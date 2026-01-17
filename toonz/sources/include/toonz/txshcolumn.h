@@ -156,7 +156,7 @@ Constructs a TXshColumn with default value.
 Return true if camera stand is visible.
 \sa setCamstandVisible()
 */
-  bool isCamstandVisible() const;
+  bool isCamstandVisible(bool checkFolder = true) const;
   /*!
 Set column status camera stand visibility to \b on.
 \sa isCamstandVisible()
@@ -183,7 +183,7 @@ relevant if camerastandVisible is off.
 Return true if preview is visible.
 \sa setPreviewVisible()
 */
-  bool isPreviewVisible() const;
+  bool isPreviewVisible(bool checkFolder = true) const;
   /*!
 Set column status preview to \b on.
 \sa isPreviewVisible()
@@ -194,7 +194,7 @@ Set column status preview to \b on.
 Return true if column is locked.
 \sa lock()
 */
-  bool isLocked() const;
+  bool isLocked(bool checkFolder = true) const;
   /*!
 Set column status look to \b on.
 \sa isLocked()

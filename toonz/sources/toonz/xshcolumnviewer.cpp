@@ -1036,8 +1036,8 @@ void ColumnArea::DrawHeader::drawEye() const {
     return;  // no preview eye in the camera column
   QColor bgColor;
   QString svgFilePath;
-  int buttonType = !column->isPreviewVisible() ? PREVIEW_OFF_XSHBUTTON
-                                               : PREVIEW_ON_XSHBUTTON;
+  int buttonType = !column->isPreviewVisible(false) ? PREVIEW_OFF_XSHBUTTON
+                                                    : PREVIEW_ON_XSHBUTTON;
   m_viewer->getButton(buttonType, bgColor, svgFilePath,
                       !o->isVerticalTimeline());
 
@@ -1073,6 +1073,12 @@ void ColumnArea::DrawHeader::drawEye() const {
   QPixmap icon =
       svgToPixmap(svgFilePath, eyeRect.size(), Qt::KeepAspectRatio, bgColor);
 
+  if (column->isInFolder() && !column->isPreviewVisible()) {
+    icon.setDevicePixelRatio(1);
+    QImage newImage = adjustImageOpacity(icon.toImage(), 0.4);
+    icon            = convertImageToPixmap(newImage);
+  }
+
   p.drawPixmap(eyeRect, icon);
 }
 
@@ -1083,9 +1089,9 @@ void ColumnArea::DrawHeader::drawPreviewToggle(int opacity) const {
   // camstand visible toggle
   QColor bgColor;
   QString svgFilePath;
-  int buttonType = !column->isCamstandVisible() ? CAMSTAND_OFF_XSHBUTTON
-                   : opacity < 255              ? CAMSTAND_TRANSP_XSHBUTTON
-                                                : CAMSTAND_ON_XSHBUTTON;
+  int buttonType = !column->isCamstandVisible(false) ? CAMSTAND_OFF_XSHBUTTON
+                   : opacity < 255                   ? CAMSTAND_TRANSP_XSHBUTTON
+                                                     : CAMSTAND_ON_XSHBUTTON;
   m_viewer->getButton(buttonType, bgColor, svgFilePath,
                       !o->isVerticalTimeline());
 
@@ -1124,6 +1130,12 @@ void ColumnArea::DrawHeader::drawPreviewToggle(int opacity) const {
   QPixmap icon = svgToPixmap(svgFilePath, tableViewImgRect.size(),
                              Qt::KeepAspectRatio, bgColor);
 
+  if (column->isInFolder() && !column->isCamstandVisible()) {
+    icon.setDevicePixelRatio(1);
+    QImage newImage = adjustImageOpacity(icon.toImage(), 0.4);
+    icon            = convertImageToPixmap(newImage);
+  }
+
   p.drawPixmap(tableViewImgRect, icon);
 }
 
@@ -1136,10 +1148,9 @@ void ColumnArea::DrawHeader::drawUnifiedViewToggle(int opacity) const {
   // camstand visible toggle
   QColor bgColor;
   QString svgFilePath;
-  int buttonType =
-      !column->isCamstandVisible()
-          ? PREVIEW_OFF_XSHBUTTON
-          : opacity < 255 ? UNIFIED_TRANSP_XSHBUTTON : PREVIEW_ON_XSHBUTTON;
+  int buttonType = !column->isCamstandVisible(false) ? PREVIEW_OFF_XSHBUTTON
+                   : opacity < 255                   ? UNIFIED_TRANSP_XSHBUTTON
+                                                     : PREVIEW_ON_XSHBUTTON;
   m_viewer->getButton(buttonType, bgColor, svgFilePath,
                       !o->isVerticalTimeline());
 
@@ -1171,6 +1182,12 @@ void ColumnArea::DrawHeader::drawUnifiedViewToggle(int opacity) const {
 
   QPixmap icon = svgToPixmap(svgFilePath, unifiedViewImgRect.size(),
                              Qt::KeepAspectRatio, bgColor);
+
+  if (column->isInFolder() && !column->isCamstandVisible()) {
+    icon.setDevicePixelRatio(1);
+    QImage newImage = adjustImageOpacity(icon.toImage(), 0.4);
+    icon            = convertImageToPixmap(newImage);
+  }
 
   p.drawPixmap(unifiedViewImgRect, icon);
 }
@@ -1220,6 +1237,12 @@ void ColumnArea::DrawHeader::drawLock() const {
 
   QPixmap icon = svgToPixmap(svgFilePath, lockModeImgRect.size(),
                              Qt::KeepAspectRatio, bgColor);
+
+  if (column->isInFolder() && !column->isLocked(false)) {
+    icon.setDevicePixelRatio(1);
+    QImage newImage = adjustImageOpacity(icon.toImage(), 0.4);
+    icon            = convertImageToPixmap(newImage);
+  }
 
   p.drawPixmap(lockModeImgRect, icon);
 }
@@ -2230,7 +2253,7 @@ void ColumnArea::drawSoundTextColumnHead(QPainter &p, int col) {  // AREA
 
   // Check if column is locked and selected
   TXshColumn *column = col >= 0 ? xsh->getColumn(col) : 0;
-  bool isLocked      = column != 0 && column->isLocked();
+  bool isLocked      = column != 0 && column->isLocked(false);
   bool isCurrent     = m_viewer->getCurrentColumn() == col;
   bool isSelected =
       m_viewer->getColumnSelection()->isColumnSelected(col) && !isEditingSpline;
@@ -3595,22 +3618,16 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
   if (m_doOnRelease != 0) {
     TXshColumn *column = xsh->getColumn(m_col);
     if (m_doOnRelease == ToggleTransparency) {
-      if (column->isParentFolderCamstandVisible()) {
-        column->setCamstandVisible(!column->isCamstandVisible());
-        // sync eye button
-        if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
-          column->setPreviewVisible(column->isCamstandVisible());
-        if (column->getSoundColumn())
-          app->getCurrentXsheet()->notifyXsheetSoundChanged();
-      }
+      column->setCamstandVisible(!column->isCamstandVisible(false));
+      // sync eye button
+      if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
+        column->setPreviewVisible(column->isCamstandVisible());
+      if (column->getSoundColumn())
+        app->getCurrentXsheet()->notifyXsheetSoundChanged();
     } else if (m_doOnRelease == TogglePreviewVisible) {
-      if (column->isParentFolderPreviewVisible()) {
-        column->setPreviewVisible(!column->isPreviewVisible());
-      }
+      column->setPreviewVisible(!column->isPreviewVisible(false));
     } else if (m_doOnRelease == ToggleLock) {
-      if (!column->isParentFolderLocked()) {
-        column->lock(!column->isLocked());
-      }
+      column->lock(!column->isLocked(false));
     } else if (m_doOnRelease == OpenSettings) {
       QPoint pos = event->pos();
       int col    = m_viewer->xyToPosition(pos).layer();
