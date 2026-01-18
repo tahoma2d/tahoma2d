@@ -382,37 +382,37 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>SvgWriterProperties</name>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2060"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2087"/>
         <source>Stroke Mode</source>
         <translation>Режим обводки</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2061"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2088"/>
         <source>Outline Quality</source>
         <translation>Качество контура</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2062"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2089"/>
         <source>Centerline</source>
         <translation>Осевая линия</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2063"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2090"/>
         <source>Outline</source>
         <translation>Контур</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2064"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2091"/>
         <source>High</source>
         <translation>Высокая</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2065"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2092"/>
         <source>Medium</source>
         <translation>Средняя</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2066"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2093"/>
         <source>Low</source>
         <translation>Низкая</translation>
     </message>

@@ -15282,7 +15282,7 @@ Detalles:
     </message>
     <message>
         <source>Accelerator</source>
-        <translation>Acelerador</translation>
+        <translation>Aceleración</translation>
     </message>
     <message>
         <source>Uniform Length</source>
@@ -15627,6 +15627,14 @@ Detalles:
     <message>
         <source>Fx Intensity</source>
         <translation>Intensidad efecto</translation>
+    </message>
+    <message>
+        <source>P1 -&gt; P2</source>
+        <translation>P1 -&gt; P2</translation>
+    </message>
+    <message>
+        <source>Motion</source>
+        <translation>Movimiento</translation>
     </message>
 </context>
 <context>
