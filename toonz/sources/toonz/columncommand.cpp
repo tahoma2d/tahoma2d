@@ -2095,6 +2095,8 @@ public:
     int startCol =
         Preferences::instance()->isXsheetCameraColumnVisible() ? -1 : 0;
 
+    std::vector<int> checkCols;
+
     for (int i = startCol; i < xsh->getColumnCount(); i++) {
       /*- Skip if empty column -*/
       if (i >= 0 && xsh->isColumnEmpty(i)) continue;
@@ -2119,38 +2121,56 @@ public:
 
       int cmd = m_cmd;
 
+      bool checkCol = false;
+
       if (cmd & (CMD_LOCK | CMD_UNLOCK | CMD_TOGGLE_LOCK)) {
-        if (cmd & CMD_LOCK)
+        if (cmd & CMD_LOCK) {
           column->lock(!negate);
-        else if (cmd & CMD_UNLOCK)
+          checkCol = column->getFolderColumn() && column->isLocked(false);
+        } else if (cmd & CMD_UNLOCK) {
           column->lock(negate);
-        else
+          checkCol = column->getFolderColumn() && !column->isLocked(false);
+        } else
           column->lock(!column->isLocked());
         viewer_changed = true;
+
+        if (m_target != TARGET_ALL && checkCol) checkCols.push_back(i);
       }
       if (cmd &
           (CMD_ENABLE_PREVIEW | CMD_DISABLE_PREVIEW | CMD_TOGGLE_PREVIEW)) {
-        if (cmd & CMD_ENABLE_PREVIEW)
+        if (cmd & CMD_ENABLE_PREVIEW) {
           column->setPreviewVisible(!negate);
-        else if (cmd & CMD_DISABLE_PREVIEW)
+          checkCol = column->isPreviewVisible(false);
+        } else if (cmd & CMD_DISABLE_PREVIEW) {
           column->setPreviewVisible(negate);
-        else
+          checkCol =
+              column->getFolderColumn() && !column->isPreviewVisible(false);
+        } else
           column->setPreviewVisible(!column->isPreviewVisible());
 
         // sync camstand visibility
         if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
-          column->setCamstandVisible(column->isPreviewVisible());
+          column->setCamstandVisible(column->isPreviewVisible(false));
+
+        if (m_target != TARGET_ALL && checkCol) checkCols.push_back(i);
       }
       if (cmd &
           (CMD_ENABLE_CAMSTAND | CMD_DISABLE_CAMSTAND | CMD_TOGGLE_CAMSTAND)) {
-        if (cmd & CMD_ENABLE_CAMSTAND)
+        if (cmd & CMD_ENABLE_CAMSTAND) {
           column->setCamstandVisible(!negate);
-        else if (cmd & CMD_DISABLE_CAMSTAND)
+          checkCol = column->isCamstandVisible(false);
+        } else if (cmd & CMD_DISABLE_CAMSTAND) {
           column->setCamstandVisible(negate);
-        else
-          column->setCamstandVisible(!column->isCamstandVisible());
+          checkCol =
+              (m_target != TARGET_UPPER && column->getFolderColumn() &&
+               !column->isCamstandVisible(false)) ||
+              (m_target == TARGET_UPPER && column->isCamstandVisible(false));
+        } else
+          column->setCamstandVisible(!column->isCamstandVisible(false));
         if (column->getSoundColumn()) sound_changed = true;
         viewer_changed = true;
+
+        if (m_target != TARGET_ALL && checkCol) checkCols.push_back(i);
       }
       /*TAB
 if(cmd & (CMD_ENABLE_PREVIEW|CMD_DISABLE_PREVIEW|CMD_TOGGLE_PREVIEW))
@@ -2173,6 +2193,54 @@ column->setCamstandVisible(!column->isCamstandVisible());
 }
       */
     }
+
+    //
+    for (int i = 0; i < checkCols.size(); i++) {
+      TXshColumn *column = xsh->getColumn(checkCols[i]);
+      if (column->isInFolder()) {
+        // Set all parent folders, only, to visbile
+        QStack<int> folderIds = column->getFolderIdStack();
+        for (int j = checkCols[i] + 1; j < xsh->getColumnCount(); j++) {
+          TXshFolderColumn *folder = xsh->getColumn(j)->getFolderColumn();
+          if (!folder) continue;
+          if (folderIds.contains(folder->getFolderColumnFolderId())) {
+            if (m_cmd & CMD_ENABLE_PREVIEW) {
+              folder->setPreviewVisible(true);
+              // sync camstand visibility
+              if (Preferences::instance()
+                      ->isUnifyColumnVisibilityTogglesEnabled())
+                folder->setCamstandVisible(true);
+            }
+            if (m_cmd & (CMD_ENABLE_CAMSTAND | CMD_DISABLE_CAMSTAND))
+              folder->setCamstandVisible(true);
+          }
+        }
+      }
+      if (column->getFolderColumn()) {
+        // Set all folder contents to visible
+        TXshFolderColumn *folder = column->getFolderColumn();
+        int folderId             = folder->getFolderColumnFolderId();
+        for (int j = checkCols[i] - 1; j >= 0; j--) {
+          TXshColumn *folderItem = xsh->getColumn(j);
+          if (!folderItem) continue;
+          if (folderItem->isContainedInFolder(folderId)) {
+            if (m_cmd & (CMD_ENABLE_PREVIEW | CMD_DISABLE_PREVIEW)) {
+              folderItem->setPreviewVisible(folder->isPreviewVisible(false));
+              // sync camstand visibility
+              if (Preferences::instance()
+                      ->isUnifyColumnVisibilityTogglesEnabled())
+                folderItem->setCamstandVisible(
+                    folder->isCamstandVisible(false));
+            }
+            if (m_cmd & (CMD_ENABLE_CAMSTAND | CMD_DISABLE_CAMSTAND))
+              folderItem->setCamstandVisible(folder->isCamstandVisible(false));
+            if (m_cmd & (CMD_LOCK | CMD_UNLOCK))
+              folderItem->lock(folder->isLocked(false));
+          }
+        }
+      }
+    }
+
     if (sound_changed)
       TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();

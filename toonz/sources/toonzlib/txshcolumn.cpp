@@ -775,8 +775,8 @@ void TXshColumn::setCamstandNextState() {
 #endif
 //-----------------------------------------------------------------------------
 
-bool TXshColumn::isCamstandVisible() const {
-  if (!isParentFolderCamstandVisible()) return false;
+bool TXshColumn::isCamstandVisible(bool checkFolder) const {
+  if (checkFolder && !isParentFolderCamstandVisible()) return false;
   return (m_status & eCamstandVisible) == 0;
 }
 
@@ -823,8 +823,8 @@ int TXshColumn::getColorFilterId() const {
 
 //-----------------------------------------------------------------------------
 
-bool TXshColumn::isPreviewVisible() const {
-  if (!isParentFolderPreviewVisible()) return false;
+bool TXshColumn::isPreviewVisible(bool checkFolder) const {
+  if (checkFolder && !isParentFolderPreviewVisible()) return false;
   return (m_status & ePreviewVisible) == 0;
 }
 
@@ -840,8 +840,8 @@ void TXshColumn::setPreviewVisible(bool on) {
 
 //-----------------------------------------------------------------------------
 
-bool TXshColumn::isLocked() const {
-  if (isParentFolderLocked()) return true;
+bool TXshColumn::isLocked(bool checkFolder) const {
+  if (checkFolder && isParentFolderLocked()) return true;
   return (m_status & eLocked) != 0;
 }
 
