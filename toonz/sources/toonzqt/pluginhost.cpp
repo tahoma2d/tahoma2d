@@ -1389,8 +1389,8 @@ static void end_library(void *mod) { dlclose(mod); }
 
 void Loader::doLoad(const QString &file) {
 #if defined(_WIN32) || defined(_CYGWIN_)
-  HMODULE handle = LoadLibraryA(file.toLocal8Bit().data());
-  printf("doLoad handle:%p path:%s\n", handle, file.toLocal8Bit().data());
+  HMODULE handle = LoadLibraryW((LPCWSTR)file.utf16());
+  wprintf(L"doLoad handle:%p path:%s\n", handle, file.utf16());
 #else
 #if defined(LINUX) || defined(FREEBSD)
   void *handle = dlopen(file.toUtf8().data(), RTLD_NOW | RTLD_LOCAL);

@@ -48,7 +48,7 @@ class EnvGlobals {  // singleton
   std::string m_moduleName;
   std::string m_rootVarName;
   std::string m_systemVarPrefix;
-  std::string m_workingDirectory;
+  QString m_workingDirectory;
   TFilePath m_registryRoot;
   TFilePath m_envFile;
   TFilePath *m_stuffDir;
@@ -78,7 +78,7 @@ public:
     QString settingsPath;
 
 #ifdef MACOSX
-    settingsPath = QString::fromStdString(getWorkingDirectory()) +
+    settingsPath = getWorkingDirectory() +
                    QString("/Contents/Resources/SystemVar.ini");
 #else
 #ifdef HAIKU
@@ -148,7 +148,7 @@ public:
   TFilePath getStuffDir() {
     if (m_stuffDir) return *m_stuffDir;
     if (m_isPortable)
-      return TFilePath((getWorkingDirectory() + "\\tahomastuff\\"));
+      return TFilePath(getWorkingDirectory()) + "tahomastuff";
 
     return TFilePath(getSystemVarValue(m_rootVarName));
   }
@@ -225,23 +225,9 @@ public:
   std::string getSystemVarPrefix() { return m_systemVarPrefix; }
 
   void setWorkingDirectory() {
-    QString workingDirectoryTmp = QDir::currentPath();
-
-//#if defined(LINUX) || defined(FREEBSD)
-//    QString appPath =
-//        workingDirectoryTmp + "/" + QCoreApplication::applicationName();
-//    QDir appDir(appPath);
-//    appPath = appDir.canonicalPath();
-//    if (!appPath.isEmpty())
-//      workingDirectoryTmp = TFilePath(appPath).getParentDir().getQString();
-//#endif
-
-    QByteArray ba                = workingDirectoryTmp.toLatin1();
-    const char *workingDirectory = ba.data();
-    m_workingDirectory           = workingDirectory;
-
+    m_workingDirectory = QDir::currentPath();
     // check if portable
-    TFilePath portableCheck = TFilePath(m_workingDirectory + "\\tahomastuff\\");
+    TFilePath portableCheck = TFilePath(m_workingDirectory) + "tahomastuff";
     TFileStatus portableStatus(portableCheck);
     m_isPortable = portableStatus.doesExist();
 
@@ -253,16 +239,15 @@ public:
     // everything together when it translocates.
     if (!m_isPortable) {
       portableCheck =
-          TFilePath(m_workingDirectory + "\\tahomastuff\\");
+          TFilePath(m_workingDirectory) + "tahomastuff";
       portableStatus = TFileStatus(portableCheck);
       m_isPortable   = portableStatus.doesExist();
       if (m_isPortable)
-        m_workingDirectory =
-            portableCheck.getParentDir().getQString().toStdString();
+        m_workingDirectory = portableCheck.getParentDir().getQString();
     }
 #endif
   }
-  std::string getWorkingDirectory() { return m_workingDirectory; }
+  QString getWorkingDirectory() { return m_workingDirectory; }
 
   bool getIsPortable() { return m_isPortable; }
 
