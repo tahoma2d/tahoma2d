@@ -180,7 +180,11 @@ public:
         r = row;
         for (; r < r1; r++) {
           TXshCell cell = xsh->getCell(r, col);
-          if (cell.isEmpty() || cell.getFrameId().isStopFrame()) break;
+          if (cell.getFrameId().isStopFrame()) break;
+          if (cell.isEmpty()) {
+            r--;
+            break;
+          }
         }
         r1 = r;
         if (m_keySelection) {
@@ -237,8 +241,16 @@ public:
         getViewer()->setCurrentRow(row);
       if (m_keySelection)
         getViewer()->getCellKeyframeSelection()->selectCellKeyframe(row, col);
-      else
-        getViewer()->getCellSelection()->selectCell(row, col);
+      else {
+        TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+        TXshColumn *column = xsh->getColumn(col);
+        if (!Preferences::instance()->isShowDragBarsEnabled() && column &&
+            column->getSoundColumn() &&
+            column->getSoundColumn()->getLevelRange(row, r0, r1))
+          getViewer()->getCellSelection()->selectCells(r0, col, r1, col);
+        else
+          getViewer()->getCellSelection()->selectCell(row, col);
+      }
     }
     refreshCellsArea();
     refreshRowsArea();
