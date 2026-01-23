@@ -17,3 +17,4 @@ brew install openjpeg libresample protobuf boost qt@5 clang-format glew lz4 lzo 
 #brew install dav1d
 brew install meson ninja
 brew install automake autoconf gettext pkg-config libtool libusb-compat gd libexif libdeflate
+brew install superlu
