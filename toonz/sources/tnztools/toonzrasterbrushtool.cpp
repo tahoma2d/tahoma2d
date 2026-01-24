@@ -720,38 +720,14 @@ double computeThickness(bool pressureEnabled, double pressure, bool tiltEnabled,
 
   if (pressureEnabled) {
     double t = pressure * pressure * pressure;
-    pThick   = (thick0 + (thick1 - thick0) * t) * 0.5;
+    pThick   = thick0 + (thick1 - thick0) * t;
     if (tiltEnabled) pThick *= 0.5;
   }
 
   if (tiltEnabled) {
     double t = tiltMagnitude * tiltMagnitude * tiltMagnitude;
-    tThick   = (thick0 + (thick1 - thick0) * t) * 0.5;
+    tThick   = thick0 + (thick1 - thick0) * t;
     if (pressureEnabled) tThick *= 0.5;
-  }
-
-  return pThick + tThick;
-}
-
-//---------------------------------------------------------------------------------------------------------
-
-int computeThickness(bool pressureEnabled, double pressure, bool tiltEnabled,
-                     double tiltMagnitude, const TIntPairProperty &property) {
-  int thick0 = property.getValue().first;
-  int thick1 = property.getValue().second;
-
-  int pThick = 0, tThick = 0;
-
-  if (pressureEnabled) {
-    double t = pressure * pressure * pressure;
-    pThick   = tround(thick0 + (thick1 - thick0) * t);
-    if (pressureEnabled) pThick /= 2;
-  }
-
-  if (tiltEnabled) {
-    double t = tiltMagnitude * tiltMagnitude * tiltMagnitude;
-    tThick   = tround(thick0 + (thick1 - thick0) * t);
-    if (pressureEnabled) tThick /= 2;
   }
 
   return pThick + tThick;
@@ -1505,8 +1481,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
     double thickness =
         (m_enabledPressure || m_enabledTilt)
             ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
-                               tiltMagnitude, m_rasThickness) *
-                  2
+                               tiltMagnitude, m_rasThickness)
             : maxThick;
 
     /*--- ストロークの最初にMaxサイズの円が描かれてしまう不具合を防止する
@@ -1964,8 +1939,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
   double thickness =
       (m_enabledPressure || m_enabledTilt)
           ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
-                             tiltMagnitude, m_rasThickness) *
-                2
+                             tiltMagnitude, m_rasThickness)
           : maxThickness;
   if (m_isMyPaintStyleSelected) {
     TRasterP ras = ti->getRaster();
@@ -2204,6 +2178,12 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
   /*--
    * 描画中にカレントフレームが変わっても、描画開始時のFidに対してUndoを記録する
    * --*/
+  double maxThickness = m_rasThickness.getValue().second;
+  double thickness =
+      (m_enabledPressure || m_enabledTilt)
+          ? computeThickness(m_enabledPressure, pressureVal, m_enabledTilt,
+                             tiltMagnitude, m_rasThickness)
+          : maxThickness;
   TFrameId frameId =
       m_workingFrameId.isEmptyFrame() ? getCurrentFid() : m_workingFrameId;
   if (m_isMyPaintStyleSelected) {
@@ -2260,12 +2240,6 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
 
   } else if ((m_cmRasterBrush && m_hardness.getValue() == 100) ||
              m_pencil.getValue()) {
-    double thickness =
-        (m_enabledPressure || m_enabledTilt)
-            ? computeThickness(m_enabledPressure, pressureVal, m_enabledTilt,
-                               tiltMagnitude, m_rasThickness)
-            : m_rasThickness.getValue().second;
-
     /*--- ストロークの最初にMaxサイズの円が描かれてしまう不具合を防止する ---*/
     if (m_enabledPressure && pressureVal == 1.0)
       thickness = m_rasThickness.getValue().first;
@@ -2319,7 +2293,6 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           points.push_back(brushPoints[m - 2]);
         }
       }
-      int maxThickness = m_rasThickness.getValue().second;
       invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
     }
     invalidate(invalidateRect.enlarge(2));
@@ -2351,12 +2324,6 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     delete m_cmRasterBrush;
     m_cmRasterBrush = 0;
   } else {
-    double maxThickness = m_rasThickness.getValue().second;
-    double thickness =
-        (m_enabledPressure || m_enabledTilt)
-            ? computeThickness(m_enabledPressure, pressureVal, m_enabledTilt,
-                               tiltMagnitude, m_rasThickness)
-            : maxThickness;
     if (m_isStraight) {
       // if (m_oldThickness > 0.0)
       //  thickness = m_oldThickness;

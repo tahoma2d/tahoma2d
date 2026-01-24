@@ -85,7 +85,7 @@ public:
 protected:
   TPropertyGroup m_prop;
 
-  TIntPairProperty m_thickness;
+  TDoublePairProperty m_thickness;
   TDoubleProperty m_smooth;
   TBoolProperty m_mypaintPressure;
   TDoublePairProperty m_opacity;
@@ -104,7 +104,7 @@ protected:
   TPixel32 m_currentColor;
   bool m_enabledPressure, m_enabledOPressure;
   bool m_enabledTilt, m_enabledOTilt;
-  int m_minCursorThick, m_maxCursorThick;
+  double m_minCursorThick, m_maxCursorThick;
   bool m_isMyPaintStyleSelected;
 
   TPointD m_mousePos,    //!< Current mouse position, in world coordinates.
@@ -144,7 +144,7 @@ protected:
 
   int m_perspectiveIndex = -1;
 
-  int m_minThick, m_maxThick;
+  double m_minThick, m_maxThick;
   double m_oldOpacity;
   std::vector<TThickPoint> m_points;
   RasterBlurredBrush *m_bluredBrush;
