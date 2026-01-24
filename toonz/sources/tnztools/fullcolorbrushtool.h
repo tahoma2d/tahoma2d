@@ -149,6 +149,8 @@ protected:
   std::vector<TThickPoint> m_points;
   RasterBlurredBrush *m_bluredBrush;
   QRadialGradient m_brushPad;
+
+  bool m_enabled;
 };
 
 //------------------------------------------------------------
