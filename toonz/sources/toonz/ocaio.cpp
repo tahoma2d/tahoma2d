@@ -936,7 +936,8 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer,
 
     column->setFolderIdStack(folderIds);
 
-    int lastFrame = 0;
+    bool isImplicitMode = Preferences::instance()->isImplicitHoldEnabled();
+    int lastFrame       = -1;
     for (auto frame : jsonLayer["frames"].toArray()) {
       TXshCell cell;
       if (frame.toObject()["name"].toString() == "_blank" ||
@@ -947,19 +948,32 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer,
         TFrameId fid = fp.getFrame();
         if (fp.getDots() != "..")
           fid = jsonLayer["type"] == "vectorlayer" ? 65534 : TFrameId::NO_FRAME;
-        cell  = TXshCell(sl, fid);
+        cell = TXshCell(sl, fid);
       }
 
       int row = frame.toObject()["frameNumber"].toInt();
+      if (isImplicitMode) {
+        if (lastFrame >= 0 && row > (lastFrame + 1))
+          m_xsheet->setCell(lastFrame + 1, col,
+                            TXshCell(sl, TFrameId::STOP_FRAME));
+        lastFrame = row;
+      }
 
-      int duration = frame.toObject()["duration"].toInt();
-      lastFrame += duration;
-      if (Preferences::instance()->isImplicitHoldEnabled()) duration = 1;
+      int duration = frame.toObject()["duration"].toInt(1);
+      if (isImplicitMode) {
+        lastFrame += duration - 1;
+        duration = 1;
+      }
 
-      for (int i = 0; i < duration; i++) m_xsheet->setCell(row + i, col, cell);
+      for (int i = 0; i < duration; i++) {
+        if (isImplicitMode && cell.isEmpty() && !i && row)
+          m_xsheet->setCell(row, col, TXshCell(sl, TFrameId::STOP_FRAME));
+        else
+          m_xsheet->setCell(row + i, col, cell);
+      }
     }
-    if (Preferences::instance()->isImplicitHoldEnabled())
-      m_xsheet->setCell(lastFrame, col, TXshCell(sl, TFrameId::STOP_FRAME));
+    if (isImplicitMode)
+      m_xsheet->setCell(lastFrame + 1, col, TXshCell(sl, TFrameId::STOP_FRAME));
 
     TApp::instance()->getCurrentLevel()->setLevel(
         level->getSimpleLevel());  // selects the last created level
