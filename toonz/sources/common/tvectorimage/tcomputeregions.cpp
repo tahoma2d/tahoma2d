@@ -858,18 +858,25 @@ assert(v[b.m_nextBranch].m_nextBranch==i);
 
   vector<UINT> toBeDeleted;
 
-  for (p1 = intList.first(); p1; p1 = p1->next())
+  for (p1 = intList.first(); p1; p1 = p1->next()) {
+    TGroupId group;
+    for (p2 = p1->m_strokeList.first(); p2; p2 = p2->next()) {
+      if (p2->m_edge.m_index < 0) continue;
+      group = m_strokes[p2->m_edge.m_index]->m_groupId;
+      break;
+    }
     for (p2 = p1->m_strokeList.first(); p2; p2 = p2->next()) {
       if (p2->m_edge.m_index < 0 && !p2->m_edge.m_s &&
           (p2->m_edge.m_w0 == 0 || p2->m_edge.m_w0 == 1)) {
         p2->m_edge.m_s = reconstructAutocloseStroke(p1, p2);
-        if (p2->m_edge.m_s)
+        if (p2->m_edge.m_s && group != TGroupId())
           m_intersectionData->m_autocloseMap[p2->m_edge.m_index] =
-              new VIStroke(p2->m_edge.m_s, TGroupId());
+              new VIStroke(p2->m_edge.m_s, group);
         else
           toBeDeleted.push_back(p2->m_edge.m_index);
       }
     }
+  }
 
   for (p1 = intList.first(); p1; p1 = p1->next())
     for (p2 = p1->m_strokeList.first(); p2; p2 = p2->next()) {
