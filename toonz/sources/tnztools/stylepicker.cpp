@@ -86,24 +86,22 @@ int StylePicker::pickStyleId(const TPointD &pos, double radius, double scale2,
     }
     if (mode == 2 || mode == 1) {  // ALL or LINES
       bool strokeFound;
-      double dist2, w, thick;
+      double dist2, w;
       UINT index;
-      //! funzionerebbe ancora meglio con un getNearestStroke che considera
-      // la thickness, cioe' la min distance dalla outline e non dalla
-      // centerLine
+      // Clicked point must be within the thickness distance from the point
+      // identified on the closest stroke. If area style is not found or only in
+      // Line mode, expand the distance allowance
       strokeFound = vi->getNearestStroke(pos, w, index, dist2);
       if (strokeFound) {
-        int devPixRatio = getDevicePixelRatio(m_widget);
-        dist2 *= scale2;
         TStroke *stroke = vi->getStroke(index);
-        thick           = stroke->getThickPoint(w).thick;
-        double len2     = thick * thick * scale2;
-        const double minDist2 =
-            (styleId <= 0)
-                ? radius * radius * (double)(devPixRatio * devPixRatio)
-                : 0;
-        double checkDist = std::max(minDist2, len2);
-        if (dist2 < checkDist) {
+        TThickPoint pt  = stroke->getThickPoint(w);
+        double thick    = pt.thick;
+        if (!thick) thick = radius;
+        double thickness = (thick + (styleId <= 0 ? radius : 0)) *
+                           getDevicePixelRatio(m_widget);
+        TRectD bbox = TRectD(pt.x - thickness / 2, pt.y - thickness / 2,
+                             pt.x + thickness / 2, pt.y + thickness / 2);
+        if (bbox.contains(pos)) {
           assert(stroke);
           styleId = stroke->getStyle();
         }
