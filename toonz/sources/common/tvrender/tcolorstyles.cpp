@@ -428,9 +428,7 @@ public:
 
   TColorStyle *create(int id, bool &isObsolete) {
     Table::iterator it = m_table.find(id);
-    if (it == m_table.end())
-      throw TException("Unknown color style id; id = " + std::to_string(id));
-
+    if (it == m_table.end()) return 0;
     isObsolete = it->second.m_isObsolete;
 
     return it->second.m_style->clone();
@@ -581,12 +579,20 @@ TColorStyle *TColorStyle::load(TInputStreamInterface &is) {
   }
   bool isObsolete    = false;
   TColorStyle *style = ColorStyleList::instance()->create(id, isObsolete);
+  bool unknownStyle  = false;
+  if (!style) {
+    // unknown style: create a default one
+    style        = ColorStyleList::instance()->create(3, isObsolete);
+    unknownStyle = true;
+  }
   assert(style);
   style->setFlags(flags);
   if (isObsolete)
     style->loadData(id, is);
   else
     style->loadData(is);
+  if (unknownStyle)
+    style->setMainColor(TPixel32(255, 0, 0, style->getMainColor().m));
   style->setName(::to_wstring(name));
   style->setGlobalName(gname);
   style->setOriginalName(origName);
