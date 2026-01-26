@@ -856,9 +856,15 @@ void ColorFieldEditorController::edit(DVGui::ColorField *colorField) {
   TColorStyle *style = m_palette->getStyle(1);
   style->setMainColor(m_currentColorField->getColor());
 
+  bool styleSwitched =
+      TApp::instance()->getPaletteController()->getCurrentPalette() !=
+      m_colorFieldHandle;
+
   // Setto m_colorFieldHandle come paletteHandle corrente.
   TApp::instance()->getPaletteController()->setCurrentPalette(
       m_colorFieldHandle);
+
+  if (styleSwitched) emit m_colorFieldHandle->broadcastColorStyleSwitched();
 
   connect(m_currentColorField, SIGNAL(colorChanged(const TPixel32 &, bool)),
           SLOT(onColorChanged(const TPixel32 &, bool)));
