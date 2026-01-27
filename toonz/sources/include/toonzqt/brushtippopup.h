@@ -177,7 +177,7 @@ public:
         *TBrushTipManager::instance()->getDefaultBrushTipImage());
   }
   QString getBrushTipName() {
-    return m_brushTip ? m_brushTip->m_brushTipName : tr("Round");
+    return m_brushTip ? m_brushTip->m_brushTipName : QObject::tr("Round");
   }
 
   void setBrushTip(BrushTipData *brushTip) {

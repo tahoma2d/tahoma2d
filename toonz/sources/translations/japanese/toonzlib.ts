@@ -51,11 +51,11 @@
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation type="unfinished">画像の読み取り中に想定外のエラーが発生しました</translation>
+        <translation type="obsolete">画像の読み取り中に想定外のエラーが発生しました</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished">認識できないファイル形式 :</translation>
+        <translation type="obsolete">認識できないファイル形式 :</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
@@ -63,7 +63,19 @@
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation type="unfinished">画像の書き込み中に想定外のエラーが発生しました</translation>
+        <translation type="obsolete">画像の書き込み中に想定外のエラーが発生しました</translation>
+    </message>
+    <message>
+        <source>Unexpected error while reading image %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unrecognized file type : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unexpected error while writing image %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -117,7 +129,7 @@
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished">認識できないファイル形式 :</translation>
+        <translation type="obsolete">認識できないファイル形式 :</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
@@ -151,6 +163,10 @@
         <source>Unhandled exception encountered</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unrecognized file type : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OutlineVectorizer</name>
@@ -172,7 +188,11 @@
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation type="unfinished">無効な色 : </translation>
+        <translation type="obsolete">無効な色 : </translation>
+    </message>
+    <message>
+        <source>Invalid color : %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -924,6 +944,62 @@
         <source>Pressure gain</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fine Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gross Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direction 360</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attack Angle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Declination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ascension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GridMap X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GridMap Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Brush Radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>
@@ -937,11 +1013,15 @@
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation type="unfinished">引数はベクターレベルまたは画像である必要があります : </translation>
+        <translation type="obsolete">引数はベクターレベルまたは画像である必要があります : </translation>
     </message>
     <message>
         <source>%1 has no palette</source>
         <translation type="unfinished">%1 にはパレットがありません</translation>
+    </message>
+    <message>
+        <source>Argument must be a vector level or image : %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -523,8 +523,7 @@ ToolOptionStylusConfigButton::ToolOptionStylusConfigButton(
 
   m_property->addListener(this);
 
-  m_stylusConfig =
-      new StylusConfigPopup(QString::fromStdString(m_property->getName()), 0);
+  m_stylusConfig = new StylusConfigPopup(m_property->getQStringName(), 0);
 
   bool useLinearCurves = m_property->useLinearCurves();
   QList<TPointD> defaultPressureCurve =
@@ -536,13 +535,13 @@ ToolOptionStylusConfigButton::ToolOptionStylusConfigButton(
   m_pressureId = m_stylusConfig->addConfiguration(tr("Pressure"));
   m_stylusConfig->setConfiguration(m_pressureId, useLinearCurves, 0, 100, 0,
                                    100, defaultPressureCurve, "0%", "", "100%",
-                                   "Min", "", "Max");
+                                   tr("Min"), "", tr("Max"));
 
   // Tilt
   m_tiltId = m_stylusConfig->addConfiguration(tr("Tilt"));
   m_stylusConfig->setConfiguration(m_tiltId, useLinearCurves, 30, 90, 0, 100,
-                                   defaultTiltCurve, "30", "", "90", "Min", "",
-                                   "Max");
+                                   defaultTiltCurve, "30", "", "90", tr("Min"), "",
+                                   tr("Max"));
 
   updateStatus();
 

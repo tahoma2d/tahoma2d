@@ -2213,6 +2213,14 @@ movido hacia el final de la primera página de la paleta.</translation>
         <source>Tilt</source>
         <translation>Inclinación</translation>
     </message>
+    <message>
+        <source>Min</source>
+        <translation>Min</translation>
+    </message>
+    <message>
+        <source>Max</source>
+        <translation>Máx</translation>
+    </message>
 </context>
 <context>
     <name>ToonzRasterBrushTool</name>
