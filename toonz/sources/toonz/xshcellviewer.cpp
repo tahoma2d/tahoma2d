@@ -1198,7 +1198,6 @@ CellArea::CellArea(XsheetViewer *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
     , m_viewer(parent)
     , m_levelExtenderRect()
-    , m_soundLevelModifyRects()
     , m_isPanning(false)
     , m_isMousePressed(false)
     , m_pos(-1, -1)
@@ -1322,7 +1321,6 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
   NumberRange frameSide = m_viewer->orientation()->frameSide(drawingArea);
 
   // for each layer
-  m_soundLevelModifyRects.clear();
   for (col = c0; col <= c1; col++) {
     if (!columnFan->isVisible(col)) continue;
 
@@ -1777,20 +1775,30 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
       soundColumn->getLevelRangeWithoutOffset(row, r0WithoutOff, r1WithoutOff);
   assert(ret);
 
+  QRect dragBarAdj = Preferences::instance()->isShowDragBarsEnabled()
+      ? QRect() : o->rect(PredefinedRect::DRAG_AREA);
   if (isFirstRow) {
     QRect modifierRect = m_viewer->orientation()
                              ->rect(PredefinedRect::BEGIN_SOUND_EDIT)
                              .translated(xy);
+    if (!o->isVerticalTimeline())
+      modifierRect.adjust(0, -dragBarAdj.height(), 0, 0);
+    else
+      modifierRect.adjust(-dragBarAdj.width(), 0, 0, 0);
+
     if (r0 != r0WithoutOff) p.fillRect(modifierRect, SoundColumnExtenderColor);
-    m_soundLevelModifyRects.append(modifierRect);  // list of clipping rects
   }
   if (isLastRow) {
     QRect modifierRect = m_viewer->orientation()
                              ->rect(PredefinedRect::END_SOUND_EDIT)
                              .translated(-frameAdj)
                              .translated(xy);
+    if (!o->isVerticalTimeline())
+      modifierRect.adjust(0, -dragBarAdj.height(), 0, 0);
+    else
+      modifierRect.adjust(-dragBarAdj.width(), 0, 0, 0);
+
     if (r1 != r1WithoutOff) p.fillRect(modifierRect, SoundColumnExtenderColor);
-    m_soundLevelModifyRects.append(modifierRect);
   }
 }
 
@@ -3979,6 +3987,18 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
               .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
               .contains(mouseInCell);
 
+      bool isSoundExtenderArea = false;
+      int r0, r1;
+      if (isSoundColumn && column->getSoundColumn()->getLevelRange(row, r0, r1))
+        if ((row == r0 && o->rect(PredefinedRect::BEGIN_SOUND_EDIT)
+                              .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+                              .contains(mouseInCell)) ||
+            (row == r1 && o->rect(PredefinedRect::END_SOUND_EDIT)
+                              .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+                              .contains(mouseInCell))) {
+          isSoundExtenderArea = true;
+        }
+
       bool isCellEmpty =
           (xsh->getCell(row, col).isEmpty() || xsh->isImplicitCell(row, col));
 
@@ -3987,7 +4007,7 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
                                 : event->modifiers() & Qt::AltModifier;
 
       // When no drag bars..
-      if (!isSoundPreviewArea && !hasDragBar) {
+      if (!isSoundPreviewArea && !isSoundExtenderArea && !hasDragBar) {
         isInDragArea = m_viewer->getCellSelection()->isCellSelected(row, col);
 
         TCellSelection *cellSelection = m_viewer->getCellSelection();
@@ -4040,8 +4060,7 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
         if (isSoundPreviewArea)
           setDragTool(XsheetGUI::DragTool::makeSoundScrubTool(
               m_viewer, column->getSoundColumn()));
-        else if (isSoundColumn &&
-                 rectContainsPos(m_soundLevelModifyRects, event->pos()))
+        else if (isSoundExtenderArea)
           setDragTool(
               XsheetGUI::DragTool::makeSoundLevelModifierTool(m_viewer));
         else
@@ -4282,11 +4301,20 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
     m_tooltip = tr("Click and drag to play");
   else if (m_levelExtenderRect.contains(pos))
     m_tooltip = tr("Click and drag to repeat selected cells");
-  else if (isSoundColumn && rectContainsPos(m_soundLevelModifyRects, pos)) {
-    if (o->isVerticalTimeline())
-      setCursor(Qt::SplitVCursor);
-    else
-      setCursor(Qt::SplitHCursor);
+  else if (isSoundColumn) {
+    int r0, r1;
+    if (column->getSoundColumn()->getLevelRange(row, r0, r1))
+      if ((row == r0 && o->rect(PredefinedRect::BEGIN_SOUND_EDIT)
+                            .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+                            .contains(mouseInCell)) ||
+          (row == r1 && o->rect(PredefinedRect::END_SOUND_EDIT)
+                            .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+                            .contains(mouseInCell))) {
+        if (o->isVerticalTimeline())
+          setCursor(Qt::SplitVCursor);
+        else
+          setCursor(Qt::SplitHCursor);
+      }
     m_tooltip = tr("");
   } else
     m_tooltip = tr("");

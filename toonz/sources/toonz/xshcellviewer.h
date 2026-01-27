@@ -88,7 +88,6 @@ class CellArea final : public QWidget {
   QRect m_levelExtenderRect;
   // upper-directional smart tab
   QRect m_upperLevelExtenderRect;
-  QList<QRect> m_soundLevelModifyRects;
 
   bool m_isPanning;
   bool m_isMousePressed;
