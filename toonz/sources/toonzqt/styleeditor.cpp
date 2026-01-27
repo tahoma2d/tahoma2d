@@ -4111,7 +4111,7 @@ void SettingsPage::onOpenStylusConfig() {
       (TMyPaintBrushStyle *)m_editedStyle.getPointer();
 
   if (!m_stylusConfig) {
-    m_stylusConfig = new StylusConfigPopup(tr("Brush Dynamic"), this);
+    m_stylusConfig = new StylusConfigPopup(QObject::tr("Brush Dynamic"), this);
   
     // Initialize all the input graphs
     for (int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; j++) {
@@ -4128,7 +4128,8 @@ void SettingsPage::onOpenStylusConfig() {
  
   // Configure Stylus Configuration popup
   QString paramName = m_editedStyle->getParamNames(m_parameterId);
-  m_stylusConfig->setGraphTitle(tr("Brush Dynamic - %1").arg(paramName));
+  m_stylusConfig->setGraphTitle(
+      QObject::tr("Brush Dynamic - %1").arg(paramName));
 
   m_stylusConfig->blockSignals(true);
 

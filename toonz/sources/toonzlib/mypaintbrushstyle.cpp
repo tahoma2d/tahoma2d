@@ -415,6 +415,39 @@ TPointD TMyPaintBrushStyle::getDefaultMappingPoint(MyPaintBrushSetting id,
 //-----------------------------------------------------------------------------
 
 QString TMyPaintBrushStyle::getInputName(MyPaintBrushInput input) const {
+  switch ((MyPaintBrushInput)input) {
+  case MYPAINT_BRUSH_INPUT_PRESSURE:
+    return QObject::tr("Pressure");
+  case MYPAINT_BRUSH_INPUT_SPEED1:
+    return QObject::tr("Fine Speed");
+  case MYPAINT_BRUSH_INPUT_SPEED2:
+    return QObject::tr("Gross Speed");
+  case MYPAINT_BRUSH_INPUT_RANDOM:
+    return QObject::tr("Random");
+  case MYPAINT_BRUSH_INPUT_STROKE:
+    return QObject::tr("Stroke");
+  case MYPAINT_BRUSH_INPUT_DIRECTION:
+    return QObject::tr("Direction");
+  case MYPAINT_BRUSH_INPUT_DIRECTION_ANGLE:
+    return QObject::tr("Direction 360");
+  case MYPAINT_BRUSH_INPUT_ATTACK_ANGLE:
+    return QObject::tr("Attack Angle");
+  case MYPAINT_BRUSH_INPUT_TILT_DECLINATION:
+    return QObject::tr("Declination");
+  case MYPAINT_BRUSH_INPUT_TILT_ASCENSION:
+    return QObject::tr("Ascension");
+  case MYPAINT_BRUSH_INPUT_GRIDMAP_X:
+    return QObject::tr("GridMap X");
+  case MYPAINT_BRUSH_INPUT_GRIDMAP_Y:
+    return QObject::tr("GridMap Y");
+  case MYPAINT_BRUSH_INPUT_BRUSH_RADIUS:
+    return QObject::tr("Base Brush Radius");
+  case MYPAINT_BRUSH_INPUT_CUSTOM:
+    return QObject::tr("Custom");
+  default:
+    break;
+  }
+
   return QString::fromStdString(mypaint::Input::byId(input).name);
 }
 

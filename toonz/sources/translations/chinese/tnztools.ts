@@ -2217,6 +2217,14 @@ moved to the end of the first page of the palette.</source>
         <source>Tilt</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ToonzRasterBrushTool</name>

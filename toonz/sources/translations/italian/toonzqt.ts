@@ -2873,6 +2873,14 @@ Zero is fully transparent.</source>
         <source>Remove Reference in Palette : %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Brush Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Dynamic - %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -3008,14 +3016,6 @@ Zero is fully transparent.</source>
     <message>
         <source>Autopaint for Lines</source>
         <translation type="obsolete">Colorazione Automatica per le Linee</translation>
-    </message>
-    <message>
-        <source>Brush Dynamic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brush Dynamic - %1</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

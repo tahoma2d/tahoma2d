@@ -14650,7 +14650,7 @@ Do you want to continue?</source>
     <message>
         <source>The log file already exists.
  Do you want to overwrite it?</source>
-        <translation>El archivo de registro ya existe.
+        <translation type="vanished">El archivo de registro ya existe.
  ¿Sobrescribirlo?</translation>
     </message>
     <message>
@@ -15635,6 +15635,11 @@ Detalles:
     <message>
         <source>Motion</source>
         <translation>Movimiento</translation>
+    </message>
+    <message>
+        <source>The log file %1 already exists.
+ Do you want to overwrite it?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -21191,6 +21196,10 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     <message>
         <source>Alpha Lock</source>
         <translation>Bloquear alfa</translation>
+    </message>
+    <message>
+        <source>Clipping Mask</source>
+        <translation>Máscara de recorte</translation>
     </message>
 </context>
 <context>

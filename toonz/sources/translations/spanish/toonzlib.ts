@@ -51,11 +51,11 @@
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation>Error inesperado al leer la imagen</translation>
+        <translation type="vanished">Error inesperado al leer la imagen</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation>Tipo de archivo no reconocido:</translation>
+        <translation type="vanished">Tipo de archivo no reconocido:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
@@ -63,7 +63,19 @@
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation>Error inesperado al escribir la imagen</translation>
+        <translation type="vanished">Error inesperado al escribir la imagen</translation>
+    </message>
+    <message>
+        <source>Unexpected error while reading image %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unrecognized file type : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unexpected error while writing image %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -117,7 +129,7 @@
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation>Tipo de archivo no reconocido:</translation>
+        <translation type="vanished">Tipo de archivo no reconocido:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
@@ -151,6 +163,10 @@
         <source>Unhandled exception encountered</source>
         <translation>Se encontró una excepción no prevista</translation>
     </message>
+    <message>
+        <source>Unrecognized file type : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OutlineVectorizer</name>
@@ -172,7 +188,11 @@
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation>Color inválido: </translation>
+        <translation type="vanished">Color inválido: </translation>
+    </message>
+    <message>
+        <source>Invalid color : %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -925,6 +945,62 @@
         <source>Pressure gain</source>
         <translation>Ganancia de presión</translation>
     </message>
+    <message>
+        <source>Pressure</source>
+        <translation>Presión</translation>
+    </message>
+    <message>
+        <source>Fine Speed</source>
+        <translation>Velocidad fina</translation>
+    </message>
+    <message>
+        <source>Gross Speed</source>
+        <translation>Velocidad gruesa</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>Aleatoriedad</translation>
+    </message>
+    <message>
+        <source>Stroke</source>
+        <translation>Trazo</translation>
+    </message>
+    <message>
+        <source>Direction</source>
+        <translation>Dirección</translation>
+    </message>
+    <message>
+        <source>Direction 360</source>
+        <translation>Dirección 360</translation>
+    </message>
+    <message>
+        <source>Attack Angle</source>
+        <translation>Ángulo ataque</translation>
+    </message>
+    <message>
+        <source>Declination</source>
+        <translation>Declinación</translation>
+    </message>
+    <message>
+        <source>Ascension</source>
+        <translation>Ascensión</translation>
+    </message>
+    <message>
+        <source>GridMap X</source>
+        <translation>Mapa cuadrícula X</translation>
+    </message>
+    <message>
+        <source>GridMap Y</source>
+        <translation>Mapa cuadrícula Y</translation>
+    </message>
+    <message>
+        <source>Base Brush Radius</source>
+        <translation>Radio base pincel</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Ent. personalizada</translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>
@@ -938,11 +1014,15 @@
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation>El argumento debe ser un nivel o imagen vectorial: </translation>
+        <translation type="vanished">El argumento debe ser un nivel o imagen vectorial: </translation>
     </message>
     <message>
         <source>%1 has no palette</source>
         <translation>%1 no contiene una paleta</translation>
+    </message>
+    <message>
+        <source>Argument must be a vector level or image : %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

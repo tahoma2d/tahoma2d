@@ -13808,11 +13808,6 @@ Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The log file already exists.
- Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Initializing QGLFormat...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14781,6 +14776,11 @@ Details:
     </message>
     <message>
         <source>Motion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The log file %1 already exists.
+ Do you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -20027,6 +20027,10 @@ Genaueres können Sie aus der Nutzerhilfe entnehmen.</translation>
     </message>
     <message>
         <source>Alpha Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clipping Mask</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
