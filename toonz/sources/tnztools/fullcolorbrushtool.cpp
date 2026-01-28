@@ -75,8 +75,8 @@
 
 //----------------------------------------------------------------------------------
 
-TEnv::IntVar FullcolorBrushMinSize("FullcolorBrushMinSize", 1);
-TEnv::IntVar FullcolorBrushMaxSize("FullcolorBrushMaxSize", 5);
+TEnv::DoubleVar FullcolorBrushMinSize("FullcolorBrushMinSize", 1);
+TEnv::DoubleVar FullcolorBrushMaxSize("FullcolorBrushMaxSize", 5);
 TEnv::DoubleVar FullcolorBrushSmooth("FullcolorBrushSmooth", 0);
 TEnv::DoubleVar FullcolorBrushHardness("FullcolorBrushHardness", 100);
 TEnv::DoubleVar FullcolorMinOpacity("FullcolorMinOpacity", 0);
@@ -131,38 +131,14 @@ double computeThickness(bool pressureEnabled, double pressure, bool tiltEnabled,
 
   if (pressureEnabled) {
     double t = pressure * pressure * pressure;
-    pThick   = (thick0 + (thick1 - thick0) * t) * 0.5;
+    pThick   = thick0 + (thick1 - thick0) * t;
     if (tiltEnabled) pThick *= 0.5;
   }
 
   if (tiltEnabled) {
     double t = tiltMagnitude * tiltMagnitude * tiltMagnitude;
-    tThick   = (thick0 + (thick1 - thick0) * t) * 0.5;
+    tThick   = thick0 + (thick1 - thick0) * t;
     if (pressureEnabled) tThick *= 0.5;
-  }
-
-  return pThick + tThick;
-}
-
-//---------------------------------------------------------------------------------------------------------
-
-int computeThickness(bool pressureEnabled, double pressure, bool tiltEnabled,
-                     double tiltMagnitude, const TIntPairProperty &property) {
-  int thick0 = property.getValue().first;
-  int thick1 = property.getValue().second;
-
-  int pThick = 0, tThick = 0;
-
-  if (pressureEnabled) {
-    double t = pressure * pressure * pressure;
-    pThick   = tround(thick0 + (thick1 - thick0) * t);
-    if (pressureEnabled) pThick /= 2;
-  }
-
-  if (tiltEnabled) {
-    double t = tiltMagnitude * tiltMagnitude * tiltMagnitude;
-    tThick   = tround(thick0 + (thick1 - thick0) * t);
-    if (pressureEnabled) tThick /= 2;
   }
 
   return pThick + tThick;
@@ -219,7 +195,7 @@ public:
 
 FullColorBrushTool::FullColorBrushTool(std::string name)
     : TTool(name)
-    , m_thickness("Size", 1, 1000, 1, 5, false)
+    , m_thickness("Size", 1, 1000, 1, 5, true)
     , m_smooth("Smooth:", 0, 50, 0)
     , m_mypaintPressure("ModifierPressure", true)
     , m_opacity("Opacity", 0, 100, 0, 100, true)
@@ -250,7 +226,8 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
     , m_bluredBrush(0)
     , m_isMyPaintStyleSelected(false)
     , m_highFreqBrushTimer(0.0)
-    , m_brushTip("Brush Tip") {
+    , m_brushTip("Brush Tip")
+    , m_enabled(false) {
   bind(TTool::RasterImage | TTool::EmptyTarget);
 
   m_thickness.setNonLinearSlider();
@@ -369,6 +346,7 @@ void FullColorBrushTool::onDeactivate() {
   if (m_mousePressed) leftButtonUp(m_mousePos, m_mouseEvent);
   m_workRaster = TRaster32P();
   m_backUpRas  = TRasterP();
+  m_enabled    = false;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -479,6 +457,10 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
     m_active = false;
     return;
   }
+
+  int col   = app->getCurrentColumn()->getColumnIndex();
+  m_enabled = col >= 0 || app->getCurrentFrame()->isEditingLevel();
+  if (!m_enabled) return;
 
   if ((e.isShiftPressed() || e.isCtrlPressed()) && !e.isAltPressed()) {
     m_isStraight = true;
@@ -625,18 +607,14 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
     double thickness =
         (m_enabledPressure || m_enabledTilt)
             ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
-                               tiltMagnitude, m_thickness) *
-                  2
+                               tiltMagnitude, m_thickness)
             : maxThick;
 
     double opacity =
         ((m_enabledOPressure || m_enabledOTilt)
              ? computeThickness(m_enabledOPressure, opressure, m_enabledOTilt,
-                                otiltMagnitude, m_opacity) *
-                   2
-             : m_opacity.getValue().second
-
-         ) *
+                                otiltMagnitude, m_opacity)
+             : m_opacity.getValue().second) *
         0.01;
     TDimension dim    = ras->getSize();
     TPointD rasCenter = TPointD(dim.lx * 0.5, dim.ly * 0.5);
@@ -698,6 +676,11 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
 
 void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
                                         const TMouseEvent &e) {
+  if (!m_enabled) {
+    m_brushPos = m_mousePos = pos;
+    return;
+  }
+    
   TRectD invalidateRect;
   invalidateRect = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
   m_lastPoint    = pos;
@@ -973,15 +956,13 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
     double thickness =
         (m_enabledPressure || m_enabledTilt)
             ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
-                               tiltMagnitude, m_thickness) *
-                  2
+                               tiltMagnitude, m_thickness)
             : maxThickness;
 
     double opacity =
         ((m_enabledOPressure || m_enabledOTilt)
              ? computeThickness(m_enabledOPressure, opressure, m_enabledOTilt,
-                                otiltMagnitude, m_opacity) *
-                   2
+                                otiltMagnitude, m_opacity)
              : m_opacity.getValue().second) *
         0.01;
     TDimension size   = m_workRaster->getSize();
@@ -990,7 +971,6 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
         pos + rasCenter, thickness,
         (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate() ? m_tiltAngle
                                                                : 0));
-
     std::vector<TThickPoint> pts;
     if (m_smooth.getValue() == 0) {
       pts.push_back(thickPoint);
@@ -1061,6 +1041,8 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
                                       const TMouseEvent &e) {
   TPointD previousBrushPos = m_brushPos;
   m_brushPos = m_mousePos = pos;
+
+  m_enabled = false;
 
   TRasterImageP ri = (TRasterImageP)getImage(true);
   if (!ri) return;
@@ -1188,9 +1170,7 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
         ((m_enabledOPressure || m_enabledOTilt)
              ? computeThickness(m_enabledOPressure, opressure, m_enabledOTilt,
                                 otiltMagnitude, m_opacity)
-             : m_opacity.getValue().second
-
-         ) *
+             : m_opacity.getValue().second) *
         0.01;
     TPointD rasCenter = ri->getRaster()->getCenterD();
     TThickPoint thickPoint(
@@ -1218,12 +1198,33 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
                              : 0));
         m_points.push_back(mid);
         m_points.push_back(thickPoint2);
+        
+        TRect bbox;
         int m = m_points.size();
         std::vector<TThickPoint> points;
-        points.push_back(m_points[m - 3]);
-        points.push_back(m_points[m - 2]);
-        points.push_back(m_points[m - 1]);
-        TRect bbox = m_bluredBrush->getBoundFromPoints(points);
+        if (m == 3) {
+          TThickPoint pa = m_points.front();
+          points.push_back(pa);
+          points.push_back(mid);
+          bbox = m_bluredBrush->getBoundFromPoints(points);
+          updateWorkAndBackupRasters(bbox + m_lastRect);
+          m_tileSaver->save(bbox);
+          m_bluredBrush->addArc(pa, (pa + mid) * 0.5, mid, m_oldOpacity,
+                                opacity);
+          m_lastRect += bbox;
+        } else {
+          // caso generale: disegno un arco
+          points.push_back(m_points[m - 4]);
+          points.push_back(old);
+          points.push_back(mid);
+          bbox = m_bluredBrush->getBoundFromPoints(points);
+          updateWorkAndBackupRasters(bbox + m_lastRect);
+          m_tileSaver->save(bbox);
+          m_bluredBrush->addArc(m_points[m - 4], old, mid, m_oldOpacity,
+                                opacity);
+          m_lastRect += bbox;
+        }
+        bbox = m_bluredBrush->getBoundFromPoints(points);
         updateWorkAndBackupRasters(bbox);
         m_tileSaver->save(bbox);
         m_bluredBrush->addArc(points[0], points[1], points[2], m_oldOpacity,
@@ -1303,35 +1304,35 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   struct Locals {
     FullColorBrushTool *m_this;
 
-    void setValue(TIntPairProperty &prop,
-                  const TIntPairProperty::Value &value) {
+    void setValue(TDoublePairProperty &prop,
+                  const TDoublePairProperty::Value &value) {
       prop.setValue(value);
 
       m_this->onPropertyChanged(prop.getName());
       TTool::getApplication()->getCurrentTool()->notifyToolChanged();
     }
 
-    void addMinMax(TIntPairProperty &prop, double add) {
-      const TIntPairProperty::Range &range = prop.getRange();
+    void addMinMax(TDoublePairProperty &prop, double add) {
+      if (add == 0.0) return;
+      const TDoublePairProperty::Range &range = prop.getRange();
 
-      TIntPairProperty::Value value = prop.getValue();
-      value.second =
-          tcrop<double>(value.second + add, range.first, range.second);
-      value.first = tcrop<double>(value.first + add, range.first, range.second);
+      TDoublePairProperty::Value value = prop.getValue();
+      value.first  = tcrop(value.first + add, range.first, range.second);
+      value.second = tcrop(value.second + add, range.first, range.second);
 
       setValue(prop, value);
     }
 
-    void addMinMaxSeparate(TIntPairProperty &prop, double min, double max) {
+    void addMinMaxSeparate(TDoublePairProperty &prop, double min, double max) {
       if (min == 0.0 && max == 0.0) return;
-      const TIntPairProperty::Range &range = prop.getRange();
+      const TDoublePairProperty::Range &range = prop.getRange();
 
-      TIntPairProperty::Value value = prop.getValue();
+      TDoublePairProperty::Value value = prop.getValue();
       value.first += min;
       value.second += max;
       if (value.first > value.second) value.first = value.second;
-      value.first  = tcrop<double>(value.first, range.first, range.second);
-      value.second = tcrop<double>(value.second, range.first, range.second);
+      value.first  = tcrop(value.first, range.first, range.second);
+      value.second = tcrop(value.second, range.first, range.second);
 
       setValue(prop, value);
     }
@@ -1733,7 +1734,7 @@ void FullColorBrushTool::removePreset() {
 
 void FullColorBrushTool::loadLastBrush() {
   m_thickness.setValue(
-      TIntPairProperty::Value(FullcolorBrushMinSize, FullcolorBrushMaxSize));
+      TDoublePairProperty::Value(FullcolorBrushMinSize, FullcolorBrushMaxSize));
   m_smooth.setValue(FullcolorBrushSmooth);
   m_opacity.setValue(
       TDoublePairProperty::Value(FullcolorMinOpacity, FullcolorMaxOpacity));
@@ -1785,8 +1786,8 @@ void FullColorBrushTool::updateCurrentStyle() {
     }
   }
 
-  int prevMinCursorThick = m_minCursorThick;
-  int prevMaxCursorThick = m_maxCursorThick;
+  double prevMinCursorThick = m_minCursorThick;
+  double prevMaxCursorThick = m_maxCursorThick;
 
   m_enabledPressure  = m_isMyPaintStyleSelected
                            ? m_mypaintPressure.getValue()
@@ -1801,7 +1802,7 @@ void FullColorBrushTool::updateCurrentStyle() {
     double radius    = exp(radiusLog);
     m_minCursorThick = m_maxCursorThick = (int)round(2.0 * radius);
   } else {
-    m_minCursorThick = std::max(m_thickness.getValue().first, 1);
+    m_minCursorThick = std::max(m_thickness.getValue().first, 1.0);
     m_maxCursorThick =
         std::max(m_thickness.getValue().second, m_minCursorThick);
     if (!m_enabledPressure && !m_enabledTilt)
