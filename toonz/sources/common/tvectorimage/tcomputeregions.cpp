@@ -2505,8 +2505,7 @@ void addIntersection(IntersectionData &intData, const vector<VIStroke *> &s,
   int gid1 = s[ii]->m_groupId.m_id[0];
   for (p = intData.m_intList.first(); p; p = p->next()) {
     int i          = p->m_strokeList.first()->m_edge.m_index;
-    int gid2       = i >= 0 ? s[i]->m_groupId.m_id[0]
-                            : intData.m_autocloseMap.at(i)->m_groupId.m_id[0];
+    int gid2       = i >= 0 ? s[i]->m_groupId.m_id[0] : gid1;
     bool sameGroup = (gid1 < 0 && gid2 < 0) || (gid1 == gid2);
 
     if (!sameGroup) continue;
@@ -2563,18 +2562,13 @@ void TVectorImage::Imp::findIntersections() {
 
     roundStroke(s1);
 
-    int gid1 = strokeArray[i]->m_groupId.m_id[0];
-
     for (it = it_b; it != it_e; ++it) {
       if (!it->second) continue;
 
       TStroke *s2 = it->second->m_s;
 
-      int gid2       = it->second->m_groupId.m_id[0];
-      bool sameGroup = (gid1 < 0 && gid2 < 0) || (gid1 == gid2);
-
       vector<DoublePair> parIntersections;
-      if (sameGroup && intersect(s1, s2, parIntersections, true))
+      if (intersect(s1, s2, parIntersections, true))
         addIntersections(intData, strokeArray, i, it->first, parIntersections,
                          strokeSize, isVectorized);
     }
