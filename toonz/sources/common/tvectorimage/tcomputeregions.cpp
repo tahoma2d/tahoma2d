@@ -2502,15 +2502,7 @@ void addIntersection(IntersectionData &intData, const vector<VIStroke *> &s,
 
   point = s[ii]->m_s->getPoint(intersection.first);
 
-  int gid1 = s[ii]->m_groupId.m_id[0];
-  for (p = intData.m_intList.first(); p; p = p->next()) {
-    int i          = p->m_strokeList.first()->m_edge.m_index;
-    int gid2       = i >= 0 ? s[i]->m_groupId.m_id[0]
-                            : intData.m_autocloseMap.at(i)->m_groupId.m_id[0];
-    bool sameGroup = (gid1 < 0 && gid2 < 0) || (gid1 == gid2);
-
-    if (!sameGroup) continue;
-
+  for (p = intData.m_intList.first(); p; p = p->next())
     if (p->m_intersection == point ||
         (isVectorized &&
          areAlmostEqual(
@@ -2521,7 +2513,6 @@ void addIntersection(IntersectionData &intData, const vector<VIStroke *> &s,
       addBranches(intData, *p, s, ii, jj, intersection, strokeSize);
       return;
     }
-  }
 
   intData.m_intList.pushBack(new Intersection);
 
@@ -2563,18 +2554,13 @@ void TVectorImage::Imp::findIntersections() {
 
     roundStroke(s1);
 
-    int gid1 = strokeArray[i]->m_groupId.m_id[0];
-
     for (it = it_b; it != it_e; ++it) {
-      if (!it->second) continue;
+      if (!it->second || it->second->m_groupId != strokeArray[i]->m_groupId)
+        continue;
 
       TStroke *s2 = it->second->m_s;
-
-      int gid2       = it->second->m_groupId.m_id[0];
-      bool sameGroup = (gid1 < 0 && gid2 < 0) || (gid1 == gid2);
-
       vector<DoublePair> parIntersections;
-      if (sameGroup && intersect(s1, s2, parIntersections, true))
+      if (intersect(s1, s2, parIntersections, true))
         addIntersections(intData, strokeArray, i, it->first, parIntersections,
                          strokeSize, isVectorized);
     }
@@ -2588,19 +2574,16 @@ void TVectorImage::Imp::findIntersections() {
   for (i = 0; i < strokeSize; i++) {
     TStroke *s1 = strokeArray[i]->m_s;
     if (strokeArray[i]->m_isPoint) continue;
-    int gid1 = strokeArray[i]->m_groupId.m_id[0];
     for (j = i; j < strokeSize /*&& (strokeArray[i]->getBBox().x1>=
                                   strokeArray[j]->getBBox().x0)*/
          ;
          j++) {
       TStroke *s2 = strokeArray[j]->m_s;
 
-      int gid2       = strokeArray[j]->m_groupId.m_id[0];
-      bool sameGroup = (gid1 < 0 && gid2 < 0) || (gid1 == gid2);
-
-      if (!sameGroup || strokeArray[j]->m_isPoint ||
+      if (strokeArray[j]->m_isPoint ||
           !(strokeArray[i]->m_isNewForFill || strokeArray[j]->m_isNewForFill))
         continue;
+      if (strokeArray[i]->m_groupId != strokeArray[j]->m_groupId) continue;
 
       vector<DoublePair> parIntersections;
       if (s1->getBBox().overlaps(s2->getBBox())) {
@@ -2646,15 +2629,12 @@ void TVectorImage::Imp::findIntersections() {
   for (i = 0; i < strokeSize; i++) {
     TStroke *s1 = strokeArray[i]->m_s;
     if (strokeArray[i]->m_isPoint) continue;
-    int gid1 = strokeArray[i]->m_groupId.m_id[0];
     for (j = i; j < strokeSize; j++) {
+      if (strokeArray[i]->m_groupId != strokeArray[j]->m_groupId) continue;
+
       TStroke *s2 = strokeArray[j]->m_s;
-
-      int gid2       = strokeArray[j]->m_groupId.m_id[0];
-      bool sameGroup = (gid1 < 0 && gid2 < 0) || (gid1 == gid2);
-
-      if (!sameGroup || strokeArray[j]->m_isPoint ||
-          !(strokeArray[i]->m_isNewForFill || strokeArray[j]->m_isNewForFill))
+      if (strokeArray[j]->m_isPoint) continue;
+      if (!(strokeArray[i]->m_isNewForFill || strokeArray[j]->m_isNewForFill))
         continue;
 
       double enlarge1 =
@@ -2736,15 +2716,11 @@ void TVectorImage::Imp::findIntersections() {
 
   for (i = strokeSize; i < (int)strokeArray.size(); ++i) {
     TStroke *s1 = strokeArray[i]->m_s;
-    int gid1    = strokeArray[i]->m_groupId.m_id[0];
 
     for (j = i + 1; j < (int)strokeArray.size();
          ++j)  // intersezione segmento-segmento
     {
-      int gid2       = strokeArray[j]->m_groupId.m_id[0];
-      bool sameGroup = (gid1 < 0 && gid2 < 0) || (gid1 == gid2);
-
-      if (!sameGroup) continue;
+      if (strokeArray[i]->m_groupId != strokeArray[j]->m_groupId) continue;
 
       TStroke *s2 = strokeArray[j]->m_s;
       vector<DoublePair> parIntersections;
@@ -2755,10 +2731,7 @@ void TVectorImage::Imp::findIntersections() {
     for (j = 0; j < strokeSize; ++j)  // intersezione segmento-curva
     {
       if (strokeArray[j]->m_isPoint) continue;
-      int gid2       = strokeArray[j]->m_groupId.m_id[0];
-      bool sameGroup = (gid1 < 0 && gid2 < 0) || (gid1 == gid2);
-
-      if (!sameGroup) continue;
+      if (strokeArray[i]->m_groupId != strokeArray[j]->m_groupId) continue;
 
       TStroke *s2 = strokeArray[j]->m_s;
       vector<DoublePair> parIntersections;
