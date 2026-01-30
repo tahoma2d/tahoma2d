@@ -2481,7 +2481,7 @@ m_value->setFont(font);*/
   m_invertMask = new QCheckBox(tr("Invert Mask"), this);
   m_invertMask->setCheckable(true);
 
-  m_maskGroupBox = new QGroupBox("Clipping Mask", this);
+  m_maskGroupBox = new QGroupBox(tr("Clipping Mask"), this);
   m_maskGroupBox->setCheckable(true);
   QGridLayout *maskLay = new QGridLayout();
   maskLay->setContentsMargins(5, 5, 5, 5);

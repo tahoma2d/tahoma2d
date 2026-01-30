@@ -3056,6 +3056,14 @@ Cero es completamente transparente.</translation>
         <source>Reset Style</source>
         <translation>Restablecer estilo</translation>
     </message>
+    <message>
+        <source>Brush Dynamic</source>
+        <translation>Dinámica del pincel</translation>
+    </message>
+    <message>
+        <source>Brush Dynamic - %1</source>
+        <translation>Dinámica del pincel - %1</translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -3202,11 +3210,11 @@ Cero es completamente transparente.</translation>
     </message>
     <message>
         <source>Brush Dynamic</source>
-        <translation>Dinámica del pincel</translation>
+        <translation type="vanished">Dinámica del pincel</translation>
     </message>
     <message>
         <source>Brush Dynamic - %1</source>
-        <translation>Dinámica del pincel - %1</translation>
+        <translation type="vanished">Dinámica del pincel - %1</translation>
     </message>
 </context>
 <context>

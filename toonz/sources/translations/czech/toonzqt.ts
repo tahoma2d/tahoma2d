@@ -2659,9 +2659,9 @@ Jste si jistý?</translation>
         <location filename="../../toonzqt/dvdialog.cpp" line="1363"/>
         <location filename="../../toonzqt/dvdialog.cpp" line="1449"/>
         <location filename="../../toonzqt/dvdialog.cpp" line="1456"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2037"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2056"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2168"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2036"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2055"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2167"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="6903"/>
         <location filename="../../toonzqt/styleselection.cpp" line="779"/>
         <location filename="../../toonzqt/styleselection.cpp" line="1084"/>
@@ -2900,166 +2900,176 @@ Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2052"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2051"/>
         <source>Emptying Set &quot;%1&quot; will permanently delete all style files for this set. This cannot be undone!
 Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2164"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2163"/>
         <source>Removing Style Set &quot;%1&quot; will permanently delete all style files for this set. This cannot be undone!
 Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2256"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2255"/>
         <source>Style Set Manager:              %1+click - Add Style to Palette              %2+click - Multi-Style Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2312"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2311"/>
         <source>Add Selected to Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2319"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2318"/>
         <source>Remove Selected from Favorites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2323"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2322"/>
         <source>Add Selected to Favorites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2331"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2330"/>
         <source>Copy Selected to Style Set...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2346"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2345"/>
         <source>Move Selected to Style Set...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2363"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2362"/>
         <source>Remove Selected from Sets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2385"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2384"/>
         <source>Add to Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2393"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2392"/>
         <source>Add to Favorites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2401"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2400"/>
         <source>Copy to Style Set...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2418"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2417"/>
         <source>Move to Style Set...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2436"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2435"/>
         <source>Remove from Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2447"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2446"/>
         <source>Add Set to Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2453"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2452"/>
         <source>Empty Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2465"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2464"/>
         <source>New Style Set...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2470"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2469"/>
         <source>Rename Style Set...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2477"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2476"/>
         <source>Reload Style Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2485"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2484"/>
         <source>Scan for Style Set Changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2493"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2492"/>
         <source>Remove &apos;%1&apos; Style Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2647"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2646"/>
         <source>Plain color</source>
         <comment>CustomStyleChooserPage</comment>
         <translation type="unfinished">Normální barva</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2864"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2863"/>
         <source>Plain color</source>
         <comment>VectorBrushStyleChooserPage</comment>
         <translation>Normální barva</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3123"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3122"/>
         <source>Plain color</source>
         <comment>TextureStyleChooserPage</comment>
         <translation type="unfinished">Normální barva</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3135"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3134"/>
         <source>Custom Texture</source>
         <comment>TextureStyleChooserPage</comment>
         <translation>Vlastní textura (povrch)</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3308"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3307"/>
         <source>Plain color</source>
         <comment>MyPaintBrushStyleChooserPage</comment>
         <translation>Normální barva</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3559"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3558"/>
         <source>Plain color</source>
         <comment>SpecialStyleChooserPage</comment>
         <translation>Normální barva</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3736"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3735"/>
         <source>Autopaint for Lines</source>
         <translation type="unfinished">Automatické malování pro čáry</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3899"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3898"/>
         <source>Brush Dynamics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3912"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3911"/>
         <source>Reset to default</source>
         <translation type="unfinished">Vrátit na výchozí</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3926"/>
         <source>Reset Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4114"/>
+        <source>Brush Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4132"/>
+        <source>Brush Dynamic - %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3466,9 +3476,9 @@ Are you sure?</source>
     </message>
     <message>
         <location filename="../../toonzqt/dvdialog.cpp" line="1456"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2037"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2056"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="2168"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2036"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2055"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="2167"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="6903"/>
         <source>Ok</source>
         <translation>OK</translation>
@@ -3680,16 +3690,6 @@ Jste si jistý?</translation>
     <message>
         <source>Reset to default</source>
         <translation type="obsolete">Vrátit na výchozí</translation>
-    </message>
-    <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4115"/>
-        <source>Brush Dynamic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4132"/>
-        <source>Brush Dynamic - %1</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

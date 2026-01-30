@@ -51,11 +51,11 @@
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation>Erreur inattendue lors de la lecture d&apos;image</translation>
+        <translation type="vanished">Erreur inattendue lors de la lecture d&apos;image</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation>Type de fichier non reconnu:</translation>
+        <translation type="vanished">Type de fichier non reconnu:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
@@ -63,7 +63,19 @@
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation>Erreur inattendue lors de l&apos;écriture d&apos;image</translation>
+        <translation type="vanished">Erreur inattendue lors de l&apos;écriture d&apos;image</translation>
+    </message>
+    <message>
+        <source>Unexpected error while reading image %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unrecognized file type : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unexpected error while writing image %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -133,7 +145,7 @@
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation>Type de fichier non reconnu:</translation>
+        <translation type="vanished">Type de fichier non reconnu:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
@@ -149,6 +161,10 @@
     </message>
     <message>
         <source>Unhandled exception encountered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unrecognized file type : %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -172,7 +188,11 @@
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation>Couleur non valide :</translation>
+        <translation type="vanished">Couleur non valide :</translation>
+    </message>
+    <message>
+        <source>Invalid color : %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -903,6 +923,62 @@ Probablement le codec peut ne pas fonctionner correctement.</translation>
         <source>Pressure gain</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fine Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gross Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direction 360</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attack Angle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Declination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ascension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GridMap X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GridMap Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Brush Radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>
@@ -916,11 +992,15 @@ Probablement le codec peut ne pas fonctionner correctement.</translation>
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation>L&apos;argument doit être un niveau ou un image vectorielle :</translation>
+        <translation type="vanished">L&apos;argument doit être un niveau ou un image vectorielle :</translation>
     </message>
     <message>
         <source>%1 has no palette</source>
         <translation>%1  n&apos;a pas de palette</translation>
+    </message>
+    <message>
+        <source>Argument must be a vector level or image : %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

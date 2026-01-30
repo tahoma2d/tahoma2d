@@ -61,13 +61,26 @@
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_image.cpp" line="144"/>
-        <source>Unexpected error while reading image</source>
-        <translation>Ошибка при чтении изображения</translation>
+        <source>Unexpected error while reading image %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_image.cpp" line="171"/>
+        <source>Unrecognized file type : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/scriptbinding_image.cpp" line="196"/>
+        <source>Unexpected error while writing image %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unexpected error while reading image</source>
+        <translation type="vanished">Ошибка при чтении изображения</translation>
+    </message>
+    <message>
         <source>Unrecognized file type :</source>
-        <translation>Нераспознанный тип файла :</translation>
+        <translation type="vanished">Нераспознанный тип файла :</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_image.cpp" line="175"/>
@@ -75,9 +88,8 @@
         <translation>Не удалось сохранить изображение %1 в этот тип файла: %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_image.cpp" line="196"/>
         <source>Unexpected error while writing image</source>
-        <translation>Ошибка при записи изображения</translation>
+        <translation type="vanished">Ошибка при записи изображения</translation>
     </message>
 </context>
 <context>
@@ -142,9 +154,13 @@
         <translation>Не удалось сохранить пустой уровень</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="196"/>
         <source>Unrecognized file type :</source>
-        <translation>Нераспознанный тип файла :</translation>
+        <translation type="vanished">Нераспознанный тип файла :</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="196"/>
+        <source>Unrecognized file type : %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="200"/>
@@ -211,8 +227,12 @@
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="175"/>
+        <source>Invalid color : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Invalid color : </source>
-        <translation>Недопустимый цвет : </translation>
+        <translation type="vanished">Недопустимый цвет : </translation>
     </message>
 </context>
 <context>
@@ -872,282 +892,352 @@
         <translation>Невозможно загрузить файл %1.</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="595"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="420"/>
+        <source>Pressure</source>
+        <translation>Давление</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="422"/>
+        <source>Fine Speed</source>
+        <translation>Тонкая скорость</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="424"/>
+        <source>Gross Speed</source>
+        <translation>Грубая скорость</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="426"/>
+        <source>Random</source>
+        <translation>Случайно</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="428"/>
+        <source>Stroke</source>
+        <translation>Мазок</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="430"/>
+        <source>Direction</source>
+        <translation>Направление</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="432"/>
+        <source>Direction 360</source>
+        <translation>Направление 360</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="434"/>
+        <source>Attack Angle</source>
+        <translation>Угол нажима</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="436"/>
+        <source>Declination</source>
+        <translation>Наклон</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="438"/>
+        <source>Ascension</source>
+        <translation>Подъём</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="440"/>
+        <source>GridMap X</source>
+        <translation>Сетка X</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="442"/>
+        <source>GridMap Y</source>
+        <translation>Сетка Y</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="444"/>
+        <source>Base Brush Radius</source>
+        <translation>Базовый радиус кисти</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="446"/>
+        <source>Custom</source>
+        <translation>Пользовательский</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="628"/>
         <source>Opacity</source>
         <translation>Непрозрачность</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="597"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="630"/>
         <source>Opacity multiply</source>
         <translation>Множитель непрозрачности</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="599"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="632"/>
         <source>Opacity linearize</source>
         <translation>Линеаризация непрозрачности</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="601"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="634"/>
         <source>Radius</source>
         <translation>Радиус</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="603"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="636"/>
         <source>Hardness</source>
         <translation>Жёсткость</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="605"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="638"/>
         <source>Pixel feather</source>
         <translation>Смягчение пикселей</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="607"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="640"/>
         <source>Dabs per basic radius</source>
         <translation>Точки на базовый радиус</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="609"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="642"/>
         <source>Dabs per actual radius</source>
         <translation>Точки на текущий радиус</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="611"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="644"/>
         <source>Dabs per second</source>
         <translation>Точки в секунду</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="613"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="646"/>
         <source>GridMap Scale</source>
         <translation>Масштаб карты сетки</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="615"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="648"/>
         <source>GridMap Scale X</source>
         <translation>Масштаб сетки X</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="617"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="650"/>
         <source>GridMap Scale Y</source>
         <translation>Масштаб сетки Y</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="619"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="652"/>
         <source>Radius by random</source>
         <translation>Случайный радиус</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="621"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="654"/>
         <source>Fine speed filter</source>
         <translation>Фильтр тонкой скорости</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="623"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="656"/>
         <source>Gross speed filter</source>
         <translation>Фильтр грубой скорости</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="625"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="658"/>
         <source>Fine speed gamma</source>
         <translation>Гамма тонкой скорости</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="627"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="660"/>
         <source>Gross speed gamma</source>
         <translation>Гамма грубой скорости</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="629"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="662"/>
         <source>Jitter</source>
         <translation>Дрожание</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="631"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="664"/>
         <source>Offset Y</source>
         <translation>Смещение Y</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="633"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="666"/>
         <source>Offset X</source>
         <translation>Смещение X</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="635"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="668"/>
         <source>Angular Offset: Direction</source>
         <translation>Угловое смещение: Направление</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="637"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="670"/>
         <source>Angular Offset: Ascension</source>
         <translation>Угловое смещение: Восхождение</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="639"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="672"/>
         <source>Angular Offset Mirrored: Direction</source>
         <translation>Зеркальное угловое смещение: Направление</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="641"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="674"/>
         <source>Angular Offset Mirrored: Ascension</source>
         <translation>Зеркальное угловое смещение: Восхождение</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="643"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="676"/>
         <source>Angular Offsets Adjustment</source>
         <translation>Корректировка угловых смещений</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="645"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="678"/>
         <source>Offsets Multiplier</source>
         <translation>Множитель смещений</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="647"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="680"/>
         <source>Offset by speed</source>
         <translation>Смещение по скорости</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="649"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="682"/>
         <source>Offset by speed filter</source>
         <translation>Фильтр смещения по скорости</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="651"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="684"/>
         <source>Slow position tracking</source>
         <translation>Медленное отслеживание позиции</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="653"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="686"/>
         <source>Slow tracking per dab</source>
         <translation>Медленное отслеживание на точку</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="655"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="688"/>
         <source>Tracking noise</source>
         <translation>Шум отслеживания</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="657"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="690"/>
         <source>Color hue</source>
         <translation>Оттенок цвета</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="659"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="692"/>
         <source>Color saturation</source>
         <translation>Насыщенность цвета</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="661"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="694"/>
         <source>Color value</source>
         <translation>Яркость цвета</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="663"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="696"/>
         <source>Save color</source>
         <translation>Сохранить цвет</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="665"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="698"/>
         <source>Change color hue</source>
         <translation>Изменить оттенок цвета</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="667"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="700"/>
         <source>Change color lightness (HSL)</source>
         <translation>Изменить светлоту (HSL)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="669"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="702"/>
         <source>Change color satur. (HSL)</source>
         <translation>Изменить насыщенность (HSL)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="671"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="704"/>
         <source>Change color value (HSV)</source>
         <translation>Изменить яркость (HSV)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="673"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="706"/>
         <source>Change color satur. (HSV)</source>
         <translation>Изменить насыщенность (HSV)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="675"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="708"/>
         <source>Smudge</source>
         <translation>Размазывание</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="677"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="710"/>
         <source>Smudge length</source>
         <translation>Длина размазывания</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="679"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="712"/>
         <source>Smudge radius</source>
         <translation>Радиус размазывания</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="681"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="714"/>
         <source>Eraser</source>
         <translation>Ластик</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="683"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="716"/>
         <source>Stroke threshold</source>
         <translation>Порог мазка</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="685"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="718"/>
         <source>Stroke duration</source>
         <translation>Длительность мазка</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="687"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="720"/>
         <source>Stroke hold time</source>
         <translation>Время удержания мазка</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="689"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="722"/>
         <source>Custom input</source>
         <translation>Пользовательский ввод</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="691"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="724"/>
         <source>Custom input filter</source>
         <translation>Фильтр пользовательского ввода</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="693"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="726"/>
         <source>Elliptical dab: ratio</source>
         <translation>Эллиптическая точка: соотношение</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="695"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="728"/>
         <source>Elliptical dab: angle</source>
         <translation>Эллиптическая точка: угол</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="697"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="730"/>
         <source>Direction filter</source>
         <translation>Фильтр направления</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="699"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="732"/>
         <source>Lock alpha</source>
         <translation>Закрепить альфа</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="701"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="734"/>
         <source>Colorize</source>
         <translation>Колоризация</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="703"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="736"/>
         <source>Snap to pixel</source>
         <translation>Привязка к пикселям</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="705"/>
+        <location filename="../../toonzlib/mypaintbrushstyle.cpp" line="738"/>
         <source>Pressure gain</source>
         <translation>Усиление давления</translation>
     </message>
@@ -1166,8 +1256,12 @@
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="87"/>
+        <source>Argument must be a vector level or image : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Argument must be a vector level or image : </source>
-        <translation>Аргумент должен быть векторным уровнем или изображением : </translation>
+        <translation type="vanished">Аргумент должен быть векторным уровнем или изображением : </translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="90"/>
