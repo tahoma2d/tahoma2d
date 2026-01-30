@@ -51,11 +51,11 @@
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation>이미지를 읽는 동안 이야기치 않는 오류 발생</translation>
+        <translation type="vanished">이미지를 읽는 동안 이야기치 않는 오류 발생</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation>인식 할 수 없는 파일 형식:</translation>
+        <translation type="vanished">인식 할 수 없는 파일 형식:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
@@ -63,7 +63,19 @@
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation>이미지를 쓰는 중 이야기치 않는 오류</translation>
+        <translation type="vanished">이미지를 쓰는 중 이야기치 않는 오류</translation>
+    </message>
+    <message>
+        <source>Unexpected error while reading image %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unrecognized file type : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unexpected error while writing image %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -117,7 +129,7 @@
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation>인식 할 수 없는 파일 형식:</translation>
+        <translation type="vanished">인식 할 수 없는 파일 형식:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
@@ -151,6 +163,10 @@
         <source>Unhandled exception encountered</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unrecognized file type : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OutlineVectorizer</name>
@@ -172,7 +188,11 @@
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation>잘못된 색상 :</translation>
+        <translation type="vanished">잘못된 색상 :</translation>
+    </message>
+    <message>
+        <source>Invalid color : %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -924,6 +944,62 @@
         <source>Pressure gain</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fine Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gross Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direction 360</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attack Angle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Declination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ascension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GridMap X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GridMap Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Brush Radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>
@@ -937,11 +1013,15 @@
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation>인수는 벡터 레벨 또는 이미지여야함 :</translation>
+        <translation type="vanished">인수는 벡터 레벨 또는 이미지여야함 :</translation>
     </message>
     <message>
         <source>%1 has no palette</source>
         <translation>팔레트가 없음 %1</translation>
+    </message>
+    <message>
+        <source>Argument must be a vector level or image : %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

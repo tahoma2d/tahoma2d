@@ -1466,7 +1466,7 @@
         <translation>Угол привязки</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1294"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1292"/>
         <source>A group of skeletons already exists for current column. Replacing it will also substitute any existing vertex animation.
 
 Do you want to continue?</source>
@@ -1475,12 +1475,12 @@ Do you want to continue?</source>
 Вы хотите продолжить?</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1298"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1296"/>
         <source>Ok</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1298"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1296"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
@@ -1493,28 +1493,28 @@ Do you want to continue?</source>
         <translation type="vanished">Вставить скелет</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1542"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1540"/>
         <source>Show Mesh</source>
         <translation>Показать полисетку</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1549"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1547"/>
         <source>Show Rigidity</source>
         <translation>Показать жесткость</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1556"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1554"/>
         <source>Show SO</source>
         <translatorcomment>SO - порядок перекрытия</translatorcomment>
         <translation>Показать порядок</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1563"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1561"/>
         <source>Show Skeleton Onion Skin</source>
         <translation>Показать кальку скелета</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1644"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1642"/>
         <source>The previous vertex name will be discarded, and all associated keys will be lost.
 
 Do you want to proceed?</source>
@@ -1863,79 +1863,79 @@ Do you want to proceed?</source>
         <translation>RGB Пипетка (R%1, G%2, B%3)</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1646"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1644"/>
         <source>Ok</source>
         <translation>ОК</translation>
     </message>
     <message>
-        <location filename="../../tnztools/plastictool.cpp" line="1646"/>
+        <location filename="../../tnztools/plastictool.cpp" line="1644"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="120"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="133"/>
         <source>Group</source>
         <translation>Сгруппировать</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="149"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="175"/>
         <source>Ungroup</source>
         <translation>Разгруппировать</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="245"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="271"/>
         <source> to Front</source>
         <translation> вперед</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="246"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="272"/>
         <source> to Forward</source>
         <translation> на передний план</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="247"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="273"/>
         <source> to Back</source>
         <translation> назад</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="248"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="274"/>
         <source> to Backward</source>
         <translation> на задний план</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="250"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="276"/>
         <source>Move Group</source>
         <translation>Переместить группу</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="274"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="300"/>
         <location filename="../../tnztools/vectorselectiontool.cpp" line="1176"/>
         <source>Enter Group</source>
         <translation>Войти в группу</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="299"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="325"/>
         <location filename="../../tnztools/vectorselectiontool.cpp" line="1201"/>
         <source>Exit Group</source>
         <translation>Выйти из группы</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="561"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="587"/>
         <source>The selection cannot be grouped. It is not editable.</source>
         <translation>Невозможно сгруппировать выделенное. Не редактируется.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="596"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="622"/>
         <source>The selection cannot be entered. It is not editable.</source>
         <translation>Невозможно указать выделенное. Не редактируется.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="644"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="670"/>
         <source>The selection cannot be ungrouped. It is not editable.</source>
         <translation>Невозможно рассгруппировать выделенное. Не редактируется.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/imagegrouping.cpp" line="811"/>
+        <location filename="../../tnztools/imagegrouping.cpp" line="837"/>
         <source>The selection cannot be moved. It is not editable.</source>
         <translation>Не удается переместить выделенное. Не редактируется.</translation>
     </message>
@@ -2477,7 +2477,7 @@ Do you want to proceed?</source>
 <context>
     <name>StyleIndexLineEdit</name>
     <message>
-        <location filename="../../tnztools/tooloptionscontrols.cpp" line="796"/>
+        <location filename="../../tnztools/tooloptionscontrols.cpp" line="795"/>
         <source>current</source>
         <translation>текущий</translation>
     </message>
@@ -2665,12 +2665,24 @@ moved to the end of the first page of the palette.</source>
 <context>
     <name>ToolOptionStylusConfigButton</name>
     <message>
-        <location filename="../../tnztools/tooloptionscontrols.cpp" line="536"/>
+        <location filename="../../tnztools/tooloptionscontrols.cpp" line="535"/>
         <source>Pressure</source>
         <translation>Нажим</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptionscontrols.cpp" line="542"/>
+        <location filename="../../tnztools/tooloptionscontrols.cpp" line="538"/>
+        <location filename="../../tnztools/tooloptionscontrols.cpp" line="543"/>
+        <source>Min</source>
+        <translation>Мин</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/tooloptionscontrols.cpp" line="538"/>
+        <location filename="../../tnztools/tooloptionscontrols.cpp" line="544"/>
+        <source>Max</source>
+        <translation>Макс</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/tooloptionscontrols.cpp" line="541"/>
         <source>Tilt</source>
         <translation>Наклон</translation>
     </message>

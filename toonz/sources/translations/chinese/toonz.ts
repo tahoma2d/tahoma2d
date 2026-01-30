@@ -14648,7 +14648,7 @@ Do you want to continue?</source>
     <message>
         <source>The log file already exists.
  Do you want to overwrite it?</source>
-        <translation>日志文件已存在。
+        <translation type="vanished">日志文件已存在。
         是否要覆盖它？</translation>
     </message>
     <message>
@@ -15630,6 +15630,11 @@ Details:
     </message>
     <message>
         <source>Motion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The log file %1 already exists.
+ Do you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -21177,7 +21182,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Clipping Mask</source>
-        <translation type="vanished">剪贴蒙版</translation>
+        <translation>剪贴蒙版</translation>
     </message>
     <message>
         <source>Invert Mask</source>

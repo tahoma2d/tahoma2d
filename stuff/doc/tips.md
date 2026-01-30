@@ -4,7 +4,8 @@ Version 1.5 brings a number of new features, enhancements, and even more fixes w
 
 ### Compatibility Changes
 
-Palettes with Raster based custom styles (`Style Editor` -> `Vector` tab -> `Custom styles`) will be auto upgraded to new format which will preventing use in prior versions of T2D if the paleette is saved in the latest T2D version.
+- Column Clipping Mask placement and stacking order has changed. It should now be placed above the column to be clipped and stacks bottom->top/left->right
+- Palettes with Raster based custom styles (`Style Editor` -> `Vector` tab -> `Custom styles`) will be auto upgraded to new format which will preventing use in prior versions of T2D if the paleette is saved in the latest T2D version.
 
 ### Windows Users
 

@@ -2978,6 +2978,14 @@ Zero is fully transparent.</source>
         <source>Reset Style</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Brush Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Dynamic - %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -3121,14 +3129,6 @@ Zero is fully transparent.</source>
     <message>
         <source>Reset to default</source>
         <translation type="obsolete">リセット</translation>
-    </message>
-    <message>
-        <source>Brush Dynamic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brush Dynamic - %1</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
