@@ -366,7 +366,10 @@ void TSystem::copyFile(const TFilePath &dst, const TFilePath &src,
   touchParentDir(dst);
 
   const QString &qDst = toQString(dst);
-  if (overwrite && QFile::exists(qDst)) QFile::remove(qDst);
+  if (QFile::exists(qDst)) {
+    if (!overwrite) return;
+    QFile::remove(qDst);
+  }
 
   if (!QFile::copy(toQString(src), qDst))
     throw TSystemException(dst, "can't copy file!");
@@ -859,13 +862,15 @@ void TSystem::copyFileOrLevel_throw(const TFilePath &dst,
     TFilePath srciconname(src.withParentDir(srciconDir)
                               .withName(src.getName() + " ")
                               .withType("png"));
-    TFilePath dsticonname(dst.withParentDir(dsticonDir)
-                              .withName(dst.getName() + " ")
-                              .withType("png"));
+    bool isBakFile = dst.getType() == "bak";
+    TFilePath dest = isBakFile ? dst.withType("") : dst;
+    TFilePath dsticonname(dest.withParentDir(dsticonDir)
+                              .withName(dest.getName() + " ")
+                              .withType(isBakFile ? "png.bak" : "png"));
 
     if (TSystem::doesExistFileOrLevel(src) &&
         TSystem::doesExistFileOrLevel(srciconname))
-      TSystem::copyFile(dsticonname, srciconname, false);
+      TSystem::copyFile(dsticonname, srciconname);
   }
     
   if (src.isLevelName()) {
