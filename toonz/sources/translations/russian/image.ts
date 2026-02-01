@@ -102,6 +102,23 @@
     </message>
 </context>
 <context>
+    <name>Ffmpeg</name>
+    <message>
+        <source>FFmpeg timed out.
+Please check the file for errors.
+If the file doesn&apos;t play or is incomplete, 
+Please try raising the FFmpeg timeout in Preferences.</source>
+        <translation>Время ожидания FFmpeg.
+Пожалуйста, проверьте файл на наличие ошибок.
+Если файл не воспроизводится или является неполным,
+попробуйте увеличить время ожидания FFmpeg в настройках.</translation>
+    </message>
+    <message>
+        <source>FFmpeg returned error-code: %1</source>
+        <translation>FFmpeg вернул код ошибки: %1</translation>
+    </message>
+</context>
+<context>
     <name>GifWriterProperties</name>
     <message>
         <source>Global Palette</source>
@@ -203,23 +220,6 @@
     <message>
         <source>Alpha Channel</source>
         <translation>Альфа канал</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <source>FFmpeg returned error-code: %1</source>
-        <translation>FFmpeg вернул код ошибки: %1</translation>
-    </message>
-    <message>
-        <source>FFmpeg timed out.
-Please check the file for errors.
-If the file doesn&apos;t play or is incomplete, 
-Please try raising the FFmpeg timeout in Preferences.</source>
-        <translation>Время ожидания FFmpeg.
-Пожалуйста, проверьте файл на наличие ошибок.
-Если файл не воспроизводится или является неполным,
-попробуйте увеличить время ожидания FFmpeg в настройках.</translation>
     </message>
 </context>
 <context>

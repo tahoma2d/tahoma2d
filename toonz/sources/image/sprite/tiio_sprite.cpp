@@ -310,17 +310,31 @@ Tiio::SpriteWriterProperties::SpriteWriterProperties()
 }
 
 void Tiio::SpriteWriterProperties::updateTranslation() {
-  m_topPadding.setQStringName(tr("Top Padding"));
-  m_bottomPadding.setQStringName(tr("Bottom Padding"));
-  m_leftPadding.setQStringName(tr("Left Padding"));
-  m_rightPadding.setQStringName(tr("Right Padding"));
-  m_scale.setQStringName(tr("Scale"));
-  m_format.setQStringName(tr("Format"));
-  m_format.setItemUIName(L"Grid", tr("Grid"));
-  m_format.setItemUIName(L"Vertical", tr("Vertical"));
-  m_format.setItemUIName(L"Horizontal", tr("Horizontal"));
-  m_format.setItemUIName(L"Individual", tr("Individual"));
-  m_trim.setQStringName(tr("Trim Empty Space"));
+  m_topPadding.setQStringName(
+      QCoreApplication::translate("SpriteWriterProperties", "Top Padding"));
+  m_bottomPadding.setQStringName(
+      QCoreApplication::translate("SpriteWriterProperties", "Bottom Padding"));
+  m_leftPadding.setQStringName(
+      QCoreApplication::translate("SpriteWriterProperties", "Left Padding"));
+  m_rightPadding.setQStringName(
+      QCoreApplication::translate("SpriteWriterProperties", "Right Padding"));
+  m_scale.setQStringName(
+      QCoreApplication::translate("SpriteWriterProperties", "Scale"));
+  m_format.setQStringName(
+      QCoreApplication::translate("SpriteWriterProperties", "Format"));
+  m_format.setItemUIName(
+      L"Grid", QCoreApplication::translate("SpriteWriterProperties", "Grid"));
+  m_format.setItemUIName(
+      L"Vertical",
+      QCoreApplication::translate("SpriteWriterProperties", "Vertical"));
+  m_format.setItemUIName(
+      L"Horizontal",
+      QCoreApplication::translate("SpriteWriterProperties", "Horizontal"));
+  m_format.setItemUIName(
+      L"Individual",
+      QCoreApplication::translate("SpriteWriterProperties", "Individual"));
+  m_trim.setQStringName(QCoreApplication::translate("SpriteWriterProperties",
+                                                    "Trim Empty Space"));
 }
 
 // Tiio::Reader* Tiio::makeSpriteReader(){ return nullptr; }

@@ -831,12 +831,12 @@ ToneCurveField::ToneCurveField(QWidget *parent,
   // setFixedWidth(368);
 
   QStringList channels;
-  channels << "RGBA"
-           << "RGB"
-           << "Red"
-           << "Green"
-           << "Blue"
-           << "Alpha";
+  channels << QCoreApplication::translate("ToneCurveField","RGBA")
+           << QCoreApplication::translate("ToneCurveField","RGB")
+           << QCoreApplication::translate("ToneCurveField","Red")
+           << QCoreApplication::translate("ToneCurveField","Green")
+           << QCoreApplication::translate("ToneCurveField","Blue")
+           << QCoreApplication::translate("ToneCurveField","Alpha");
   int channelCount        = channels.size();
   int currentChannelIndex = 0;
 
@@ -879,8 +879,8 @@ ToneCurveField::ToneCurveField(QWidget *parent,
   }
   m_sliderStackedWidget->setCurrentIndex(currentChannelIndex);
 
-  m_isLinearCheckBox   = new CheckBox(QString("Linear"), this);
-  m_isEnlargedCheckBox = new CheckBox(QString("Enlarge"), this);
+  m_isLinearCheckBox   = new CheckBox(QString(QCoreApplication::translate("ToneCurveField","Linear")), this);
+  m_isEnlargedCheckBox = new CheckBox(QString(QCoreApplication::translate("ToneCurveField","Enlarge")), this);
   m_isEnlargedCheckBox->setChecked(false);
   m_currentInput  = new DoubleLineEdit(this);
   m_currentOutput = new DoubleLineEdit(this);
@@ -903,10 +903,10 @@ ToneCurveField::ToneCurveField(QWidget *parent,
     channelListLayout->setAlignment(Qt::AlignCenter);
     {
       // lista canali: label+comboBox
-      channelListLayout->addWidget(new QLabel(tr("Channel:"), this));
+      channelListLayout->addWidget(new QLabel(QCoreApplication::translate("ToneCurveField","Channel:"), this));
       channelListLayout->addWidget(m_channelListChooser);
       channelListLayout->addSpacing(20);
-      channelListLayout->addWidget(new QLabel(tr("Range:"), this));
+      channelListLayout->addWidget(new QLabel(QCoreApplication::translate("ToneCurveField","Range:"), this));
       channelListLayout->addWidget(m_rangeMode);
       channelListLayout->addSpacing(20);
       channelListLayout->addWidget(m_isEnlargedCheckBox);
@@ -924,10 +924,10 @@ ToneCurveField::ToneCurveField(QWidget *parent,
       currentValLayout->setAlignment(Qt::AlignLeft);
       {
         currentValLayout->addStretch(1);
-        currentValLayout->addWidget(new QLabel(tr("Output:"), this));
+        currentValLayout->addWidget(new QLabel(QCoreApplication::translate("ToneCurveField","Output:"), this));
         currentValLayout->addWidget(m_currentOutput);
         currentValLayout->addSpacing(10);
-        currentValLayout->addWidget(new QLabel(tr("Input:"), this));
+        currentValLayout->addWidget(new QLabel(QCoreApplication::translate("ToneCurveField","Input:"), this));
         currentValLayout->addWidget(m_currentInput);
         currentValLayout->addSpacing(10);
       }

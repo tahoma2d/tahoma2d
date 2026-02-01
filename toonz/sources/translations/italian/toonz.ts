@@ -10508,6 +10508,10 @@ but a random crash might occur, use at your own risk:</source>
         <source>Inbetween Flip</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Import Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::AdditionalStyleEdit</name>
@@ -18266,6 +18270,21 @@ Clicca la freccia per creare un nuovo sub-xsheet</translation>
     <message>
         <source>Right:</source>
         <translation>Destra:</translation>
+    </message>
+</context>
+<context>
+    <name>TextAwareBaseFx</name>
+    <message>
+        <source>Nearby Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specified Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input Text</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

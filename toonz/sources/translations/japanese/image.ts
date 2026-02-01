@@ -102,6 +102,22 @@
     </message>
 </context>
 <context>
+    <name>Ffmpeg</name>
+    <message>
+        <source>FFmpeg timed out.
+Please check the file for errors.
+If the file doesn&apos;t play or is incomplete, 
+Please try raising the FFmpeg timeout in Preferences.</source>
+        <translation>FFmpeg処理がタイムアウトしました。
+出力ファイルを確認し、正しく再生しなかったりフレームが足りない場合は
+環境設定のFFmpegのタイムアウト時間を増やして再度試してみて下さい。</translation>
+    </message>
+    <message>
+        <source>FFmpeg returned error-code: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GifWriterProperties</name>
     <message>
         <source>Global Palette</source>
@@ -203,22 +219,6 @@
     <message>
         <source>Alpha Channel</source>
         <translation>アルファチャンネル</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <source>FFmpeg returned error-code: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FFmpeg timed out.
-Please check the file for errors.
-If the file doesn&apos;t play or is incomplete, 
-Please try raising the FFmpeg timeout in Preferences.</source>
-        <translation>FFmpeg処理がタイムアウトしました。
-出力ファイルを確認し、正しく再生しなかったりフレームが足りない場合は
-環境設定のFFmpegのタイムアウト時間を増やして再度試してみて下さい。</translation>
     </message>
 </context>
 <context>

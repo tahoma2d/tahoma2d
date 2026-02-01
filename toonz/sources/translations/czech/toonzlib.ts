@@ -1000,6 +1000,10 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <source>Pressure gain</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>page </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

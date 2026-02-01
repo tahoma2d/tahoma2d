@@ -1001,6 +1001,10 @@
         <source>Custom</source>
         <translation>Ent. personalizada</translation>
     </message>
+    <message>
+        <source>page </source>
+        <translation>página </translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

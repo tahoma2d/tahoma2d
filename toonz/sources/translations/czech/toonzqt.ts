@@ -1834,7 +1834,18 @@ It can&apos;t be changed.  Ever.</source>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="obsolete">Nová strana</translation>
+        <translation>Nová strana</translation>
+    </message>
+    <message>
+        <source>Name Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PaletteIconWidget</name>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2839,22 +2850,6 @@ Jste si jistý?</translation>
         <translation type="vanished">Nastavit</translation>
     </message>
     <message>
-        <source>Name Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Style</source>
-        <translation type="unfinished">Nový styl</translation>
-    </message>
-    <message>
-        <source>New Page</source>
-        <translation type="unfinished">Nová strana</translation>
-    </message>
-    <message>
-        <source>Click &amp; Drag Palette into Studio Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Round</source>
         <comment>BrushTipChooserFrame</comment>
         <translation type="unfinished"></translation>
@@ -3208,6 +3203,18 @@ Jste si jistý?</translation>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
+    <message>
+        <source>Personal Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditor</name>
@@ -3396,6 +3403,26 @@ Jste si jistý?</translation>
         <source>Style Editor - No Valid Style Selected</source>
         <translation>Editor stylu - Nevybrán žádný platný styl</translation>
     </message>
+    <message>
+        <source>Vector brushes</source>
+        <comment>Display of folder stuff/library/vector brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom styles</source>
+        <comment>Display of folder stuff/library/custom styles</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textures</source>
+        <comment>Display of folder stuff/library/textures</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MyPaint brushes</source>
+        <comment>Display of folder stuff/library/mypaint brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditorGUI::ColorChannelControl</name>
@@ -3549,6 +3576,38 @@ Jste si jistý?</translation>
     </message>
     <message>
         <source>Input:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RGBA</source>
+        <translation type="unfinished">RGBA</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">Červená</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">Zelená</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">Modrá</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfa</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">Lineární</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

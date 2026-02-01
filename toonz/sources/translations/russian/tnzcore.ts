@@ -5,26 +5,26 @@
     <name>BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation type="obsolete">Битов на пиксель</translation>
+        <translation>Битов на пиксель</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation type="obsolete">24 бита</translation>
+        <translation>24 бита</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation type="obsolete">8 бит (оттенки серого)</translation>
+        <translation>8 бит (оттенки серого)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="obsolete">Качество</translation>
+        <translation>Качество</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation type="obsolete">Сглаживание</translation>
+        <translation>Сглаживание</translation>
     </message>
 </context>
 <context>
@@ -85,32 +85,6 @@
     <message>
         <source>Rotation</source>
         <translation>Вращение</translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::BmpWriterProperties</name>
-    <message>
-        <source>Bits Per Pixel</source>
-        <translation>Битов на пиксель</translation>
-    </message>
-    <message>
-        <source>24 bits</source>
-        <translation>24 бита</translation>
-    </message>
-    <message>
-        <source>8 bits (Greyscale)</source>
-        <translation>8 бит (оттенки серого)</translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::JpgWriterProperties</name>
-    <message>
-        <source>Quality</source>
-        <translation>Качество</translation>
-    </message>
-    <message>
-        <source>Smoothing</source>
-        <translation>Сглаживание</translation>
     </message>
 </context>
 </TS>

@@ -757,7 +757,11 @@ Tiio::BmpWriterProperties::BmpWriterProperties()
 }
 
 void Tiio::BmpWriterProperties::updateTranslation() {
-  m_pixelSize.setQStringName(tr("Bits Per Pixel"));
-  m_pixelSize.setItemUIName(L"24 bits", tr("24 bits"));
-  m_pixelSize.setItemUIName(L"8 bits (Greyscale)", tr("8 bits (Greyscale)"));
+  m_pixelSize.setQStringName(
+      QCoreApplication::translate("BmpWriterProperties", "Bits Per Pixel"));
+  m_pixelSize.setItemUIName(L"24 bits", QCoreApplication::translate(
+                                            "BmpWriterProperties", "24 bits"));
+  m_pixelSize.setItemUIName(
+      L"8 bits (Greyscale)",
+      QCoreApplication::translate("BmpWriterProperties", "8 bits (Greyscale)"));
 }

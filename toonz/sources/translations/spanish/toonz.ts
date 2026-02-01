@@ -11696,6 +11696,10 @@ pero es posible que se produzcan ocasionales cierres inesperados; usar a propio 
         <source>Show Images in Cell Tooltips</source>
         <translation>Mostrar imágenes emergentes en celdas</translation>
     </message>
+    <message>
+        <source>Import Preferences</source>
+        <translation>Importar preferencias</translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::AdditionalStyleEdit</name>
@@ -19992,6 +19996,21 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     <message>
         <source>Right:</source>
         <translation>Derecha:</translation>
+    </message>
+</context>
+<context>
+    <name>TextAwareBaseFx</name>
+    <message>
+        <source>Nearby Note Column</source>
+        <translation>Columna de notas cercana</translation>
+    </message>
+    <message>
+        <source>Specified Note Column</source>
+        <translation>Columna de notas específica</translation>
+    </message>
+    <message>
+        <source>Input Text</source>
+        <translation>Texto ingresado</translation>
     </message>
 </context>
 <context>

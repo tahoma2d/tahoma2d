@@ -5,26 +5,26 @@
     <name>BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation type="obsolete">Bits Por Pixel</translation>
+        <translation>Bits Por Pixel</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation type="obsolete">24 bits</translation>
+        <translation>24 bits</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation type="obsolete">8 bits (Escala de Cinza)</translation>
+        <translation>8 bits (Escala de Cinza)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="obsolete">Qualidade</translation>
+        <translation>Qualidade</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation type="obsolete">Suavização</translation>
+        <translation>Suavização</translation>
     </message>
 </context>
 <context>
@@ -77,32 +77,6 @@
     <message>
         <source>Rotation</source>
         <translation>Rotação</translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::BmpWriterProperties</name>
-    <message>
-        <source>Bits Per Pixel</source>
-        <translation>Bits Por Pixel</translation>
-    </message>
-    <message>
-        <source>24 bits</source>
-        <translation>24 bits</translation>
-    </message>
-    <message>
-        <source>8 bits (Greyscale)</source>
-        <translation>8 bits (Escala de Cinza)</translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::JpgWriterProperties</name>
-    <message>
-        <source>Quality</source>
-        <translation>Qualidade</translation>
-    </message>
-    <message>
-        <source>Smoothing</source>
-        <translation>Suavização</translation>
     </message>
 </context>
 </TS>

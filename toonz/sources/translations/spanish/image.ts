@@ -102,6 +102,23 @@
     </message>
 </context>
 <context>
+    <name>Ffmpeg</name>
+    <message>
+        <source>FFmpeg timed out.
+Please check the file for errors.
+If the file doesn&apos;t play or is incomplete, 
+Please try raising the FFmpeg timeout in Preferences.</source>
+        <translation>Tiempo de espera excedido para FFmpeg.
+Por favor comprobar errores en el archivo.
+Si no se reproduce o se encuentra incompleto, 
+intentar aumentar el tiempo de espera en las Preferencias.</translation>
+    </message>
+    <message>
+        <source>FFmpeg returned error-code: %1</source>
+        <translation>Código de error devuelto por FFmpeg: %1</translation>
+    </message>
+</context>
+<context>
     <name>GifWriterProperties</name>
     <message>
         <source>Global Palette</source>
@@ -203,23 +220,6 @@
     <message>
         <source>Alpha Channel</source>
         <translation>Canal alfa</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <source>FFmpeg returned error-code: %1</source>
-        <translation>Código de error devuelto por FFmpeg: %1</translation>
-    </message>
-    <message>
-        <source>FFmpeg timed out.
-Please check the file for errors.
-If the file doesn&apos;t play or is incomplete, 
-Please try raising the FFmpeg timeout in Preferences.</source>
-        <translation>Tiempo de espera excedido para FFmpeg.
-Por favor comprobar errores en el archivo.
-Si no se reproduce o se encuentra incompleto, 
-intentar aumentar el tiempo de espera en las Preferencias.</translation>
     </message>
 </context>
 <context>

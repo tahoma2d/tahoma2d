@@ -980,6 +980,10 @@ Provavelmente o codec não está funcionando corretamente.</translation>
         <source>Pressure gain</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>page </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

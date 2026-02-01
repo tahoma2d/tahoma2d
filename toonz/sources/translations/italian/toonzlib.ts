@@ -978,6 +978,10 @@
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>page </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

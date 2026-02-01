@@ -1860,7 +1860,7 @@ Selecione Nós de Efeitos e conexões relacionadas antes de copiar ou recortar a
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="vanished">Editor de Nome</translation>
+        <translation>Editor de Nome</translation>
     </message>
     <message>
         <source>New Style</source>
@@ -1868,13 +1868,20 @@ Selecione Nós de Efeitos e conexões relacionadas antes de copiar ou recortar a
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">Nova Página</translation>
+        <translation>Nova Página</translation>
     </message>
     <message>
         <source>Style 0 is set to full transparent. 
 It can&apos;t be changed.  Ever.</source>
         <translation>Estilo 0 está totalmente transparente. 
 Isto não pode ser mudado. Jamais.</translation>
+    </message>
+</context>
+<context>
+    <name>PaletteIconWidget</name>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
+        <translation>Clique e Arraste Paleta para a Paleta Studio</translation>
     </message>
 </context>
 <context>
@@ -2473,22 +2480,6 @@ A segunda linha deveria ser &quot;Mesh [Profundidade de bit de Entrada] [Profund
     <message>
         <source>Don&apos;t Overwrite</source>
         <translation>Não Substituir</translation>
-    </message>
-    <message>
-        <source>Name Editor</source>
-        <translation>Editor de Nome</translation>
-    </message>
-    <message>
-        <source>New Style</source>
-        <translation>Novo Estilo</translation>
-    </message>
-    <message>
-        <source>New Page</source>
-        <translation>Nova Página</translation>
-    </message>
-    <message>
-        <source>Click &amp; Drag Palette into Studio Palette</source>
-        <translation>Clique e Arraste Paleta para a Paleta Studio</translation>
     </message>
     <message>
         <source>Modify Fx Param : %1</source>
@@ -3189,6 +3180,18 @@ Tem certeza?</translation>
         <source>Move</source>
         <translation>Mover</translation>
     </message>
+    <message>
+        <source>Personal Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleChooserPage</name>
@@ -3433,6 +3436,26 @@ Tem certeza?</translation>
         <source>Style Set Name already exists. Please try another name.</source>
         <translation>Nome do Conjunto de Estilos já existe. Por favor tente outro nome.</translation>
     </message>
+    <message>
+        <source>Vector brushes</source>
+        <comment>Display of folder stuff/library/vector brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom styles</source>
+        <comment>Display of folder stuff/library/custom styles</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textures</source>
+        <comment>Display of folder stuff/library/textures</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MyPaint brushes</source>
+        <comment>Display of folder stuff/library/mypaint brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleIndexLineEdit</name>
@@ -3545,6 +3568,38 @@ Tem certeza?</translation>
     <message>
         <source>Input:</source>
         <translation>Entrada:</translation>
+    </message>
+    <message>
+        <source>RGBA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">Vermelho</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">Verde</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">Azul</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alpha</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">Linear</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

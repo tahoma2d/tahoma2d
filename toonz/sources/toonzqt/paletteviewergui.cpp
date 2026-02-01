@@ -613,7 +613,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
   QPainter p(this);
   QColor textColor = p.pen().color();
   if (m_chipPerRow == 0) {
-    p.drawText(QPoint(5, 25), tr("- No Styles -"));
+    p.drawText(QPoint(5, 25), QCoreApplication::translate("PageViewer","- No Styles -"));
     return;
   }
 
@@ -692,7 +692,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
       tmpFont.setPointSize(16);
       tmpFont.setBold(true);
       p.setFont(tmpFont);
-      QString newLabel = tr(" + ");
+      QString newLabel = QCoreApplication::translate("PageViewer"," + ");
       p.drawText(rect.adjusted(0, -6, 0, 0), Qt::AlignCenter, newLabel);
 
       // revert font set
@@ -953,7 +953,7 @@ void PageViewer::paintEvent(QPaintEvent *e) {
       tmpFont.setPointSize(16);
       tmpFont.setBold(true);
       p.setFont(tmpFont);
-      QString newLabel = tr(" + ");
+      QString newLabel = QCoreApplication::translate("PageViewer"," + ");
       p.drawText(chipRect.adjusted(0, -6, 0, 0), Qt::AlignCenter, newLabel);
 
       // revert font set
@@ -1194,7 +1194,7 @@ void PageViewer::contextMenuEvent(QContextMenuEvent *event) {
   }
   QAction *openStyleControlAct = cmd->getAction("MI_OpenStyleControl");
   menu.addAction(openStyleControlAct);
-  QAction *openStyleNameEditorAct = menu.addAction(QObject::tr("Name Editor"));
+  QAction *openStyleNameEditorAct = menu.addAction(QCoreApplication::translate("PageViewer","Name Editor"));
   openStyleNameEditorAct->setIcon(createQIcon("rename", false, true));
   connect(openStyleNameEditorAct, &QAction::triggered, [&]() {
     if (!m_styleNameEditor) {
@@ -1250,10 +1250,10 @@ void PageViewer::contextMenuEvent(QContextMenuEvent *event) {
   if (m_page) {
     menu.addSeparator();
     QIcon newStyleIco = createQIcon("newstyle", false, true);
-    QAction *newStyle = menu.addAction(newStyleIco, QObject::tr("New Style"));
+    QAction *newStyle = menu.addAction(newStyleIco, QCoreApplication::translate("PageViewer","New Style"));
     connect(newStyle, SIGNAL(triggered()), SLOT(addNewColor()));
     QIcon newPageIco = createQIcon("newpage", false, true);
-    QAction *newPage = menu.addAction(newPageIco, QObject::tr("New Page"));
+    QAction *newPage = menu.addAction(newPageIco, QCoreApplication::translate("PageViewer","New Page"));
     connect(newPage, SIGNAL(triggered()), SLOT(addNewPage()));
   }
 
@@ -1419,9 +1419,9 @@ bool PageViewer::event(QEvent *e) {
       if (style) {
         int styleIndex = m_page->getStyleId(indexInPage);
         if (styleIndex == 0) {
-          toolTip =
-              tr("Style 0 is set to full transparent. \nIt can't be changed.  "
-                 "Ever.");
+          toolTip = QCoreApplication::translate("PageViewer",
+              "Style 0 is set to full transparent. \nIt can't be changed.  "
+              "Ever.");
         } else {
           toolTip = "#" + QString::number(styleIndex) + " " +
                     QString::fromStdWString(style->getName());
@@ -1434,7 +1434,7 @@ bool PageViewer::event(QEvent *e) {
       }
     }
     if (indexInPage == m_page->getStyleCount()) {
-      toolTip = tr("New Style");
+      toolTip = QCoreApplication::translate("PageViewer","New Style");
     }
     if (toolTip != "")
       QToolTip::showText(helpEvent->globalPos(), toolTip);
@@ -1718,7 +1718,7 @@ void PaletteTabBar::updateTabName() {
 PaletteIconWidget::PaletteIconWidget(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags), m_isOver(false) {
   setFixedSize(30, 20);
-  setToolTip(QObject::tr("Click & Drag Palette into Studio Palette"));
+  setToolTip(QCoreApplication::translate("PaletteIconWidget","Click & Drag Palette into Studio Palette"));
 }
 
 //-----------------------------------------------------------------------------

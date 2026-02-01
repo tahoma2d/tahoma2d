@@ -1672,7 +1672,7 @@ PreferencesPopup::PreferencesPopup()
   // createImportPrefsPage() must always be last
   m_stackedWidget->addWidget(createImportPrefsPage());
 
-  QPushButton* importPrefButton = new QPushButton("Import Preferences");
+  QPushButton* importPrefButton = new QPushButton(tr("Import Preferences"));
 
   QHBoxLayout* mainLayout = new QHBoxLayout();
   mainLayout->setContentsMargins(0, 0, 0, 0);

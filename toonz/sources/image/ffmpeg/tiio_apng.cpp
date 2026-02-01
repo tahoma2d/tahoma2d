@@ -222,7 +222,10 @@ Tiio::APngWriterProperties::APngWriterProperties()
 }
 
 void Tiio::APngWriterProperties::updateTranslation() {
-  m_scale.setQStringName(tr("Scale"));
-  m_looping.setQStringName(tr("Looping"));
-  m_extPng.setQStringName(tr("Write as .png"));
+  m_scale.setQStringName(
+      QCoreApplication::translate("APngWriterProperties", "Scale"));
+  m_looping.setQStringName(
+      QCoreApplication::translate("APngWriterProperties", "Looping"));
+  m_extPng.setQStringName(
+      QCoreApplication::translate("APngWriterProperties", "Write as .png"));
 }

@@ -440,6 +440,13 @@
     </message>
 </context>
 <context>
+    <name>TMarkerStrokeStyle</name>
+    <message>
+        <source>Marker</source>
+        <translation>Marcador</translation>
+    </message>
+</context>
+<context>
     <name>TMatrioskaStrokeStyle</name>
     <message>
         <source>Toothpaste</source>
@@ -644,6 +651,21 @@
     <message>
         <source>Density</source>
         <translation>Densidad</translation>
+    </message>
+</context>
+<context>
+    <name>TSoftRoundStrokeStyle</name>
+    <message>
+        <source>Hardness</source>
+        <translation>Definición</translation>
+    </message>
+    <message>
+        <source>Fade</source>
+        <translation>Fundido</translation>
+    </message>
+    <message>
+        <source>Soft Round</source>
+        <translation>Circular suave</translation>
     </message>
 </context>
 <context>

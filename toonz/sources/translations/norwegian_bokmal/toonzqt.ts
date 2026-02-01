@@ -1611,6 +1611,21 @@ Select FX nodes and related links before copying or cutting the selection you wa
 It can&apos;t be changed.  Ever.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PaletteIconWidget</name>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PaletteViewer</name>
@@ -2178,22 +2193,6 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>Don&apos;t Overwrite</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Click &amp; Drag Palette into Studio Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2869,6 +2868,18 @@ Are you sure ?</source>
         <source>Move</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Personal Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditor</name>
@@ -3033,6 +3044,26 @@ Are you sure ?</source>
         <source>Style Set Name already exists. Please try another name.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Vector brushes</source>
+        <comment>Display of folder stuff/library/vector brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom styles</source>
+        <comment>Display of folder stuff/library/custom styles</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textures</source>
+        <comment>Display of folder stuff/library/textures</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MyPaint brushes</source>
+        <comment>Display of folder stuff/library/mypaint brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleIndexLineEdit</name>
@@ -3144,6 +3175,38 @@ Are you sure ?</source>
     </message>
     <message>
         <source>Input:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RGBA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

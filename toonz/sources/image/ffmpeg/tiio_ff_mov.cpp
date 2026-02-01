@@ -253,6 +253,8 @@ Tiio::FFMovWriterProperties::FFMovWriterProperties()
 }
 
 void Tiio::FFMovWriterProperties::updateTranslation() {
-  m_vidQuality.setQStringName(tr("Quality"));
-  m_scale.setQStringName(tr("Scale"));
+  m_vidQuality.setQStringName(
+      QCoreApplication::translate("FFMovWriterProperties", "Quality"));
+  m_scale.setQStringName(
+      QCoreApplication::translate("FFMovWriterProperties", "Scale"));
 }

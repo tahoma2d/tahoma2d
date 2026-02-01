@@ -305,34 +305,63 @@ Tiio::WebmWriterProperties::WebmWriterProperties()
   bind(m_lossless);
 
   // Encoding Speeds
-  m_speed.addValueWithUIName(L"0",
-                             tr("Placebo (Smallest File)"));  // cpu-used 0
-  m_speed.addValueWithUIName(L"1", tr("Very Slow"));          // cpu-used 1
-  m_speed.addValueWithUIName(L"2", tr("Slower"));             // cpu-used 2
-  m_speed.addValueWithUIName(L"3", tr("Slow"));               // cpu-used 3
-  m_speed.addValueWithUIName(L"4", tr("Medium"));             // cpu-used 4
-  m_speed.addValueWithUIName(L"5", tr("Fast"));               // cpu-used 5
-  m_speed.addValueWithUIName(L"6", tr("Faster"));             // cpu-used 6
-  m_speed.addValueWithUIName(L"7", tr("Very Fast"));          // cpu-used 7
-  m_speed.addValueWithUIName(L"8",
-                             tr("Ultra Fast (Largest File)"));  // cpu-used 8
+  m_speed.addValueWithUIName(
+      L"0",
+      QCoreApplication::translate("WebmWriterProperties",
+                                  "Placebo (Smallest File)"));  // cpu-used 0
+  m_speed.addValueWithUIName(
+      L"1", QCoreApplication::translate("WebmWriterProperties",
+                                        "Very Slow"));  // cpu-used 1
+  m_speed.addValueWithUIName(
+      L"2", QCoreApplication::translate("WebmWriterProperties",
+                                        "Slower"));  // cpu-used 2
+  m_speed.addValueWithUIName(
+      L"3", QCoreApplication::translate("WebmWriterProperties",
+                                        "Slow"));  // cpu-used 3
+  m_speed.addValueWithUIName(
+      L"4", QCoreApplication::translate("WebmWriterProperties",
+                                        "Medium"));  // cpu-used 4
+  m_speed.addValueWithUIName(
+      L"5", QCoreApplication::translate("WebmWriterProperties",
+                                        "Fast"));  // cpu-used 5
+  m_speed.addValueWithUIName(
+      L"6", QCoreApplication::translate("WebmWriterProperties",
+                                        "Faster"));  // cpu-used 6
+  m_speed.addValueWithUIName(
+      L"7", QCoreApplication::translate("WebmWriterProperties",
+                                        "Very Fast"));  // cpu-used 7
+  m_speed.addValueWithUIName(
+      L"8",
+      QCoreApplication::translate("WebmWriterProperties",
+                                  "Ultra Fast (Largest File)"));  // cpu-used 8
   m_speed.setValue(L"1");  // Default to Very Slow (benefits animation)
 
   // Keyframe Intervals
-  m_kf.addValueWithUIName(L"1", tr("Every Frame"));
-  m_kf.addValueWithUIName(L"2", tr("Every Second"));
-  m_kf.addValueWithUIName(L"3", tr("Every 2 Seconds"));
-  m_kf.addValueWithUIName(L"4", tr("Every 5 Seconds"));
-  m_kf.addValueWithUIName(L"5", tr("Every 10 Seconds"));
+  m_kf.addValueWithUIName(
+      L"1", QCoreApplication::translate("WebmWriterProperties", "Every Frame"));
+  m_kf.addValueWithUIName(L"2", QCoreApplication::translate(
+                                    "WebmWriterProperties", "Every Second"));
+  m_kf.addValueWithUIName(L"3", QCoreApplication::translate(
+                                    "WebmWriterProperties", "Every 2 Seconds"));
+  m_kf.addValueWithUIName(L"4", QCoreApplication::translate(
+                                    "WebmWriterProperties", "Every 5 Seconds"));
+  m_kf.addValueWithUIName(
+      L"5",
+      QCoreApplication::translate("WebmWriterProperties", "Every 10 Seconds"));
   m_kf.setValue(L"2");  // Default to Every Second
 }
 
 void Tiio::WebmWriterProperties::updateTranslation() {
-  m_scale.setQStringName(tr("Scale"));
-  m_speed.setQStringName(tr("Encoding Speed"));
-  m_kf.setQStringName(tr("Keyframe Interval"));
-  m_preserveAlpha.setQStringName(tr("Preserve Alpha"));
-  m_lossless.setQStringName(tr("Lossless"));
+  m_scale.setQStringName(
+      QCoreApplication::translate("WebmWriterProperties", "Scale"));
+  m_speed.setQStringName(
+      QCoreApplication::translate("WebmWriterProperties", "Encoding Speed"));
+  m_kf.setQStringName(
+      QCoreApplication::translate("WebmWriterProperties", "Keyframe Interval"));
+  m_preserveAlpha.setQStringName(
+      QCoreApplication::translate("WebmWriterProperties", "Preserve Alpha"));
+  m_lossless.setQStringName(
+      QCoreApplication::translate("WebmWriterProperties", "Lossless"));
 }
 
 // Tiio::Reader* Tiio::makeWebmReader(){ return nullptr; }

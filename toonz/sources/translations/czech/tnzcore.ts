@@ -5,26 +5,26 @@
     <name>BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation type="vanished">Bitů na obrazový bod (pixel)</translation>
+        <translation>Bitů na obrazový bod (pixel)</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation type="vanished">24 bitů</translation>
+        <translation>24 bitů</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation type="vanished">8 bitů (odstíny šedi)</translation>
+        <translation>8 bitů (odstíny šedi)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="vanished">Jakost</translation>
+        <translation>Jakost</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation type="vanished">Vyhlazování</translation>
+        <translation>Vyhlazování</translation>
     </message>
 </context>
 <context>
@@ -85,32 +85,6 @@
     <message>
         <source>Rotation</source>
         <translation>Otočení</translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::BmpWriterProperties</name>
-    <message>
-        <source>Bits Per Pixel</source>
-        <translation type="unfinished">Bitů na obrazový bod (pixel)</translation>
-    </message>
-    <message>
-        <source>24 bits</source>
-        <translation type="unfinished">24 bitů</translation>
-    </message>
-    <message>
-        <source>8 bits (Greyscale)</source>
-        <translation type="unfinished">8 bitů (odstíny šedi)</translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::JpgWriterProperties</name>
-    <message>
-        <source>Quality</source>
-        <translation type="unfinished">Jakost</translation>
-    </message>
-    <message>
-        <source>Smoothing</source>
-        <translation type="unfinished">Vyhlazování</translation>
     </message>
 </context>
 </TS>

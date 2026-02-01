@@ -439,6 +439,13 @@
     </message>
 </context>
 <context>
+    <name>TMarkerStrokeStyle</name>
+    <message>
+        <source>Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TMatrioskaStrokeStyle</name>
     <message>
         <source>Stripes</source>
@@ -642,6 +649,21 @@
     </message>
     <message>
         <source>Fuzz</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TSoftRoundStrokeStyle</name>
+    <message>
+        <source>Hardness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fade</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Soft Round</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

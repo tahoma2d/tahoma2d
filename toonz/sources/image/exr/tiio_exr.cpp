@@ -287,36 +287,59 @@ Tiio::ExrWriterProperties::ExrWriterProperties()
 }
 
 void Tiio::ExrWriterProperties::updateTranslation() {
-  m_bitsPerPixel.setQStringName(tr("Bits Per Pixel"));
+  m_bitsPerPixel.setQStringName(
+      QCoreApplication::translate("ExrWriterProperties", "Bits Per Pixel"));
   // internally handles float raster
-  m_bitsPerPixel.setItemUIName(L"96(RGB)_HF", tr("48(RGB Half Float)"));
-  m_bitsPerPixel.setItemUIName(L"128(RGBA)_HF", tr("64(RGBA Half Float)"));
-  m_bitsPerPixel.setItemUIName(L"96(RGB)_F", tr("96(RGB Float)"));
-  m_bitsPerPixel.setItemUIName(L"128(RGBA)_F", tr("128(RGBA Float)"));
-  // m_bitsPerPixel.setItemUIName(L"48(RGB)", tr("48(RGB Half Float)"));
-  // m_bitsPerPixel.setItemUIName(L"64(RGBA)", tr("64(RGBA Half Float)"));
+  m_bitsPerPixel.setItemUIName(
+      L"96(RGB)_HF",
+      QCoreApplication::translate("ExrWriterProperties", "48(RGB Half Float)"));
+  m_bitsPerPixel.setItemUIName(
+      L"128(RGBA)_HF", QCoreApplication::translate("ExrWriterProperties",
+                                                   "64(RGBA Half Float)"));
+  m_bitsPerPixel.setItemUIName(
+      L"96(RGB)_F",
+      QCoreApplication::translate("ExrWriterProperties", "96(RGB Float)"));
+  m_bitsPerPixel.setItemUIName(
+      L"128(RGBA)_F",
+      QCoreApplication::translate("ExrWriterProperties", "128(RGBA Float)"));
+  // m_bitsPerPixel.setItemUIName(L"48(RGB)",
+  // QCoreApplication::translate("ExrWriterProperties", "48(RGB Half Float)"));
+  // m_bitsPerPixel.setItemUIName(L"64(RGBA)",
+  // QCoreApplication::translate("ExrWriterProperties", "64(RGBA Half Float)"));
 
-  m_compressionType.setQStringName(tr("Compression Type"));
+  m_compressionType.setQStringName(
+      QCoreApplication::translate("ExrWriterProperties", "Compression Type"));
   m_compressionType.setItemUIName(
-      ExrCompTypeStr.value(TINYEXR_COMPRESSIONTYPE_NONE), tr("No compression"));
+      ExrCompTypeStr.value(TINYEXR_COMPRESSIONTYPE_NONE),
+      QCoreApplication::translate("ExrWriterProperties", "No compression"));
   m_compressionType.setItemUIName(
       ExrCompTypeStr.value(TINYEXR_COMPRESSIONTYPE_RLE),
-      tr("Run Length Encoding (RLE)"));
+      QCoreApplication::translate("ExrWriterProperties",
+                                  "Run Length Encoding (RLE)"));
   m_compressionType.setItemUIName(
       ExrCompTypeStr.value(TINYEXR_COMPRESSIONTYPE_ZIPS),
-      tr("ZIP compression per Scanline (ZIPS)"));
+      QCoreApplication::translate("ExrWriterProperties",
+                                  "ZIP compression per Scanline (ZIPS)"));
   m_compressionType.setItemUIName(
       ExrCompTypeStr.value(TINYEXR_COMPRESSIONTYPE_ZIP),
-      tr("ZIP compression per scanline band (ZIP)"));
+      QCoreApplication::translate("ExrWriterProperties",
+                                  "ZIP compression per scanline band (ZIP)"));
   m_compressionType.setItemUIName(
       ExrCompTypeStr.value(TINYEXR_COMPRESSIONTYPE_PIZ),
-      tr("PIZ-based wavelet compression (PIZ)"));
+      QCoreApplication::translate("ExrWriterProperties",
+                                  "PIZ-based wavelet compression (PIZ)"));
 
-  m_storageType.setQStringName(tr("Storage Type"));
-  m_storageType.setItemUIName(EXR_STORAGETYPE_SCANLINE, tr("Scan-line based"));
-  m_storageType.setItemUIName(EXR_STORAGETYPE_TILE, tr("Tile based"));
+  m_storageType.setQStringName(
+      QCoreApplication::translate("ExrWriterProperties", "Storage Type"));
+  m_storageType.setItemUIName(
+      EXR_STORAGETYPE_SCANLINE,
+      QCoreApplication::translate("ExrWriterProperties", "Scan-line based"));
+  m_storageType.setItemUIName(
+      EXR_STORAGETYPE_TILE,
+      QCoreApplication::translate("ExrWriterProperties", "Tile based"));
 
-  m_colorSpaceGamma.setQStringName(tr("Color Space Gamma"));
+  m_colorSpaceGamma.setQStringName(
+      QCoreApplication::translate("ExrWriterProperties", "Color Space Gamma"));
 }
 
 //============================================================

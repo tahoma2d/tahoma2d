@@ -102,6 +102,23 @@
     </message>
 </context>
 <context>
+    <name>Ffmpeg</name>
+    <message>
+        <source>FFmpeg timed out.
+Please check the file for errors.
+If the file doesn&apos;t play or is incomplete, 
+Please try raising the FFmpeg timeout in Preferences.</source>
+        <translation>U FFmpeg došlo k překročení času.
+Prověřte, prosím, soubor na chyby.
+Pokud se soubor nepřehrává, nebo je neúplný,
+zkuste, prosím, zvednout dobu pro vypršení pro FFmpeg v Nastavení.</translation>
+    </message>
+    <message>
+        <source>FFmpeg returned error-code: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GifWriterProperties</name>
     <message>
         <source>Global Palette</source>
@@ -203,23 +220,6 @@
     <message>
         <source>Alpha Channel</source>
         <translation>Alfa kanál</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <source>FFmpeg returned error-code: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FFmpeg timed out.
-Please check the file for errors.
-If the file doesn&apos;t play or is incomplete, 
-Please try raising the FFmpeg timeout in Preferences.</source>
-        <translation>U FFmpeg došlo k překročení času.
-Prověřte, prosím, soubor na chyby.
-Pokud se soubor nepřehrává, nebo je neúplný,
-zkuste, prosím, zvednout dobu pro vypršení pro FFmpeg v Nastavení.</translation>
     </message>
 </context>
 <context>

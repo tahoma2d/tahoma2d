@@ -5,7 +5,8 @@ La versión 1.5 trae una serie de nuevas características, mejoras y aún más c
 ### Cambios en la compatibilidad
 
 - La ubicación y el orden de la Máscara de recorte de una capa/columna ha cambiado. Ahora deberá ser colocada arriba de la capa/a la izquierda de la columna a ser recortada y se apilarán de abajo a arriba/izquierda a derecha
-- Las paletas de Imagen con estilos personalizados (pestaña `Editor de estilos` -> `Vectoriales` -> `Estilos personalizados`) serán automáticamente actualizados al nuevo formato, lo que impedirá su uso con versiones anteriores de T2D, en caso de que la paleta fuera guardada usando la versión más reciente de T2D.
+- Las paletas de Imagen con estilos personalizados (`Editor de estilos` -> pestaña `Vectoriales` -> `Estilos personalizados`) serán automáticamente actualizados al nuevo formato, lo que impedirá su uso con versiones anteriores de T2D, en caso de que la paleta fuera guardada usando la versión más reciente de T2D.
+- Paletas que contengan los nuevos estilos `Marcador` y `Circular suave` (`Editor de estilos` -> pestaña `Vectoriales` -> `Generados`) impedirán su uso en versiones anteriores de T2D
 
 ### Usuarios de Windows
 

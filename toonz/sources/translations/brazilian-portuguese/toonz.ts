@@ -9746,6 +9746,10 @@ mas uma queda aleatória do programa pode ocorrer, use sob seu próprio risco:</
         <source>Import complete. Please restart to complete applying the changes.</source>
         <translation>Importação concluída. Por favor reinicie o programa para completar e aplicar as mudanças.</translation>
     </message>
+    <message>
+        <source>Import Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::AdditionalStyleEdit</name>
@@ -17262,6 +17266,21 @@ Atribuir o caminho da Pasta de Saída na Subpasta também.</translation>
     <message>
         <source>Right:</source>
         <translation>Direita:</translation>
+    </message>
+</context>
+<context>
+    <name>TextAwareBaseFx</name>
+    <message>
+        <source>Nearby Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specified Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input Text</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

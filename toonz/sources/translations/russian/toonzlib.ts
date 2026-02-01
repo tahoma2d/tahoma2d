@@ -1000,6 +1000,10 @@
         <source>Pressure gain</source>
         <translation>Усиление давления</translation>
     </message>
+    <message>
+        <source>page </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

@@ -11629,6 +11629,10 @@ but a random crash might occur, use at your own risk:</source>
         <source>Import complete. Please restart to complete applying the changes.</source>
         <translation>Импорт завершен. Пожалуйста, перезапустите, чтобы завершить применение изменений.</translation>
     </message>
+    <message>
+        <source>Import Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::AdditionalStyleEdit</name>
@@ -19986,6 +19990,21 @@ Set the output folder path to the subfolder as well.</source>
     <message>
         <source>Right:</source>
         <translation>Справа:</translation>
+    </message>
+</context>
+<context>
+    <name>TextAwareBaseFx</name>
+    <message>
+        <source>Nearby Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specified Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input Text</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

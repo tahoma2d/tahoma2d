@@ -180,11 +180,12 @@ bool Ffmpeg::waitFfmpeg(QProcess &ffmpeg, bool asyncProcess) {
   if (!asyncProcess) {
     bool status = ffmpeg.waitForFinished(m_ffmpegTimeout);
     if (!status) {
-      DVGui::warning(
-          QObject::tr("FFmpeg timed out.\n"
-                      "Please check the file for errors.\n"
-                      "If the file doesn't play or is incomplete, \n"
-                      "Please try raising the FFmpeg timeout in Preferences."));
+      DVGui::warning(QCoreApplication::translate(
+          "Ffmpeg",
+          "FFmpeg timed out.\n"
+          "Please check the file for errors.\n"
+          "If the file doesn't play or is incomplete, \n"
+          "Please try raising the FFmpeg timeout in Preferences."));
     }
     return status;
   }
@@ -193,14 +194,16 @@ bool Ffmpeg::waitFfmpeg(QProcess &ffmpeg, bool asyncProcess) {
   if (exitCode == 0) return true;
   if (exitCode == -1) {
     DVGui::warning(
-        QObject::tr("FFmpeg returned error-code: %1").arg(ffmpeg.exitCode()));
+        QCoreApplication::translate("Ffmpeg", "FFmpeg returned error-code: %1")
+            .arg(ffmpeg.exitCode()));
   }
   if (exitCode == -2) {
-    DVGui::warning(
-        QObject::tr("FFmpeg timed out.\n"
-                    "Please check the file for errors.\n"
-                    "If the file doesn't play or is incomplete, \n"
-                    "Please try raising the FFmpeg timeout in Preferences."));
+    DVGui::warning(QCoreApplication::translate(
+        "Ffmpeg",
+        "FFmpeg timed out.\n"
+        "Please check the file for errors.\n"
+        "If the file doesn't play or is incomplete, \n"
+        "Please try raising the FFmpeg timeout in Preferences."));
   }
   return false;
 }

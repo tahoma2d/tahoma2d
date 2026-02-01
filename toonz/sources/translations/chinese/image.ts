@@ -102,6 +102,23 @@
     </message>
 </context>
 <context>
+    <name>Ffmpeg</name>
+    <message>
+        <source>FFmpeg timed out.
+Please check the file for errors.
+If the file doesn&apos;t play or is incomplete, 
+Please try raising the FFmpeg timeout in Preferences.</source>
+        <translation>FFmpeg 已超时。
+请查看文件错误。
+如果文件不能播放或者不完整，
+请在首选项调高 FFmpeg 的超时参数。</translation>
+    </message>
+    <message>
+        <source>FFmpeg returned error-code: %1</source>
+        <translation>FFmpeg返回错误代码：%1</translation>
+    </message>
+</context>
+<context>
     <name>GifWriterProperties</name>
     <message>
         <source>Global Palette</source>
@@ -203,23 +220,6 @@
     <message>
         <source>Alpha Channel</source>
         <translation>透明度通道</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <source>FFmpeg returned error-code: %1</source>
-        <translation>FFmpeg返回错误代码：%1</translation>
-    </message>
-    <message>
-        <source>FFmpeg timed out.
-Please check the file for errors.
-If the file doesn&apos;t play or is incomplete, 
-Please try raising the FFmpeg timeout in Preferences.</source>
-        <translation>FFmpeg 已超时。
-请查看文件错误。
-如果文件不能播放或者不完整，
-请在首选项调高 FFmpeg 的超时参数。</translation>
     </message>
 </context>
 <context>

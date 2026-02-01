@@ -778,7 +778,8 @@ Tiio::PngWriterProperties::PngWriterProperties()
 }
 
 void Tiio::PngWriterProperties::updateTranslation() {
-  m_matte.setQStringName(tr("Alpha Channel"));
+  m_matte.setQStringName(
+      QCoreApplication::translate("PngWriterProperties", "Alpha Channel"));
 }
 
 //=========================================================

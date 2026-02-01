@@ -1974,7 +1974,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="vanished">Редактор имен</translation>
+        <translation>Редактор имен</translation>
     </message>
     <message>
         <source>New Style</source>
@@ -1982,13 +1982,20 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">Новая страница</translation>
+        <translation>Новая страница</translation>
     </message>
     <message>
         <source>Style 0 is set to full transparent. 
 It can&apos;t be changed.  Ever.</source>
         <translation>Стиль 0 установлен на полную прозрачность.
 Это не может быть изменено. Всегда.</translation>
+    </message>
+</context>
+<context>
+    <name>PaletteIconWidget</name>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
+        <translation>Нажмите и перетащите палитру в палитру Studio</translation>
     </message>
 </context>
 <context>
@@ -3036,22 +3043,6 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <translation>Не удалось загрузить файл 3DLUT.</translation>
     </message>
     <message>
-        <source>Name Editor</source>
-        <translation>Редактор имен</translation>
-    </message>
-    <message>
-        <source>New Style</source>
-        <translation>Новый стиль</translation>
-    </message>
-    <message>
-        <source>New Page</source>
-        <translation>Новая страница</translation>
-    </message>
-    <message>
-        <source>Click &amp; Drag Palette into Studio Palette</source>
-        <translation>Нажмите и перетащите палитру в палитру Studio</translation>
-    </message>
-    <message>
         <source>Round</source>
         <comment>BrushTipChooserFrame</comment>
         <translation>Круглый</translation>
@@ -3417,6 +3408,18 @@ Are you sure ?</source>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
+    <message>
+        <source>Personal Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleChooserPage</name>
@@ -3703,6 +3706,26 @@ Apply</source>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
+    <message>
+        <source>Vector brushes</source>
+        <comment>Display of folder stuff/library/vector brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom styles</source>
+        <comment>Display of folder stuff/library/custom styles</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textures</source>
+        <comment>Display of folder stuff/library/textures</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MyPaint brushes</source>
+        <comment>Display of folder stuff/library/mypaint brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditorGUI::ColorChannelControl</name>
@@ -3890,6 +3913,38 @@ Zero is fully transparent.</source>
     <message>
         <source>Input:</source>
         <translation>Ввод:</translation>
+    </message>
+    <message>
+        <source>RGBA</source>
+        <translation type="unfinished">RGBA</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Альфа</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">Линейная</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

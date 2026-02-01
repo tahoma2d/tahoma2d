@@ -11,6 +11,11 @@ if [ -d "${BASE_DIR}/${TOONZLANG}" ]
 then
    echo "./update.sh $TOONZLANG"
    ./update.sh $TOONZLANG
+   if [ "$?" != "0" ]
+   then
+      echo "ERROR ENCOUNTERED!!!!"
+      exit 1
+   fi
 fi
 
 done

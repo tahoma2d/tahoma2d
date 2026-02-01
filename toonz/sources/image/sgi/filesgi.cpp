@@ -1226,14 +1226,27 @@ Tiio::SgiWriterProperties::SgiWriterProperties()
 }
 
 void Tiio::SgiWriterProperties::updateTranslation() {
-  m_pixelSize.setQStringName(tr("Bits Per Pixel"));
-  m_pixelSize.setItemUIName(L"24 bits", tr("24 bits"));
-  m_pixelSize.setItemUIName(L"32 bits", tr("32 bits"));
-  m_pixelSize.setItemUIName(L"48 bits", tr("48 bits"));
-  m_pixelSize.setItemUIName(L"64 bits", tr("64 bits"));
-  m_pixelSize.setItemUIName(L"8 bits (Greyscale)", tr("8 bits (Greyscale)"));
-  m_endianness.setQStringName(tr("Endianness"));
-  m_endianness.setItemUIName(L"Big Endian", tr("Big Endian"));
-  m_endianness.setItemUIName(L"Little Endian", tr("Little Endian"));
-  m_compressed.setQStringName(tr("RLE-Compressed"));
+  m_pixelSize.setQStringName(
+      QCoreApplication::translate("SgiWriterProperties", "Bits Per Pixel"));
+  m_pixelSize.setItemUIName(L"24 bits", QCoreApplication::translate(
+                                            "SgiWriterProperties", "24 bits"));
+  m_pixelSize.setItemUIName(L"32 bits", QCoreApplication::translate(
+                                            "SgiWriterProperties", "32 bits"));
+  m_pixelSize.setItemUIName(L"48 bits", QCoreApplication::translate(
+                                            "SgiWriterProperties", "48 bits"));
+  m_pixelSize.setItemUIName(L"64 bits", QCoreApplication::translate(
+                                            "SgiWriterProperties", "64 bits"));
+  m_pixelSize.setItemUIName(
+      L"8 bits (Greyscale)",
+      QCoreApplication::translate("SgiWriterProperties", "8 bits (Greyscale)"));
+  m_endianness.setQStringName(
+      QCoreApplication::translate("SgiWriterProperties", "Endianness"));
+  m_endianness.setItemUIName(
+      L"Big Endian",
+      QCoreApplication::translate("SgiWriterProperties", "Big Endian"));
+  m_endianness.setItemUIName(
+      L"Little Endian",
+      QCoreApplication::translate("SgiWriterProperties", "Little Endian"));
+  m_compressed.setQStringName(
+      QCoreApplication::translate("SgiWriterProperties", "RLE-Compressed"));
 }

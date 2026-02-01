@@ -1957,7 +1957,7 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">Nueva página</translation>
+        <translation>Nueva página</translation>
     </message>
     <message>
         <source>- No Styles -</source>
@@ -1965,7 +1965,7 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="obsolete">Editor de nombres</translation>
+        <translation>Editor de nombres</translation>
     </message>
     <message>
         <source> + </source>
@@ -1976,6 +1976,13 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
 It can&apos;t be changed.  Ever.</source>
         <translation>El estilo 0 es completamente transparente. 
 No debe ser modificado.  Nunca.</translation>
+    </message>
+</context>
+<context>
+    <name>PaletteIconWidget</name>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
+        <translation>Arrastrar la paleta a la Paleta de estudio</translation>
     </message>
 </context>
 <context>
@@ -2848,10 +2855,6 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
         <translation>Ése es un nombre de archivo reservado y no es posible su uso.</translation>
     </message>
     <message>
-        <source>Click &amp; Drag Palette into Studio Palette</source>
-        <translation>Arrastrar la paleta a la Paleta de estudio</translation>
-    </message>
-    <message>
         <source>Plain color</source>
         <comment>CustomStyleChooserPage</comment>
         <translation>Color pleno</translation>
@@ -2908,18 +2911,6 @@ Are you sure?</source>
     <message>
         <source>Sample Type: </source>
         <translation>Tipo de muestra: </translation>
-    </message>
-    <message>
-        <source>Name Editor</source>
-        <translation>Editor de nombres</translation>
-    </message>
-    <message>
-        <source>New Style</source>
-        <translation>Nuevo estilo</translation>
-    </message>
-    <message>
-        <source>New Page</source>
-        <translation>Nueva página</translation>
     </message>
     <message>
         <source>R</source>
@@ -3437,6 +3428,18 @@ Are you sure ?</source>
         <source>Failed to save palette.</source>
         <translation>Error al guardar paleta.</translation>
     </message>
+    <message>
+        <source>Personal Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Palettes</source>
+        <translation>Paletas del proyecto</translation>
+    </message>
+    <message>
+        <source>Global Palettes</source>
+        <translation>Paletas globales</translation>
+    </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
@@ -3675,6 +3678,26 @@ Autom</translation>
         <source>Show Auto/Apply</source>
         <translation>Mostrar Auto/Aplicar</translation>
     </message>
+    <message>
+        <source>Vector brushes</source>
+        <comment>Display of folder stuff/library/vector brushes</comment>
+        <translation>Pinceles vectoriales</translation>
+    </message>
+    <message>
+        <source>Custom styles</source>
+        <comment>Display of folder stuff/library/custom styles</comment>
+        <translation>Estilos personalizados</translation>
+    </message>
+    <message>
+        <source>Textures</source>
+        <comment>Display of folder stuff/library/textures</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MyPaint brushes</source>
+        <comment>Display of folder stuff/library/mypaint brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditorGUI::ColorChannelControl</name>
@@ -3860,6 +3883,38 @@ Autom</translation>
     <message>
         <source>Input:</source>
         <translation>Entrada:</translation>
+    </message>
+    <message>
+        <source>RGBA</source>
+        <translation>RVAα</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation>RVA</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>Rojo</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>Verde</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>Azul</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation>Alfa</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>Lineal</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Agrandar</translation>
     </message>
 </context>
 <context>

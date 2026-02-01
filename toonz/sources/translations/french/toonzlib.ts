@@ -979,6 +979,10 @@ Probablement le codec peut ne pas fonctionner correctement.</translation>
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>page </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

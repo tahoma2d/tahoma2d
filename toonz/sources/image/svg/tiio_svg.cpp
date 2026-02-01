@@ -2084,13 +2084,21 @@ Tiio::SvgWriterProperties::SvgWriterProperties()
 }
 
 void Tiio::SvgWriterProperties::updateTranslation() {
-  m_strokeMode.setQStringName(tr("Stroke Mode"));
-  m_outlineQuality.setQStringName(tr("Outline Quality"));
-  m_strokeMode.setItemUIName(L"Centerline", tr("Centerline"));
-  m_strokeMode.setItemUIName(L"Outline", tr("Outline"));
-  m_outlineQuality.setItemUIName(L"High", tr("High"));
-  m_outlineQuality.setItemUIName(L"Medium", tr("Medium"));
-  m_outlineQuality.setItemUIName(L"Low", tr("Low"));
+  m_strokeMode.setQStringName(
+      QCoreApplication::translate("SvgWriterProperties", "Stroke Mode"));
+  m_outlineQuality.setQStringName(
+      QCoreApplication::translate("SvgWriterProperties", "Outline Quality"));
+  m_strokeMode.setItemUIName(
+      L"Centerline",
+      QCoreApplication::translate("SvgWriterProperties", "Centerline"));
+  m_strokeMode.setItemUIName(L"Outline", QCoreApplication::translate(
+                                             "SvgWriterProperties", "Outline"));
+  m_outlineQuality.setItemUIName(
+      L"High", QCoreApplication::translate("SvgWriterProperties", "High"));
+  m_outlineQuality.setItemUIName(
+      L"Medium", QCoreApplication::translate("SvgWriterProperties", "Medium"));
+  m_outlineQuality.setItemUIName(
+      L"Low", QCoreApplication::translate("SvgWriterProperties", "Low"));
 }
 //----------------------------------------------------------------------------
 
