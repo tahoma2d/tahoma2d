@@ -66,6 +66,9 @@ void initColorFx() {
 
   add(new TMatrioskaStrokeStyle());
 
+  add(new TMarkerStrokeStyle());
+  add(new TSoftRoundStrokeStyle());
+  
 #ifdef _DEBUG
   add(new OutlineViewerStyle());
 #endif

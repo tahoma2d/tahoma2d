@@ -1345,3 +1345,77 @@ public:
 };
 
 #endif  // STROKESTYLES_H
+
+//-------------------------------------------------------------------
+
+class TMarkerStrokeStyle final : public TSolidColorStyle {
+  TPixel32 m_color;
+
+public:
+  TMarkerStrokeStyle(TPixel32 color = TPixel32(0, 0, 0, 128));
+
+  void invalidate() {}
+
+  TColorStyle *clone() const override;
+
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; TSolidColorStyle::setMainColor(color); }
+
+  void drawStroke(const TColorFunction *cf, TStrokeOutline *outline,
+                  const TStroke *stroke) const override;
+
+  bool isRegionStyle() const override { return true; }
+  bool isStrokeStyle() const override { return true; }
+
+  QString getDescription() const override {
+    return QCoreApplication::translate("TMarkerStrokeStyle", "Marker");
+  }
+  std::string getBrushIdName() const override { return "TMarkerStrokeStyle"; }
+
+  void loadData(TInputStreamInterface &is) override { is >> m_color; TSolidColorStyle::setMainColor(m_color); }
+  void saveData(TOutputStreamInterface &os) const override { os << m_color; }
+
+  int getTagId() const override { return 142; };
+};
+
+//-------------------------------------------------------------------
+
+class TSoftRoundStrokeStyle final : public TOptimizedStrokeStyleT<PointsAndDoubles> {
+  TPixel32 m_color;
+  double m_hardness;
+  double m_fade;
+
+public:
+TSoftRoundStrokeStyle(TPixel32 color = TPixel32(0, 0, 0, 128), double hardness = 75, double fade = 1.75);
+
+  void invalidate() {}
+
+  TColorStyle *clone() const override;
+
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
+
+  void computeData(PointsAndDoubles &data, const TStroke *stroke,
+    const TColorFunction *cf) const override;
+  void drawStroke(const TColorFunction *cf, PointsAndDoubles &data,
+    const TStroke *stroke) const override;
+
+  int getParamCount() const override;
+  TColorStyle::ParamType getParamType(int index) const override;
+  QString getParamNames(int index) const override;
+  void getParamRange(int index, double &min, double &max) const override;
+  double getParamValue(TColorStyle::double_tag, int index) const override;
+  void setParamValue(int index, double value) override;
+
+  QString getDescription() const override {
+    return QCoreApplication::translate("TSoftRoundStrokeStyle", "Soft Round");
+  }
+  std::string getBrushIdName() const override { return "TSoftRoundStrokeStyle"; }
+
+  void loadData(TInputStreamInterface &is) override { is >> m_color >> m_hardness >> m_fade; }
+  void saveData(TOutputStreamInterface &os) const override { os << m_color << m_hardness << m_fade; }
+
+  int getTagId() const override { return 143; };
+};
