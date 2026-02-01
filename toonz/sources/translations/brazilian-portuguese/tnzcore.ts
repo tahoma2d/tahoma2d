@@ -30,17 +30,14 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../common/timage_io/tlevel_io.cpp" line="135"/>
         <source>Skipping frame.</source>
         <translation>Pulando Quadro.</translation>
     </message>
     <message>
-        <location filename="../../common/timage_io/tlevel_io.cpp" line="139"/>
         <source>Unhandled exception encountered: Skipping frame.</source>
         <translation>Exceção não resolvida encontrada: Pulando Quadro.</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="258"/>
         <source>colors</source>
         <translation>cores</translation>
     </message>
@@ -48,12 +45,10 @@
 <context>
     <name>TCenterLineStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="899"/>
         <source>Constant</source>
         <translation>Constante</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="938"/>
         <source>Thickness</source>
         <translation>Espessura</translation>
     </message>
@@ -61,17 +56,14 @@
 <context>
     <name>TRasterImagePatternStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1101"/>
         <source>Distance</source>
         <translation>Distância</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1103"/>
         <source>Rotation</source>
         <translation>Rotação</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1105"/>
         <source>Flip</source>
         <translation type="unfinished"></translation>
     </message>
@@ -79,12 +71,10 @@
 <context>
     <name>TVectorImagePatternStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1639"/>
         <source>Distance</source>
         <translation>Distância</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1641"/>
         <source>Rotation</source>
         <translation>Rotação</translation>
     </message>
@@ -92,17 +82,14 @@
 <context>
     <name>Tiio::BmpWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="760"/>
         <source>Bits Per Pixel</source>
         <translation>Bits Por Pixel</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="761"/>
         <source>24 bits</source>
         <translation>24 bits</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="762"/>
         <source>8 bits (Greyscale)</source>
         <translation>8 bits (Escala de Cinza)</translation>
     </message>
@@ -110,12 +97,10 @@
 <context>
     <name>Tiio::JpgWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="318"/>
         <source>Quality</source>
         <translation>Qualidade</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="319"/>
         <source>Smoothing</source>
         <translation>Suavização</translation>
     </message>

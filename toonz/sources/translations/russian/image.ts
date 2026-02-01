@@ -4,17 +4,14 @@
 <context>
     <name>APngWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_apng.cpp" line="225"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_apng.cpp" line="226"/>
         <source>Looping</source>
         <translation>Зациклить</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_apng.cpp" line="227"/>
         <source>Write as .png</source>
         <translation>Написать как .png</translation>
     </message>
@@ -22,12 +19,10 @@
 <context>
     <name>AviWriterProperties</name>
     <message>
-        <location filename="../../image/avi/tiio_avi.cpp" line="1210"/>
         <source>Codec</source>
         <translation>Кодек</translation>
     </message>
     <message>
-        <location filename="../../image/avi/tiio_avi.cpp" line="1211"/>
         <source>Uncompressed</source>
         <translation>Без сжатия</translation>
     </message>
@@ -35,77 +30,62 @@
 <context>
     <name>ExrWriterProperties</name>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="290"/>
         <source>Bits Per Pixel</source>
         <translation>Битов на пиксель</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="292"/>
         <source>48(RGB Half Float)</source>
         <translation>48(RGB Half Float)</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="293"/>
         <source>64(RGBA Half Float)</source>
         <translation>64(RGBA Half Float)</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="294"/>
         <source>96(RGB Float)</source>
         <translation>96(RGB Float)</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="295"/>
         <source>128(RGBA Float)</source>
         <translation>128(RGBA Float)</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="299"/>
         <source>Compression Type</source>
         <translation>Тип сжатия</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="301"/>
         <source>No compression</source>
         <translation>Без сжатия</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="304"/>
         <source>Run Length Encoding (RLE)</source>
         <translation>Кодирование длины серии (RLE)</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="307"/>
         <source>ZIP compression per Scanline (ZIPS)</source>
         <translation>Сжатие ZIP на строку сканирования (ZIPS)</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="310"/>
         <source>ZIP compression per scanline band (ZIP)</source>
         <translation>ZIP-сжатие на полосу развертки (ZIP)</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="313"/>
         <source>PIZ-based wavelet compression (PIZ)</source>
         <translation>Вейвлет-сжатие на основе PIZ (PIZ)</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="315"/>
         <source>Storage Type</source>
         <translation>Тип хранилища</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="316"/>
         <source>Scan-line based</source>
         <translation>На основе строк сканирования</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="317"/>
         <source>Tile based</source>
         <translation>На основе плитки</translation>
     </message>
     <message>
-        <location filename="../../image/exr/tiio_exr.cpp" line="319"/>
         <source>Color Space Gamma</source>
         <translation>Гамма цветового пространства</translation>
     </message>
@@ -113,12 +93,10 @@
 <context>
     <name>FFMovWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="256"/>
         <source>Quality</source>
         <translation>Качество</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="257"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
@@ -126,92 +104,74 @@
 <context>
     <name>GifWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="359"/>
         <source>Global Palette</source>
         <translation>Глобальная палитра</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="360"/>
         <source>Global Palette + Sierra Dither</source>
         <translation>Глобальная палитра + Sierra Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="361"/>
         <source>Global Palette + Bayer2 Dither</source>
         <translation>Глобальная палитра + Bayer2 Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="362"/>
         <source>Global Palette + Bayer1 Dither</source>
         <translation>Глобальная палитра + Bayer1 Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="363"/>
         <source>Diff Palette</source>
         <translation>Diff Palette</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="364"/>
         <source>Diff Palette + Sierra Dither</source>
         <translation>Diff Palette + Sierra Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="365"/>
         <source>Diff Palette + Bayer2 Dither</source>
         <translation>Diff Palette + Bayer2 Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="366"/>
         <source>Diff Palette + Bayer1 Dither</source>
         <translation>Diff Palette + Bayer1 Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="367"/>
         <source>New Pal Per Frame</source>
         <translation>New Pal Per Frame</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="368"/>
         <source>New Pal Per Frame + Sierra Dither</source>
         <translation>New Pal Per Frame + Sierra Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="369"/>
         <source>New Pal Per Frame + Bayer2 Dither</source>
         <translation>New Pal Per Frame + Bayer2 Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="370"/>
         <source>New Pal Per Frame + Bayer1 Dither</source>
         <translation>New Pal Per Frame + Bayer1 Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="371"/>
         <source>Opaque, Dither, 256 Colors Only</source>
         <translation>Непрозрачный, Dither, только 256 цветов</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="384"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="385"/>
         <source>Looping</source>
         <translation>Зациклить</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="386"/>
         <source>Generate Palette</source>
         <translation>Создать палитру</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="387"/>
         <source>Mode</source>
         <translation>Режим</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="388"/>
         <source>Max Colors</source>
         <translation>Максимальное количество цветов</translation>
     </message>
@@ -230,12 +190,10 @@
 <context>
     <name>Mp4WriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="260"/>
         <source>Quality</source>
         <translation>Качество</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="261"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
@@ -243,7 +201,6 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="781"/>
         <source>Alpha Channel</source>
         <translation>Альфа канал</translation>
     </message>
@@ -251,13 +208,10 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="196"/>
         <source>FFmpeg returned error-code: %1</source>
         <translation>FFmpeg вернул код ошибки: %1</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="184"/>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="200"/>
         <source>FFmpeg timed out.
 Please check the file for errors.
 If the file doesn&apos;t play or is incomplete, 
@@ -271,52 +225,42 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>SgiWriterProperties</name>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1229"/>
         <source>Bits Per Pixel</source>
         <translation>Битов на пиксель</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1230"/>
         <source>24 bits</source>
         <translation>24 бита</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1231"/>
         <source>32 bits</source>
         <translation>32 бита</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1232"/>
         <source>48 bits</source>
         <translation>48 бита</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1233"/>
         <source>64 bits</source>
         <translation>64 бита</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1234"/>
         <source>8 bits (Greyscale)</source>
         <translation>8 бита (оттенки серого)</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1235"/>
         <source>Endianness</source>
         <translation>Порядок байтов</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1236"/>
         <source>Big Endian</source>
         <translation>От старшего к младшему</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1237"/>
         <source>Little Endian</source>
         <translation>От младшего к старшему</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1238"/>
         <source>RLE-Compressed</source>
         <translation>RLE-сжатие</translation>
     </message>
@@ -324,57 +268,46 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>SpriteWriterProperties</name>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="313"/>
         <source>Top Padding</source>
         <translation>Заполнение сверху</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="314"/>
         <source>Bottom Padding</source>
         <translation>Заполнение снизу</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="315"/>
         <source>Left Padding</source>
         <translation>Заполнение слева</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="316"/>
         <source>Right Padding</source>
         <translation>Заполнение справа</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="317"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="318"/>
         <source>Format</source>
         <translation>Формат</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="319"/>
         <source>Grid</source>
         <translation>Сетка</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="320"/>
         <source>Vertical</source>
         <translation>Вертикально</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="321"/>
         <source>Horizontal</source>
         <translation>Горизонтально</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="322"/>
         <source>Individual</source>
         <translation>Индивидуально</translation>
     </message>
     <message>
-        <location filename="../../image/sprite/tiio_sprite.cpp" line="323"/>
         <source>Trim Empty Space</source>
         <translation>Обрезать пустое пространство</translation>
     </message>
@@ -382,37 +315,30 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>SvgWriterProperties</name>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2087"/>
         <source>Stroke Mode</source>
         <translation>Режим обводки</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2088"/>
         <source>Outline Quality</source>
         <translation>Качество контура</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2089"/>
         <source>Centerline</source>
         <translation>Осевая линия</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2090"/>
         <source>Outline</source>
         <translation>Контур</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2091"/>
         <source>High</source>
         <translation>Высокая</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2092"/>
         <source>Medium</source>
         <translation>Средняя</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2093"/>
         <source>Low</source>
         <translation>Низкая</translation>
     </message>
@@ -420,27 +346,22 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>TgaWriterProperties</name>
     <message>
-        <location filename="../../image/tga/tiio_tga.cpp" line="523"/>
         <source>Bits Per Pixel</source>
         <translation>Битов на пиксель</translation>
     </message>
     <message>
-        <location filename="../../image/tga/tiio_tga.cpp" line="524"/>
         <source>16 bits</source>
         <translation>16 битов</translation>
     </message>
     <message>
-        <location filename="../../image/tga/tiio_tga.cpp" line="525"/>
         <source>24 bits</source>
         <translation>24 бита</translation>
     </message>
     <message>
-        <location filename="../../image/tga/tiio_tga.cpp" line="526"/>
         <source>32 bits</source>
         <translation>32 бита</translation>
     </message>
     <message>
-        <location filename="../../image/tga/tiio_tga.cpp" line="527"/>
         <source>Compression</source>
         <translation>Сжатие</translation>
     </message>
@@ -448,37 +369,30 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>TifWriterProperties</name>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="731"/>
         <source>Byte Ordering</source>
         <translation>Порядок следования байтов</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="732"/>
         <source>Compression Type</source>
         <translation>Тип сжатия</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="733"/>
         <source>Bits Per Pixel</source>
         <translation>Битов на пиксель</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="734"/>
         <source>24(RGB)</source>
         <translation>24(RGB)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="735"/>
         <source>48(RGB)</source>
         <translation>48(RGB)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="736"/>
         <source> 1(BW)</source>
         <translation> 1(ЧБ)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="737"/>
         <source> 8(GREYTONES)</source>
         <translation> 8(ОТТЕНКИСЕРОГО)</translation>
     </message>
@@ -491,57 +405,46 @@ Please try raising the FFmpeg timeout in Preferences.</source>
         <translation type="obsolete">64(RGBA)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="738"/>
         <source>32(RGBA)</source>
         <translation>32(RGBA)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="739"/>
         <source>64(RGBA)</source>
         <translation>64(RGBA)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="740"/>
         <source>Orientation</source>
         <translation>Ориентация</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="741"/>
         <source>Top Left</source>
         <translation>Сверху слева</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="742"/>
         <source>Top Right</source>
         <translation>Сверху справа</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="743"/>
         <source>Bottom Right</source>
         <translation>Снизу справа</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="744"/>
         <source>Bottom Left</source>
         <translation>Снизу слева</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="745"/>
         <source>Left Top</source>
         <translation>Слева сверху</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="746"/>
         <source>Left Bottom</source>
         <translation>Слева снизу</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="747"/>
         <source>Right Top</source>
         <translation>Справа снизу</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="748"/>
         <source>Right Bottom</source>
         <translation>Справа снизу</translation>
     </message>
@@ -743,97 +646,78 @@ Please try raising the FFmpeg timeout in Preferences.</source>
         <translation type="vanished">Качество</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="309"/>
         <source>Placebo (Smallest File)</source>
         <translation>Плацебо (самый маленький файл)</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="310"/>
         <source>Very Slow</source>
         <translation>Очень медленно</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="311"/>
         <source>Slower</source>
         <translation>Помедленнее</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="312"/>
         <source>Slow</source>
         <translation>Медленно</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="313"/>
         <source>Medium</source>
         <translation>Средняя</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="314"/>
         <source>Fast</source>
         <translation>Быстро</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="315"/>
         <source>Faster</source>
         <translation>Быстрее</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="316"/>
         <source>Very Fast</source>
         <translation>Очень быстро</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="318"/>
         <source>Ultra Fast (Largest File)</source>
         <translation>Сверхбыстро (самый большой файл)</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="322"/>
         <source>Every Frame</source>
         <translation>Каждый кадр</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="323"/>
         <source>Every Second</source>
         <translation>Каждую секунду</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="324"/>
         <source>Every 2 Seconds</source>
         <translation>Каждые 2 секунды</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="325"/>
         <source>Every 5 Seconds</source>
         <translation>Каждые 5 секунд</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="326"/>
         <source>Every 10 Seconds</source>
         <translation>Каждые 10 секунд</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="331"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="332"/>
         <source>Encoding Speed</source>
         <translation>Скорость кодирования</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="333"/>
         <source>Keyframe Interval</source>
         <translation>Интервал ключевых кадров</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="334"/>
         <source>Preserve Alpha</source>
         <translation>Сохранение альфа-канала</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="335"/>
         <source>Lossless</source>
         <translation>Без потерь</translation>
     </message>
