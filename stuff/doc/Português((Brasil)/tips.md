@@ -1,4 +1,4 @@
-# Bem-vindo ao Tahoma2D 1.5!
+# Bem-vindo ao Tahoma2D 1.6!
 
 A Versão 1.5 traz um grande número de novos recursos, aprimoramentos e ainda mais correções que estão listadas [aqui](https://github.com/tahoma2d/tahoma2d/releases/tag/v1.5).
 

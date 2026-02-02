@@ -118,3 +118,4 @@ unix2dos tmp.txt
 mv tmp.txt CHANGELOG.md
 
 echo -e "\n\n******* REMINDER: Update new $NEWFULLVERSION section in CHANGELOG.md *******\n\n"
+echo -e "\n\n******* REMINDER: Update new $NEWFULLVERSION section in tips.md (+ translated tips.md) *******\n\n"
