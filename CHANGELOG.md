@@ -5,6 +5,115 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-02-02
+
+### Added
+
+- Brush Tips (Raster/Smart Raster) [#1915]
+- Stylus Settings Popup (Raster Brush & MyPaint styles) [#1888, #1923, #2018]
+- Stylus Settings Popup (Smart Raster - Standard Brush, Vector) [#1898, #2018]
+- Column Alpha Lock [#1666, #1736]
+- Loop Frames [#1821, #1970]
+- Add Raster Tool Option - Paint Behind [#1793, #1881, #1802]
+- Smart Raster Selection - Selective mode [#1797, #1817]
+- Add marker and soft round vector styles. [#1983]
+- Contiguous cell selection shortcut [#1812]
+- Show image in cell tooltip [#1783]
+- Special Modifier Key: Viewer Scrub [#1722]
+- Canon SDK for Linux [#1704]
+
+### Changed
+
+- MyPaint Brush Tilt Support [#1836]
+- New and updated shortcuts [#1805]
+- Refactored and Improved Preproduction Board [#1953]
+- Reverse Clipping Mask Stacking Placement [#1667]
+- Rhubarb Recognizer option [#1835]
+- Shift markers with Cell Insert/Delete [#1970]
+- Add color and fill support to raster pattern brush. [#1931]
+- Allow Touch Screen zoom and rotate combo [#1834]
+- List All GPhoto config button and critical error handling [#1962]
+- Enhance input validation and clamping in DoubleValueField (OpenToonz port) [#1946, #1961]
+- Existing scenes list in Startup Popup (OpenToonz Port) [#1930, #1964, #1954]
+
+### Fixed
+
+- SVG load fixes [#1995]
+- Add missing Hook Tool status bar description [#1926, #1933]
+- Autoclose: Limit Two Points Spot Research Angle to 0°~36° [#1901]
+- Capitalize Spanish Fx doc directory [#1984]
+- Compress high frequency MyPaint drawing events [#1921]
+- Fix backing up of scene icon [#2026]
+- Fix Capture Image using Canon EDSDK Linux [#1977]
+- Fix changing geometry opacity back to 100 [#1919]
+- Fix column status toggling and display of folder items [#2008]
+- Fix Export Vector Level Bad Resolution Crash [#1920]
+- Fix File Browser New Folder creation [#1948]
+- Fix File Browser Rename logic and UI [#1947]
+- Fix flipped vector color picker [#2022]
+- Fix image capture default folder [#1978]
+- Fix key as last scene frame [#1976, #1999]
+- Fix last Stop Frame Hold [#2006]
+- Fix load svg crash [#1925]
+- Fix loading unknown style id [#2012]
+- Fix missing Checkboard Fx settings (Linux) [#1922]
+- Fix missing MSVC DLLs [#1938]
+- Fix missing QString arg [#2000]
+- Fix missing viewer title bar level info [#1949]
+- Fix reading corrupted PNG crash [#1982]
+- Fix saving escaped apostrophe (linux) [#1928]
+- Fix Show Column Parent's Color context menu option [#1924]
+- Fix some Vector Inspector issues + some refactoring [#1996]
+- Fix sound cells extender controls and move selection [#2014]
+- Fix starting in unicode path [#2009]
+- Fix stop frame placement on OCA import [#2010]
+- Fix styleeditor not updating on colorswatch switch [#2020]
+- Fix SVG stroke-width at lower resolutions [#2004]
+- Fix to stop writing unfilled regions to SVG [#2007]
+- Fix vector fill loss due to ghost grouping changes [#1997]
+- Fix Vector Ungroup/Group undo issue [#2002]
+- Fix Zerary Fx input preview status in Schematic [#1927]
+- Fix(autoclose): Add intersection check for spotRearchTwoPoints [#1934]
+- Fixes for Preproduction Board and File Browser [#1950, #1964]
+- Force startup tips window to the top [#1932]
+- Restore disabled file writer types [#1936]
+- Fix bounds issue [#1941]
+- Fix brush size input for non-English locales (OpenToonz port) [#1946]
+- Fix color wheel pointer and replace layout margins (OpenToonz port) [#1946[^11]]
+- Fix dummy ink pixel (Tone =255) ink texture crash (OpenToonz port) [#1946]
+- Fix memory leaks by replacing 'delete' with 'delete[] (OpenToonz port) [#1946]
+- Fix Mesh Memory Leak (OpenToonz port) [#1946[^8]]
+- Fix New Folder refresh issue in File Browser (OpenToonz port) [#1946]
+- Fix order of beginInsertRows/beginRemoveRows in ExportSceneDvDirModel (OpenToonz port) [#1946]
+- Fix registering multiple system var paths with command line qualifiers (OpenToonz port) [#1946]
+- Fix SVG import crash with non-ASCII file paths on Windows (OpenToonz port) [#1946]
+- Fix unreachable code and duplicate VEC array initialization (OpenToonz port) [#1946]
+- Fix -Wreturn-type warnings in iocommand and igs_rotate_blur (OpenToonz port) [#1946[^9] ]
+- Fix(OCA): correct endTime (OpenToonz port) [#1946]
+- Fix(Scene Depth/Quicktoolbar): Invisible after startup (OpenToonz port) [#1942]
+- Fix: Add missing fclose calls for proper file handling (OpenToonz port) [#1946]
+- fix: handle MSVC warnings C4723 and C4552 (OpenToonz port) [#1946[^10]]
+- fix: initialize popup, firstW, and lastW (OpenToonz port) [#1946]
+- fix: ODR violations (# 241) by adding flipbooksettings.h for toggle vars (OpenToonz port) [#1946]
+- Fix: Premultiply background color for Export Level Commands (OpenToonz port) [#1946[^9] ]
+- fix: Preview not Updating for New Toonz Raster Levels editted with Fill Tool (OpenToonz port) [#1946]
+- fix: remove duplicate and unreachable 'stylepages' case (OpenToonz port) [#1946]
+- fix: remove std::iterator to resolve deprecation warning (OpenToonz port) [#1946]
+- fix: resolve C4018 signed/unsigned mismatch warnings (OpenToonz port) [#1946]
+- fix: typo (OpenToonz port) [#1946]
+- fix: unreachable code in tscannerepson.cpp and Naa2TlvConverter.cpp (OpenToonz port) [#1946[^10]]
+- Fix: Use sig_atomic_t for signal-safe shutdown flag (OpenToonz port) [#1946]
+- Prevent OS/theme background mismatch (OpenToonz port) [#1946[^8]]
+- Set proper window flag on preferences pop-up for Mac OSX (OpenToonz port) [#1946]
+
+### Other
+
+- Update translation files for v1.6 [#1980, #1992, #2005, #2023, #2032]
+- Fix macOS build CMake version [#1909]
+- Fix removing unnecessary files in Windows builds [#1968]
+- Github build on macos-15-intel (Sequoia)/Fix Linux build [#1917]
+- Feature: Report missing/unknown XML tags during scene loading (OpenToonz port) [#1946]
+
 ## [1.5.4] - 2025-08-01
 
 ### Fixed
@@ -918,7 +1027,12 @@ Some features, when used, are saved to the scene file and will prevent the scene
 [^5]: Only fixes from this OpenToonz port PR were applied to this release. Rest will be in v1.5
 [^6]: A few fixes from this OpenToonz port PR were moved to the v1.5.3 fix release
 [^7]: Followup fixes made directly in Tahoma2D related to OpenToonz ports
+[^8]: Modified to work with T2D changes
+[^9]: Partial. Some changes on unported OT changes not applied
+[^10]: Partial. Changes not relevant to T2D were not applied
+[^11]: Partial. Similar changes already in T2D were not applied
 
+[1.6.0]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.4...v1.6
 [1.5.4]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.3...v1.5.4
 [1.5.3]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.1...v1.5.2
