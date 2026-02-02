@@ -1878,7 +1878,7 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">Neue Seite</translation>
+        <translation>Neue Seite</translation>
     </message>
     <message>
         <source>- No Styles -</source>
@@ -1886,7 +1886,7 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="obsolete">Stil-Name-Editor</translation>
+        <translation>Stil-Name-Editor</translation>
     </message>
     <message>
         <source> + </source>
@@ -1895,6 +1895,13 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     <message>
         <source>Style 0 is set to full transparent. 
 It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PaletteIconWidget</name>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2760,10 +2767,6 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Click &amp; Drag Palette into Studio Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Plain color</source>
         <comment>CustomStyleChooserPage</comment>
         <translation type="unfinished">Normale Farbe</translation>
@@ -2814,18 +2817,6 @@ Are you sure?</source>
     <message>
         <source>Sample Type: </source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name Editor</source>
-        <translation type="unfinished">Stil-Name-Editor</translation>
-    </message>
-    <message>
-        <source>New Style</source>
-        <translation type="unfinished">Neuer Stil</translation>
-    </message>
-    <message>
-        <source>New Page</source>
-        <translation type="unfinished">Neue Seite</translation>
     </message>
     <message>
         <source>R</source>
@@ -3326,6 +3317,18 @@ Are you sure ?</source>
         <source>Failed to save palette.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Personal Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
@@ -3531,6 +3534,26 @@ anwenden</translation>
         <source>Show Auto/Apply</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Vector brushes</source>
+        <comment>Display of folder stuff/library/vector brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom styles</source>
+        <comment>Display of folder stuff/library/custom styles</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textures</source>
+        <comment>Display of folder stuff/library/textures</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MyPaint brushes</source>
+        <comment>Display of folder stuff/library/mypaint brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditorGUI::PlainColorPage</name>
@@ -3684,6 +3707,38 @@ anwenden</translation>
     </message>
     <message>
         <source>Input:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RGBA</source>
+        <translation type="unfinished">RGBA</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">Rot</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">Grün</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">Blau</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alpha</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">Linear</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

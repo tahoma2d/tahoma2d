@@ -5,26 +5,26 @@
     <name>BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation type="vanished">色深度</translation>
+        <translation>色深度</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation type="vanished">24ビット</translation>
+        <translation>24ビット</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation type="vanished">8ビット (グレースケール)</translation>
+        <translation>8ビット (グレースケール)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="vanished">品質</translation>
+        <translation>品質</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation type="vanished">スムージング</translation>
+        <translation>スムージング</translation>
     </message>
 </context>
 <context>
@@ -85,32 +85,6 @@
     <message>
         <source>Rotation</source>
         <translation>回転</translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::BmpWriterProperties</name>
-    <message>
-        <source>Bits Per Pixel</source>
-        <translation type="unfinished">色深度</translation>
-    </message>
-    <message>
-        <source>24 bits</source>
-        <translation type="unfinished">24ビット</translation>
-    </message>
-    <message>
-        <source>8 bits (Greyscale)</source>
-        <translation type="unfinished">8ビット (グレースケール)</translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::JpgWriterProperties</name>
-    <message>
-        <source>Quality</source>
-        <translation type="unfinished">品質</translation>
-    </message>
-    <message>
-        <source>Smoothing</source>
-        <translation type="unfinished">スムージング</translation>
     </message>
 </context>
 </TS>

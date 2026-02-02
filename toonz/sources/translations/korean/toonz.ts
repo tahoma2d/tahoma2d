@@ -11008,6 +11008,10 @@ but a random crash might occur, use at your own risk:</source>
         <source>Show Images in Cell Tooltips</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Import Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::AdditionalStyleEdit</name>
@@ -18969,6 +18973,21 @@ Set the output folder path to the subfolder as well.</source>
     <message>
         <source>Right:</source>
         <translation>오른쪽:</translation>
+    </message>
+</context>
+<context>
+    <name>TextAwareBaseFx</name>
+    <message>
+        <source>Nearby Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specified Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input Text</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

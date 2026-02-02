@@ -520,11 +520,16 @@ Tiio::TgaWriterProperties::TgaWriterProperties()
 }
 
 void Tiio::TgaWriterProperties::updateTranslation() {
-  m_pixelSize.setQStringName(tr("Bits Per Pixel"));
-  m_pixelSize.setItemUIName(L"16 bits", tr("16 bits"));
-  m_pixelSize.setItemUIName(L"24 bits", tr("24 bits"));
-  m_pixelSize.setItemUIName(L"32 bits", tr("32 bits"));
-  m_compressed.setQStringName(tr("Compression"));
+  m_pixelSize.setQStringName(
+      QCoreApplication::translate("TgaWriterProperties", "Bits Per Pixel"));
+  m_pixelSize.setItemUIName(L"16 bits", QCoreApplication::translate(
+                                            "TgaWriterProperties", "16 bits"));
+  m_pixelSize.setItemUIName(L"24 bits", QCoreApplication::translate(
+                                            "TgaWriterProperties", "24 bits"));
+  m_pixelSize.setItemUIName(L"32 bits", QCoreApplication::translate(
+                                            "TgaWriterProperties", "32 bits"));
+  m_compressed.setQStringName(
+      QCoreApplication::translate("TgaWriterProperties", "Compression"));
 }
 
 //============================================================

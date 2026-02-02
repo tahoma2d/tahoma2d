@@ -728,24 +728,55 @@ Tiio::TifWriterProperties::TifWriterProperties()
 }
 
 void Tiio::TifWriterProperties::updateTranslation() {
-  m_byteOrdering.setQStringName(tr("Byte Ordering"));
-  m_compressionType.setQStringName(tr("Compression Type"));
-  m_bitsPerPixel.setQStringName(tr("Bits Per Pixel"));
-  m_bitsPerPixel.setItemUIName(L"24(RGB)", tr("24(RGB)"));
-  m_bitsPerPixel.setItemUIName(L"48(RGB)", tr("48(RGB)"));
-  m_bitsPerPixel.setItemUIName(L" 1(BW)", tr(" 1(BW)"));
-  m_bitsPerPixel.setItemUIName(L" 8(GREYTONES)", tr(" 8(GREYTONES)"));
-  m_bitsPerPixel.setItemUIName(L"32(RGBM)", tr("32(RGBA)"));
-  m_bitsPerPixel.setItemUIName(L"64(RGBM)", tr("64(RGBA)"));
-  m_orientation.setQStringName(tr("Orientation"));
-  m_orientation.setItemUIName(TNZ_INFO_ORIENT_TOPLEFT, tr("Top Left"));
-  m_orientation.setItemUIName(TNZ_INFO_ORIENT_TOPRIGHT, tr("Top Right"));
-  m_orientation.setItemUIName(TNZ_INFO_ORIENT_BOTRIGHT, tr("Bottom Right"));
-  m_orientation.setItemUIName(TNZ_INFO_ORIENT_BOTLEFT, tr("Bottom Left"));
-  m_orientation.setItemUIName(TNZ_INFO_ORIENT_LEFTTOP, tr("Left Top"));
-  m_orientation.setItemUIName(TNZ_INFO_ORIENT_RIGHTTOP, tr("Left Bottom"));
-  m_orientation.setItemUIName(TNZ_INFO_ORIENT_RIGHTBOT, tr("Right Top"));
-  m_orientation.setItemUIName(TNZ_INFO_ORIENT_LEFTBOT, tr("Right Bottom"));
+  m_byteOrdering.setQStringName(
+      QCoreApplication::translate("TifWriterProperties", "Byte Ordering"));
+  m_compressionType.setQStringName(
+      QCoreApplication::translate("TifWriterProperties", "Compression Type"));
+  m_bitsPerPixel.setQStringName(
+      QCoreApplication::translate("TifWriterProperties", "Bits Per Pixel"));
+  m_bitsPerPixel.setItemUIName(
+      L"24(RGB)",
+      QCoreApplication::translate("TifWriterProperties", "24(RGB)"));
+  m_bitsPerPixel.setItemUIName(
+      L"48(RGB)",
+      QCoreApplication::translate("TifWriterProperties", "48(RGB)"));
+  m_bitsPerPixel.setItemUIName(
+      L" 1(BW)", QCoreApplication::translate("TifWriterProperties", " 1(BW)"));
+  m_bitsPerPixel.setItemUIName(
+      L" 8(GREYTONES)",
+      QCoreApplication::translate("TifWriterProperties", " 8(GREYTONES)"));
+  m_bitsPerPixel.setItemUIName(
+      L"32(RGBM)",
+      QCoreApplication::translate("TifWriterProperties", "32(RGBA)"));
+  m_bitsPerPixel.setItemUIName(
+      L"64(RGBM)",
+      QCoreApplication::translate("TifWriterProperties", "64(RGBA)"));
+  m_orientation.setQStringName(
+      QCoreApplication::translate("TifWriterProperties", "Orientation"));
+  m_orientation.setItemUIName(
+      TNZ_INFO_ORIENT_TOPLEFT,
+      QCoreApplication::translate("TifWriterProperties", "Top Left"));
+  m_orientation.setItemUIName(
+      TNZ_INFO_ORIENT_TOPRIGHT,
+      QCoreApplication::translate("TifWriterProperties", "Top Right"));
+  m_orientation.setItemUIName(
+      TNZ_INFO_ORIENT_BOTRIGHT,
+      QCoreApplication::translate("TifWriterProperties", "Bottom Right"));
+  m_orientation.setItemUIName(
+      TNZ_INFO_ORIENT_BOTLEFT,
+      QCoreApplication::translate("TifWriterProperties", "Bottom Left"));
+  m_orientation.setItemUIName(
+      TNZ_INFO_ORIENT_LEFTTOP,
+      QCoreApplication::translate("TifWriterProperties", "Left Top"));
+  m_orientation.setItemUIName(
+      TNZ_INFO_ORIENT_RIGHTTOP,
+      QCoreApplication::translate("TifWriterProperties", "Left Bottom"));
+  m_orientation.setItemUIName(
+      TNZ_INFO_ORIENT_RIGHTBOT,
+      QCoreApplication::translate("TifWriterProperties", "Right Top"));
+  m_orientation.setItemUIName(
+      TNZ_INFO_ORIENT_LEFTBOT,
+      QCoreApplication::translate("TifWriterProperties", "Right Bottom"));
 }
 
 //============================================================

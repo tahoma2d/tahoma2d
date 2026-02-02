@@ -197,11 +197,16 @@ void StudioPaletteTreeViewer::setStdPaletteHandle(
 
 QTreeWidgetItem *StudioPaletteTreeViewer::createRootItem(TFilePath path) {
   QString rootName = QString::fromStdWString(path.getWideName());
-  if (rootName != "Global Palettes")
+  if (rootName != "Global Palettes") {
     if (path == StudioPalette::instance()->getPersonalPalettesRoot())
-      rootName = "Personal Palettes";
+      rootName = QCoreApplication::translate("StudioPaletteTreeViewer",
+                                             "Personal Palettes");
     else
-      rootName = "Project Palettes";
+      rootName = QCoreApplication::translate("StudioPaletteTreeViewer",
+                                             "Project Palettes");
+  } else
+    rootName = QCoreApplication::translate("StudioPaletteTreeViewer",
+                                           "Global Palettes");
   QTreeWidgetItem *rootItem =
       new QTreeWidgetItem((QTreeWidget *)0, QStringList(rootName));
   rootItem->setIcon(0, createQIcon("folder", true));

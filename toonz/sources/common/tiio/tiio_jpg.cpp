@@ -315,8 +315,10 @@ public:
 //----
 
 void Tiio::JpgWriterProperties::updateTranslation() {
-  m_quality.setQStringName(tr("Quality"));
-  m_smoothing.setQStringName(tr("Smoothing"));
+  m_quality.setQStringName(
+      QCoreApplication::translate("JpgWriterProperties", "Quality"));
+  m_smoothing.setQStringName(
+      QCoreApplication::translate("JpgWriterProperties", "Smoothing"));
 }
 
 //----

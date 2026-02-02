@@ -2038,7 +2038,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">新建页</translation>
+        <translation>新建页</translation>
     </message>
     <message>
         <source>- No Styles -</source>
@@ -2046,7 +2046,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="vanished">名字编辑器</translation>
+        <translation>名字编辑器</translation>
     </message>
     <message>
         <source> + </source>
@@ -2057,6 +2057,13 @@ Select FX nodes and related links before copying or cutting the selection you wa
 It can&apos;t be changed.  Ever.</source>
         <translation type="unfinished">样式0设置为完全透明。
         它不能更改。曾经。</translation>
+    </message>
+</context>
+<context>
+    <name>PaletteIconWidget</name>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
+        <translation>单击将调色板拖动到工作室调色板中</translation>
     </message>
 </context>
 <context>
@@ -2959,10 +2966,6 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <translation>被保留的文件名不可使用。</translation>
     </message>
     <message>
-        <source>Click &amp; Drag Palette into Studio Palette</source>
-        <translation>单击将调色板拖动到工作室调色板中</translation>
-    </message>
-    <message>
         <source>Plain color</source>
         <comment>CustomStyleChooserPage</comment>
         <translation>纯色</translation>
@@ -3017,18 +3020,6 @@ Are you sure?</source>
     <message>
         <source>Sample Type: </source>
         <translation>样式类型：</translation>
-    </message>
-    <message>
-        <source>Name Editor</source>
-        <translation>名字编辑器</translation>
-    </message>
-    <message>
-        <source>New Style</source>
-        <translation>新建样式</translation>
-    </message>
-    <message>
-        <source>New Page</source>
-        <translation>新建页</translation>
     </message>
     <message>
         <source>R</source>
@@ -3546,6 +3537,18 @@ Are you sure ?</source>
         <source>Failed to save palette.</source>
         <translation>未能保存调色板。</translation>
     </message>
+    <message>
+        <source>Personal Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
@@ -3794,6 +3797,26 @@ Apply</source>
  \ / : * ? &quot; &lt; &gt; |</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Vector brushes</source>
+        <comment>Display of folder stuff/library/vector brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom styles</source>
+        <comment>Display of folder stuff/library/custom styles</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textures</source>
+        <comment>Display of folder stuff/library/textures</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MyPaint brushes</source>
+        <comment>Display of folder stuff/library/mypaint brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditorGUI::PlainColorPage</name>
@@ -3948,6 +3971,38 @@ Apply</source>
     <message>
         <source>Input:</source>
         <translation type="unfinished">输入: </translation>
+    </message>
+    <message>
+        <source>RGBA</source>
+        <translation type="unfinished">RGBA</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">红</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">绿</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">蓝</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">线性</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

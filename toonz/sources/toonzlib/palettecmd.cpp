@@ -695,7 +695,8 @@ void PaletteCmd::addPage(TPaletteHandle *paletteHandle, std::wstring name,
                          bool withUndo) {
   TPalette *palette = paletteHandle->getPalette();
   if (name == L"")
-    name = L"page " + std::to_wstring(palette->getPageCount() + 1);
+    name = QObject::tr("page ").toStdWString() +
+           std::to_wstring(palette->getPageCount() + 1);
   TPalette::Page *page = palette->addPage(name);
 
   palette->setDirtyFlag(true);

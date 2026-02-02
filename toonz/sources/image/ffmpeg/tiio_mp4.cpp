@@ -257,8 +257,10 @@ Tiio::Mp4WriterProperties::Mp4WriterProperties()
 }
 
 void Tiio::Mp4WriterProperties::updateTranslation() {
-  m_vidQuality.setQStringName(tr("Quality"));
-  m_scale.setQStringName(tr("Scale"));
+  m_vidQuality.setQStringName(
+      QCoreApplication::translate("Mp4WriterProperties", "Quality"));
+  m_scale.setQStringName(
+      QCoreApplication::translate("Mp4WriterProperties", "Scale"));
 }
 
 // Tiio::Reader* Tiio::makeMp4Reader(){ return nullptr; }

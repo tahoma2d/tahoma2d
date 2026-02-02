@@ -356,19 +356,44 @@ Tiio::GifWriterProperties::GifWriterProperties()
   m_mode.addValue(L"NOPAL");
 
   // Translate values
-  m_mode.setItemUIName(L"GLOBAL0", tr("Global Palette"));
-  m_mode.setItemUIName(L"GLOBAL1", tr("Global Palette + Sierra Dither"));
-  m_mode.setItemUIName(L"GLOBAL2", tr("Global Palette + Bayer2 Dither"));
-  m_mode.setItemUIName(L"GLOBAL3", tr("Global Palette + Bayer1 Dither"));
-  m_mode.setItemUIName(L"DIFF0", tr("Diff Palette"));
-  m_mode.setItemUIName(L"DIFF1", tr("Diff Palette + Sierra Dither"));
-  m_mode.setItemUIName(L"DIFF2", tr("Diff Palette + Bayer2 Dither"));
-  m_mode.setItemUIName(L"DIFF3", tr("Diff Palette + Bayer1 Dither"));
-  m_mode.setItemUIName(L"NEW0", tr("New Pal Per Frame"));
-  m_mode.setItemUIName(L"NEW1", tr("New Pal Per Frame + Sierra Dither"));
-  m_mode.setItemUIName(L"NEW2", tr("New Pal Per Frame + Bayer2 Dither"));
-  m_mode.setItemUIName(L"NEW3", tr("New Pal Per Frame + Bayer1 Dither"));
-  m_mode.setItemUIName(L"NOPAL", tr("Opaque, Dither, 256 Colors Only"));
+  m_mode.setItemUIName(
+      L"GLOBAL0",
+      QCoreApplication::translate("GifWriterProperties", "Global Palette"));
+  m_mode.setItemUIName(
+      L"GLOBAL1", QCoreApplication::translate(
+                      "GifWriterProperties", "Global Palette + Sierra Dither"));
+  m_mode.setItemUIName(
+      L"GLOBAL2", QCoreApplication::translate(
+                      "GifWriterProperties", "Global Palette + Bayer2 Dither"));
+  m_mode.setItemUIName(
+      L"GLOBAL3", QCoreApplication::translate(
+                      "GifWriterProperties", "Global Palette + Bayer1 Dither"));
+  m_mode.setItemUIName(L"DIFF0", QCoreApplication::translate(
+                                     "GifWriterProperties", "Diff Palette"));
+  m_mode.setItemUIName(
+      L"DIFF1", QCoreApplication::translate("GifWriterProperties",
+                                            "Diff Palette + Sierra Dither"));
+  m_mode.setItemUIName(
+      L"DIFF2", QCoreApplication::translate("GifWriterProperties",
+                                            "Diff Palette + Bayer2 Dither"));
+  m_mode.setItemUIName(
+      L"DIFF3", QCoreApplication::translate("GifWriterProperties",
+                                            "Diff Palette + Bayer1 Dither"));
+  m_mode.setItemUIName(
+      L"NEW0",
+      QCoreApplication::translate("GifWriterProperties", "New Pal Per Frame"));
+  m_mode.setItemUIName(
+      L"NEW1", QCoreApplication::translate(
+                   "GifWriterProperties", "New Pal Per Frame + Sierra Dither"));
+  m_mode.setItemUIName(
+      L"NEW2", QCoreApplication::translate(
+                   "GifWriterProperties", "New Pal Per Frame + Bayer2 Dither"));
+  m_mode.setItemUIName(
+      L"NEW3", QCoreApplication::translate(
+                   "GifWriterProperties", "New Pal Per Frame + Bayer1 Dither"));
+  m_mode.setItemUIName(
+      L"NOPAL", QCoreApplication::translate("GifWriterProperties",
+                                            "Opaque, Dither, 256 Colors Only"));
 
   // Doesn't make Generate Palette property visible in the popup
   m_palette.setVisible(false);
@@ -381,11 +406,16 @@ Tiio::GifWriterProperties::GifWriterProperties()
 }
 
 void Tiio::GifWriterProperties::updateTranslation() {
-  m_scale.setQStringName(tr("Scale"));
-  m_looping.setQStringName(tr("Looping"));
-  m_palette.setQStringName(tr("Generate Palette"));
-  m_mode.setQStringName(tr("Mode"));
-  m_maxcolors.setQStringName(tr("Max Colors"));
+  m_scale.setQStringName(
+      QCoreApplication::translate("GifWriterProperties", "Scale"));
+  m_looping.setQStringName(
+      QCoreApplication::translate("GifWriterProperties", "Looping"));
+  m_palette.setQStringName(
+      QCoreApplication::translate("GifWriterProperties", "Generate Palette"));
+  m_mode.setQStringName(
+      QCoreApplication::translate("GifWriterProperties", "Mode"));
+  m_maxcolors.setQStringName(
+      QCoreApplication::translate("GifWriterProperties", "Max Colors"));
 }
 
 // Tiio::Reader* Tiio::makeGifReader(){ return nullptr; }

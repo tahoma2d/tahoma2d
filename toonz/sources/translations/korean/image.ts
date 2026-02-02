@@ -102,6 +102,22 @@
     </message>
 </context>
 <context>
+    <name>Ffmpeg</name>
+    <message>
+        <source>FFmpeg timed out.
+Please check the file for errors.
+If the file doesn&apos;t play or is incomplete, 
+Please try raising the FFmpeg timeout in Preferences.</source>
+        <translation>FFmpeg 시간초과.
+파일에 오류가 있는지 확인하십시요.
+파일이 재생되지 않거나 불완전 한 경우, 기본 설정에서 FFmpeg 시간초과를 설정하세요.</translation>
+    </message>
+    <message>
+        <source>FFmpeg returned error-code: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GifWriterProperties</name>
     <message>
         <source>Scale</source>
@@ -203,22 +219,6 @@
     <message>
         <source>Alpha Channel</source>
         <translation>알파 채널</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <source>FFmpeg timed out.
-Please check the file for errors.
-If the file doesn&apos;t play or is incomplete, 
-Please try raising the FFmpeg timeout in Preferences.</source>
-        <translation>FFmpeg 시간초과.
-파일에 오류가 있는지 확인하십시요.
-파일이 재생되지 않거나 불완전 한 경우, 기본 설정에서 FFmpeg 시간초과를 설정하세요.</translation>
-    </message>
-    <message>
-        <source>FFmpeg returned error-code: %1</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

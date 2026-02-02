@@ -11642,6 +11642,10 @@ but a random crash might occur, use at your own risk:</source>
         <source>Show Images in Cell Tooltips</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Import Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup:: FormatProperties</name>
@@ -19887,6 +19891,21 @@ Klepněte na tlačítko pro vytvoření nového pod-Xsheet</translation>
     <message>
         <source>Right:</source>
         <translation>Pravý:</translation>
+    </message>
+</context>
+<context>
+    <name>TextAwareBaseFx</name>
+    <message>
+        <source>Nearby Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specified Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input Text</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

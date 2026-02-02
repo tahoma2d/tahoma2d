@@ -6053,6 +6053,20 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
              ? tr("Generated")
              : (isMyFavoriteSet) ? tr("My Favorites")
                                  : styleFolder.withoutParentDir().getQString());
+
+    // Translate default directory names for display purposes
+    if (labelText == "vector brushes")
+      labelText = tr("Vector brushes",
+                     "Display of folder stuff/library/vector brushes");
+    else if (labelText == "custom styles")
+      labelText =
+          tr("Custom styles", "Display of folder stuff/library/custom styles");
+    else if (labelText == "textures")
+      labelText = tr("Textures", "Display of folder stuff/library/textures");
+    else if (labelText == "mypaint brushes")
+      labelText = tr("MyPaint brushes",
+                     "Display of folder stuff/library/mypaint brushes");
+
     if (isFavorite && dirDepth > 0)
       labelText += tr(" (Favorites)");
     else if (!isFavorite && pageType == StylePageType::Raster &&

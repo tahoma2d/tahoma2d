@@ -1898,7 +1898,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">新規ページ</translation>
+        <translation>新規ページ</translation>
     </message>
     <message>
         <source>- No Styles -</source>
@@ -1906,7 +1906,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="obsolete">スタイル名エディタ</translation>
+        <translation>スタイル名エディタ</translation>
     </message>
     <message>
         <source> + </source>
@@ -1915,6 +1915,13 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <message>
         <source>Style 0 is set to full transparent. 
 It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PaletteIconWidget</name>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2777,10 +2784,6 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <translation>システムの予約語のため、使用できません。</translation>
     </message>
     <message>
-        <source>Click &amp; Drag Palette into Studio Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Plain color</source>
         <comment>CustomStyleChooserPage</comment>
         <translation type="unfinished"></translation>
@@ -2831,18 +2834,6 @@ Are you sure?</source>
     <message>
         <source>Sample Type: </source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name Editor</source>
-        <translation type="unfinished">スタイル名エディタ</translation>
-    </message>
-    <message>
-        <source>New Style</source>
-        <translation type="unfinished">新規スタイル</translation>
-    </message>
-    <message>
-        <source>New Page</source>
-        <translation type="unfinished">新規ページ</translation>
     </message>
     <message>
         <source>R</source>
@@ -3351,6 +3342,18 @@ Are you sure ?</source>
         <source>Failed to save palette.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Personal Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global Palettes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
@@ -3588,6 +3591,26 @@ Apply</source>
         <source>Show Auto/Apply</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Vector brushes</source>
+        <comment>Display of folder stuff/library/vector brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom styles</source>
+        <comment>Display of folder stuff/library/custom styles</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Textures</source>
+        <comment>Display of folder stuff/library/textures</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MyPaint brushes</source>
+        <comment>Display of folder stuff/library/mypaint brushes</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditorGUI::PlainColorPage</name>
@@ -3741,6 +3764,38 @@ Apply</source>
     </message>
     <message>
         <source>Input:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RGBA</source>
+        <translation type="unfinished">RGBA</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">赤</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">緑</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">青</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">アルファ</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">線形</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

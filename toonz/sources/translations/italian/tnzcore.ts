@@ -2,6 +2,32 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="it">
 <context>
+    <name>BmpWriterProperties</name>
+    <message>
+        <source>Bits Per Pixel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>24 bits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>8 bits (Greyscale)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>JpgWriterProperties</name>
+    <message>
+        <source>Quality</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smoothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>colors</source>
@@ -51,32 +77,6 @@
     <message>
         <source>Rotation</source>
         <translation>Ruotazione</translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::BmpWriterProperties</name>
-    <message>
-        <source>Bits Per Pixel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>24 bits</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>8 bits (Greyscale)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Tiio::JpgWriterProperties</name>
-    <message>
-        <source>Quality</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Smoothing</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

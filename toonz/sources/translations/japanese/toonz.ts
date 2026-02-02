@@ -11626,6 +11626,10 @@ but a random crash might occur, use at your own risk:</source>
         <source>Show Images in Cell Tooltips</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Import Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::AdditionalStyleEdit</name>
@@ -19846,6 +19850,21 @@ Click the arrow button to create a new sub-xsheet</source>
     <message>
         <source>Right:</source>
         <translation>右：</translation>
+    </message>
+</context>
+<context>
+    <name>TextAwareBaseFx</name>
+    <message>
+        <source>Nearby Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specified Note Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input Text</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
