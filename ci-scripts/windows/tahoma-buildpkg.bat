@@ -57,8 +57,11 @@ for /d /r ""%VCINSTALLDIR%"" %%a in (14.*) do (
 :done
 echo "VCRUNTIME_PATH=%VCRUNTIME_PATH%"
 
+copy /Y "%VCRUNTIME_PATH%\vcruntime140.dll" Tahoma2D
 copy /Y "%VCRUNTIME_PATH%\vcruntime140_1.dll" Tahoma2D
+copy /Y "%VCRUNTIME_PATH%\msvcp140.dll" Tahoma2D
 copy /Y "%VCRUNTIME_PATH%\msvcp140_1.dll" Tahoma2D
+copy /Y "%VCRUNTIME_PATH%\msvcp140_2.dll" Tahoma2D
 
 echo ">>> Configuring Tahoma2D.exe for deployment"
 
