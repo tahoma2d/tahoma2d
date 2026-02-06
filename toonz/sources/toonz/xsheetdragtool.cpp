@@ -1363,7 +1363,7 @@ public:
     TStageObjectId cameraId =
         TStageObjectId::CameraId(xsh->getCameraColumnIndex());
 
-    TStageObjectId objId = col >= 0 ? TStageObjectId::ColumnId(col) : cameraId;
+    TStageObjectId objId = col >= 0 ? xsh->getColumnObjectId(col) : cameraId;
     if (xsh->getColumn(col) && xsh->getColumn(col)->isLocked()) {
       m_enable = false;
       return;

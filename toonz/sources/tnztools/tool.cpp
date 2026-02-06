@@ -930,8 +930,8 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   // find the nearest level before it
   if (levelType == NO_XSHLEVEL &&
       !m_application->getCurrentFrame()->isEditingLevel()) {
-    if (!column ||
-        (column && !column->getSoundColumn() && !column->getFolderColumn())) {
+    if (!column || (column && !column->getSoundColumn() &&
+                    !column->getFolderColumn() && !column->getPegbarColumn())) {
       TXshCell cell = xsh->getCell(rowIndex, columnIndex);
       xl            = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
       sl            = cell.isEmpty() ? 0 : cell.getSimpleLevel();
@@ -954,7 +954,8 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     if (levelType == NO_XSHLEVEL &&
         !m_application->getCurrentFrame()->isEditingLevel()) {
       if (!column ||
-          (column && !column->getSoundColumn() && !column->getFolderColumn())) {
+          (column && !column->getSoundColumn() && !column->getFolderColumn() &&
+           !column->getPegbarColumn())) {
             int r0, r1;
             xsh->getCellRange(columnIndex, r0, r1);
             for (int r = std::min(r1, rowIndex); r > r0; r--) {
@@ -1035,6 +1036,10 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     else if (column->getFolderColumn())
       return (enable(false),
               QObject::tr("It is not possible to edit the folder column."));
+
+    else if (column->getPegbarColumn())
+      return (enable(false),
+              QObject::tr("It is not possible to edit the pegbar column."));
 
     if (toolType == TTool::ColumnTool) {
       // Check column target

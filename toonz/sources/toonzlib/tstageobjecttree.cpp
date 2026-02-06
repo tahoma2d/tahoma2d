@@ -3,6 +3,8 @@
 #include "toonz/tstageobjecttree.h"
 #include "toonz/tstageobjectspline.h"
 #include "toonz/tstageobject.h"
+#include "toonz/txshpegbarcolumn.h"
+
 #include "tgrammar.h"
 #include "ttokenizer.h"
 #include "tconvert.h"
@@ -433,7 +435,24 @@ void TStageObjectTree::loadData(TIStream &is, TXsheet *xsh) {
         m_imp->m_groupIdCount = pegbar->getGroupId();
       is.matchEndTag();
 
-      std::string name = pegbar->getName();
+      // If there isn't a pegbar column for this pegbar, create it now
+      // Assume columns have already been loaded
+      if (id.isPegbar()) {
+        bool found = false;
+        int cols   = xsh->getColumnCount();
+        for (int i = 0; i < cols; i++) {
+          if (!xsh->getColumn(i) || !xsh->getColumn(i)->getPegbarColumn() ||
+              xsh->getColumn(i)->getPegbarColumn()->getPegbarObjectId() != id)
+            continue;
+          found = true;
+        }
+        if (!found) {
+          TXshPegbarColumn *pegbarCol = new TXshPegbarColumn();
+          pegbarCol->setXsheet(xsh);
+          pegbarCol->setPegbarObjectId(id);
+          xsh->insertColumn(cols, pegbarCol);
+        }
+      }
     } else if (tagName == "grid_dimension") {
       is >> m_imp->m_dagGridDimension;
       is.matchEndTag();

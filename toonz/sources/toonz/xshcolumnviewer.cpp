@@ -50,6 +50,7 @@
 #include "toonz/tcamera.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/txshfoldercolumn.h"
+#include "toonz/txshpegbarcolumn.h"
 
 // TnzCore includes
 #include "tconvert.h"
@@ -751,7 +752,7 @@ void RenameColumnField::show(const QRect &rect, int col) {
   TXsheet *xsh    = m_xsheetHandle->getXsheet();
   int cameraIndex = xsh->getCameraColumnIndex();
   std::string name =
-      col >= 0 ? xsh->getStageObject(TStageObjectId::ColumnId(col))->getName()
+      col >= 0 ? xsh->getStageObject(xsh->getColumnObjectId(col))->getName()
                : xsh->getStageObject(TStageObjectId::CameraId(cameraIndex))
                      ->getName();
   TXshColumn *column          = xsh->getColumn(col);
@@ -775,7 +776,7 @@ void RenameColumnField::show(const QRect &rect, int col) {
 void RenameColumnField::renameColumn() {
   std::string newName     = text().toStdString();
   int cameraIndex         = m_xsheetHandle->getXsheet()->getCameraColumnIndex();
-  TStageObjectId columnId = m_col >= 0 ? TStageObjectId::ColumnId(m_col)
+  TStageObjectId columnId = m_col >= 0 ? m_xsheetHandle->getXsheet()->getColumnObjectId(m_col)
                                        : TStageObjectId::CameraId(cameraIndex);
   TXshColumn *column =
       m_xsheetHandle->getXsheet()->getColumn(columnId.getIndex());
@@ -911,7 +912,7 @@ void ColumnArea::DrawHeader::levelColors(QColor &columnColor,
   if (column) {
     if (column->isControl()) usage = Control;
     if (column->isRendered() || column->getMeshColumn() ||
-        column->getFolderColumn())
+        column->getFolderColumn() || column->getPegbarColumn())
       usage = Normal;
   }
 
@@ -1056,7 +1057,7 @@ void ColumnArea::DrawHeader::drawEye() const {
   else
     p.setPen(m_viewer->getTimelineIconLineColor());  // Preview border color
 
-  if (col < 0 || column->getSoundTextColumn()) {
+  if (col < 0 || column->getSoundTextColumn() || column->getPegbarColumn()) {
     if (o->flag(PredefinedFlag::EYE_AREA_BORDER)) p.drawRect(prevViewRect);
     return;
   }
@@ -1111,7 +1112,8 @@ void ColumnArea::DrawHeader::drawPreviewToggle(int opacity) const {
   else
     p.setPen(m_viewer->getTimelineIconLineColor());  // Camstand border color
 
-  if (col < 0 || column->getPaletteColumn() || column->getSoundTextColumn()) {
+  if (col < 0 || column->getPaletteColumn() || column->getSoundTextColumn() ||
+      column->getPegbarColumn()) {
     if (o->flag(PredefinedFlag::PREVIEW_LAYER_AREA_BORDER))
       p.drawRect(tableViewRect);
     return;
@@ -1170,7 +1172,8 @@ void ColumnArea::DrawHeader::drawUnifiedViewToggle(int opacity) const {
   else
     p.setPen(m_viewer->getTimelineIconLineColor());  // border color
 
-  if (col < 0 || column->getPaletteColumn() || column->getSoundTextColumn()) {
+  if (col < 0 || column->getPaletteColumn() || column->getSoundTextColumn() ||
+      column->getPegbarColumn()) {
     if (o->flag(PredefinedFlag::PREVIEW_LAYER_AREA_BORDER))
       p.drawRect(unifiedViewRect);
     return;
@@ -1281,7 +1284,8 @@ void ColumnArea::DrawHeader::drawConfig() const {
 
   TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
 
-  if (zColumn || column->getPaletteColumn() || column->getSoundTextColumn())
+  if (zColumn || column->getPaletteColumn() || column->getSoundTextColumn() ||
+      column->getPegbarColumn())
     return;
 
   QPixmap icon = svgToPixmap(svgFilePath, configImgRect.size(),
@@ -1561,6 +1565,12 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
     return;
   }
 
+  // pegbar thubnail
+  if (column->getPegbarColumn()) {
+    p.drawPixmap(thumbnailImageRect, iconPixmap);
+    return;
+  }
+
   // All other thumbnails
   p.setPen(m_viewer->getTextColor());
 
@@ -1725,7 +1735,7 @@ void ColumnArea::DrawHeader::drawParentHandleName() const {
 void ColumnArea::DrawHeader::drawFilterColor() const {
   if (col < 0 || isEmpty || column->getColorFilterId() == 0 ||
       column->getSoundColumn() || column->getSoundTextColumn() ||
-      column->getPaletteColumn() ||
+      column->getPegbarColumn() || column->getPaletteColumn() ||
       ((column->isMask() || column->isAlphaLocked()) &&
        (!o->isVerticalTimeline() ||
         Preferences::instance()->getXsheetLayoutPreference() != "Minimum")))
@@ -2124,12 +2134,69 @@ void ColumnArea::drawFolderColumnHead(QPainter &p, int col) {
   drawHeader.drawFolderIndicator();
   drawHeader.drawColumnName();
   drawHeader.drawColumnNumber();
-  QPixmap iconPixmap = getColumnIcon(col);
-  drawHeader.drawThumbnail(iconPixmap);
+  static QPixmap iconignored;
+  drawHeader.drawThumbnail(iconignored);
   drawHeader.drawFilterColor();
   drawHeader.drawConfig();
   drawHeader.drawPegbarName();
   drawHeader.drawParentHandleName();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnArea::drawPegbarColumnHead(QPainter &p, int col) {  // AREA
+  TColumnSelection *selection = m_viewer->getColumnSelection();
+  const Orientation *o        = m_viewer->orientation();
+
+  int x = m_viewer->columnToLayerAxis(col);
+
+  p.setRenderHint(QPainter::SmoothPixmapTransform, true);
+  QString fontName = Preferences::instance()->getInterfaceFont();
+  if (fontName == "") {
+#ifdef _WIN32
+    fontName = "Arial";
+#else
+    fontName = "Helvetica";
+#endif
+  }
+  static QFont font(fontName, -1, QFont::Normal);
+  font.setPixelSize(XSHEET_FONT_PX_SIZE);
+  p.setFont(font);
+
+  QRect rect(x, 0, o->cellWidth(), height());
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = m_viewer->getXsheet();
+
+  TStageObjectId columnId = m_viewer->getObjectId(col);
+  std::string name        = xsh->getStageObject(columnId)->getName();
+
+  bool isEditingSpline = app->getCurrentObject()->isSpline();
+
+  // Check if column is locked and selected
+  TXshColumn *column = col >= 0 ? xsh->getColumn(col) : 0;
+  bool isLocked      = column != 0 && column->isLocked(false);
+  bool isCurrent     = m_viewer->getCurrentColumn() == col;
+  bool isSelected =
+      m_viewer->getColumnSelection()->isColumnSelected(col) && !isEditingSpline;
+
+  DrawHeader drawHeader(this, p, col);
+  drawHeader.prepare();
+  QColor columnColor, dragColor;
+  drawHeader.levelColors(columnColor, dragColor);
+  drawHeader.drawBaseFill(columnColor, dragColor);
+  drawHeader.drawEye();
+  drawHeader.drawPreviewToggle(255);
+  drawHeader.drawLock();
+  drawHeader.drawConfig();
+  drawHeader.drawFolderIndicator();
+  drawHeader.drawColumnName();
+  drawHeader.drawColumnNumber();
+  static QPixmap iconPixmap(svgToPixmap(":Resources/pegbar_header.svg"));
+  drawHeader.drawThumbnail(iconPixmap);
+  drawHeader.drawPegbarName();
+  drawHeader.drawParentHandleName();
+  // drawHeader.drawFilterColor();
 }
 
 //-----------------------------------------------------------------------------
@@ -2423,6 +2490,9 @@ void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
         break;
       case TXshColumn::eFolderType:
         drawFolderColumnHead(p, col);
+        break;
+      case TXshColumn::ePegbarType:
+        drawPegbarColumnHead(p, col);
         break;
       default:
         drawLevelColumnHead(p, col);  // camera column is also painted here
@@ -3134,7 +3204,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
                      .contains(mouseInCell)) {
         // unified view button
         if (event->button() != Qt::LeftButton) return;
-        if (column->getSoundTextColumn()) {
+        if (column->getSoundTextColumn() || column->getPegbarColumn()) {
           // do nothing
         } else {
           // sync eye button on release
@@ -3151,7 +3221,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
                      .contains(mouseInCell)) {
         // separated view - preview button
         if (event->button() != Qt::LeftButton) return;
-        if (column->getSoundTextColumn()) {
+        if (column->getSoundTextColumn() || column->getPegbarColumn()) {
           // do nothing
         } else {
           m_doOnRelease =
@@ -3166,7 +3236,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
                      .contains(mouseInCell)) {
         // separated view - camstand button
         if (event->button() != Qt::LeftButton) return;
-        if (column->getPaletteColumn() || column->getSoundTextColumn()) {
+        if (column->getPaletteColumn() || column->getSoundTextColumn() ||
+            column->getPegbarColumn()) {
           // do nothing
         } else {
           m_doOnRelease =
@@ -3183,8 +3254,9 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
         TXshZeraryFxColumn *zColumn =
             dynamic_cast<TXshZeraryFxColumn *>(column);
 
-        if (column && (zColumn || column->getPaletteColumn() ||
-                       column->getSoundTextColumn())) {
+        if (column &&
+            (zColumn || column->getPaletteColumn() ||
+             column->getSoundTextColumn() || column->getPegbarColumn())) {
           // do nothing
         } else
           m_doOnRelease = OpenSettings;
@@ -3701,7 +3773,7 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
       for (col = 0; col < totcols; col++) {
         TXshColumn *column = xsh->getColumn(col);
         if (!xsh->isColumnEmpty(col) && !column->getPaletteColumn() &&
-            !column->getSoundTextColumn()) {
+            !column->getSoundTextColumn() && !column->getPegbarColumn()) {
           column->setPreviewVisible(!column->isPreviewVisible());
         }
       }
@@ -3710,7 +3782,7 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
       for (col = 0; col < totcols; col++) {
         TXshColumn *column = xsh->getColumn(col);
         if (!xsh->isColumnEmpty(col) && !column->getPaletteColumn() &&
-            !column->getSoundTextColumn()) {
+            !column->getSoundTextColumn() && !column->getPegbarColumn()) {
           column->setCamstandVisible(!column->isCamstandVisible());
           // sync eye button
           if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
@@ -3951,6 +4023,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addSeparator();
       menu.addAction(cmdManager->getAction(MI_InsertFx));
       menu.addAction(cmdManager->getAction(MI_NewNoteLevel));
+      menu.addAction(cmdManager->getAction(MI_NewPegbar));
       menu.addAction(cmdManager->getAction(MI_NewFolder));
       if (!o->isVerticalTimeline()) {
         menu.addSeparator();

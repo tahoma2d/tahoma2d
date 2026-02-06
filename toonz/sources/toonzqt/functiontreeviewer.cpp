@@ -895,7 +895,10 @@ void FunctionTreeModel::refreshStageObjects(TXsheet *xsh) {
   for (i = 0; i < iCount; ++i) {
     TStageObject *pegbar = ptree->getStageObject(i);
     TStageObjectId id    = pegbar->getId();
-    if (id.isColumn() && xsh->isColumnEmpty(id.getIndex())) continue;
+    int col              = id.getIndex();
+    if (id.isColumn() && (xsh->isColumnEmpty(col) || xsh->isFolderColumn(col) ||
+                          xsh->isPegbarColumn(col)))
+      continue;
     if (id == ptree->getMotionPathViewerId()) continue;
 
     newItems.push_back(new StageObjectChannelGroup(pegbar));

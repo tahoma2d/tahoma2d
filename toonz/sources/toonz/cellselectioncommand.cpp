@@ -2136,8 +2136,8 @@ void TCellSelection::shiftKeyframes(int direction) {
     if (!column || column->isLocked()) continue;
 
     TStageObjectId colId =
-        col < 0 ? TStageObjectId::ColumnId(xsh->getCameraColumnIndex())
-                : TStageObjectId::ColumnId(col);
+        col < 0 ? TStageObjectId::CameraId(xsh->getCameraColumnIndex())
+                : xsh->getColumnObjectId(col);
     TStageObject *colObj = xsh->getStageObject(colId);
     TStageObject::KeyframeMap keyframes;
     colObj->getKeyframes(keyframes);

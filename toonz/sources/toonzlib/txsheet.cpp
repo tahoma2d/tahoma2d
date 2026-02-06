@@ -35,6 +35,7 @@
 #include "toonz/expressionreferencemonitor.h"
 #include "toonz/navigationtags.h"
 #include "toonz/txshfoldercolumn.h"
+#include "toonz/txshpegbarcolumn.h"
 
 #include "toonz/txsheet.h"
 #include "toonz/preferences.h"
@@ -254,7 +255,7 @@ int TXsheet::getFrameCount() const {
       continue;
     }
 
-    TStageObject *pegbar = getStageObject(TStageObjectId::ColumnId(c));
+    TStageObject *pegbar = getStageObject(getColumnObjectId(c));
     if (!pegbar) continue;
     if (!pegbar->getKeyframeRange(r0, r1)) continue;
     frameCount = std::max(frameCount, (r1 + 1));
@@ -1687,6 +1688,19 @@ TXshColumn *TXsheet::getColumn(int col) const {
 
 //-----------------------------------------------------------------------------
 
+TStageObjectId TXsheet::getColumnObjectId(int col) const {
+  if (col < 0) return TStageObjectId::ColumnId(m_cameraColumnIndex);
+
+  TXshColumn *column = getColumn(col);
+
+  if (column && column->getPegbarColumn())
+    return column->getPegbarColumn()->getPegbarObjectId();
+
+  return TStageObjectId::ColumnId(col);
+}
+
+//-----------------------------------------------------------------------------
+
 int TXsheet::getColumnCount() const {
   return m_imp->m_columnSet.getColumnCount();
 }
@@ -2279,6 +2293,15 @@ bool TXsheet::isFolderColumn(int col) {
   if (!column) return false;
 
   return column->getFolderColumn() ? true : false;
+}
+
+//---------------------------------------------------------
+
+bool TXsheet::isPegbarColumn(int col) {
+  TXshColumn *column = getColumn(col);
+  if (!column) return false;
+
+  return column->getPegbarColumn() ? true : false;
 }
 
 //---------------------------------------------------------

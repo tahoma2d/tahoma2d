@@ -385,6 +385,17 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(QColor SelectedFolderColumnColor READ getSelectedFolderColumnColor
                  WRITE setSelectedFolderColumnColor)
 
+  // Pegbar column
+  QColor m_pegbarColumnColor;
+  QColor m_pegbarColumnBorderColor;
+  QColor m_selectedPegbarColumnColor;
+  Q_PROPERTY(QColor PegbarColumnColor READ getPegbarColumnColor WRITE
+                 setPegbarColumnColor)
+  Q_PROPERTY(QColor PegbarColumnBorderColor READ getPegbarColumnBorderColor
+                 WRITE setPegbarColumnBorderColor)
+  Q_PROPERTY(QColor SelectedPegbarColumnColor READ getSelectedPegbarColumnColor
+                 WRITE setSelectedPegbarColumnColor)
+
   // Implicit Cell alpha
   int m_implicitCellAlpha;
   Q_PROPERTY(int ImplicitCellAlpha READ getImplicitCellAlpha WRITE
@@ -702,6 +713,7 @@ public:
   bool areSoundCellsSelected();
   bool areSoundTextCellsSelected();
   bool areFolderCellsSelected();
+  bool arePegbarCellsSelected();
   bool areCameraCellsSelected();
 
   XsheetGUI::DragTool *getDragTool() const { return m_dragTool; };
@@ -1057,6 +1069,23 @@ public:
   }
   QColor getSelectedFolderColumnColor() const {
     return m_selectedFolderColumnColor;
+  }
+  // Pegbar column
+  void setPegbarColumnColor(const QColor &color) {
+    m_pegbarColumnColor = color;
+  }
+  void setPegbarColumnBorderColor(const QColor &color) {
+    m_pegbarColumnBorderColor = color;
+  }
+  void setSelectedPegbarColumnColor(const QColor &color) {
+    m_selectedPegbarColumnColor = color;
+  }
+  QColor getPegbarColumnColor() const { return m_pegbarColumnColor; }
+  QColor getPegbarColumnBorderColor() const {
+    return m_pegbarColumnBorderColor;
+  }
+  QColor getSelectedPegbarColumnColor() const {
+    return m_selectedPegbarColumnColor;
   }
 
   // Implicit Cell Alpha

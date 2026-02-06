@@ -123,7 +123,7 @@ void TCellKeyframeSelection::selectCellsKeyframes(int r0, int c0, int r1,
     for (r = r0; r <= r1; r++) {
       TStageObjectId id =
           c < 0 ? TStageObjectId::CameraId(xsh->getCameraColumnIndex())
-                : TStageObjectId::ColumnId(c);
+                : xsh->getColumnObjectId(c);
       TStageObject *stObj = xsh->getStageObject(id);
       if (stObj->isKeyframe(r)) m_keyframeSelection->select(r, c);
     }
@@ -136,7 +136,7 @@ void TCellKeyframeSelection::selectCellKeyframe(int row, int col) {
   TXsheet *xsh = m_xsheetHandle->getXsheet();
   TStageObjectId id =
       col < 0 ? TStageObjectId::CameraId(xsh->getCameraColumnIndex())
-              : TStageObjectId::ColumnId(col);
+              : xsh->getColumnObjectId(col);
   TStageObject *stObj = xsh->getStageObject(id);
   m_keyframeSelection->clear();
   if (stObj->isKeyframe(row)) m_keyframeSelection->select(row, col);
