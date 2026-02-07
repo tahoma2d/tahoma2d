@@ -3978,9 +3978,12 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
       bool hasDragBar = Preferences::instance()->isShowDragBarsEnabled();
 
       bool isInDragArea =
-          col < 0 ? false : o->rect(PredefinedRect::DRAG_AREA)
-                                .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
-                                .contains(mouseInCell);
+          hasDragBar &&
+          (col < 0 ? false
+                   : o->rect(PredefinedRect::DRAG_AREA)
+                         .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+                         .contains(mouseInCell));
+
       bool isSoundPreviewArea =
           isSoundColumn &&
           o->rect(PredefinedRect::PREVIEW_TRACK)
@@ -3989,16 +3992,26 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
 
       bool isSoundExtenderArea = false;
       int r0, r1;
-      if (isSoundColumn && column->getSoundColumn()->getLevelRange(row, r0, r1))
+      if (isSoundColumn &&
+          column->getSoundColumn()->getLevelRange(row, r0, r1)) {
+        QRect dragBarAdj = Preferences::instance()->isShowDragBarsEnabled()
+                               ? QRect()
+                               : o->rect(PredefinedRect::DRAG_AREA);
+
+        int heightAdj = o->isVerticalTimeline() ? 0 : -dragBarAdj.height();
+        int widthAdj  = o->isVerticalTimeline() ? -dragBarAdj.width() : 0;
+
         if ((row == r0 && o->rect(PredefinedRect::BEGIN_SOUND_EDIT)
-                              .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+                              .adjusted(widthAdj, heightAdj, 0, 0)
                               .contains(mouseInCell)) ||
-            (row == r1 && o->rect(PredefinedRect::END_SOUND_EDIT)
-                              .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
-                              .contains(mouseInCell))) {
+            (row == r1 &&
+             o->rect(PredefinedRect::END_SOUND_EDIT)
+                 .adjusted(widthAdj + -frameAdj.x(), heightAdj + -frameAdj.y(),
+                           -frameAdj.x(), -frameAdj.y())
+                 .contains(mouseInCell))) {
           isSoundExtenderArea = true;
         }
-
+      }
       bool isCellEmpty =
           (xsh->getCell(row, col).isEmpty() || xsh->isImplicitCell(row, col));
 
@@ -4303,18 +4316,28 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
     m_tooltip = tr("Click and drag to repeat selected cells");
   else if (isSoundColumn) {
     int r0, r1;
-    if (column->getSoundColumn()->getLevelRange(row, r0, r1))
+    if (column->getSoundColumn()->getLevelRange(row, r0, r1)) {
+      QRect dragBarAdj = Preferences::instance()->isShowDragBarsEnabled()
+                             ? QRect()
+                             : o->rect(PredefinedRect::DRAG_AREA);
+
+      int heightAdj = o->isVerticalTimeline() ? 0 : -dragBarAdj.height();
+      int widthAdj  = o->isVerticalTimeline() ? -dragBarAdj.width() : 0;
+
       if ((row == r0 && o->rect(PredefinedRect::BEGIN_SOUND_EDIT)
-                            .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+                            .adjusted(widthAdj, heightAdj, 0, 0)
                             .contains(mouseInCell)) ||
-          (row == r1 && o->rect(PredefinedRect::END_SOUND_EDIT)
-                            .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
-                            .contains(mouseInCell))) {
+          (row == r1 &&
+           o->rect(PredefinedRect::END_SOUND_EDIT)
+               .adjusted(widthAdj + -frameAdj.x(), heightAdj + -frameAdj.y(),
+                         -frameAdj.x(), -frameAdj.y())
+               .contains(mouseInCell))) {
         if (o->isVerticalTimeline())
           setCursor(Qt::SplitVCursor);
         else
           setCursor(Qt::SplitHCursor);
       }
+    }
     m_tooltip = tr("");
   } else
     m_tooltip = tr("");
