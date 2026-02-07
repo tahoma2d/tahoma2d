@@ -1202,7 +1202,16 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
         TRect bbox;
         int m = m_points.size();
         std::vector<TThickPoint> points;
-        if (m == 3) {
+        if (m_isStraight) {
+          points.push_back(m_points[0]);
+          points.push_back(m_points[2]);
+          bbox = m_bluredBrush->getBoundFromPoints(points);
+          updateWorkAndBackupRasters(bbox + m_lastRect);
+          m_tileSaver->save(bbox);
+          m_bluredBrush->addArc(m_points[0], m_points[1], m_points[2],
+                                m_oldOpacity, opacity);
+          m_lastRect += bbox;
+        } else if (m == 3) {
           TThickPoint pa = m_points.front();
           points.push_back(pa);
           points.push_back(mid);
@@ -1224,11 +1233,6 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
                                 opacity);
           m_lastRect += bbox;
         }
-        bbox = m_bluredBrush->getBoundFromPoints(points);
-        updateWorkAndBackupRasters(bbox);
-        m_tileSaver->save(bbox);
-        m_bluredBrush->addArc(points[0], points[1], points[2], m_oldOpacity,
-                              opacity);
         m_bluredBrush->updateDrawing(
             ri->getRaster(), m_backUpRas, m_currentColor, bbox, opacity,
             m_modifierPaintBehind.getValue(), m_modifierLockAlpha.getValue());
