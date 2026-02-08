@@ -1904,9 +1904,7 @@ void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
                              m_brushPos + TPointD(radius, radius));
 
   } else {
-    m_mousePos = pos;
     m_brushPos = pos;
-    m_windowMousePos = -e.m_pos;
 
     TPointD snapThick(6.0 * m_pixelSize, 6.0 * m_pixelSize);
     // In order to clear the previous snap indicator
@@ -1927,6 +1925,9 @@ void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
     invalidateRect += TRectD(pos - halfThick, pos + halfThick);
   }
+
+  m_mousePos       = pos;
+  m_windowMousePos = -e.m_pos;
 
   invalidate(invalidateRect.enlarge(2));
 
