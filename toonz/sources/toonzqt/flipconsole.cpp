@@ -870,7 +870,7 @@ void FlipConsole::playNextFrame(QElapsedTimer *timer, qint64 targetInstant) {
     to   = m_stopAt;
   }
 
-  if (m_framesCount == 0 ||
+  if (m_framesCount == 0 || ((m_isLoop || m_isPingPong) && from == to) ||
       (m_isPlay && m_currentFrame == (m_reverse ? from : to))) {
     doButtonPressed(ePause);
     setChecked(m_isPlay ? ePlay : eLoop, false);
