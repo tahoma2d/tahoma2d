@@ -26,6 +26,15 @@ LayerFooterPanel::LayerFooterPanel(XsheetViewer *viewer, QWidget *parent,
   setObjectName("layerFooterPanel");
 
   setMouseTracking(true);
+
+  m_toggleColumnNumber = new QToolButton(this);
+  m_toggleColumnNumber->setToolTip(tr("Toggle Column Numbers"));
+  m_toggleColumnNumber->setIcon(createQIcon("toggle_col_number"));
+
+  m_toggleColumnParent = new QToolButton(this);
+  m_toggleColumnParent->setToolTip(tr("Toggle Column Parents"));
+  m_toggleColumnParent->setIcon(createQIcon("toggle_col_parent"));
+
   m_noteArea = new XsheetGUI::FooterNoteArea(this, m_viewer);
 
   Qt::Orientation ori =
@@ -48,6 +57,11 @@ LayerFooterPanel::LayerFooterPanel(XsheetViewer *viewer, QWidget *parent,
 
   connect(m_frameZoomSlider, SIGNAL(valueChanged(int)), this,
           SLOT(onFrameZoomSliderValueChanged(int)));
+
+  connect(m_toggleColumnNumber, SIGNAL(clicked()), this,
+          SLOT(onToggleColumnNumbers()));
+  connect(m_toggleColumnParent, SIGNAL(clicked()), this,
+          SLOT(onToggleColumnParents()));
 }
 
 LayerFooterPanel::~LayerFooterPanel() {}
@@ -92,6 +106,19 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
   m_noteArea->setFixedSize(o->rect(PredefinedRect::FOOTER_NOTE_AREA).size());
   m_noteArea->setGeometry(noteObjRect);
 
+  QRect toggleColParentRect =
+      o->rect(PredefinedRect::TOGGLE_COLUMN_PARENT_AREA);
+  p.fillRect(toggleColParentRect, Qt::NoBrush);
+
+  QRect toggleColParentObjRect = o->rect(PredefinedRect::TOGGLE_COLUMN_PARENT);
+  m_toggleColumnParent->setGeometry(toggleColParentObjRect);
+
+  QRect toggleColNumRect = o->rect(PredefinedRect::TOGGLE_COLUMN_NUMBER_AREA);
+  p.fillRect(toggleColNumRect, Qt::NoBrush);
+
+  QRect toggleColNumObjRect = o->rect(PredefinedRect::TOGGLE_COLUMN_NUMBER);
+  m_toggleColumnNumber->setGeometry(toggleColNumObjRect);
+
   static QPixmap zoomIn         = generateIconPixmap("zoom_in");
   static QPixmap zoomInRollover = generateIconPixmap("zoom_in_rollover");
   const QRect zoomInImgRect     = o->rect(PredefinedRect::ZOOM_IN);
@@ -123,7 +150,9 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
 
   if (!o->isVerticalTimeline()) {
     p.setPen(m_viewer->getVerticalLineColor());
-    QLine line = {leftSide(shorter(zoomOutImgRect)).translated(-2, 0)};
+    QLine line = {leftSide(shorter(noteAreaRect)).translated(-2, 0)};
+    p.drawLine(line);
+    line = {leftSide(shorter(zoomOutImgRect)).translated(-2, 0)};
     p.drawLine(line);
   }
 }
@@ -265,6 +294,24 @@ void LayerFooterPanel::setZoomSliderValue(int val) {
   m_frameZoomSlider->blockSignals(true);
   m_frameZoomSlider->setValue(val);
   m_frameZoomSlider->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void LayerFooterPanel::onToggleColumnNumbers() {
+  Preferences::instance()->setValue(
+      showColumnNumbers,
+      !Preferences::instance()->isShowColumnNumbersEnabled());
+  m_viewer->updateColumnArea();
+}
+
+//-----------------------------------------------------------------------------
+
+void LayerFooterPanel::onToggleColumnParents() {
+  Preferences::instance()->setValue(
+      showColumnParents,
+      !Preferences::instance()->isShowColumnParentsEnabled());
+  m_viewer->updateColumnArea();
 }
 
 //-----------------------------------------------------------------------------

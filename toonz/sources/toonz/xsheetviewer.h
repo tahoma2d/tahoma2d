@@ -736,6 +736,7 @@ public:
 
   void scroll(QPoint delta);
   int getColumnScrollValue();
+  int getCellScrollValue();
 
   void setAutoPanSpeed(const QPoint &speed);
   void setAutoPanSpeed(const QRect &widgetBounds, const QPoint &mousePos);

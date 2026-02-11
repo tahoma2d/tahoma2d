@@ -606,6 +606,7 @@ void Preferences::definePreferenceItems() {
          false);
   define(expandFunctionHeader, "expandFunctionHeader", QMetaType::Bool, false);
   define(showColumnNumbers, "showColumnNumbers", QMetaType::Bool, false);
+  define(showColumnParents, "showColumnParents", QMetaType::Bool, false);
   define(unifyColumnVisibilityToggles, "unifyColumnVisibilityToggles",
          QMetaType::Bool, false);
   define(parentColorsInXsheetColumn, "parentColorsInXsheetColumn",

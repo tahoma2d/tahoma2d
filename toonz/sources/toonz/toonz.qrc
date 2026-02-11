@@ -398,6 +398,11 @@
 		<file>icons/dark/actions/15/zoom_in_rollover.svg</file>
 		<file>icons/dark/actions/15/zoom_out.svg</file>
 		<file>icons/dark/actions/15/zoom_out_rollover.svg</file>
+		<file>icons/dark/actions/15/toggle_col_number.svg</file>
+		<file>icons/dark/actions/15/toggle_col_number_rollover.svg</file>
+		<file>icons/dark/actions/15/toggle_col_parent.svg</file>
+		<file>icons/dark/actions/15/toggle_col_parent_rollover.svg</file>
+
 		<file>icons/dark/actions/30/sound_header.svg</file>
 		<file>icons/dark/actions/30/sound_header_on.svg</file>
 		<file>icons/dark/actions/74/notelevel.svg</file>
