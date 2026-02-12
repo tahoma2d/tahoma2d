@@ -1393,7 +1393,12 @@ void TypeTool::mouseMove(const TPointD &pos, const TMouseEvent &) {
 bool TypeTool::preLeftButtonDown() {
   if (getViewer() && getViewer()->getGuidedStrokePickerMode()) return false;
 
-  if (m_validFonts && !m_active) touchImage();
+  m_active = false;
+  if (m_validFonts) {
+    if (!touchImage()) return false;
+  }
+  m_active = true;
+
   return true;
 }
 
@@ -1409,12 +1414,17 @@ void TypeTool::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
 
   if (!m_validFonts) return;
 
+  if (!m_active) return;
+
   TImageP img      = getImage(true);
   TVectorImageP vi = img;
   TToonzImageP ti  = img;
   TRasterImageP ri = img;
 
-  if (!vi && !ti && !ri) return;
+  if (!vi && !ti && !ri) {
+    m_active = false;
+    return;
+  }
 
   setSize(m_size.getValue());
 
@@ -1435,7 +1445,6 @@ void TypeTool::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
 
   //  closeImeWindow();
   //  if(m_viewer) m_viewer->enableIme(true);
-  m_active = true;
 
   if (!m_string.empty()) {
     TPointD clickPoint =
