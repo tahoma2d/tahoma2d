@@ -22,6 +22,7 @@
 #include "toonz/preferences.h"
 #include "toonz/txshchildlevel.h"
 #include "toonz/tcolumnhandle.h"
+#include "toonz/txshfoldercolumn.h"
 
 // TnzCore includes
 #include "tvectorimage.h"
@@ -360,11 +361,23 @@ void TColumnSelection::cloneChild() {
 
 void TColumnSelection::hideColumns() {
   TApp *app = TApp::instance();
+  TXsheet* xsh = app->getCurrentXsheet()->getXsheet();
   for (auto o : Orientations::all()) {
-    ColumnFan *columnFan =
-        app->getCurrentXsheet()->getXsheet()->getColumnFan(o);
+    ColumnFan* columnFan       = xsh->getColumnFan(o);
     std::set<int>::iterator it = m_indices.begin();
-    for (; it != m_indices.end(); ++it) columnFan->deactivate(*it);
+    for (; it != m_indices.end(); ++it) {
+      int col = *it;
+      columnFan->deactivate(col);
+      if (xsh->isFolderColumn(col)) {
+        int folderId =
+            xsh->getColumn(col)->getFolderColumn()->getFolderColumnFolderId();
+        for (int i = col - 1; i >= 0; i--) {
+          TXshColumn* folderItem = xsh->getColumn(i);
+          if (!folderItem->isContainedInFolder(folderId)) break;
+          columnFan->deactivate(i);
+        }
+      }
+    }
   }
   m_indices.clear();
   app->getCurrentXsheet()->notifyXsheetChanged();

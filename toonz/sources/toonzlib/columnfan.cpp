@@ -55,8 +55,7 @@ void ColumnFan::update() {
     int pos = -1;
     if (m_columns[i].m_active && m_columns[i].m_visible)
       pos = m_columns[i].m_pos + m_unfolded - 1;
-    else if (i + 1 < m && m_columns[i + 1].m_active &&
-             m_columns[i + 1].m_visible)
+    else if (i + 1 < m && m_columns[i + 1].m_active)
       pos = m_columns[i + 1].m_pos - 1;
     else if (i + 1 == m)
       pos = m_firstFreePos - (m_columns[i].m_visible ? 1 : 0);
