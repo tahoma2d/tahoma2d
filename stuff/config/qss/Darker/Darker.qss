@@ -2399,6 +2399,9 @@ XsheetViewer {
   qproperty-FolderColumnColor: #c4a972;
   qproperty-FolderColumnBorderColor: #b5934e;
   qproperty-SelectedFolderColumnColor: #dbaf8b;
+  qproperty-PegbarColumnColor: #9f6e3c;
+  qproperty-PegbarColumnBorderColor: #7a542e;
+  qproperty-SelectedPegbarColumnColor: #b87959;
   qproperty-ActiveCameraColor: #4073a3;
   qproperty-SelectedActiveCameraColor: #617db8;
   qproperty-OtherCameraColor: #5e9aa3;

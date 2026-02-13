@@ -13,6 +13,7 @@
 #include "toonz/tcamera.h"
 #include "toonz/tcolumnfxset.h"
 #include "toonz/fxdag.h"
+#include "toonz/txshpegbarcolumn.h"
 
 // TnzBase includes
 #include "tdoublekeyframe.h"
@@ -104,14 +105,16 @@ class NewPegbarUndo final : public TUndo {
   TStageObject *m_stageObject;
   TXsheetHandle *m_xshHandle;
   TObjectHandle *m_objHandle;
+  int m_col;
 
 public:
   NewPegbarUndo(const TStageObjectId &id, TXsheetHandle *xshHandle,
-                TObjectHandle *objHandle)
+                TObjectHandle *objHandle, int col)
       : m_id(id)
       , m_stageObject(0)
       , m_xshHandle(xshHandle)
-      , m_objHandle(objHandle) {
+      , m_objHandle(objHandle)
+      , m_col(col) {
     assert(!id.isTable());
     TXsheet *xsh  = m_xshHandle->getXsheet();
     m_stageObject = xsh->getStageObject(m_id);
@@ -126,12 +129,21 @@ public:
     if (m_id == m_objHandle->getObjectId())
       m_objHandle->setObjectId(m_oldCurrentId);
     xsh->getStageObjectTree()->removeStageObject(m_id);
+
+    xsh->removeColumn(m_col);
+
     m_xshHandle->notifyXsheetChanged();
   }
   void redo() const override {
     TXsheet *xsh = m_xshHandle->getXsheet();
     xsh->getStageObjectTree()->insertStageObject(m_stageObject);
     m_objHandle->setObjectId(m_id);
+
+    TXshPegbarColumn *pegbarCol = new TXshPegbarColumn();
+    pegbarCol->setXsheet(xsh);
+    pegbarCol->setPegbarObjectId(m_id);
+    xsh->insertColumn(m_col, pegbarCol);
+
     m_xshHandle->notifyXsheetChanged();
   }
   int getSize() const override { return sizeof(*this); }
@@ -1396,8 +1408,8 @@ void TStageObjectCmd::addNewCamera(TXsheetHandle *xshHandle,
 //-------------------------------------------------------------------
 
 void TStageObjectCmd::addNewPegbar(TXsheetHandle *xshHandle,
-                                   TObjectHandle *objHandle,
-                                   QPointF initialPos) {
+                                   TObjectHandle *objHandle, QPointF initialPos,
+                                   int col) {
   TXsheet *xsh = xshHandle->getXsheet();
   // crea la nuova pegbar
   TStageObjectTree *pTree = xsh->getStageObjectTree();
@@ -1410,7 +1422,12 @@ void TStageObjectCmd::addNewPegbar(TXsheetHandle *xshHandle,
   if (!initialPos.isNull())
     obj->setDagNodePos(TPointD(initialPos.x(), initialPos.y()));
 
-  TUndoManager::manager()->add(new NewPegbarUndo(id, xshHandle, objHandle));
+  TXshPegbarColumn *pegbarCol = new TXshPegbarColumn();
+  pegbarCol->setXsheet(xsh);
+  pegbarCol->setPegbarObjectId(id);
+  xsh->insertColumn(col, pegbarCol);
+
+  TUndoManager::manager()->add(new NewPegbarUndo(id, xshHandle, objHandle, col));
   xshHandle->notifyXsheetChanged();
 }
 
@@ -1490,7 +1507,20 @@ void TStageObjectCmd::deleteSelection(
   std::vector<TStageObjectId>::const_iterator it2;
   for (it2 = objIds.begin(); it2 != objIds.end(); it2++) {
     if (it2->isColumn()) columnIndexes.append(it2->getIndex());
-    if (it2->isPegbar()) pegbarIndexes.append(it2->getIndex());
+    if (it2->isPegbar()) {
+      pegbarIndexes.append(it2->getIndex());
+
+      TXsheet *xsh = xshHandle->getXsheet();
+      for (int j = 0; j < xsh->getColumnCount(); j++) {
+        TXshColumn *col = xsh->getColumn(j);
+        if (!col || !col->getPegbarColumn()) continue;
+        TXshPegbarColumn *pegbarCol = col->getPegbarColumn();
+        if (pegbarCol->getPegbarObjectId() == *it2) {
+          columnIndexes.append(j);
+          break;
+        }
+      }
+    }
     if (it2->isCamera()) cameraIndexes.append(it2->getIndex());
   }
   if (!columnIndexes.isEmpty()) {

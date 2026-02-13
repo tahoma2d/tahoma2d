@@ -66,8 +66,7 @@ void TKeyframeData::setKeyframes(std::set<Position> positions, TXsheet *xsh,
   for (it = positions.begin(); it != positions.end(); ++it) {
     int row              = it->first;
     int col              = it->second;
-    TStageObject *pegbar = xsh->getStageObject(
-        col >= 0 ? TStageObjectId::ColumnId(col) : cameraId);
+    TStageObject *pegbar = xsh->getStageObject(col >= 0 ? xsh->getColumnObjectId(col) : cameraId);
     assert(pegbar);
     m_isPegbarsCycleEnabled[col] = pegbar->isCycleEnabled();
     if (pegbar->isKeyframe(row)) {
@@ -117,8 +116,7 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
     TXshColumn *column = xsh->getColumn(col);
     if (column && (column->getSoundColumn() || column->getFolderColumn()))
       continue;
-    TStageObject *pegbar = xsh->getStageObject(
-        col >= 0 ? TStageObjectId::ColumnId(col) : cameraId);
+    TStageObject *pegbar = xsh->getStageObject(col >= 0 ? xsh->getColumnObjectId(col) : cameraId);
     if (xsh->getColumn(col) && xsh->getColumn(col)->isLocked()) continue;
     keyFrameChanged = true;
     assert(pegbar);
@@ -196,7 +194,7 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
   for (auto const pegbar : m_isPegbarsCycleEnabled) {
     int const col = pegbar.first;
     TStageObjectId objectId =
-        (col >= 0) ? TStageObjectId::ColumnId(col) : cameraId;
+        (col >= 0) ? xsh->getColumnObjectId(col) : cameraId;
     xsh->getStageObject(objectId)->enableCycle(pegbar.second);
   }
   return true;

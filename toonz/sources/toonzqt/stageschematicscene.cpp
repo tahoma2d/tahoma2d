@@ -643,7 +643,7 @@ StageSchematicNode *StageSchematicScene::createStageSchematicNode(
     } else {
       TXshColumn *column = m_xshHandle->getXsheet()->getColumn(columnIndex);
       if (!column || column->getSoundColumn() || column->getSoundTextColumn() ||
-          column->getFolderColumn())
+          column->getFolderColumn() || column->getPegbarColumn())
         return 0;
     }
   }

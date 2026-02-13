@@ -159,6 +159,9 @@ void XsheetViewer::getColumnColor(QColor &color, QColor &sideColor, int index,
   } else if (xsh->getColumn(index)->getFolderColumn()) {
     color     = m_folderColumnColor;
     sideColor = m_folderColumnBorderColor;
+  } else if (xsh->getColumn(index)->getPegbarColumn()) {
+    color     = m_pegbarColumnColor;
+    sideColor = m_pegbarColumnBorderColor;
   }
   //  if (xsh->getColumn(index)->isMask()) color = QColor(255, 0, 255);
 }
@@ -577,7 +580,7 @@ int XsheetViewer::getCurrentRow() const {
 TStageObjectId XsheetViewer::getObjectId(int col) const {
   TXsheet *xsh = getXsheet();
   if (col < 0) return TStageObjectId::CameraId(xsh->getCameraColumnIndex());
-  return TStageObjectId::ColumnId(col);
+  return xsh->getColumnObjectId(col);
 }
 //-----------------------------------------------------------------------------
 
@@ -592,8 +595,8 @@ void XsheetViewer::setCurrentColumn(int col) {
     if (col >= 0 && objectHandle->isSpline()) objectHandle->setIsSpline(false);
     updateCellColumnAree();
     if (col >= 0) {
-      objectHandle->setObjectId(TStageObjectId::ColumnId(col));
-      TXsheet *xsh       = getXsheet();
+      TXsheet *xsh = getXsheet();
+      objectHandle->setObjectId(xsh->getColumnObjectId(col));
       TXshColumn *column = xsh->getColumn(col);
       if (!column) return;
       // switching the current fx
@@ -1099,6 +1102,23 @@ bool XsheetViewer::areFolderCellsSelected() {
     TXshColumn *column = getXsheet()->getColumn(j);
     if (column && (column->isEmpty() ||
                    column->getColumnType() == TXshColumn::eFolderType))
+      continue;
+    return false;
+  }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool XsheetViewer::arePegbarCellsSelected() {
+  int r0, c0, r1, c1;
+  getCellSelection()->getSelectedCells(r0, c0, r1, c1);
+  if (c0 < 0) return false;
+  int i, j;
+  for (j = c0; j <= c1; j++) {
+    TXshColumn *column = getXsheet()->getColumn(j);
+    if (column && (column->isEmpty() ||
+                   column->getColumnType() == TXshColumn::ePegbarType))
       continue;
     return false;
   }

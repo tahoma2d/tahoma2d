@@ -50,7 +50,7 @@ bool shiftKeyframesWithoutUndo(int r0, int r1, int c0, int c1, bool cut,
   int x;
   for (x = c0; x <= c1; x++) {
     TStageObject *stObj = xsh->getStageObject(
-        x >= 0 ? TStageObjectId::ColumnId(x)
+        x >= 0 ? xsh->getColumnObjectId(x)
                : TStageObjectId::CameraId(xsh->getCameraColumnIndex()));
     std::set<int> keyToShift;
     int kr0, kr1;
@@ -107,8 +107,7 @@ bool deleteKeyframesWithoutUndo(
   for (; it != positions->end(); ++it) {
     int row              = it->first;
     int col              = it->second;
-    TStageObject *pegbar = xsh->getStageObject(
-        col >= 0 ? TStageObjectId::ColumnId(col) : cameraId);
+    TStageObject *pegbar = xsh->getStageObject(col >= 0 ? xsh->getColumnObjectId(col) : cameraId);
     if (xsh->getColumn(col) && xsh->getColumn(col)->isLocked()) continue;
     areAllColumnLocked = false;
     assert(pegbar);
@@ -341,7 +340,7 @@ void TKeyframeSelection::setKeyframes() {
   Position pos         = *m_positions.begin();
   int row              = pos.first;
   int col              = pos.second;
-  TStageObjectId id    = col < 0 ? cameraId : TStageObjectId::ColumnId(col);
+  TStageObjectId id    = col < 0 ? cameraId : xsh->getColumnObjectId(col);
   TStageObject *pegbar = xsh->getStageObject(id);
   if (!pegbar) return;
   if (pegbar->isKeyframe(row)) {

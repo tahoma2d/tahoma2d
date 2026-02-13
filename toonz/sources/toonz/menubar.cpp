@@ -458,6 +458,7 @@ void TopBar::loadMenubar() {
     addMenuItem(newMenu, MI_NewVectorLevel);
     addMenuItem(newMenu, MI_NewNoteLevel);
     newMenu->addSeparator();
+    addMenuItem(newMenu, MI_NewPegbar);
     addMenuItem(newMenu, MI_NewFolder);
   }
   addMenuItem(levelMenu, MI_LoadLevel);

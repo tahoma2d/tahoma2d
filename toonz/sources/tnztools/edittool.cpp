@@ -946,9 +946,9 @@ void EditTool::onEditAllLeftButtonDown(TPointD &pos, const TMouseEvent &e) {
     pos = getMatrix() * pos;
     int columnIndex = getViewer()->posToColumnIndex(e.m_pos, 5.0, false);
     if (columnIndex >= 0) {
-      TStageObjectId id      = TStageObjectId::ColumnId(columnIndex);
       int currentColumnIndex = getColumnIndex();
       TXsheet *xsh           = getXsheet();
+      TStageObjectId id      = xsh->getColumnObjectId(columnIndex);
 
       if (m_autoSelect.getValue() == L"Pegbar") {
         TStageObjectId id2 = id;
@@ -963,9 +963,10 @@ void EditTool::onEditAllLeftButtonDown(TPointD &pos, const TMouseEvent &e) {
           if (e.isShiftPressed()) {
             TXsheetHandle *xshHandle =
                 TTool::getApplication()->getCurrentXsheet();
+            TXsheet *xsh = xshHandle->getXsheet();
             TStageObjectId curColId =
-                TStageObjectId::ColumnId(currentColumnIndex);
-            TStageObjectId colId = TStageObjectId::ColumnId(columnIndex);
+                xsh->getColumnObjectId(currentColumnIndex);
+            TStageObjectId colId = xsh->getColumnObjectId(columnIndex);
             TStageObjectCmd::setParent(curColId, colId, "", xshHandle);
             m_what = None;
             xshHandle->notifyXsheetChanged();
@@ -1510,10 +1511,7 @@ m_foo.setFxHandle(getApplication()->getCurrentFx());
   if (objId == TStageObjectId::NoneId) {
     int index    = getColumnIndex();
     TXsheet *xsh = TTool::getApplication()->getCurrentXsheet()->getXsheet();
-    if (index == -1)
-      objId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
-    else
-      objId = TStageObjectId::ColumnId(index);
+    objId        = xsh->getColumnObjectId(index);
   }
   TTool::getApplication()->getCurrentObject()->setObjectId(objId);
 }
