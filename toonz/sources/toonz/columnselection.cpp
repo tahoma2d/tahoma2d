@@ -121,8 +121,33 @@ bool TColumnSelection::isEmpty() const { return m_indices.empty(); }
 
 //-----------------------------------------------------------------------------
 
+void addFolderItemIndices(std::set<int> &indices, TXsheet* xsh) {
+  std::set<int> newIndices = indices;
+
+  std::set<int>::const_iterator it;
+  for (it = indices.begin(); it != indices.end(); ++it) {
+    if (!xsh->isFolderColumn(*it)) continue;
+    TXshFolderColumn *folder = xsh->getColumn(*it)->getFolderColumn();
+    int folderId = folder->getFolderColumnFolderId();
+    for (int c = (*it - 1); c >= 0; c--) {
+      TXshColumn* column = xsh->getColumn(c);
+      if (!column || !column->isContainedInFolder(folderId)) break;
+      newIndices.insert(c);
+    }
+  }
+
+  indices = newIndices;
+}
+
+//-----------------------------------------------------------------------------
+
 void TColumnSelection::copyColumns() {
   m_indices.erase(-1);  // Ignore camera column
+  if (m_indices.empty()) return;
+
+  TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  addFolderItemIndices(m_indices, xsh);
+
   ColumnCmd::copyColumns(m_indices);
 }
 
@@ -181,6 +206,12 @@ void TColumnSelection::pasteColumns() {
 
 //-----------------------------------------------------------------------------
 void TColumnSelection::deleteColumns() {
+  m_indices.erase(-1);
+  if (m_indices.empty()) return;
+
+  TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  addFolderItemIndices(m_indices, xsh);
+
   if (!ColumnCmd::checkExpressionReferences(m_indices)) return;
 
   ColumnCmd::deleteColumns(m_indices, false, false);
@@ -217,12 +248,24 @@ void TColumnSelection::insertColumns() {
 //-----------------------------------------------------------------------------
 
 void TColumnSelection::groupColumns() {
+  m_indices.erase(-1);
+  if (m_indices.empty()) return;
+
+  TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  addFolderItemIndices(m_indices, xsh);
+
   ColumnCmd::groupColumns(m_indices);
 }
 
 //-----------------------------------------------------------------------------
 
 void TColumnSelection::ungroupColumns() {
+  m_indices.erase(-1);
+  if (m_indices.empty()) return;
+
+  TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  addFolderItemIndices(m_indices, xsh);
+
   ColumnCmd::ungroupColumns(m_indices);
 }
 
@@ -230,6 +273,10 @@ void TColumnSelection::ungroupColumns() {
 void TColumnSelection::collapse() {
   m_indices.erase(-1);  // Ignore camera column
   if (m_indices.empty()) return;
+
+  TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  addFolderItemIndices(m_indices, xsh);
+
   SubsceneCmd::collapse(m_indices);
 }
 
@@ -392,6 +439,10 @@ void TColumnSelection::hideColumns() {
 void TColumnSelection::loopColumns() {
   m_indices.erase(-1);  // Ignore camera column
   if (m_indices.empty()) return;
+
+  TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  addFolderItemIndices(m_indices, xsh);
+
   ColumnCmd::loopColumns(m_indices);
 }
 
@@ -400,5 +451,9 @@ void TColumnSelection::loopColumns() {
 void TColumnSelection::removeColumnLoops() {
   m_indices.erase(-1);  // Ignore camera column
   if (m_indices.empty()) return;
+
+  TXsheet* xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  addFolderItemIndices(m_indices, xsh);
+
   ColumnCmd::removeColumnLoops(m_indices);
 }
