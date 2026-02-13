@@ -151,6 +151,8 @@ protected:
   QRadialGradient m_brushPad;
 
   bool m_enabled;
+  
+  bool m_active;
 };
 
 //------------------------------------------------------------

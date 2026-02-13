@@ -37,6 +37,8 @@
 #include "toutputproperties.h"
 #include "toonz/levelset.h"
 
+#include "toonzqt/dvdialog.h"
+
 // TnzCore includes
 #include "tvectorimage.h"
 #include "timagecache.h"
@@ -377,11 +379,24 @@ TImage *TTool::touchImage(bool forDuplicate) {
 
   if (sl) {
     // For Single Frame levels, don't create anything
-    std::vector<TFrameId> fids;
-    sl->getFids(fids);
-    if (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
-                             fids[0].getNumber() == TFrameId::NO_FRAME))
-      return 0;
+    if ((cell.isEmpty() ||
+         (isCreateInHoldCellsEnabled && xsh->isImplicitCell(row, col))) &&
+        sl->isSingleFileLevel()) {
+      if (sl->canConvertSingleFileToSequence()) {
+        // confirmation dialog
+        int ret = DVGui::MsgBox(
+            QObject::tr(
+                "In order to create a new frame in this Single Frame level, it "
+                "will need to be converted and saved as a new sequenced "
+                "file level.\nWould you like to continue?"),
+            QObject::tr("Ok"), QObject::tr("Cancel"));
+        if (ret == 0 || ret == 2) return 0;
+        sl->convertSingleFileToSequence(xsh);
+      } else {
+        DVGui::error(QObject::tr("Cannot add frames to a Single Frame level."));
+        return 0;
+      }
+  }
 
     // If for some reason there is no palette, try and set a default one now.
     if (!sl->getPalette() &&
@@ -487,13 +502,35 @@ TImage *TTool::touchImage(bool forDuplicate) {
                        xsh->getCell(b, col).getFrameId().isStopFrame()))
       b++;
 
+    int rX;
     // find the level we must attach to
     if (a >= r0) {
       // there is a not-empty cell before the current one
       sl = xsh->getCell(a, col).getSimpleLevel();
+      rX = a;
     } else if (b <= r1) {
+      rX = b;
       sl = xsh->getCell(b, col).getSimpleLevel();
     }
+
+    // For Single Frame levels, don't create anything
+    if (sl && sl->isSingleFileLevel()) {
+      if (sl->canConvertSingleFileToSequence()) {
+        // confirmation dialog
+        int ret = DVGui::MsgBox(
+            QObject::tr(
+                "In order to create a new frame in this Single Frame level, it "
+                "will need to be converted and saved as a new sequenced "
+                "file level.\nWould you like to continue?"),
+            QObject::tr("Ok"), QObject::tr("Cancel"));
+        if (ret == 0 || ret == 2) return 0;
+        sl->convertSingleFileToSequence(xsh);
+      } else {
+        DVGui::error(QObject::tr("Cannot add frames to a Single Frame level."));
+        return 0;
+      }
+    }
+
     if (sl && !sl->isSubsequence() && !sl->isReadOnly()) {
       // note: sl should be always !=0 (the column is not empty)
       // if - for some reason - it is == 0 or it is not editable,
@@ -1137,20 +1174,6 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
         return (enable(false),
                 QObject::tr("The current level is not editable."));
 
-      // For Single Frame raster levels, don't allow new levels to be created
-      if (levelType == OVL_XSHLEVEL && !filmstrip) {
-        std::vector<TFrameId> fids;
-        sl->getFids(fids);
-        if (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
-                                 fids[0].getNumber() == TFrameId::NO_FRAME)) {
-          TXshCell cell = xsh->getCell(rowIndex, columnIndex);
-          if (cell.isEmpty())
-            return (enable(false),
-                    QObject::tr("The current tool cannot be used on empty "
-                                "frames of a Single Frame level."));
-        }
-      }
- 
       // Stop frames cannot be modified
       if (xsh->getCell(rowIndex, columnIndex).getFrameId().isStopFrame()) {
         return (
