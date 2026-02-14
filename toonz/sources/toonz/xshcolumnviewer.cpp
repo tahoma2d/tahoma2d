@@ -956,7 +956,7 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
                                  : PredefinedRect::LAYER_HEADER)
                    .translated(orig);
   if (!o->isVerticalTimeline())
-    rect.adjust(isEmpty ? 0 : 73, 0, m_viewer->getTimelineBodyOffset(), 0);
+    rect.adjust(isEmpty ? 0 : 73, 0, m_viewer->getTimelineBodyOffset() - 1, 0);
   else
     rect.adjust(0, 0, 0, m_viewer->getXsheetBodyOffset());
   // Adjust for folder indicator
@@ -988,10 +988,23 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
       // column handle
       QRect sideBar =
           o->rect(PredefinedRect::DRAG_LAYER).translated(x0 - 73, y0);
-      if (!o->isVerticalTimeline())
-        sideBar.adjust(0, 0, m_viewer->getTimelineBodyOffset() -
-                                 (indicatorRect.width() * folderDepth),
+      if (!o->isVerticalTimeline()) {
+        if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+          int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+          sideBar.adjust(shiftRight, 0, 0, 0);
+        }
+        if (Preferences::instance()->isShowColumnParentsEnabled() && column &&
+            !column->isEmpty() && !column->getSoundColumn() &&
+            !column->getSoundTextColumn() && !column->getFolderColumn()) {
+          int shiftLeft = o->rect(PredefinedRect::PEGBAR_NAME).width();
+          sideBar.adjust(0, 0, -shiftLeft, 0);
+        }
+
+        sideBar.adjust(0, 0,
+                       m_viewer->getTimelineBodyOffset() - 1 -
+                           (indicatorRect.width() * folderDepth),
                        0);
+      }
 
       if (o->flag(PredefinedFlag::DRAG_LAYER_BORDER)) {
         p.setPen(m_viewer->getVerticalLineColor());
@@ -1298,14 +1311,19 @@ void ColumnArea::DrawHeader::drawFolderIndicator() const {
 
   if (indicatorRect.isEmpty()) return;
 
+  int shiftRight = 0;
+  if (Preferences::instance()->isShowColumnNumbersEnabled())
+    shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+
   for (int i = 0; i < column->folderDepth(); i++) {
     QRect indicatorRectAdj;
     if (o->isVerticalTimeline())
-      indicatorRectAdj = indicatorRect.adjusted(0, indicatorRect.height() * i, 0,
-                                        indicatorRect.height() * i);
+      indicatorRectAdj = indicatorRect.adjusted(0, indicatorRect.height() * i,
+                                                0, indicatorRect.height() * i);
     else
-      indicatorRectAdj = indicatorRect.adjusted(indicatorRect.width() * i, 0,
-                                        indicatorRect.width() * i, 0);
+      indicatorRectAdj =
+          indicatorRect.adjusted(shiftRight + (indicatorRect.width() * i), 0,
+                                 shiftRight + (indicatorRect.width() * i), 0);
     p.setPen(Qt::NoPen);
     p.setBrush(m_viewer->getFolderColumnColor());
     p.drawRect(indicatorRectAdj);
@@ -1333,13 +1351,9 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
 
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth()) {
-    if (!o->isVerticalTimeline())
-      pos.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                 indicatorRect.width() * column->folderDepth(), 0);
-    else
-      pos.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                 indicatorRect.height() * column->folderDepth());
+  if (column && column->folderDepth() && o->isVerticalTimeline()) {
+    pos.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
+               indicatorRect.height() * column->folderDepth());
   }
 
   p.setPen(m_viewer->getVerticalLineColor());
@@ -1349,20 +1363,15 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
                ? Qt::black
                : m_viewer->getTextColor());
 
-  int valign = o->isVerticalTimeline() ? Qt::AlignVCenter : Qt::AlignBottom;
-
   if (!o->isVerticalTimeline()) {
-    pos.adjust(0, -1, 0, -1);
-
-    if (!Preferences::instance()->isShowDragBarsEnabled()) {
-      if (Preferences::instance()->getTimelineLayoutPreference() == "NoDragCompact")
-        pos.adjust(0, -1, 0, -1);
-      else if (Preferences::instance()->getTimelineLayoutPreference() == "Roomy")
-        pos.adjust(0, -3, 0, -3);
-    }
+    if (Preferences::instance()->getTimelineLayoutPreference() ==
+        "NoDragCompact")
+      pos.adjust(0, -1, 0, -1);
+    else if (Preferences::instance()->getTimelineLayoutPreference() == "Roomy")
+      pos.adjust(0, -2, 0, -2);
   }
 
-  p.drawText(pos, Qt::AlignHCenter | valign | Qt::TextSingleLine,
+  p.drawText(pos, Qt::AlignHCenter | Qt::AlignVCenter | Qt::TextSingleLine,
              QString::number(col + 1));
 }
 
@@ -1393,8 +1402,13 @@ void ColumnArea::DrawHeader::drawColumnName() const {
   QRect columnName = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                        : PredefinedRect::LAYER_NAME)
                          .translated(orig);
-  if (!o->isVerticalTimeline())
+  if (!o->isVerticalTimeline()) {
+    if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+      int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+      columnName.adjust(shiftRight, 0, shiftRight, 0);
+    }
     columnName.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
+  }
 
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
@@ -1446,8 +1460,6 @@ void ColumnArea::DrawHeader::drawColumnName() const {
                o->flag(PredefinedFlag::LAYER_NUMBER_VISIBLE)) {
       if (o->isVerticalTimeline())
         rightadj = -20;
-      else
-        leftadj = 24;
     }
 
     p.setPen((nameBacklit || (column && column->getFolderColumn()))
@@ -1501,6 +1513,12 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
     thumbnailRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                          m_viewer->getXsheetBodyOffset());
 
+  if (!o->isVerticalTimeline() &&
+      Preferences::instance()->isShowColumnNumbersEnabled()) {
+    int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+    thumbnailRect.adjust(shiftRight, 0, shiftRight, 0);
+  }
+
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
   if (column && column->folderDepth() && !o->isVerticalTimeline()) {
@@ -1542,6 +1560,12 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
   if (col >= 0 && o->isVerticalTimeline())
     thumbnailImageRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                               m_viewer->getXsheetBodyOffset());
+
+  if (!o->isVerticalTimeline() &&
+           Preferences::instance()->isShowColumnNumbersEnabled()) {
+    int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+    thumbnailImageRect.adjust(shiftRight, 0, shiftRight, 0);
+  }
 
   // Adjust for folder indicator
   if (column && column->folderDepth() && !o->isVerticalTimeline()) {
@@ -1590,9 +1614,34 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
 }
 
 void ColumnArea::DrawHeader::drawPegbarName() const {
-  if (isEmpty || !o->flag(PredefinedFlag::PEGBAR_NAME_VISIBLE)) return;
+  if (isEmpty || !o->flag(PredefinedFlag::PEGBAR_NAME_VISIBLE) ||
+      (!o->isVerticalTimeline() &&
+       !Preferences::instance()->isShowColumnParentsEnabled()))
+    return;
   // the camera column may have parent pegbar, but it is not displayed for now
   if (col < 0) return;
+
+  // pegbar name
+  QRect pegbarnamerect = o->rect(PredefinedRect::PEGBAR_NAME).translated(orig);
+  if (o->isVerticalTimeline())
+    pegbarnamerect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                          m_viewer->getXsheetBodyOffset());
+  else
+    pegbarnamerect.adjust(
+        m_viewer->getTimelineBodyOffset() - pegbarnamerect.width(), 0,
+        m_viewer->getTimelineBodyOffset() - pegbarnamerect.width(), 0);
+
+  if (!o->isVerticalTimeline() &&
+      (column->getSoundColumn() || column->getSoundTextColumn() ||
+       column->getFolderColumn()))
+    return;
+
+  p.setPen(m_viewer->getVerticalLineColor());
+  if (o->flag(PredefinedFlag::PEGBAR_NAME_BORDER)) p.drawRect(pegbarnamerect);
+
+  if (column->getSoundColumn() || column->getSoundTextColumn() ||
+      column->getFolderColumn())
+    return;
 
   TStageObjectId columnId = m_viewer->getObjectId(col);
   TStageObjectId parentId = xsh->getStageObjectParent(columnId);
@@ -1625,25 +1674,6 @@ void ColumnArea::DrawHeader::drawPegbarName() const {
     name.remove(-1, 1000);
     width = QFontMetrics(font).horizontalAdvance(name);
   }
-
-  // pegbar name
-  QRect pegbarnamerect = o->rect(PredefinedRect::PEGBAR_NAME).translated(orig);
-  if (o->isVerticalTimeline())
-    pegbarnamerect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
-                          m_viewer->getXsheetBodyOffset());
-
-  // Adjust for folder indicator
-  QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth() && !o->isVerticalTimeline())
-    pegbarnamerect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                          indicatorRect.width() * column->folderDepth(), 0);
-
-  p.setPen(m_viewer->getVerticalLineColor());
-  if (o->flag(PredefinedFlag::PEGBAR_NAME_BORDER)) p.drawRect(pegbarnamerect);
-
-  if (column->getSoundColumn() || column->getSoundTextColumn() ||
-      column->getFolderColumn())
-    return;
 
   if (Preferences::instance()->isParentColorsInXsheetColumnEnabled() &&
       column->isPreviewVisible()) {
@@ -1678,7 +1708,9 @@ void ColumnArea::DrawHeader::drawParentHandleName() const {
   if (col < 0 || isEmpty ||
       !o->flag(PredefinedFlag::PARENT_HANDLE_NAME_VISIBILE) ||
       column->getSoundColumn() || column->getSoundTextColumn() ||
-      column->getFolderColumn())
+      column->getFolderColumn() ||
+      (!o->isVerticalTimeline() &&
+       !Preferences::instance()->isShowColumnParentsEnabled()))
     return;
 
   TStageObjectId columnId = m_viewer->getObjectId(col);
@@ -1690,12 +1722,10 @@ void ColumnArea::DrawHeader::drawParentHandleName() const {
   if (o->isVerticalTimeline())
     parenthandleRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                             m_viewer->getXsheetBodyOffset());
-
-  // Adjust for folder indicator
-  QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth() && !o->isVerticalTimeline())
-    parenthandleRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                            indicatorRect.width() * column->folderDepth(), 0);
+  else
+    parenthandleRect.adjust(
+        m_viewer->getTimelineBodyOffset() - parenthandleRect.width(), 0,
+        m_viewer->getTimelineBodyOffset() - parenthandleRect.width(), 0);
 
   p.setPen(Qt::yellow);  // m_viewer->getVerticalLineColor());
   if (o->flag(PredefinedFlag::PARENT_HANDLE_NAME_BORDER))
@@ -1744,9 +1774,15 @@ void ColumnArea::DrawHeader::drawFilterColor() const {
   if (o->isVerticalTimeline()) {
     filterColorRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                            m_viewer->getXsheetBodyOffset());
-  } else if (column && column->folderDepth()) {
-    filterColorRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                           indicatorRect.width() * column->folderDepth(), 0);
+  } else {
+    if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+      int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+      filterColorRect.adjust(shiftRight, 0, shiftRight, 0);
+    }
+    if (column && column->folderDepth()) {
+      filterColorRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                             indicatorRect.width() * column->folderDepth(), 0);
+    }
   }
 
   p.drawPixmap(filterColorRect, getColorChipIcon(filterColor).pixmap(12, 12));
@@ -1789,9 +1825,16 @@ void ColumnArea::DrawHeader::drawClippingMask() const {
   if (o->isVerticalTimeline()) {
     clippingMaskArea.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                             m_viewer->getXsheetBodyOffset());
-  } else if (column && column->folderDepth()) {
-    clippingMaskArea.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                            indicatorRect.width() * column->folderDepth(), 0);
+  } else {
+    if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+      int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+      clippingMaskArea.adjust(shiftRight, 0, shiftRight, 0);
+    }
+    if (column && column->folderDepth()) {
+      clippingMaskArea.adjust(indicatorRect.width() * column->folderDepth(), 0,
+
+                              indicatorRect.width() * column->folderDepth(), 0);
+    }
   }
 
   p.drawPixmap(clippingMaskArea, maskPixmap);
@@ -1806,9 +1849,15 @@ void ColumnArea::DrawHeader::drawSoundIcon(bool isPlaying) const {
   if (o->isVerticalTimeline()) {
     rect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                 m_viewer->getXsheetBodyOffset());
-  } else if (column && column->folderDepth()) {
-    rect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                indicatorRect.width() * column->folderDepth(), 0);
+  } else {
+    if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+      int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+      rect.adjust(shiftRight, 0, shiftRight, 0);
+    }
+    if (column && column->folderDepth()) {
+      rect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                  indicatorRect.width() * column->folderDepth(), 0);
+    }
   }
   p.drawPixmap(rect, isPlaying ? Pixmaps::soundPlaying() : Pixmaps::sound());
 }
@@ -1869,9 +1918,15 @@ void ColumnArea::DrawHeader::drawVolumeControl(double volume) const {
   if (o->isVerticalTimeline()) {
     trackRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                      m_viewer->getXsheetBodyOffset());
-  } else if (column && column->folderDepth()) {
-    trackRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                     indicatorRect.width() * column->folderDepth(), 0);
+  } else {
+    if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+      int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+      trackRect.adjust(shiftRight, 0, shiftRight, 0);
+    }
+    if (column && column->folderDepth()) {
+      trackRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                       indicatorRect.width() * column->folderDepth(), 0);
+    }
   }
   if (o->flag(PredefinedFlag::VOLUME_AREA_VERTICAL)) volume = 1 - volume;
 
@@ -1904,9 +1959,15 @@ void ColumnArea::DrawHeader::drawFolderStatusIcon(bool isOpen) const {
   if (o->isVerticalTimeline()) {
     rect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                 m_viewer->getXsheetBodyOffset());
-  } else if (column && column->folderDepth()) {
-    rect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                indicatorRect.width() * column->folderDepth(), 0);
+  } else {
+    if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+      int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+      rect.adjust(shiftRight, 0, shiftRight, 0);
+    }
+    if (column && column->folderDepth()) {
+      rect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                  indicatorRect.width() * column->folderDepth(), 0);
+    }
   }
   QPixmap openPixmap = o->isVerticalTimeline()
                            ? Pixmaps::folder_arrow_left()
@@ -2138,13 +2199,26 @@ void ColumnArea::drawCurrentColumnFocus(QPainter &p, int col) {
   const Orientation *o = m_viewer->orientation();
   QPoint orig          = m_viewer->positionToXY(CellPosition(0, col));
 
-  QRect rect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
+  TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
+
+  QRect rect         = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                  : PredefinedRect::LAYER_NAME)
                    .translated(orig);
-  if (!o->isVerticalTimeline())
-    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
+  if (!o->isVerticalTimeline()) {
+    if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+      int shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+      rect.adjust(shiftRight, 0, 0, 0);
+    }
+    if (Preferences::instance()->isShowColumnParentsEnabled() && column &&
+        !column->isEmpty() && !column->getSoundColumn() &&
+        !column->getSoundTextColumn() && !column->getFolderColumn()) {
+      int shiftLeft = o->rect(PredefinedRect::PEGBAR_NAME).width();
+      rect.adjust(0, 0, -shiftLeft, 0);
+    }
 
-  TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
+    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
+  }
+
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
   if (column && column->folderDepth()) {
@@ -3108,8 +3182,21 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
     }
     // clicking on the normal columns
     else if (!isEmpty) {
+      int shiftRight = 0;
+      int shiftLeft  = 0;
+      if (!o->isVerticalTimeline()) {
+        if (Preferences::instance()->isShowColumnNumbersEnabled())
+          shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+        if (Preferences::instance()->isShowColumnParentsEnabled() && column &&
+            !column->isEmpty() && !column->getSoundColumn() &&
+            !column->getSoundTextColumn() && !column->getFolderColumn())
+          shiftLeft = o->rect(PredefinedRect::PEGBAR_NAME).width();
+      }
+
       int xsheetBodyOffset =
           o->isVerticalTimeline() ? m_viewer->getXsheetBodyOffset() : 0;
+      int timelineBodyOffset =
+          !o->isVerticalTimeline() ? m_viewer->getTimelineBodyOffset() : 0;
       // Adjust for folder indicator
       int indicatorYAdj = 0;
       int indicatorXAdj = 0;
@@ -3193,7 +3280,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           // sound column
           if (column->getSoundColumn()) {
             if (o->rect(PredefinedRect::SOUND_ICON)
-                    .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                    .adjusted(shiftRight + indicatorXAdj, xsheetBodyOffset,
+                              shiftRight + indicatorXAdj,
                               xsheetBodyOffset)
                     .contains(mouseInCell)) {
               TXshSoundColumn *s = column->getSoundColumn();
@@ -3222,7 +3310,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
               return;
             } else if (!o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE) &&
                        o->rect(PredefinedRect::VOLUME_AREA)
-                           .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
+                           .adjusted(shiftRight, xsheetBodyOffset, shiftRight,
+                                     xsheetBodyOffset)
                            .contains(mouseInCell)) {
               setDragTool(XsheetGUI::DragTool::makeVolumeDragTool(m_viewer));
               return;
@@ -3230,7 +3319,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           } else if (column->getFolderColumn()) {
             if (event->button() == Qt::LeftButton) {
               if (o->rect(PredefinedRect::FOLDER_TOGGLE_ICON)
-                      .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                      .adjusted(shiftRight + indicatorXAdj, xsheetBodyOffset,
+                                shiftRight + indicatorXAdj,
                                 xsheetBodyOffset)
                       .contains(mouseInCell)) {
                 toggleFolderStatus(column);
@@ -3256,42 +3346,57 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
         m_viewer->setCurrentColumn(m_col);
         if (event->button() != Qt::LeftButton) return;
         if (column && !column->getSoundTextColumn() &&
-            !column->getSoundColumn() && !column->getFolderColumn()) {
+            !column->getSoundColumn() && !column->getFolderColumn() &&
+            (o->isVerticalTimeline() ||
+             Preferences::instance()->isShowColumnParentsEnabled())) {
           int y = Preferences::instance()->isShowQuickToolbarEnabled() ? 30 : 0;
           y += Preferences::instance()->isShowXsheetBreadcrumbsEnabled() ? 30
                                                                          : 0;
           TStageObjectId columnId = m_viewer->getObjectId(m_col);
           bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
+
+          QRect parenthandleRect = o->rect(PredefinedRect::PARENT_HANDLE_NAME);
+          if (o->isVerticalTimeline())
+            parenthandleRect.adjust(0, xsheetBodyOffset, 0, xsheetBodyOffset);
+          else
+            parenthandleRect.adjust(
+                timelineBodyOffset - parenthandleRect.width(), 0,
+                timelineBodyOffset - parenthandleRect.width(), 0);
+
+          QRect pegbarnamerect = o->rect(PredefinedRect::PEGBAR_NAME);
+          if (o->isVerticalTimeline())
+            pegbarnamerect.adjust(0, xsheetBodyOffset, 0, xsheetBodyOffset);
+          else
+            pegbarnamerect.adjust(
+                timelineBodyOffset - pegbarnamerect.width(), 0,
+                timelineBodyOffset - pegbarnamerect.width(), 0);
+
+          QPoint pt =
+              m_viewer->positionToXY(CellPosition(0, m_col)) +
+              (o->isVerticalTimeline()
+                   ? (parenthandleRect.bottomLeft() +
+                      QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 0) +
+                      QPoint(-m_viewer->getColumnScrollValue(), y))
+                   : (parenthandleRect.topRight() +
+                      QPoint(5, -m_viewer->getCellScrollValue() + y)));
+
           bool clickChangeParent =
-              isColumn
-                  ? o->rect(PredefinedRect::PEGBAR_NAME)
-                        .adjusted(0, xsheetBodyOffset, -20, xsheetBodyOffset)
-                        .contains(mouseInCell)
-                  : o->rect(PredefinedRect::PEGBAR_NAME)
-                        .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
-                        .contains(mouseInCell);
+              isColumn ? pegbarnamerect.adjusted(0, 0, 0 - 20, 0)
+                             .contains(mouseInCell)
+                       : pegbarnamerect.contains(mouseInCell);
+
           if (clickChangeParent) {
             m_changeObjectParent->refresh();
-            m_changeObjectParent->show(
-                QPoint(o->rect(PredefinedRect::PARENT_HANDLE_NAME)
-                           .adjusted(0, 0, 0, xsheetBodyOffset)
-                           .bottomLeft() +
-                QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 0) +
-                m_viewer->positionToXY(CellPosition(0, m_col)) +
-                QPoint(-m_viewer->getColumnScrollValue(), y)));
+            m_changeObjectParent->show(pt);
             return;
           }
-          if (isColumn &&
-              o->rect(PredefinedRect::PARENT_HANDLE_NAME)
-                  .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
-                  .contains(mouseInCell)) {
+
+          if (isColumn && parenthandleRect.contains(mouseInCell)) {
             m_changeObjectHandle->refresh();
-            m_changeObjectHandle->show(
-                QPoint(o->rect(PredefinedRect::PARENT_HANDLE_NAME)
-                           .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
-                           .bottomLeft() +
-                       m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
-                       QPoint(-m_viewer->getColumnScrollValue(), y)));
+            if (o->isVerticalTimeline())
+              pt += QPoint(
+                  pegbarnamerect.topRight().x() - parenthandleRect.width(), 0);
+            m_changeObjectHandle->show(pt);
             return;
           }
         }
@@ -3779,12 +3884,25 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
   QPoint topLeft     = m_viewer->positionToXY(cellPosition);
   QPoint mouseInCell = pos - topLeft;
 
+  TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
+
   QRect nameRect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                      : PredefinedRect::LAYER_NAME);
-  if (!o->isVerticalTimeline())
-    nameRect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
-  TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
+  int shiftRight = 0;
+  int shiftLeft  = 0;
+  if (!o->isVerticalTimeline()) {
+    if (Preferences::instance()->isShowColumnNumbersEnabled())
+      shiftRight = o->rect(PredefinedRect::LAYER_NUMBER).width();
+    if (Preferences::instance()->isShowColumnParentsEnabled() && column &&
+        !column->isEmpty() && !column->getSoundColumn() &&
+        !column->getSoundTextColumn() && !column->getFolderColumn())
+      shiftLeft = o->rect(PredefinedRect::PEGBAR_NAME).width();
+
+    nameRect.adjust(shiftRight, 0,
+                    m_viewer->getTimelineBodyOffset() - shiftLeft, 0);
+  }
+
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
   if (column && column->folderDepth()) {
@@ -3805,7 +3923,8 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
   QRect renameRect =
       o->rect(PredefinedRect::RENAME_COLUMN).translated(fieldPos);
   if (!o->isVerticalTimeline())
-    renameRect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
+    renameRect.adjust(shiftRight, 0,
+                      m_viewer->getTimelineBodyOffset() - shiftLeft, 0);
 
   if (column && column->folderDepth()) {
     if (!o->isVerticalTimeline())
