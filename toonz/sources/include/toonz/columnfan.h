@@ -100,6 +100,8 @@ of column identified by \b col.
   void rollLeftFoldedState(int index, int count);
   void rollRightFoldedState(int index, int count);
 
+  void shiftFoldedStates(int index, int shift);
+
   void hide(int col);
   void show(int col);
   bool isVisible(int col) const;

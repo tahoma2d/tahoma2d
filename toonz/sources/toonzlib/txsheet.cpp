@@ -1605,8 +1605,7 @@ void TXsheet::insertColumn(int col, TXshColumn *column) {
   }
 
   for (ColumnFan &columnFan : m_imp->m_columnFans) {
-    columnFan.rollRightFoldedState(col,
-                                   m_imp->m_columnSet.getColumnCount() - col);
+    columnFan.shiftFoldedStates(col, 1);
   }
 
   notify(TXsheetColumnChange(TXsheetColumnChange::Insert, col));
@@ -1630,8 +1629,7 @@ void TXsheet::removeColumn(int col) {
   m_imp->m_pegTree->removeColumn(col);
 
   for (ColumnFan &columnFan : m_imp->m_columnFans) {
-    columnFan.rollLeftFoldedState(col,
-                                  m_imp->m_columnSet.getColumnCount() - col);
+    columnFan.shiftFoldedStates(col + 1, -1);
   }
 
   notify(TXsheetColumnChange(TXsheetColumnChange::Remove, col));
