@@ -1312,9 +1312,8 @@ La ganancia se mostrará en forma de f-stops donde el valor &quot;neutral&quot;,
     <message>
         <source>Some key(s) in this parameter loses original reference in expression.
 Manually changing any keyframe will clear the warning.</source>
-        <translatorcomment>Algunos claves en este parámetro perderán su referencia original en la expresión.
-Cambiar el clave de forma manual eliminará la advertencia.</translatorcomment>
-        <translation></translation>
+        <translation>Algunos claves en este parámetro perderán su referencia original en la expresión.
+Cambiar el clave de forma manual eliminará la advertencia.</translation>
     </message>
 </context>
 <context>
@@ -3430,7 +3429,7 @@ Are you sure ?</source>
     </message>
     <message>
         <source>Personal Palettes</source>
-        <translation type="unfinished"></translation>
+        <translation>Paletas personales</translation>
     </message>
     <message>
         <source>Project Palettes</source>
@@ -3691,12 +3690,12 @@ Autom</translation>
     <message>
         <source>Textures</source>
         <comment>Display of folder stuff/library/textures</comment>
-        <translation type="unfinished"></translation>
+        <translation>Texturas</translation>
     </message>
     <message>
         <source>MyPaint brushes</source>
         <comment>Display of folder stuff/library/mypaint brushes</comment>
-        <translation type="unfinished"></translation>
+        <translation>Pinceles MyPaint</translation>
     </message>
 </context>
 <context>
