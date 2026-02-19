@@ -292,19 +292,19 @@ XsheetViewer::XsheetViewer(QWidget *parent, Qt::WindowFlags flags)
   m_cellScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
   m_cellScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
-  m_columnArea       = new XsheetGUI::ColumnArea(this);
-  m_columnScrollArea = new XsheetScrollArea(this);
-  m_columnScrollArea->setObjectName("xsheetArea");
-  m_columnScrollArea->setWidget(m_columnArea);
-  m_columnScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  m_columnScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
   m_rowArea       = new XsheetGUI::RowArea(this);
   m_rowScrollArea = new XsheetScrollArea(this);
   m_rowScrollArea->setObjectName("xsheetArea");
   m_rowScrollArea->setWidget(m_rowArea);
   m_rowScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_rowScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+  m_columnArea       = new XsheetGUI::ColumnArea(this);
+  m_columnScrollArea = new XsheetScrollArea(this);
+  m_columnScrollArea->setObjectName("xsheetArea");
+  m_columnScrollArea->setWidget(m_columnArea);
+  m_columnScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  m_columnScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   m_layerFooterPanel = new LayerFooterPanel(this, this);
 
@@ -683,6 +683,12 @@ void XsheetViewer::scroll(QPoint delta) {
 
 int XsheetViewer::getColumnScrollValue() {
   return m_columnScrollArea->horizontalScrollBar()->value();
+}
+
+//-----------------------------------------------------------------------------
+
+int XsheetViewer::getCellScrollValue() {
+  return m_cellScrollArea->verticalScrollBar()->value();
 }
 
 //-----------------------------------------------------------------------------
@@ -1762,16 +1768,16 @@ void XsheetViewer::updateColumnArea() {
 
 void XsheetViewer::updateCellColumnAree() {
   if (!m_isComputingSize) refreshContentSize(0, 0);
-  m_columnArea->update(m_columnArea->visibleRegion());
   m_cellArea->update(m_cellArea->visibleRegion());
+  m_columnArea->update(m_columnArea->visibleRegion());
 }
 
 //-----------------------------------------------------------------------------
 
 void XsheetViewer::updateCellRowAree() {
   if (!m_isComputingSize) refreshContentSize(0, 0);
-  m_rowArea->update(m_rowArea->visibleRegion());
   m_cellArea->update(m_cellArea->visibleRegion());
+  m_rowArea->update(m_rowArea->visibleRegion());
 }
 
 //-----------------------------------------------------------------------------

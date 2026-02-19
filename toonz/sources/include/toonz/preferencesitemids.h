@@ -156,6 +156,7 @@ enum PreferencesItemId {
   showDragBars,
   timelineLayoutPreference,
   showImagesInCellTooltip,
+  showColumnParents,
 
   //----------
   // Animation

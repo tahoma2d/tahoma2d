@@ -1006,9 +1006,23 @@ TopToBottomOrientation::TopToBottomOrientation() {
       QRect(0, 0, LAYER_FOOTER_PANEL_WIDTH + 2, use_header_height));
   addRect(PredefinedRect::LAYER_FOOTER_PANEL, layerFooterPanel);
 
-  QRect zoomSlider, zoomIn, zoomOut, noteArea;
+  QRect toggleColNum, zoomSlider, zoomIn, zoomOut, noteArea;
 
-  zoomSlider = QRect(0, 17, LAYER_FOOTER_PANEL_WIDTH, use_header_height - 34);
+  toggleColNum = QRect(0, 0, LAYER_FOOTER_PANEL_WIDTH, 16);
+  addRect(PredefinedRect::TOGGLE_COLUMN_NUMBER_AREA, toggleColNum);
+  addRect(PredefinedRect::TOGGLE_COLUMN_NUMBER, QRect(0, 0, -1, -1));
+  if (layout == QString("Minimum"))
+    addRect(PredefinedRect::TOGGLE_COLUMN_NUMBER, QRect(0, 0, -1, -1));
+  else
+    addRect(PredefinedRect::TOGGLE_COLUMN_NUMBER,
+            toggleColNum.adjusted(0, 1, 0, 0));
+
+
+  addRect(PredefinedRect::TOGGLE_COLUMN_PARENT_AREA, QRect(0, 0, -1, -1));
+  addRect(PredefinedRect::TOGGLE_COLUMN_PARENT, QRect(0, 0, -1, -1));
+
+  zoomSlider = QRect(0, toggleColNum.bottom() + 17, LAYER_FOOTER_PANEL_WIDTH,
+                     use_header_height - 51);
   addRect(PredefinedRect::ZOOM_SLIDER_AREA, zoomSlider);
   if (layout == QString("Minimum"))
     addRect(PredefinedRect::ZOOM_SLIDER, QRect(0, 0, -1, -1));
@@ -1482,8 +1496,7 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
   addRect(PredefinedRect::LAYER_NAME, columnName);
   addRect(PredefinedRect::CAMERA_LAYER_NAME, rect(PredefinedRect::LAYER_NAME));
   addRect(PredefinedRect::LAYER_NUMBER,
-          QRect(ICONS_WIDTH + THUMBNAIL_WIDTH + 1, 0, LAYER_NUMBER_WIDTH,
-                CELL_HEIGHT));
+          QRect(ICONS_WIDTH + 1, 0, LAYER_NUMBER_WIDTH, CELL_HEIGHT));
   QRect thumbnailArea = QRect(ICONS_WIDTH + 1, 0, THUMBNAIL_WIDTH, CELL_HEIGHT);
   addRect(PredefinedRect::THUMBNAIL_AREA, thumbnailArea);
   QRect thumbnail = thumbnailArea.adjusted(1, 1, 0, 0);
@@ -1498,8 +1511,10 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
   addRect(PredefinedRect::CLIPPING_MASK_AREA,
           QRect(thumbnail.right() - 14, thumbnail.top() + 3, 12, 12));
 
-  addRect(PredefinedRect::PEGBAR_NAME, QRect(0, 0, -1, -1));         // hide
-  addRect(PredefinedRect::PARENT_HANDLE_NAME, QRect(0, 0, -1, -1));  // hide
+  QRect pegbarname = QRect(columnName.topRight().x() + 1, 0, 74, CELL_HEIGHT);
+  addRect(PredefinedRect::PEGBAR_NAME, pegbarname);
+  addRect(PredefinedRect::PARENT_HANDLE_NAME,
+          QRect(columnName.topRight().x() + 1, 0, 20, CELL_HEIGHT));
 
   addRect(PredefinedRect::SOUND_ICON,
           QRect(thumbnailArea.topLeft(), QSize(27, thumbnailArea.height()))
@@ -1526,7 +1541,7 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
       QRect(0, 0, LAYER_HEADER_WIDTH + 2, LAYER_FOOTER_PANEL_HEIGHT));
   addRect(PredefinedRect::LAYER_FOOTER_PANEL, layerFooterPanel);
 
-  QRect zoomSlider, zoomIn, zoomOut, noteArea;  // addLevel,
+  QRect toggleColNum, toggleColParent, zoomSlider, zoomIn, zoomOut, noteArea;  // addLevel,
 
   zoomSlider =
       QRect(layerFooterPanel.width() - 100, 0, 81, LAYER_FOOTER_PANEL_HEIGHT);
@@ -1549,6 +1564,18 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
   addRect(PredefinedRect::FOOTER_NOTE_AREA, noteArea);
   addRect(PredefinedRect::FOOTER_NOTE_OBJ_AREA, noteArea.adjusted(1, 0, 0, 0));
 
+  toggleColParent = QRect(noteArea.left() - 20, 0, LAYER_FOOTER_PANEL_HEIGHT,
+                          LAYER_FOOTER_PANEL_HEIGHT);
+  addRect(PredefinedRect::TOGGLE_COLUMN_PARENT_AREA, toggleColParent);
+  addRect(PredefinedRect::TOGGLE_COLUMN_PARENT,
+          toggleColParent.adjusted(1, 1, 0, 0));
+
+  toggleColNum = QRect(toggleColParent.left() - 20, 0,
+                       LAYER_FOOTER_PANEL_HEIGHT, LAYER_FOOTER_PANEL_HEIGHT);
+  addRect(PredefinedRect::TOGGLE_COLUMN_NUMBER_AREA, toggleColNum);
+  addRect(PredefinedRect::TOGGLE_COLUMN_NUMBER,
+          toggleColNum.adjusted(1, 1, 0, 0));
+
   // Flags
   addFlag(PredefinedFlag::DRAG_LAYER_BORDER, false);
   addFlag(PredefinedFlag::DRAG_LAYER_VISIBLE, true);
@@ -1566,10 +1593,10 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
   addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_BORDER, true);
   addFlag(PredefinedFlag::CONFIG_AREA_VISIBLE, true);
   addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_VISIBLE, true);
-  addFlag(PredefinedFlag::PEGBAR_NAME_BORDER, false);
-  addFlag(PredefinedFlag::PEGBAR_NAME_VISIBLE, false);
+  addFlag(PredefinedFlag::PEGBAR_NAME_BORDER, true);
+  addFlag(PredefinedFlag::PEGBAR_NAME_VISIBLE, true);
   addFlag(PredefinedFlag::PARENT_HANDLE_NAME_BORDER, false);
-  addFlag(PredefinedFlag::PARENT_HANDLE_NAME_VISIBILE, false);
+  addFlag(PredefinedFlag::PARENT_HANDLE_NAME_VISIBILE, true);
   addFlag(PredefinedFlag::THUMBNAIL_AREA_BORDER, true);
   addFlag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE, true);
   addFlag(PredefinedFlag::CAMERA_ICON_VISIBLE, true);
