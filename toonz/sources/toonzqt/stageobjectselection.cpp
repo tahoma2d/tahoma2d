@@ -376,6 +376,7 @@ void StageObjectSelection::pasteSelection() {
   for (auto c : indexes) {
     TXshColumnP column = m_xshHandle->getXsheet()->getColumn(c);
     if (!column || column->isEmpty()) continue;
+    column->removeFromAllFolders();
     pastedColumns.append(column);
   }
   if (!pastedColumns.isEmpty()) {

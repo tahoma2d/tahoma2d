@@ -55,8 +55,7 @@ void ColumnFan::update() {
     int pos = -1;
     if (m_columns[i].m_active && m_columns[i].m_visible)
       pos = m_columns[i].m_pos + m_unfolded - 1;
-    else if (i + 1 < m && m_columns[i + 1].m_active &&
-             m_columns[i + 1].m_visible)
+    else if (i + 1 < m && m_columns[i + 1].m_active)
       pos = m_columns[i + 1].m_pos - 1;
     else if (i + 1 == m)
       pos = m_firstFreePos - (m_columns[i].m_visible ? 1 : 0);
@@ -343,5 +342,40 @@ void ColumnFan::rollRightFoldedState(int index, int count) {
   else if (!isVisible(i) && tmpVisible)
     show(i);
 
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnFan::shiftFoldedStates(int col, int shift) {
+  if (col < 0 || !m_columns.size()) return;
+
+  if (shift > 0) {
+    int n = m_columns.size() + shift;
+    initializeCol(n - 1);
+  }
+
+  int newCol = col + shift;
+
+  if (newCol < 0) newCol = 0;
+  if (newCol >= m_columns.size()) initializeCol(newCol);
+
+  if (newCol < col) {  // shift left
+    int diff = col - newCol;
+    for (int c = col; c <= (m_columns.size() - diff); c++)
+      m_columns[c - diff] = m_columns[c];
+    for (int c = (m_columns.size() - diff); c < m_columns.size(); c++) {
+      m_columns[c].m_active  = true;
+      m_columns[c].m_visible = true;
+    }
+  } else if (newCol > col) {  // shift right
+    int diff = newCol - col;
+    for (int c = m_columns.size() - 1; c >= newCol; c--)
+      m_columns[c] = m_columns[c - diff];
+    for (int c = newCol - 1; c >= col; c--) {
+      m_columns[c].m_active  = true;
+      m_columns[c].m_visible = true;
+    }
+  }
   update();
 }
