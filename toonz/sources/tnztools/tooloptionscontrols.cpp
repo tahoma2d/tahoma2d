@@ -15,6 +15,8 @@
 #include "toonz/stage2.h"
 #include "toonz/doubleparamcmd.h"
 #include "toonz/preferences.h"
+#include "toonz/txsheethandle.h"
+#include "toonz/tframehandle.h"
 
 // TnzQt includes
 #include "toonzqt/gutil.h"
@@ -1209,6 +1211,8 @@ PegbarChannelField::PegbarChannelField(TTool *tool,
     , m_scaleType(eNone) {
   bool ret = connect(this, SIGNAL(measuredValueChanged(TMeasuredValue *, bool)),
                      SLOT(onChange(TMeasuredValue *, bool)));
+  ret      = ret &&
+        connect(this, SIGNAL(measuredValueDeleted(bool)), SLOT(onDelete(bool)));
   assert(ret);
   // NOTA: per le unita' di misura controlla anche tpegbar.cpp
   switch (actionId) {
@@ -1322,6 +1326,68 @@ void PegbarChannelField::onChange(TMeasuredValue *fld, bool addToUndo) {
     m_firstMouseDrag = false;
   }
   if (!addToUndo && !m_firstMouseDrag) m_firstMouseDrag = true;
+  m_objHandle->notifyObjectIdChanged(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void PegbarChannelField::onDelete(bool addToUndo) {
+  if (!m_tool->isEnabled()) return;
+
+  bool modifyConnectedActionId = false;
+  if (addToUndo) TUndoManager::manager()->beginBlock();
+  // m_firstMouseDrag is set to true only if addToUndo is false
+  // and only for the first drag
+  // This should always fire if addToUndo is true
+  if (!m_firstMouseDrag) {
+    m_before = TStageObjectValues();
+    m_before.setFrameHandle(m_frameHandle);
+    m_before.setObjectHandle(m_objHandle);
+    m_before.setXsheetHandle(m_xshHandle);
+    m_before.add(m_actionId);
+    if (m_scaleType != eNone) {
+      modifyConnectedActionId = true;
+      if (m_actionId == TStageObject::T_ScaleX)
+        m_before.add(TStageObject::T_ScaleY);
+      else if (m_actionId == TStageObject::T_ScaleY)
+        m_before.add(TStageObject::T_ScaleX);
+      else
+        modifyConnectedActionId = false;
+    }
+    if (m_isGlobalKeyframe) {
+      m_before.add(TStageObject::T_Angle);
+      m_before.add(TStageObject::T_X);
+      m_before.add(TStageObject::T_Y);
+      m_before.add(TStageObject::T_Z);
+      m_before.add(TStageObject::T_SO);
+      m_before.add(TStageObject::T_ScaleX);
+      m_before.add(TStageObject::T_ScaleY);
+      m_before.add(TStageObject::T_Scale);
+      m_before.add(TStageObject::T_Path);
+      m_before.add(TStageObject::T_ShearX);
+      m_before.add(TStageObject::T_ShearY);
+    }
+    m_before.updateValues();
+  }
+
+  TTool::Viewer *viewer = m_tool->getViewer();
+  if (viewer) m_tool->invalidate();
+  setCursorPosition(0);
+
+  TStageObjectId objId   = m_objHandle->getObjectId();
+  TStageObject *stageObj = m_xshHandle->getXsheet()->getStageObject(objId);
+  int frame              = m_frameHandle->getFrameIndex();
+
+  stageObj->getParam(m_actionId)->deleteKeyframe(frame);
+
+  if (addToUndo) {
+    UndoChannelDelete *undo = new UndoChannelDelete(m_actionId, m_before);
+    undo->setXsheetHandle(m_xshHandle);
+    undo->setObjectHandle(m_objHandle);
+    undo->setFrameHandle(m_frameHandle);
+    TUndoManager::manager()->add(undo);
+    TUndoManager::manager()->endBlock();
+  }
   m_objHandle->notifyObjectIdChanged(false);
 }
 
