@@ -1222,6 +1222,11 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
 
         if (ii) dim = TDimension(ii->m_lx / m_shrink, ii->m_ly / m_shrink);
 
+        if (palette && level->getPalette() != palette)
+          level->setPalette(palette);
+
+        m_palette = level->getPalette();
+
         // When viewing the tlv, try to cache all frames at the beginning.
         if (!m_imageViewer->isColorModel() && fp.getType() == "tlv" &&
             !(m_flags & eDontKeepFilesOpened) && !m_isPreviewFx) {
@@ -1241,10 +1246,6 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
       }
 
       m_flipConsole->setFrameRange(1, m_framesCount, 1, current);
-
-      if (palette && level->getPalette() != palette) level->setPalette(palette);
-
-      m_palette = level->getPalette();
 
       if (dim != TDimension(-1, -1)) {
         if (append && !m_levels.empty())
