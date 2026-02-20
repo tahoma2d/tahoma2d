@@ -1581,6 +1581,7 @@ void StrokeSelection::enableCommands() {
   enableCommand(m_groupCommand.get(), MI_EnterGroup,
                 &TGroupCommand::enterGroup);
   enableCommand(m_groupCommand.get(), MI_ExitGroup, &TGroupCommand::exitGroup);
+  enableCommand(m_groupCommand.get(), MI_UngroupAll, &TGroupCommand::ungroupAll);
 
   enableCommand(this, MI_RemoveEndpoints, &StrokeSelection::removeEndpoints);
   enableCommand(this, MI_SelectAll, &StrokeSelection::selectAll);

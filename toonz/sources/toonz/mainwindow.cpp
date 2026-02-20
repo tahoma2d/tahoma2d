@@ -2001,6 +2001,8 @@ void MainWindow::defineActions() {
                        "move_forward_one");
   createMenuEditAction(MI_BringToFront, QT_TR_NOOP("&Move to Front"), "Ctrl+]",
                        "move_to_front");
+  createMenuEditAction(MI_UngroupAll, QT_TR_NOOP("&Ungroup All"), "",
+                       "ungroup_all");
   createMenuFileAction(MI_ClearRecentProject,
                        QT_TR_NOOP("&Clear Recent Project List"), "", "",
                        tr("Remove everything from the recent project list."));

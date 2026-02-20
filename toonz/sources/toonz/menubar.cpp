@@ -398,6 +398,7 @@ void TopBar::loadMenubar() {
   {
     addMenuItem(groupMenu, MI_Group);
     addMenuItem(groupMenu, MI_Ungroup);
+    addMenuItem(groupMenu, MI_UngroupAll);
     addMenuItem(groupMenu, MI_EnterGroup);
     addMenuItem(groupMenu, MI_ExitGroup);
   }
