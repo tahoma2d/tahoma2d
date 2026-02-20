@@ -68,7 +68,7 @@ public:
       , m_y0(0)
       , m_x1(-1)
       , m_y1(-1)
-      , m_samplePerPixel(0)
+      , m_samplePerPixel(4)
       , m_bitsPerSample(8)
       , m_fileSize(0)
       , m_valid(false) {}
@@ -84,7 +84,7 @@ public:
       , m_y0(0)
       , m_x1(-1)
       , m_y1(-1)
-      , m_samplePerPixel(0)
+      , m_samplePerPixel(4)
       , m_bitsPerSample(8)
       , m_fileSize(0)
       , m_valid(false) {}
