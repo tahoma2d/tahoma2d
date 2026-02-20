@@ -15,6 +15,7 @@
 #include "toonz/textureutils.h"
 #include "toonz/levelset.h"
 #include "toonz/tcamera.h"
+#include "toonz/txshcell.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -2526,6 +2527,8 @@ TRectD TXshSimpleLevel::getBBox(const TFrameId &fid) const {
   return TScale(1.0 / dpiX, 1.0 / dpiY) * bbox;
 }
 
+//-----------------------------------------------------------------------------
+
 bool TXshSimpleLevel::isFrameReadOnly(TFrameId fid) {
   // For Raster and mesh files, check to see if files are marked as read-only at
   // the OS level
@@ -2548,4 +2551,52 @@ bool TXshSimpleLevel::isFrameReadOnly(TFrameId fid) {
     return false;
 
   return m_isReadOnly;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshSimpleLevel::isSingleFileLevel() {
+  return (m_frames.size() == 1 &&
+          (m_frames.begin()->getNumber() == TFrameId::EMPTY_FRAME ||
+           m_frames.begin()->getNumber() == TFrameId::NO_FRAME));
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshSimpleLevel::canConvertSingleFileToSequence() {
+  std::string fileType = toLower(m_path.getType());
+  return m_type == OVL_XSHLEVEL && isSingleFileLevel() &&
+         !m_path.isUneditable();
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshSimpleLevel::convertSingleFileToSequence(TXsheet *xsh) {
+  if (!isSingleFileLevel()) return;
+
+  TFrameId oldFid = *m_frames.begin();
+  TFrameId newFid = oldFid;
+  TImage *img     = getFrame(oldFid, false)->cloneImage();
+  eraseFrame(oldFid);
+  newFid.convertToSequence();
+  setFrame(newFid, img);
+
+  m_path = m_path.withFrame();
+
+  if (xsh) {
+    TXshCell cell(this, newFid);
+
+    // Replace frame on Xsheet
+    for (int c = 0; c < xsh->getColumnCount(); c++) {
+      int r0, r1;
+      xsh->getCellRange(c, r0, r1);
+      for (int r = r0; r <= r1; r++) {
+        TXshCell oldCell = xsh->getCell(r, c, false, false);
+        if (oldCell.isEmpty() || oldCell.m_level != this ||
+            oldCell.getFrameId() != oldFid)
+          continue;
+        xsh->setCell(r, c, cell);
+      }
+    }
+  }
 }

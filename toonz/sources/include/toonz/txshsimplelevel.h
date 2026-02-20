@@ -9,6 +9,7 @@
 #include "toonz/txshlevel.h"
 #include "toonz/txshleveltypes.h"
 #include "toonz/imagemanager.h"
+#include "toonz/txsheet.h"
 
 // TnzCore includes
 #include "traster.h"
@@ -316,6 +317,10 @@ The oldFp is used when the current scene path change...
   void renumber(const std::vector<TFrameId> &fids);
 
   bool isFrameReadOnly(TFrameId fid);
+
+  bool isSingleFileLevel();
+  bool canConvertSingleFileToSequence();
+  void convertSingleFileToSequence(TXsheet *xsh);
 
 public:
   // Auxiliary files management: hooks, tpl, etc.
