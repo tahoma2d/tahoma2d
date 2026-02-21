@@ -61,6 +61,7 @@ public:
   void ungroup();
   void enterGroup();
   void exitGroup();
+  void ungroupAll();
 
 private:
   void moveGroup(UCHAR moveType);

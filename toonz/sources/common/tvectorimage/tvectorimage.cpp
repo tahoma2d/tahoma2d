@@ -2505,7 +2505,7 @@ int TVectorImage::getCommonGroupDepth(int index0, int index1) const {
 
 //-------------------------------------------------------------------
 
-int TVectorImage::ungroup(int fromIndex) {
+int TVectorImage::ungroup(int fromIndex, bool removeAll) {
   assert(m_imp->m_strokes[fromIndex]->m_groupId.isGrouped() != 0);
   std::vector<int> changedStrokes;
 
@@ -2539,12 +2539,16 @@ int TVectorImage::ungroup(int fromIndex) {
        i <= toIndex || (i < (int)m_imp->m_strokes.size() &&
                         m_imp->m_strokes[i]->m_groupId.isGrouped(true) != 0);
        i++) {
-    // Popup outer groups
-    for (int x = 0; x < outerGroups.size(); x++)
-      m_imp->m_strokes[i]->m_groupId.m_id.pop_back();
+    if (removeAll)
+      m_imp->m_strokes[i]->m_groupId.m_id.clear();
+    else {
+      // Popup outer groups
+      for (int x = 0; x < outerGroups.size(); x++)
+        m_imp->m_strokes[i]->m_groupId.m_id.pop_back();
 
-    // Pop top most group
-    m_imp->m_strokes[i]->m_groupId.m_id.pop_back();
+      // Pop top most group
+      m_imp->m_strokes[i]->m_groupId.m_id.pop_back();
+    }
 
     // Push back outer groups
     for (int x = 0; x < outerGroups.size(); x++)
@@ -2559,6 +2563,12 @@ int TVectorImage::ungroup(int fromIndex) {
   notifyChangedStrokes(changedStrokes, std::vector<TStroke *>(), false);
 
   return toIndex - fromIndex + 1;
+}
+
+//-------------------------------------------------------------------
+
+int TVectorImage::ungroupAll(int fromIndex) {
+  return ungroup(fromIndex, true);
 }
 
 //-------------------------------------------------------------------

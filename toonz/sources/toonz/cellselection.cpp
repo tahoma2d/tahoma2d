@@ -99,6 +99,31 @@ bool containsOnlyOneRasterLevel(int r0, int c0, int r1, int c1) {
 
 //-----------------------------------------------------------------------------
 
+void setToolFrameSelection(int r0, int c0, int r1, int c1) {
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+  int c = TApp::instance()->getCurrentColumn()->getColumnIndex();
+  if (c < c0 || c > c1) return;
+
+  TXshColumn *column = xsh->getColumn(c);
+  if (!column || column->isEmpty() || !column->getLevelColumn()) return;
+
+  TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+  std::set<TFrameId> frameIdSet;
+
+  for (int r = r0; r <= r1; r++) {
+    TXshCell cell = xsh->getCell(r, c);
+    if (cell.isEmpty() || !cell.getSimpleLevel()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (fid.isEmptyFrame() || fid.isNoFrame() || fid.isStopFrame()) continue;
+    frameIdSet.insert(fid);
+  }
+
+  tool->setSelectedFrames(frameIdSet);
+}
+
+//-----------------------------------------------------------------------------
+
 void copyCellsWithoutUndo(int r0, int c0, int r1, int c1) {
   int colCount = c1 - c0 + 1;
   int rowCount = r1 - r0 + 1;
@@ -2019,17 +2044,13 @@ void TCellSelection::selectCells(int r0, int c0, int r1, int c1) {
   m_range.m_c1            = c1;
   bool onlyOneRasterLevel = containsOnlyOneRasterLevel(r0, c0, r1, c1);
   CommandManager::instance()->enable(MI_CanvasSize, onlyOneRasterLevel);
+  setToolFrameSelection(r0, c0, r1, c1);
 }
 
 //-----------------------------------------------------------------------------
 
 void TCellSelection::selectCell(int row, int col) {
-  m_range.m_r0            = row;
-  m_range.m_c0            = col;
-  m_range.m_r1            = row;
-  m_range.m_c1            = col;
-  bool onlyOneRasterLevel = containsOnlyOneRasterLevel(row, col, row, col);
-  CommandManager::instance()->enable(MI_CanvasSize, onlyOneRasterLevel);
+  selectCells(row, col, row, col);
 }
 
 //-----------------------------------------------------------------------------
