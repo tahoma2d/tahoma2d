@@ -746,17 +746,48 @@ void TGroupCommand::ungroupAll() {
   }
 
   // Let's remove entries not in a group
-  StrokeSelection *sel                        = new StrokeSelection(*m_sel);
-  StrokeSelection::IndexesContainer selection = sel->getSelection();
-  for (int i = 0; i < selection.size(); i++)
-    if (!vimg->isStrokeGrouped(selection[i])) sel->select(selection[i], false);
+  StrokeSelection *sel    = new StrokeSelection(*m_sel);
+  LevelSelection levelSel = sel->getLevelSelection();
 
   TXshSimpleLevel *level =
       TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
-  UngroupAllUndo *undo = new UngroupAllUndo(level, tool->getCurrentFid(),
-                                            new StrokeSelection(*sel));
-  TUndoManager::manager()->add(undo);
-  undo->redo();
+  std::vector<TFrameId> fids;
+
+  if (levelSel.framesMode() == LevelSelection::FRAMES_ALL)
+    level->getFids(fids);
+  else if (levelSel.framesMode() == LevelSelection::FRAMES_SELECTED) {
+    std::vector<TFrameId> allFids;
+    level->getFids(allFids);
+    for (int f = 0; f < allFids.size(); f++) {
+      if (tool->getCurrentFid() != allFids[f] &&
+          !tool->getSelectedFrames().count(allFids[f]))
+        continue;
+      fids.push_back(allFids[f]);
+    }
+  } else
+    fids.push_back(tool->getCurrentFid());
+
+  if (fids.size() > 1) TUndoManager::manager()->beginBlock();
+
+  for (int f = 0; f < fids.size(); f++) {
+    TVectorImageP vi = level->getFrame(fids[f], true);
+    if (!vi) continue;
+
+    StrokeSelection *strokeSelection = new StrokeSelection;
+    std::vector<int> filteredStrokes =
+        vi == vimg ? sel->getSelection() : getSelectedStrokes(*vi, levelSel);
+    for (int i = 0; i < filteredStrokes.size(); i++) {
+      TStroke *stroke = vi->getStroke(filteredStrokes[i]);
+      if (!vi->isStrokeGrouped(filteredStrokes[i])) continue;
+      strokeSelection->select(filteredStrokes[i], true);
+    }
+
+    UngroupAllUndo *undo = new UngroupAllUndo(level, fids[f], strokeSelection);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  if (fids.size() > 1) TUndoManager::manager()->endBlock();
 }
 
 //-----------------------------------------------------------------------------

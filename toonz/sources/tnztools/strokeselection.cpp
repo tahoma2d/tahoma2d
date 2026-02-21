@@ -548,7 +548,8 @@ StrokeSelection::StrokeSelection(const StrokeSelection &other)
     , m_indexes(other.m_indexes)
     , m_groupCommand(new TGroupCommand())
     , m_sceneHandle(other.m_sceneHandle)
-    , m_updateSelectionBBox(other.m_updateSelectionBBox) {
+    , m_updateSelectionBBox(other.m_updateSelectionBBox)
+    , m_levelSelection(other.m_levelSelection) {
   m_groupCommand->setSelection(this);
 }
 
@@ -559,6 +560,7 @@ StrokeSelection &StrokeSelection::operator=(const StrokeSelection &other) {
   m_indexes             = other.m_indexes;
   m_sceneHandle         = other.m_sceneHandle;
   m_updateSelectionBBox = other.m_updateSelectionBBox;
+  m_levelSelection      = other.m_levelSelection;
 
   return *this;
 }

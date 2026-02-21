@@ -12,6 +12,8 @@
 #include "tcommon.h"
 #include "tvectorimage.h"
 
+#include "levelselection.h"
+
 // STD includes
 #include <set>
 
@@ -52,6 +54,8 @@ class DVAPI StrokeSelection final : public TSelection {
 public:
   typedef std::vector<int> IndexesContainer;
 
+  LevelSelection m_levelSelection;
+
 public:
   StrokeSelection();
   ~StrokeSelection();
@@ -66,6 +70,12 @@ public:
 
   const IndexesContainer &getSelection() const { return m_indexes; }
   IndexesContainer &getSelection() { return m_indexes; }
+
+  void setLevelSelection(const LevelSelection &levelSelection) {
+    m_levelSelection = levelSelection;
+  }
+  const LevelSelection &getLevelSelection() const { return m_levelSelection; }
+  LevelSelection &getLevelSelection() { return m_levelSelection; }
 
   bool isEmpty() const override { return m_indexes.empty(); }
   bool updateSelectionBBox() const { return m_updateSelectionBBox; }
