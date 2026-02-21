@@ -453,6 +453,7 @@ protected slots:
 signals:
 
   void measuredValueChanged(TMeasuredValue *value, bool addToUndo = true);
+  void measuredValueDeleted(bool addToUndo = true);
 };
 //-----------------------------------------------------------------------------
 
@@ -486,6 +487,7 @@ protected slots:
   // add to undo is only false if mouse dragging to change the value
   // on mouse release, add to undo is true
   void onChange(TMeasuredValue *fld, bool addToUndo = true);
+  void onDelete(bool addToUndo = true);
 };
 
 //-----------------------------------------------------------------------------
