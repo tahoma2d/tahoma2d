@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="40"
+   height="30"
+   version="1.1"
+   xml:space="preserve"
+   style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2"
+   id="svg1"
+   sodipodi:docname="pegbar_header.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs1" /><sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="true"
+   inkscape:zoom="29.9"
+   inkscape:cx="19.983278"
+   inkscape:cy="15"
+   inkscape:window-width="1920"
+   inkscape:window-height="1141"
+   inkscape:window-x="-7"
+   inkscape:window-y="-7"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg1"><inkscape:grid
+     id="grid1"
+     units="px"
+     originx="0"
+     originy="0"
+     spacingx="1"
+     spacingy="1"
+     empcolor="#0099e5"
+     empopacity="0.30196078"
+     color="#0099e5"
+     opacity="0.14901961"
+     empspacing="5"
+     enabled="true"
+     visible="true" /></sodipodi:namedview>
+    <rect
+   style="fill:#ffffff;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;fill-opacity:0.80000001"
+   id="rect2"
+   width="40"
+   height="30"
+   x="0"
+   y="0"
+   ry="0.16516964" /><rect
+   x="0"
+   y="0"
+   width="20"
+   height="20"
+   style="fill-opacity:0"
+   id="rect1" />
+    <g
+   transform="matrix(1.5555556,0,0,1.3333333,2.8888889,3)"
+   id="g1">
+        <path
+   d="M 20,9 C 20,7.344 18.656,6 17,6 H 5 C 3.344,6 2,7.344 2,9 c 0,1.656 1.344,3 3,3 h 12 c 1.656,0 3,-1.344 3,-3 z M 18,9 C 18,8.448 17.552,8 17,8 h -2 c -0.552,0 -1,0.448 -1,1 0,0.552 0.448,1 1,1 h 2 c 0.552,0 1,-0.448 1,-1 z m -6,0 c 0,-0.552 -0.448,-1 -1,-1 -0.552,0 -1,0.448 -1,1 0,0.552 0.448,1 1,1 0.552,0 1,-0.448 1,-1 z M 8,9 C 8,8.448 7.552,8 7,8 H 5 C 4.448,8 4,8.448 4,9 4,9.552 4.448,10 5,10 H 7 C 7.552,10 8,9.552 8,9 Z"
+   style="fill:#000000"
+   id="path1" />
+    </g>
+</svg>

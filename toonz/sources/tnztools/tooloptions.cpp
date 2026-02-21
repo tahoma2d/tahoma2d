@@ -1017,7 +1017,8 @@ void ArrowToolOptionsBox::updateStageObjectComboItems() {
     if (id == xsh->getStageObjectTree()->getMotionPathViewerId()) continue;
     if (id.isColumn()) {
       int columnIndex = id.getIndex();
-      if (xsh->isColumnEmpty(columnIndex) || xsh->isFolderColumn(columnIndex))
+      if (xsh->isColumnEmpty(columnIndex) || xsh->isFolderColumn(columnIndex) ||
+          xsh->isPegbarColumn(columnIndex))
         continue;
     }
     TStageObject *pegbar = xsh->getStageObject(id);

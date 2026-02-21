@@ -504,9 +504,10 @@ void TApp::onImageChanged() {
 void TApp::onXsheetSwitched() {
   // update current object
   int columnIndex = m_currentColumn->getColumnIndex();
-  if (columnIndex >= 0)
-    m_currentObject->setObjectId(TStageObjectId::ColumnId(columnIndex));
-
+  if (columnIndex >= 0) {
+    TXsheet *xsh = getCurrentXsheet()->getXsheet();
+    m_currentObject->setObjectId(xsh->getColumnObjectId(columnIndex));
+  }
   // update xsheetlevel
   updateXshLevel();
 
@@ -558,13 +559,12 @@ void TApp::onColumnIndexSwitched() {
 
   // update current object
   int columnIndex = m_currentColumn->getColumnIndex();
+  TXsheet *xsh    = getCurrentXsheet()->getXsheet();
   if (columnIndex >= 0)
-    m_currentObject->setObjectId(TStageObjectId::ColumnId(columnIndex));
-  else {
-    TXsheet *xsh = getCurrentXsheet()->getXsheet();
+    m_currentObject->setObjectId(xsh->getColumnObjectId(columnIndex));
+  else
     m_currentObject->setObjectId(
         TStageObjectId::CameraId(xsh->getCameraColumnIndex()));
-  }
 }
 
 //-----------------------------------------------------------------------------

@@ -41,6 +41,8 @@
 #include "toonz/tstageobjectid.h"
 #include "toonz/columnfan.h"
 #include "toonz/txshfoldercolumn.h"
+#include "toonz/txshpegbarcolumn.h"
+#include "toonz/tstageobjectcmd.h"   
 
 #include "../toonz/xsheetviewer.h"
 
@@ -344,6 +346,18 @@ void deleteColumnsWithoutUndo(std::set<int> *indices,
     TXshColumn *column = xsh->getColumn(*it);
     if (column && column->getSoundColumn()) soundColumnRemoved = true;
     if (column && column->getFx()) app->getCurrentFx()->setFx(0);
+    if (column && column->getPegbarColumn()) {
+      std::vector<TStageObjectId> objIds;
+      std::list<QPair<TStageObjectId, TStageObjectId>> links;
+      std::list<int> splineIds;
+      objIds.push_back(column->getPegbarColumn()->getPegbarObjectId());
+      TXsheetHandle *xshHandle = TApp::instance()->getCurrentXsheet();
+      TFxHandle *fxHandle      = TApp::instance()->getCurrentFx();
+      TObjectHandle *objHandle     = TApp::instance()->getCurrentObject();
+      TStageObjectCmd::deleteSelection(objIds, links, splineIds, xshHandle,
+                                       objHandle, fxHandle, false);
+      continue; // deleteSelection will delete the column
+    }
     xsh->removeColumn(*it);
   }
 
@@ -516,9 +530,16 @@ public:
     TApp *app    = TApp::instance();
     m_data       = new StageObjectsData();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+    std::vector<TStageObjectId> objIds;
+    std::set<int>::iterator it;
+    for (it = indices.begin(); it != indices.end(); ++it) {
+      TXshColumn *column = xsh->getColumn(*it);
+      if (!column || !column->getPegbarColumn()) continue;
+      objIds.push_back(column->getPegbarColumn()->getPegbarObjectId());
+    }
+    m_data->storeObjects(objIds, xsh, 0);
     m_data->storeColumns(indices, xsh, 0);
     m_data->storeColumnFxs(indices, xsh, 0);
-    std::set<int>::iterator it;
     for (it = m_indices.begin(); it != m_indices.end(); it++) {
       TXshColumn *column = xsh->getColumn(*it);
       if (!column || !column->getFx()) continue;
@@ -569,6 +590,7 @@ public:
 
 class DeleteColumnsUndo final : public TUndo {
   std::set<int> m_indices;
+  std::vector<TStageObjectId> m_objIds;
 
   QMap<TFxPort *, TFx *> m_columnFxLinks;
   QMap<TStageObjectId, QList<TStageObjectId>> m_columnObjChildren;
@@ -585,10 +607,16 @@ public:
     TApp *app    = TApp::instance();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
+    std::set<int>::iterator it;
+    for (it = indices.begin(); it != indices.end(); ++it) {
+      TXshColumn *column = xsh->getColumn(*it);
+      if (!column || !column->getPegbarColumn()) continue;
+      m_objIds.push_back(column->getPegbarColumn()->getPegbarObjectId());
+    }
+    m_data->storeObjects(m_objIds, xsh, 0);
     m_data->storeColumns(m_indices, xsh, 0);
     m_data->storeColumnFxs(m_indices, xsh, 0);
 
-    std::set<int>::iterator it;
     for (it = m_indices.begin(); it != m_indices.end(); ++it) {
       TXshColumn *column = xsh->getColumn(*it);
       if (!column) continue;
@@ -609,7 +637,7 @@ public:
 
       // Store TStageObject children
       int pegbarsCount     = xsh->getStageObjectTree()->getStageObjectCount();
-      TStageObjectId id    = TStageObjectId::ColumnId(*it);
+      TStageObjectId id    = xsh->getColumnObjectId(*it);
       TStageObject *pegbar = xsh->getStageObject(id);
       for (int i = 0; i < pegbarsCount; ++i) {
         TStageObject *other = xsh->getStageObjectTree()->getStageObject(i);
@@ -632,6 +660,7 @@ public:
     assert(!m_data.get());
     m_data.reset(new StageObjectsData);
 
+    m_data->storeObjects(m_objIds, xsh, 0);
     m_data->storeColumns(m_indices, xsh, 0);
     m_data->storeColumnFxs(m_indices, xsh, 0);
 
@@ -1191,10 +1220,22 @@ void ColumnCmd::ungroupColumns(const std::set<int> &indices) {
 static void copyColumns_internal(const std::set<int> &indices) {
   assert(!indices.empty());
 
+  std::vector<TStageObjectId> objIds;
+
   StageObjectsData *data = new StageObjectsData;
 
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
+  std::set<int>::iterator it;
+  for (it = indices.begin(); it != indices.end(); ++it) {
+    TXshColumn *column = xsh->getColumn(*it);
+    if (!column || !column->getPegbarColumn()) continue;
+    objIds.push_back(column->getPegbarColumn()->getPegbarObjectId());
+  }
+
+  data->storeObjects(
+      objIds, xsh,
+      StageObjectsData::eDoClone | StageObjectsData::eResetFxDagPositions);
   data->storeColumns(
       indices, xsh,
       StageObjectsData::eDoClone | StageObjectsData::eResetFxDagPositions);

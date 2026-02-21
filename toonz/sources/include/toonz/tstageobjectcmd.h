@@ -46,7 +46,7 @@ DVAPI void setSplineParent(TStageObjectSpline *spline, TStageObject *parentObj,
 DVAPI void addNewCamera(TXsheetHandle *xshHandle, TObjectHandle *objHandle,
                         QPointF initialPos = QPointF());
 DVAPI void addNewPegbar(TXsheetHandle *xshHandle, TObjectHandle *objHandle,
-                        QPointF initialPos = QPointF());
+                        QPointF initialPos = QPointF(), int col = 0);
 DVAPI void setAsActiveCamera(TXsheetHandle *xshHandle,
                              TObjectHandle *objHandle);
 DVAPI TStageObjectSpline *addNewSpline(TXsheetHandle *xshHandle,

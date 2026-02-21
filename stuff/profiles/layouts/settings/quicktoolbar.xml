@@ -9,6 +9,7 @@
     <command>MI_NewToonzRasterLevel</command>
     <command>MI_NewVectorLevel</command>
     <command>MI_NewNoteLevel</command>
+    <command>MI_NewPegbar</command>
     <command>MI_NewFolder</command>
     <separator/>
     <command>MI_CreateBlankDrawing</command>

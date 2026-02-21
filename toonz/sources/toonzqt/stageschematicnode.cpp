@@ -30,6 +30,7 @@
 #include "toonz/hook.h"
 #include "toonz/preferences.h"
 #include "toonz/txshsimplelevel.h"
+#include "toonz/txshpegbarcolumn.h"
 
 // TnzQt includes
 #include "toonzqt/gutil.h"
@@ -1500,7 +1501,19 @@ void StageSchematicNode::onClicked() {
   emit currentObjectChanged(id, false);
   if (id.isColumn())
     emit currentColumnChanged(id.getIndex());
-  else if (id.isCamera() || id.isPegbar() || id.isTable())
+  else if (id.isPegbar()) {
+    StageSchematicScene *stageScene =
+        dynamic_cast<StageSchematicScene *>(scene());
+    TXsheet *xsh = stageScene->getXsheet();
+    for (int i = 0; i < xsh->getColumnCount(); i++) {
+      if (!xsh->getColumn(i) || !xsh->getColumn(i)->getPegbarColumn() ||
+          xsh->getColumn(i)->getPegbarColumn()->getPegbarObjectId() != id)
+        continue;
+      emit currentColumnChanged(i);
+      break;
+    }
+    emit editObject();
+  } else if (id.isCamera() || id.isTable())
     emit editObject();
 }
 
@@ -1580,7 +1593,7 @@ StageSchematicPegbarNode::StageSchematicPegbarNode(StageSchematicScene *scene,
                                                    TStageObject *pegbar)
     : StageSchematicNode(scene, pegbar, 90, 18, false, false) {
   SchematicViewer *viewer = scene->getSchematicViewer();
-  std::string name        = m_stageObject->getFullName();
+  std::string name        = m_stageObject->getName();
   std::string id          = m_stageObject->getId().toString();
   m_name                  = QString::fromStdString(name);
   m_nameItem              = new SchematicName(this, 72, 20);

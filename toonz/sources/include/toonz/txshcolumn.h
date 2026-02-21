@@ -32,6 +32,7 @@ class TXshPaletteColumn;
 class TXshZeraryFxColumn;
 class TXshMeshColumn;
 class TXshFolderColumn;
+class TXshPegbarColumn;
 class TXsheet;
 class TXshCell;
 class TFx;
@@ -125,7 +126,8 @@ Constructs a TXshColumn with default value.
     eZeraryFxType,
     ePaletteType,
     eMeshType,
-    eFolderType
+    eFolderType,
+    ePegbarType
   };
 
   virtual ColumnType getColumnType() const = 0;
@@ -147,6 +149,7 @@ Constructs a TXshColumn with default value.
   virtual TXshZeraryFxColumn *getZeraryFxColumn() { return 0; }
   virtual TXshMeshColumn *getMeshColumn() { return 0; }
   virtual TXshFolderColumn *getFolderColumn() { return 0; }
+  virtual TXshPegbarColumn *getPegbarColumn() { return 0; }
 
   virtual int getMaxFrame(bool ignoreLastStop = false) const = 0;
 

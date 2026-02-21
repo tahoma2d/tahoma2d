@@ -163,6 +163,10 @@ XsheetViewer {
   qproperty-FolderColumnColor: @xsheet-FolderColumn-color;
   qproperty-FolderColumnBorderColor: desaturate(darken(@xsheet-FolderColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
   qproperty-SelectedFolderColumnColor: mix(shade(@xsheet-FolderColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
+
+  qproperty-PegbarColumnColor: @xsheet-PegbarColumn-color;
+  qproperty-PegbarColumnBorderColor: desaturate(darken(@xsheet-PegbarColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
+  qproperty-SelectedPegbarColumnColor: mix(shade(@xsheet-PegbarColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
  
   qproperty-ActiveCameraColor: @xsheet-ActiveCamera-color;
   qproperty-SelectedActiveCameraColor: mix(shade(@xsheet-ActiveCamera-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);

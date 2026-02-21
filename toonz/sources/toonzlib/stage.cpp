@@ -777,7 +777,8 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     }
 
     if (column && !column->isEmpty() && !column->getSoundColumn() &&
-        !column->getFolderColumn() && !column->isMask()) {
+        !column->getFolderColumn() && !column->getPegbarColumn() &&
+        !column->isMask()) {
 
       if (!column->isPreviewVisible() && checkPreviewVisibility) {
         if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {

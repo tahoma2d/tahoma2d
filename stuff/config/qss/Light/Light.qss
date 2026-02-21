@@ -2396,9 +2396,12 @@ XsheetViewer {
   qproperty-SelectedSoundColumnColor: #a8b2c0;
   qproperty-SoundColumnHlColor: #f5ffe6;
   qproperty-SoundColumnTrackColor: rgba(0, 0, 0, 0.8);
-  qproperty-FolderColumnColor: #e7c9a9;
-  qproperty-FolderColumnBorderColor: #cfa375;
-  qproperty-SelectedFolderColumnColor: #d2a9a1;
+  qproperty-FolderColumnColor: #f0d08f;
+  qproperty-FolderColumnBorderColor: #dfb154;
+  qproperty-SelectedFolderColumnColor: #d8ad8f;
+  qproperty-PegbarColumnColor: #dfb081;
+  qproperty-PegbarColumnBorderColor: #c68a4d;
+  qproperty-SelectedPegbarColumnColor: #cc9785;
   qproperty-ActiveCameraColor: #79b5ee;
   qproperty-SelectedActiveCameraColor: #869bd1;
   qproperty-OtherCameraColor: #6eb7c2;

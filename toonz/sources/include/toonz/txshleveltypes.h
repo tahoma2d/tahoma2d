@@ -28,7 +28,8 @@ enum TXshLevelType {
   SND_XSHLEVEL      = 3 << 7,
   SND_TXT_XSHLEVEL  = 4 << 7,
   MESH_XSHLEVEL     = 5 << 7,
-  FOLDER_XSHLEVEL   = 6 << 7
+  FOLDER_XSHLEVEL   = 6 << 7,
+  PEGBAR_XSHLEVEL   = 7 << 7
 };
 
 #endif
