@@ -291,12 +291,6 @@ void Preferences::load() {
     setValue(CurrentLanguageName, "English");
 
   TImageWriter::setBackgroundColor(getColorValue(rasterBackgroundColor));
-
-#ifdef MACOSX
-  // Can only support 3-finger swipe undo/redo gestures for now
-  setValue(gestureUndoMethod, GestureUndoMethod::ThreeFingerDragLeft);
-  setValue(gestureRedoMethod, GestureRedoMethod::ThreeFingerDragRight);
-#endif
 }
 
 //-----------------------------------------------------------------
