@@ -475,8 +475,7 @@
     </message>
     <message>
         <source>X and Y Positions</source>
-        <translatorcomment>Posiciones X e Y</translatorcomment>
-        <translation></translation>
+        <translation>Posiciones X e Y</translation>
     </message>
 </context>
 <context>
@@ -1013,8 +1012,7 @@
     <name>PerspectiveGridToolOptionBox</name>
     <message>
         <source>Spacing:</source>
-        <translatorcomment>Espaciado:</translatorcomment>
-        <translation></translation>
+        <translation>Espaciado:</translation>
     </message>
     <message>
         <source>Rotation:</source>
@@ -1543,7 +1541,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>The current tool cannot be used in Level Strip mode.</source>
-        <translation>No es posible usar la herramienta actual en la cinta de nivel.</translation>
+        <translation>No es posible usar la herramienta actual en la Cinta de nivel.</translation>
     </message>
     <message>
         <source>The current tool cannot be used to edit a motion path.</source>
@@ -1555,19 +1553,19 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>The current tool cannot be used on a Vector Level.</source>
-        <translation>No es posible usar la herramienta actual en un nivel vectorial.</translation>
+        <translation>No es posible usar la herramienta actual en un nivel Vectorial.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Toonz Level.</source>
-        <translation>No es posible usar la herramienta actual en un nivel de imagen de Toonz.</translation>
+        <translation>No es posible usar la herramienta actual en un nivel de Imagen inteligente.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Raster Level.</source>
-        <translation>No es posible usar la herramienta actual en un nivel de imagen.</translation>
+        <translation>No es posible usar la herramienta actual en un nivel de Imagen.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a Mesh Level.</source>
-        <translation>No es posible usar la herramienta actual en un nivel de malla.</translation>
+        <translation>No es posible usar la herramienta actual en un nivel de Malla.</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a mesh-deformed level</source>
@@ -1703,8 +1701,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>The current tool cannot be used on a stop frame.</source>
-        <translatorcomment>No es posible usar la herramienta actual en un fotograma de detención.</translatorcomment>
-        <translation></translation>
+        <translation>No es posible usar la herramienta actual en un fotograma de detención.</translation>
     </message>
     <message>
         <source>It is not possible to edit the folder column.</source>

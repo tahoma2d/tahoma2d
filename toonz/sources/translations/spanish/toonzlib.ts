@@ -67,15 +67,15 @@
     </message>
     <message>
         <source>Unexpected error while reading image %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error inesperado al leer la imagen %1</translation>
     </message>
     <message>
         <source>Unrecognized file type : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de archivo no reconocido: %1</translation>
     </message>
     <message>
         <source>Unexpected error while writing image %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error inesperado al escribir la imagen %1</translation>
     </message>
 </context>
 <context>
@@ -165,7 +165,7 @@
     </message>
     <message>
         <source>Unrecognized file type : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de archivo no reconocido: %1</translation>
     </message>
 </context>
 <context>
@@ -192,7 +192,7 @@
     </message>
     <message>
         <source>Invalid color : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Color inválido: %1</translation>
     </message>
 </context>
 <context>
@@ -718,8 +718,7 @@
     </message>
     <message>
         <source>It is not possible to load file %1.</source>
-        <translatorcomment>No es posible cargar el archivo %1.</translatorcomment>
-        <translation></translation>
+        <translation>No es posible cargar el archivo %1.</translation>
     </message>
     <message>
         <source>Opacity</source>
@@ -775,19 +774,19 @@
     </message>
     <message>
         <source>Fine speed filter</source>
-        <translation>Filtro de velocidad: Fina</translation>
+        <translation>Velocidad fina: Filtro</translation>
     </message>
     <message>
         <source>Gross speed filter</source>
-        <translation>Filtro de velocidad: Gruesa</translation>
+        <translation>Velocidad gruesa: Filtro</translation>
     </message>
     <message>
         <source>Fine speed gamma</source>
-        <translation>Gama de velocidad: Fina</translation>
+        <translation>Velocidad fina: Gama</translation>
     </message>
     <message>
         <source>Gross speed gamma</source>
-        <translation>Gama de velocidad: Gruesa</translation>
+        <translation>Velocidad gruesa: Gama</translation>
     </message>
     <message>
         <source>Jitter</source>
@@ -803,35 +802,35 @@
     </message>
     <message>
         <source>Angular Offset: Direction</source>
-        <translation>Desplazamiento angular: Dirección</translation>
+        <translation>Despl. angular: Dirección</translation>
     </message>
     <message>
         <source>Angular Offset: Ascension</source>
-        <translation>Desplazamiento angular: Ascensión</translation>
+        <translation>Despl. angular: Ascensión</translation>
     </message>
     <message>
         <source>Angular Offset Mirrored: Direction</source>
-        <translation>Desplazamiento angular reflejado: Dirección</translation>
+        <translation>Despl. angular reflejado: Dirección</translation>
     </message>
     <message>
         <source>Angular Offset Mirrored: Ascension</source>
-        <translation>Desplazamiento angular reflejado: Ascensión</translation>
+        <translation>Despl. angular reflejado: Ascensión</translation>
     </message>
     <message>
         <source>Angular Offsets Adjustment</source>
-        <translation>Desplazamiento angular: Ajuste</translation>
+        <translation>Despl. angular: Ajuste</translation>
     </message>
     <message>
         <source>Offsets Multiplier</source>
-        <translation>Desplazamientos: Multiplicador</translation>
+        <translation>Despl: Multiplicador</translation>
     </message>
     <message>
         <source>Offset by speed</source>
-        <translation>Desplazamiento por velocidad</translation>
+        <translation>Despl. por velocidad</translation>
     </message>
     <message>
         <source>Offset by speed filter</source>
-        <translation>Desplazamiento por velocidad: Filtro</translation>
+        <translation>Despl. por velocidad: Filtro</translation>
     </message>
     <message>
         <source>Slow position tracking</source>
@@ -995,7 +994,7 @@
     </message>
     <message>
         <source>Base Brush Radius</source>
-        <translation>Radio base pincel</translation>
+        <translation>Radio nominal</translation>
     </message>
     <message>
         <source>Custom</source>
@@ -1026,7 +1025,7 @@
     </message>
     <message>
         <source>Argument must be a vector level or image : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>El argumento debe ser un nivel Vectorial o de Imagen: %1</translation>
     </message>
 </context>
 <context>

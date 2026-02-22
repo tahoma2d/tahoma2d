@@ -1170,7 +1170,7 @@ Do you want to crop the canvas?</source>
     <name>CleanupPopup</name>
     <message>
         <source>Do you want to cleanup this frame?</source>
-        <translation>¿Se desea limpiar este fotograma?</translation>
+        <translation>¿Limpiar este fotograma?</translation>
     </message>
     <message>
         <source>Cleanup</source>
@@ -1278,7 +1278,7 @@ nuevo al iniciar el proceso de limpieza.</translation>
         <source>File &quot;%1&quot; already exists.
 What do you want to do?</source>
         <translation>El archivo &quot;%1&quot; ya existe.
-¿Qué se desea hacer?</translation>
+¿Qué hacer?</translation>
     </message>
     <message>
         <source>Cleanup all selected drawings overwriting those previously cleaned up.*</source>
@@ -1744,11 +1744,11 @@ What do you want to do? </source>
     <name>CommandBarPopup</name>
     <message>
         <source>Quick Toolbar</source>
-        <translation>Barra de herramientas de planilla</translation>
+        <translation>Barra de herramientas rápida</translation>
     </message>
     <message>
         <source>Customize Quick Toolbar</source>
-        <translation>Personalizar barra de herramientas de planilla</translation>
+        <translation>Personalizar barra de herramientas rápida</translation>
     </message>
     <message>
         <source>Command Bar</source>
@@ -4422,19 +4422,19 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>Raster level</source>
-        <translation>Nivel de imagen</translation>
+        <translation>Imagen</translation>
     </message>
     <message>
         <source>Mesh level</source>
-        <translation>Nivel de malla</translation>
+        <translation>Malla</translation>
     </message>
     <message>
         <source>Palette level</source>
-        <translation>Nivel de paleta</translation>
+        <translation>Paleta</translation>
     </message>
     <message>
         <source>Sound Column</source>
-        <translation>Columna de sonido</translation>
+        <translation>Sonido</translation>
     </message>
     <message>
         <source>[Various]</source>
@@ -4442,19 +4442,19 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>SubXsheet Level</source>
-        <translation>Nivel de sub-escena</translation>
+        <translation>Sub-escena</translation>
     </message>
     <message>
         <source>Another Level Type</source>
-        <translation>Nivel de otro tipo</translation>
+        <translation>Otro tipo</translation>
     </message>
     <message>
         <source>Smart Raster level</source>
-        <translation>Nivel de imagen inteligente</translation>
+        <translation>Imagen inteligente</translation>
     </message>
     <message>
         <source>Vector level</source>
-        <translation>Nivel vectorial</translation>
+        <translation>Vectorial</translation>
     </message>
     <message>
         <source>The file you entered is already used by another level.
@@ -5450,7 +5450,7 @@ Escoger un archivo válido de datos de sincronización de labios para continuar.
     </message>
     <message>
         <source>&amp;Cleanup</source>
-        <translation>&amp;Limpiar</translation>
+        <translation>&amp;Limpiar...</translation>
     </message>
     <message>
         <source>&amp;Add Frames...</source>
@@ -6906,7 +6906,7 @@ Escoger un archivo válido de datos de sincronización de labios para continuar.
     </message>
     <message>
         <source>Toggle Quick Toolbar</source>
-        <translation>Barra de herramientas de planilla</translation>
+        <translation>Barra de herramientas rápida</translation>
     </message>
     <message>
         <source>Snap Sensitivity</source>
@@ -7150,7 +7150,7 @@ Escoger un archivo válido de datos de sincronización de labios para continuar.
     </message>
     <message>
         <source>&amp;FX Editor</source>
-        <translation>Editor de e&amp;fectos</translation>
+        <translation>Opciones de e&amp;fectos</translation>
     </message>
     <message>
         <source>&amp;Stop Motion Controls</source>
@@ -7306,7 +7306,7 @@ o es posible que se termine borrando algún archivo usado por ésta.</translatio
     </message>
     <message>
         <source>http://tahoma2d.readthedocs.io</source>
-        <translation>http://tahoma2d.readthedocs.io</translation>
+        <translation>http://tahoma2d.readthedocs.io/es</translation>
     </message>
     <message>
         <source>https://groups.google.com/g/tahoma2d</source>
@@ -7540,7 +7540,7 @@ Los espacios de trabajo personalizados no serán alterados.</translation>
     </message>
     <message>
         <source>Vectors to Smart Raster</source>
-        <translation>Vectorial a imagen inteligente</translation>
+        <translation>Vectorial a Imagen inteligente</translation>
     </message>
     <message>
         <source>&amp;New Motion Path</source>
@@ -8244,7 +8244,7 @@ o es posible que se termine borrando algún archivo usado por ésta.</translatio
     </message>
     <message>
         <source>https://tahoma2d.readthedocs.io/en/latest/whats_new.html</source>
-        <translation>https://tahoma2d.readthedocs.io/en/latest/whats_new.html</translation>
+        <translation>https://tahoma2d.readthedocs.io/es/latest/whats_new.html</translation>
     </message>
     <message>
         <source>&amp;Open Recent Project</source>
@@ -8292,7 +8292,7 @@ o es posible que se termine borrando algún archivo usado por ésta.</translatio
     </message>
     <message>
         <source>Toggle Navigation Tag</source>
-        <translation>Etiqueta de navegación</translation>
+        <translation>Insertar etiqueta de navegación</translation>
     </message>
     <message>
         <source>Next Tag</source>
@@ -8861,7 +8861,7 @@ Nota: Los comandos duplicados serán ignorados. Sólo el último aparecerá en l
     </message>
     <message>
         <source>Level %1 already exists! Are you sure you want to overwrite it?</source>
-        <translation>¡El nivel %1 ya existe! ¿Seguro sobreescribirlo?</translation>
+        <translation>¡El nivel %1 ya existe! ¿Sobreescribirlo?</translation>
     </message>
 </context>
 <context>
@@ -8881,7 +8881,7 @@ Nota: Los comandos duplicados serán ignorados. Sólo el último aparecerá en l
         <source>A level with the preferred path &quot;%1&quot; already exists.
 What do you want to do?</source>
         <translation>Ya existe un nivel con la ruta indicada &quot;%1&quot;.
-¿Qué se desea hacer?</translation>
+¿Qué hacer?</translation>
     </message>
     <message>
         <source>Delete the old level entirely</source>
@@ -9625,7 +9625,7 @@ Are you sure?</source>
         <source>File %1 already exists.
 What do you want to do?</source>
         <translation>El archivo %1 ya existe.
-¿Qué se desea hacer?</translation>
+¿Qué hacer?</translation>
     </message>
     <message>
         <source>The suffix field is empty. Please specify a suffix.</source>
@@ -9641,7 +9641,7 @@ What do you want to do?</source>
 What do you want to do?</source>
         <translation>El nivel &quot;%1&quot; ya existe.
 
-¿Qué se desea hacer?</translation>
+¿Qué hacer?</translation>
     </message>
     <message>
         <source>Overwrite</source>
@@ -9661,7 +9661,7 @@ Do you want to overwrite it?</source>
         <source>File &quot;%1&quot; already exists.
 What do you want to do?</source>
         <translation>El archivo &quot;%1&quot; ya existe.
-¿Qué se desea hacer?</translation>
+¿Qué hacer?</translation>
     </message>
 </context>
 <context>
@@ -12082,7 +12082,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Expose layers in a group as frames in a column</source>
-        <translation>Exponer capas de un grupo como fotogramas en una columna</translation>
+        <translation>Capas de grupos como dibujos en una columna</translation>
     </message>
     <message>
         <source>FileName#LayerName</source>
@@ -12110,15 +12110,15 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Flatten visible document layers into a single image. Layer styles are maintained.</source>
-        <translation>Colapsa las capas visibles del documento en una única imagen. Se mantendrán los estilos de capas.</translation>
+        <translation>Colapsar capas visibles en una única imagen. Preserva estilos de capas.</translation>
     </message>
     <message>
         <source>Load document layers as frames into a single xsheet column.</source>
-        <translation>Carga las capas del documento como fotogramas de una misma columna.</translation>
+        <translation>Cargar capas como dibujos en una única columna.</translation>
     </message>
     <message>
         <source>Load document layers as xhseet columns.</source>
-        <translation>Carga las capas del documento como columnas de la planilla (o capas de la línea de tiempo).</translation>
+        <translation>Cargar capas como columnas.</translation>
     </message>
     <message>
         <source>OK</source>
@@ -12134,7 +12134,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Expose layers in a group as columns in a sub-scene</source>
-        <translation>Exponer capas de un grupo como columnas en una sub-escena</translation>
+        <translation>Capas de grupos como columnas en una sub-escena</translation>
     </message>
 </context>
 <context>
@@ -12248,7 +12248,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Are you sure you want to override </source>
-        <translation>¿Seguro se desea redefinir?</translation>
+        <translation>¿Seguro redefinir?</translation>
     </message>
     <message>
         <source>Override</source>
@@ -12457,7 +12457,7 @@ el nivel tiene que ser guardado antes.</translation>
         <source>File %1 doesn&apos;t belong to the current project.
 Do you want to import it or load it from its original location?</source>
         <translation>El archivo %1 no pertenece al proyecto actual.
-¿Se desea importarlo o cargarlo desde su ubicación original?</translation>
+¿Importarlo o cargarlo desde su ubicación original?</translation>
     </message>
     <message>
         <source>Import</source>
@@ -12469,7 +12469,7 @@ Do you want to import it or load it from its original location?</source>
     </message>
     <message>
         <source>The camera settings of the scene you are loading as sub-xsheet are different from those of your current scene. What you want to do?</source>
-        <translation>Las opciones de cámara de la escena que se está cargando como sub-planilla son distintas de las de la escena actual. ¿Qué se desea hacer?</translation>
+        <translation>Las opciones de cámara de la escena que se está cargando como sub-planilla son distintas de las de la escena actual. ¿Qué hacer?</translation>
     </message>
     <message>
         <source>Keep the sub-xsheet original camera settings.</source>
@@ -12505,7 +12505,7 @@ Do you want to save your changes?</source>
         <source>The scene %1 already exists.
 Do you want to overwrite it?</source>
         <translation>La escena %1 ya existe.
-¿Se desea sobrescribirla?</translation>
+¿Sobrescribirla?</translation>
     </message>
     <message>
         <source>The Scene &apos;%1&apos; belongs to project &apos;%2&apos;.
@@ -12553,7 +12553,7 @@ Are you sure you want to revert to previous version?</source>
     </message>
     <message>
         <source>Collapsing columns: what you want to do?</source>
-        <translation>A punto de colapsar columnas: ¿qué se desea hacer?</translation>
+        <translation>A punto de colapsar columnas: ¿qué hacer?</translation>
     </message>
     <message>
         <source>Include relevant pegbars in the sub-xsheet as well.</source>
@@ -15643,7 +15643,8 @@ Detalles:
     <message>
         <source>The log file %1 already exists.
  Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo de registro %1 ya existe.
+¿Sobrescribirlo?</translation>
     </message>
 </context>
 <context>
@@ -15787,7 +15788,7 @@ El archivo de sonido no será incluido en el clip procesado.</translation>
         <source>The %1  scene has a different resolution from the %2 scene.
                            The output result may differ from what you expect. What do you want to do?</source>
         <translation>La escena %1 tiene una resolución distinta a la de la escena %2.
-                           El resultado producido puede diferir de lo esperado. ¿Qué se desea hacer?</translation>
+                           El resultado producido puede diferir de lo esperado. ¿Qué hacer?</translation>
     </message>
     <message>
         <source>Please specify an file name.</source>
@@ -16177,7 +16178,7 @@ El archivo de audio no será incluído en el clip procesado.</translation>
     </message>
     <message>
         <source>You are deleting items also on repository. Are you sure ?</source>
-        <translation>Se borrarán los elementos también en el repositorio. ¿Seguro de esto?</translation>
+        <translation>Se borrarán los elementos también en el repositorio. ¿Seguro?</translation>
     </message>
 </context>
 <context>
@@ -17504,7 +17505,7 @@ Por favor enviar o revertir los cambios antes.</translation>
     </message>
     <message>
         <source>Alpha Matting</source>
-        <translation>Transparencia alfa</translation>
+        <translation>Máscara alfa</translation>
     </message>
     <message>
         <source>Main</source>
@@ -20354,7 +20355,7 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
     <message>
         <source>P</source>
-        <translation></translation>
+        <translation>P</translation>
     </message>
     <message>
         <source>x</source>
@@ -20362,7 +20363,7 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
     <message>
         <source>y</source>
-        <translation></translation>
+        <translation>y</translation>
     </message>
     <message>
         <source>Thickness</source>
@@ -21309,7 +21310,7 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     <name>XsheetGUI::QuickToolbar</name>
     <message>
         <source>Customize Quick Toolbar</source>
-        <translation>Personalizar barra de herramientas de planilla</translation>
+        <translation>Personalizar barra de herramientas rápida</translation>
     </message>
 </context>
 <context>

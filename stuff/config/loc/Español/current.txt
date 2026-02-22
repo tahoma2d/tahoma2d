@@ -132,7 +132,7 @@
   <item>"Linear Gradient (Classic)"	"Gradiente lineal (clásico)"			</item>
   <item>"Linear Gradient"		"Gradiente lineal"			</item>
   <item>"Linear Light Ino"		"Luz lineal Ino"			</item>
-  <item>"Linear Wave"			"Onda lineal"			</item>
+  <item>"Linear Wave"			"Ondas lineales"			</item>
   <item>"Local Blur"			"Desenfoque local"			</item>
   <item>"Local Transp"			"Transp local"			</item>
   <item>"Max Min Ino"			"Máx mín Ino"			</item>

@@ -52,11 +52,11 @@
     </message>
     <message>
         <source>Horiz Offset</source>
-        <translation>Desplazamiento horiz.</translation>
+        <translation>Despl. horizontal</translation>
     </message>
     <message>
         <source>Vert Offset</source>
-        <translation>Desplazamiento vert.</translation>
+        <translation>Despl. vertical</translation>
     </message>
 </context>
 <context>
@@ -90,7 +90,7 @@
     <name>ShadowStyle</name>
     <message>
         <source>Hatched Shading</source>
-        <translation>Sombreado tramado</translation>
+        <translation>Sombra tramada</translation>
     </message>
     <message>
         <source>Angle</source>
@@ -102,7 +102,7 @@
     </message>
     <message>
         <source>Length</source>
-        <translation>Longitud</translation>
+        <translation>Extensión</translation>
     </message>
 </context>
 <context>
@@ -117,7 +117,7 @@
     </message>
     <message>
         <source>Size</source>
-        <translation>Tamaño</translation>
+        <translation>Extensión</translation>
     </message>
 </context>
 <context>
@@ -149,19 +149,19 @@
     <name>TBlendStrokeStyle2</name>
     <message>
         <source>Fade</source>
-        <translation>Desvanecer</translation>
+        <translation>Fundido</translation>
     </message>
     <message>
         <source>Border Fade</source>
-        <translation>Desvanecer borde</translation>
+        <translation>Fundido bordes</translation>
     </message>
     <message>
         <source>Fade In</source>
-        <translation>Desvanecimiento entrante</translation>
+        <translation>Fundido inicial</translation>
     </message>
     <message>
         <source>Fade Out</source>
-        <translation>Desvanecimiento saliente</translation>
+        <translation>Fundido final</translation>
     </message>
 </context>
 <context>
@@ -201,7 +201,7 @@
     </message>
     <message>
         <source>Dot Size</source>
-        <translation>Tamaño del punto</translation>
+        <translation>Tamaño puntos</translation>
     </message>
 </context>
 <context>
@@ -212,7 +212,7 @@
     </message>
     <message>
         <source>Border Fade</source>
-        <translation>Desvanecimiento del borde</translation>
+        <translation>Fundido bordes</translation>
     </message>
     <message>
         <source>Density</source>
@@ -220,11 +220,11 @@
     </message>
     <message>
         <source>Fade In</source>
-        <translation>Desvanecimiento entrante</translation>
+        <translation>Fundido inicial</translation>
     </message>
     <message>
         <source>Fade Out</source>
-        <translation>Desvanecimiento saliente</translation>
+        <translation>Fundido final</translation>
     </message>
     <message>
         <source>Noise</source>
@@ -235,7 +235,7 @@
     <name>TCheckedFillStyle</name>
     <message>
         <source>Square</source>
-        <translation>Cuadrado</translation>
+        <translation>Cuadriculado</translation>
     </message>
     <message>
         <source>Horiz Dist</source>
@@ -308,7 +308,7 @@
     </message>
     <message>
         <source>Crease</source>
-        <translation>Pliegue</translation>
+        <translation>Pliegues</translation>
     </message>
     <message>
         <source>Opacity</source>
@@ -323,7 +323,7 @@
     </message>
     <message>
         <source>Dot Size</source>
-        <translation>Tamaño del punto</translation>
+        <translation>Tamaño puntos</translation>
     </message>
     <message>
         <source>Dot Distance</source>
@@ -334,23 +334,23 @@
     <name>TDottedLineStrokeStyle</name>
     <message>
         <source>Vanishing</source>
-        <translation>Esfumado</translation>
+        <translation>Discontinuo</translation>
     </message>
     <message>
         <source>Fade In</source>
-        <translation>Desvanecimiento entrante</translation>
+        <translation>Fundido inicial</translation>
     </message>
     <message>
         <source>Dash</source>
-        <translation>Línea</translation>
+        <translation>Longitud líneas</translation>
     </message>
     <message>
         <source>Fade Out</source>
-        <translation>Desvanecimiento saliente</translation>
+        <translation>Fundido final</translation>
     </message>
     <message>
         <source>Gap</source>
-        <translation>Espacio</translation>
+        <translation>Longitud espacios</translation>
     </message>
 </context>
 <context>
@@ -518,11 +518,11 @@
     </message>
     <message>
         <source>Light X Pos</source>
-        <translation>Pos. X de la luz</translation>
+        <translation>Luz: Pos X</translation>
     </message>
     <message>
         <source>Light Y Pos</source>
-        <translation>Pos. Y de la luz</translation>
+        <translation>Luz: Pos Y</translation>
     </message>
     <message>
         <source>Shininess</source>
@@ -556,7 +556,7 @@
     <name>TPointShadowFillStyle</name>
     <message>
         <source>Sponge Shading</source>
-        <translation>Sombreado con esponja</translation>
+        <translation>Sombra punteda</translation>
     </message>
     <message>
         <source>Angle</source>
@@ -568,11 +568,11 @@
     </message>
     <message>
         <source>Size</source>
-        <translation>Tamaño</translation>
+        <translation>Extensión</translation>
     </message>
     <message>
         <source>Point Size</source>
-        <translation>Tamaño del punto</translation>
+        <translation>Tamaño puntos</translation>
     </message>
 </context>
 <context>
@@ -613,7 +613,7 @@
     <name>TRubberFillStyle</name>
     <message>
         <source>Blob</source>
-        <translation>Gota</translation>
+        <translation>Mancha</translation>
     </message>
     <message>
         <source>Intensity</source>
@@ -635,7 +635,7 @@
     <name>TSinStrokeStyle</name>
     <message>
         <source>Wave</source>
-        <translation>Onda</translation>
+        <translation>Ondas</translation>
     </message>
     <message>
         <source>Frequency</source>
@@ -676,7 +676,7 @@
     </message>
     <message>
         <source>Border Fade</source>
-        <translation>Desvanecimiento del borde</translation>
+        <translation>Fundido bordes</translation>
     </message>
     <message>
         <source>Density</source>
@@ -718,7 +718,7 @@
     </message>
     <message>
         <source>Border Size</source>
-        <translation>Tamaño del borde</translation>
+        <translation>Flecos</translation>
     </message>
 </context>
 <context>
