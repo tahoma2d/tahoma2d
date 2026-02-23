@@ -1498,6 +1498,8 @@ void EditTool::onActivate() {
     m_scaleConstraint.setValue(::to_wstring(ScaleConstraint.getValue()));
     m_globalKeyframes.setValue(ArrowGlobalKeyFrame ? 1 : 0);
 
+    onPropertyChanged(m_activeAxis.getName());
+
     /*
 m_foo.setTool(this);
 m_foo.setFxHandle(getApplication()->getCurrentFx());
