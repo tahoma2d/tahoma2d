@@ -519,6 +519,9 @@ in TXsheetImp.
           \b TColumnSetT::getColumnCount().
           \sa getColumn() and getMaxFrame().
    */
+
+  TStageObjectId getColumnObjectId(int index) const;
+
   int getColumnCount() const;
   /*! Returns first not empty column index in xsheet.
    */
@@ -617,6 +620,8 @@ in TXsheetImp.
   void shiftCellMarks(int row, int col, int rowCount);
  
   void shiftMarkers(int row, int col, int rowCount);
+
+  bool isPegbarColumn(int col);
 
 protected:
   bool checkCircularReferences(TXsheet *childCandidate);

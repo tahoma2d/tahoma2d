@@ -31,6 +31,7 @@ set(MOC_HEADERS
     ../include/toonz/txshsimplelevel.h
     ../include/toonz/txshsoundcolumn.h
     ../include/toonz/brushtipmanager.h
+    ../include/toonz/txshpegbarcolumn.h
 )
 
 set(HEADERS
@@ -330,6 +331,7 @@ set(SOURCES
     navigationtags.cpp
     txshfoldercolumn.cpp
     brushtipmanager.cpp
+    txshpegbarcolumn.cpp
 )
 
 if(BUILD_TARGET_WIN)

@@ -20,6 +20,7 @@
 #include "toonz/txshzeraryfxcolumn.h"
 #include "toonz/tcolumnfx.h"
 #include "toonz/tstageobjectspline.h"
+#include "toonz/txshpegbarcolumn.h"
 
 #include "toonzqt/stageobjectsdata.h"
 
@@ -162,6 +163,8 @@ public:
   //! TXsheet) and
   //! returns the associated new stage object identifier.
   TStageObjectId restoreObject(TXsheet *xsh, bool copyPosition) const;
+
+  int getObjectIndex() const { return m_params->m_id.getIndex(); }
 };
 
 //------------------------------------------------------------------------------
@@ -945,6 +948,10 @@ std::vector<TStageObjectId> StageObjectsData::restoreObjects(
   int index                    = -1;  // The actual column insertion index
 
   int i, elementsCount = m_elements.size();
+
+  std::set<TStageObjectId> pegbars;
+  std::set<TStageObjectId> replacedPegbars;
+
   for (i = 0; i < elementsCount; ++i) {
     TStageObjectDataElement *element = m_elements[i];
 
@@ -956,11 +963,23 @@ std::vector<TStageObjectId> StageObjectsData::restoreObjects(
     // Restore the object depending on its specific type
     TStageObjectId restoredId = TStageObjectId::NoneId;
 
-    if (!cameraElement && !columnElement)
+    if (!cameraElement && !columnElement) {
+      TStageObjectId origId = TStageObjectId::PegbarId(element->getObjectIndex());
       restoredId = element->restoreObject(xsh, pos != TConst::nowhere);
-    else if (cameraElement)
+ 
+      pegbars.insert(restoredId);
+      if (origId != restoredId) replacedPegbars.insert(origId);
+    } else if (cameraElement)
       restoredId = cameraElement->restoreCamera(xsh, pos != TConst::nowhere);
     else if (columnElement) {
+      if (columnElement->m_column &&
+          columnElement->m_column->getPegbarColumn()) {
+        if (replacedPegbars.find(columnElement->m_column->getPegbarColumn()
+                                     ->getPegbarObjectId()) !=
+            replacedPegbars.end())
+          continue;
+      }
+
       // Build the column insertion index
       if (idxt != columnIndices.end())
         index = *idxt++;
@@ -972,6 +991,10 @@ std::vector<TStageObjectId> StageObjectsData::restoreObjects(
       // Restore the column element
       restoredId = columnElement->restoreColumn(xsh, index, fxFlags,
                                                 pos != TConst::nowhere);
+
+      if (columnElement->m_column && columnElement->m_column->getPegbarColumn())
+        pegbars.erase(
+            columnElement->m_column->getPegbarColumn()->getPegbarObjectId());
 
       FxDag *fxDag = xsh->getFxDag();
 
@@ -1013,6 +1036,22 @@ std::vector<TStageObjectId> StageObjectsData::restoreObjects(
     // Remember stored/restored stage object pairings
     idTable[element->m_params->m_id] = restoredId;
     restoredIds.push_back(restoredId);
+  }
+
+  // Create pegbar columns as needed
+  foreach(TStageObjectId objId, pegbars) {
+    // Build the column insertion index
+    if (idxt != columnIndices.end())
+      index = *idxt++;
+    else {
+      ++index;
+      columnIndices.insert(index);
+    }
+
+    TXshPegbarColumn *pegbarCol = new TXshPegbarColumn();
+    pegbarCol->setXsheet(xsh);
+    pegbarCol->setPegbarObjectId(objId);
+    xsh->insertColumn(index, pegbarCol);
   }
 
   // Apply stage object-parental relationships

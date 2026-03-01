@@ -535,6 +535,7 @@
 #define MI_OpenAlignmentPanel "MI_OpenAlignmentPanel"
 
 #define MI_NewFolder "MI_NewFolder"
+#define MI_NewPegbar "MI_NewPegbar"
 
 #define MI_ShowSymmetryGuide "MI_ShowSymmetryGuide"
 #define MI_ShowPerspectiveGrids "MI_ShowPerspectiveGrids"

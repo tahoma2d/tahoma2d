@@ -395,6 +395,7 @@ public:
   void drawPaletteColumnHead(QPainter &p, int col);
   void drawSoundTextColumnHead(QPainter &p, int col);
   void drawFolderColumnHead(QPainter &p, int col);
+  void drawPegbarColumnHead(QPainter &p, int col);
   void drawCurrentColumnFocus(QPainter &p, int col);
 
   QPixmap getColumnIcon(int columnIndex);

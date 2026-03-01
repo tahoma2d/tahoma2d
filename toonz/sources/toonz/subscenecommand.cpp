@@ -33,6 +33,7 @@
 #include "toonz/expressionreferencemonitor.h"
 #include "toonz/preferences.h"
 #include "toonz/txshfoldercolumn.h"
+#include "toonz/txshpegbarcolumn.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -564,7 +565,8 @@ void bringObjectOut(TStageObject *obj, TXsheet *xsh,
                     QMap<TStageObjectId, TStageObjectId> &ids,
                     QMap<TStageObjectSpline *, TStageObjectSpline *> &splines,
                     QList<TStageObject *> &pegObjects, int &pegbarIndex,
-                    const GroupData &objGroupData, int groupId) {
+                    const GroupData &objGroupData, int groupId, int &index,
+                    std::set<int> &indexes) {
   if (!obj->hasChildren()) return;
   std::list<TStageObject *> children = obj->getChildren();
   std::list<TStageObject *>::iterator it;
@@ -585,6 +587,14 @@ void bringObjectOut(TStageObject *obj, TXsheet *xsh,
     ids[id] = outerId;
     pegObjects.append(outerObj);
     outerObj->addRef();  // undo make release!!!
+
+    TXshPegbarColumn *pegbarCol = new TXshPegbarColumn();
+    pegbarCol->setXsheet(xsh);
+    pegbarCol->setPegbarObjectId(outerId);
+    xsh->insertColumn(index, pegbarCol);
+    indexes.insert(index);
+    index++;
+
     TStageObjectParams *params = (*it)->getParams();
     if (params->m_spline) {
       if (splines.contains(params->m_spline))
@@ -617,7 +627,7 @@ void bringObjectOut(TStageObject *obj, TXsheet *xsh,
         outerObj->editGroup();
     }
     bringObjectOut(*it, xsh, ids, splines, pegObjects, pegbarIndex,
-                   objGroupData, groupId);
+                   objGroupData, groupId, index, indexes);
   }
 }
 
@@ -637,6 +647,7 @@ std::set<int> explodeStageObjects(
   // innerSpline->outerSpline
   int groupId = -1;  // outerTree->getNewGroupId();
   /*- Pegbarも持ち出す場合 -*/
+  std::set<int> indexes;
   if (!onlyColumn) {
     // add a pegbar to represent the table
     TStageObject *table = subXsh->getStageObject(TStageObjectId::TableId);
@@ -653,6 +664,14 @@ std::set<int> explodeStageObjects(
     ids[TStageObjectId::TableId] = id;
     pegObjects.append(obj);
     obj->addRef();  // undo make release!!!!
+
+    TXshPegbarColumn *pegbarCol = new TXshPegbarColumn();
+    pegbarCol->setXsheet(xsh);
+    pegbarCol->setPegbarObjectId(id);
+    xsh->insertColumn(index, pegbarCol);
+    indexes.insert(index);
+    index++;
+
     /*- SubのTableの情報を、今作ったPegbarにコピーする -*/
     TStageObjectParams *params = table->getParams();
     if (params->m_spline) {
@@ -692,17 +711,19 @@ std::set<int> explodeStageObjects(
     }
     // add all pegbar
     bringObjectOut(table, xsh, ids, splines, pegObjects, pegbarIndex,
-                   objGroupData, groupId);
+                   objGroupData, groupId, index, indexes);
   }
 
   // add columns;
   FxDag *innerDag            = subXsh->getFxDag();
   FxDag *outerDag            = xsh->getFxDag();
   TStageObjectId tmpParentId = parentId;
-  std::set<int> indexes;
   int i;
   for (i = 0; i < subXsh->getColumnCount(); i++) {
     TXshColumn *innerColumn = subXsh->getColumn(i);
+
+    if (innerColumn->getPegbarColumn()) continue;
+
     TXshColumn *outerColumn = innerColumn->clone();
 
     TFx *innerFx = innerColumn->getFx();

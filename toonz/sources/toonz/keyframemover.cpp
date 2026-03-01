@@ -49,7 +49,7 @@ void KeyframeMover::setKeyframes() {
   for (auto const &key : m_lastKeyframes) {
     int c = key.second;
     TStageObjectId objId =
-        c >= 0 ? TStageObjectId::ColumnId(c)
+        c >= 0 ? xsh->getColumnObjectId(c)
                : TStageObjectId::CameraId(xsh->getCameraColumnIndex());
     TStageObject *stObj = xsh->getStageObject(objId);
     TStageObject::KeyframeMap keyframes;
@@ -68,7 +68,7 @@ void KeyframeMover::getKeyframes() {
   for (auto const &pos : m_startSelectedKeyframes) {
     int c = pos.second;
     TStageObjectId objId =
-        c >= 0 ? TStageObjectId::ColumnId(c)
+        c >= 0 ? xsh->getColumnObjectId(c)
                : TStageObjectId::CameraId(xsh->getCameraColumnIndex());
     TStageObject *stObj = xsh->getStageObject(objId);
     assert(stObj->isKeyframe(pos.first));
@@ -118,7 +118,7 @@ bool KeyframeMover::moveKeyframes(
       int c = posIt->second;
       int r = posIt->first;
       TStageObjectId objId =
-          c >= 0 ? TStageObjectId::ColumnId(c)
+          c >= 0 ? xsh->getColumnObjectId(c)
                  : TStageObjectId::CameraId(xsh->getCameraColumnIndex());
       TStageObject *stObj = xsh->getStageObject(objId);
       if (r + dr < 0) {
@@ -144,7 +144,7 @@ bool KeyframeMover::moveKeyframes(
         int c = revIt->second;
         int r = revIt->first;
         TStageObjectId objId =
-            c >= 0 ? TStageObjectId::ColumnId(c)
+            c >= 0 ? xsh->getColumnObjectId(c)
                    : TStageObjectId::CameraId(xsh->getCameraColumnIndex());
         TStageObject *stObj = xsh->getStageObject(objId);
         if (m_qualifiers & eCopyKeyframes) {
@@ -159,7 +159,7 @@ bool KeyframeMover::moveKeyframes(
         int c = posIt->second;
         int r = posIt->first;
         TStageObjectId objId =
-            c >= 0 ? TStageObjectId::ColumnId(c)
+            c >= 0 ? xsh->getColumnObjectId(c)
                    : TStageObjectId::CameraId(xsh->getCameraColumnIndex());
         TStageObject *stObj = xsh->getStageObject(objId);
         if (m_qualifiers & eCopyKeyframes) {
@@ -184,7 +184,7 @@ bool KeyframeMover::moveKeyframes(
     int c = posIt->second;
     int r = posIt->first;
     TStageObjectId objId =
-        c >= 0 ? TStageObjectId::ColumnId(c)
+        c >= 0 ? xsh->getColumnObjectId(c)
                : TStageObjectId::CameraId(xsh->getCameraColumnIndex());
     TStageObject *stObj    = xsh->getStageObject(objId);
     if (r + dr < 0) dr     = -r;
@@ -199,7 +199,7 @@ bool KeyframeMover::moveKeyframes(
     int c = posIt->second;
     int r = posIt->first;
     TStageObjectId objId =
-        c >= 0 ? TStageObjectId::ColumnId(c)
+        c >= 0 ? xsh->getColumnObjectId(c)
                : TStageObjectId::CameraId(xsh->getCameraColumnIndex());
     TStageObject *stObj = xsh->getStageObject(objId);
 

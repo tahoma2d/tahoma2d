@@ -2145,6 +2145,8 @@ void MainWindow::defineActions() {
 
   createMenuLevelAction(MI_NewFolder, QT_TR_NOOP("New Folder"), "",
                         "new_folder_column");
+  createMenuLevelAction(MI_NewPegbar, QT_TR_NOOP("New Pegbar"), "",
+                        "pegbar");
 
   // Menu - Scene
 

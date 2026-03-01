@@ -1549,8 +1549,8 @@ void FxSchematicScene::onSwitchCurrentFx(TFx *fx) {
     int columnIndex = fx->getReferenceColumnIndex();
     if (columnIndex >= 0) {
       m_columnHandle->setColumnIndex(columnIndex);
-      m_app->getCurrentObject()->setObjectId(
-          TStageObjectId::ColumnId(columnIndex));
+      TXsheet *xsh = m_app->getCurrentXsheet()->getXsheet();
+      m_app->getCurrentObject()->setObjectId(xsh->getColumnObjectId(columnIndex));
     }
 
     SwatchViewer::suspendRendering(false);
@@ -1585,7 +1585,8 @@ void FxSchematicScene::onCurrentFxSwitched() {
 
 void FxSchematicScene::onCurrentColumnChanged(int index) {
   m_app->getCurrentColumn()->setColumnIndex(index);
-  m_app->getCurrentObject()->setObjectId(TStageObjectId::ColumnId(index));
+  TXsheet *xsh = m_app->getCurrentXsheet()->getXsheet();
+  m_app->getCurrentObject()->setObjectId(xsh->getColumnObjectId(index));
 }
 
 //------------------------------------------------------------------

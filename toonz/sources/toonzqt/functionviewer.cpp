@@ -26,6 +26,7 @@
 #include "toonz/tproject.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/sceneproperties.h"
+#include "toonz/txshpegbarcolumn.h"
 
 // TnzBase includes
 #include "tparamcontainer.h"
@@ -673,7 +674,16 @@ void FunctionViewer::doSwitchCurrentObject(TStageObject *obj) {
   TStageObjectId id = obj->getId();
   if (id.isColumn())
     m_columnHandle->setColumnIndex(id.getIndex());
-  else
+  else if (id.isPegbar()) {
+    TXsheet *xsh = m_xshHandle->getXsheet();
+    for (int i = 0; i < xsh->getColumnCount(); i++) {
+      if (!xsh->getColumn(i) || !xsh->getColumn(i)->getPegbarColumn() ||
+          xsh->getColumn(i)->getPegbarColumn()->getPegbarObjectId() != id)
+        continue;
+      m_columnHandle->setColumnIndex(i);
+      break;
+    }
+  } else
     m_objectHandle->setObjectId(id);
 }
 
