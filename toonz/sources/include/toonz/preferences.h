@@ -430,6 +430,9 @@ public:
   bool isShowColumnNumbersEnabled() const {
     return getBoolValue(showColumnNumbers);
   }
+  bool isShowColumnParentsEnabled() const {
+    return getBoolValue(showColumnParents);
+  }
   bool isUnifyColumnVisibilityTogglesEnabled() const {
   // Disabled until OT officially releases it
   //  return getBoolValue(unifyColumnVisibilityToggles);

@@ -1426,8 +1426,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {showColumnNumbers, tr("Show Column Numbers")},
       {unifyColumnVisibilityToggles,
        tr("Unify Preview and Camstand Visibility Toggles")},
-      {parentColorsInXsheetColumn,
-       tr("Show Column Parent's Color in the Xsheet")},
+      {showColumnParents, tr("Show Column Parents (Timeline)")},
+      {parentColorsInXsheetColumn, tr("Show Column Parent's Color")},
       {highlightLineEverySecond, tr("Highlight Line Every Second")},
       {syncLevelRenumberWithXsheet,
        tr("Sync Level Strip Drawing Number Changes with the Scene")},
@@ -2214,6 +2214,7 @@ QWidget* PreferencesPopup::createXsheetPage() {
     insertUI(expandFunctionHeader, xshToolbarLay);
   }
   insertUI(showColumnNumbers, lay);
+  insertUI(showColumnParents, lay);
 // Disabled until OT officially releases it
 //  insertUI(unifyColumnVisibilityToggles, lay);
   insertUI(parentColorsInXsheetColumn, lay);

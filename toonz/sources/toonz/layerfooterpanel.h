@@ -6,6 +6,8 @@
 #include <QWidget>
 #include <QSlider>
 #include <QKeyEvent>
+#include <QToolButton>
+
 #include <boost/optional.hpp>
 
 #include "orientation.h"
@@ -23,6 +25,7 @@ class LayerFooterPanel final : public QWidget {
   QPoint m_pos;
 
   QSlider *m_frameZoomSlider;
+  QToolButton *m_toggleColumnNumber, *m_toggleColumnParent;
 
   bool isCtrlPressed        = false;
   bool m_zoomInHighlighted  = false;
@@ -62,6 +65,8 @@ protected:
 public slots:
   void onFrameZoomSliderValueChanged(int val);
   void onFramesPerPageSelected();
+  void onToggleColumnNumbers();
+  void onToggleColumnParents();
 };
 #endif
 #pragma once
