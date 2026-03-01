@@ -149,7 +149,11 @@ enum class PredefinedRect {
   FOLDER_TOGGLE_ICON,
   BUTTONS_AREA,
   LOOP_START_MARKER_AREA,
-  LOOP_END_MARKER_AREA
+  LOOP_END_MARKER_AREA,
+  TOGGLE_COLUMN_NUMBER_AREA,
+  TOGGLE_COLUMN_NUMBER,
+  TOGGLE_COLUMN_PARENT_AREA,
+  TOGGLE_COLUMN_PARENT
 };
 enum class PredefinedLine {
   LOCKED,              //! dotted vertical line when cell is locked
