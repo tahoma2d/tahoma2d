@@ -1374,62 +1374,92 @@ void VectorSelectionTool::updateSelectionTarget() {
     m_strokeSelection.makeCurrent();  // Empties any (different) previously
                                       // current selection on its own
     selectedStrokes.swap(m_strokeSelection.getSelection());
+
+    m_strokeSelection.m_levelSelection.framesMode() =
+        LevelSelection::FRAMES_CURRENT;
+    m_strokeSelection.m_levelSelection.filter() = LevelSelection::WHOLE;
     return;
   }
 
   m_levelSelection.makeCurrent();  // Same here
 
-  // Choose frames mode
   LevelSelection::FramesMode framesMode;
+  LevelSelection::Filter filter;
+
   switch (m_selectionTarget.getIndex()) {
-  case SAME_STYLE_TYPE_IDX:
-  case BOUNDARY_TYPE_IDX:
-    framesMode = LevelSelection::FRAMES_CURRENT;
-    break;
-
-  case ALL_LEVEL_TYPE_IDX:
-  case STYLE_LEVEL_TYPE_IDX:
-  case BOUNDARY_LEVEL_TYPE_IDX:
-    framesMode = LevelSelection::FRAMES_ALL;
-    break;
-
-  case SELECTED_FRAMES_TYPE_IDX:
-  case STYLE_SELECTED_FRAMES_TYPE_IDX:
-  case BOUNDARY_SELECTED_FRAMES_TYPE_IDX:
+  case SELECTED_FRAMES_TYPE_IDX: {
     framesMode = LevelSelection::FRAMES_SELECTED;
+    filter     = LevelSelection::WHOLE;
+    selectedStyles().clear();
+    m_strokeSelection.m_levelSelection.styles().clear();
     break;
+  }
+
+  case ALL_LEVEL_TYPE_IDX: {
+    framesMode = LevelSelection::FRAMES_ALL;
+    filter     = LevelSelection::WHOLE;
+    selectedStyles().clear();
+    m_strokeSelection.m_levelSelection.styles().clear();
+    break;
+  }
+
+  case SAME_STYLE_TYPE_IDX: {
+    framesMode = LevelSelection::FRAMES_CURRENT;
+    filter     = LevelSelection::SELECTED_STYLES;
+    break;
+  }
+
+  case STYLE_SELECTED_FRAMES_TYPE_IDX: {
+    framesMode = LevelSelection::FRAMES_SELECTED;
+    filter     = LevelSelection::SELECTED_STYLES;
+    break;
+  }
+
+  case STYLE_LEVEL_TYPE_IDX: {
+    framesMode = LevelSelection::FRAMES_ALL;
+    filter     = LevelSelection::SELECTED_STYLES;
+    break;
+  }
+
+  case BOUNDARY_TYPE_IDX: {
+    framesMode = LevelSelection::FRAMES_CURRENT;
+    filter     = LevelSelection::BOUNDARY_STROKES;
+    selectedStyles().clear();
+    m_strokeSelection.m_levelSelection.styles().clear();
+    break;
+  }
+
+  case BOUNDARY_SELECTED_FRAMES_TYPE_IDX: {
+    framesMode = LevelSelection::FRAMES_SELECTED;
+    filter     = LevelSelection::BOUNDARY_STROKES;
+    selectedStyles().clear();
+    break;
+  }
+
+  case BOUNDARY_LEVEL_TYPE_IDX: {
+    framesMode = LevelSelection::FRAMES_ALL;
+    filter     = LevelSelection::BOUNDARY_STROKES;
+    selectedStyles().clear();
+    m_strokeSelection.m_levelSelection.styles().clear();
+    break;
+  }
+  default: {
+    framesMode = LevelSelection::FRAMES_CURRENT;
+    filter     = LevelSelection::WHOLE;
+    selectedStyles().clear();
+    m_strokeSelection.m_levelSelection.styles().clear();
+    break;
+  }
   }
 
   if (framesMode != m_levelSelection.framesMode()) clearSelectedStrokes();
-
-  m_levelSelection.framesMode() = framesMode;
-
-  // Choose filter
-  LevelSelection::Filter filter;
-  switch (m_selectionTarget.getIndex()) {
-  case SELECTED_FRAMES_TYPE_IDX:
-  case ALL_LEVEL_TYPE_IDX:
-    filter = LevelSelection::WHOLE;
-    selectedStyles().clear();
-    break;
-
-  case SAME_STYLE_TYPE_IDX:
-  case STYLE_SELECTED_FRAMES_TYPE_IDX:
-  case STYLE_LEVEL_TYPE_IDX:
-    filter = LevelSelection::SELECTED_STYLES;
-    break;
-
-  case BOUNDARY_TYPE_IDX:
-  case BOUNDARY_SELECTED_FRAMES_TYPE_IDX:
-  case BOUNDARY_LEVEL_TYPE_IDX:
-    filter = LevelSelection::BOUNDARY_STROKES;
-    selectedStyles().clear();
-    break;
-  }
-
   if (filter != m_levelSelection.filter()) clearSelectedStrokes();
 
-  m_levelSelection.filter() = filter;
+  m_levelSelection.framesMode() = framesMode;
+  m_levelSelection.filter()     = filter;
+
+  m_strokeSelection.m_levelSelection.framesMode() = framesMode;
+  m_strokeSelection.m_levelSelection.filter()     = filter;
 }
 
 //-----------------------------------------------------------------------------
@@ -1512,6 +1542,7 @@ void VectorSelectionTool::modifySelectionOnClick(TImageP image,
   if (clearSelection) {
     m_strokeSelection.selectNone();
     selectedStyles().clear();  // Targets are preserved here
+    m_strokeSelection.m_levelSelection.styles().clear();
   }
 
   if (strokeAtPos)
@@ -1968,10 +1999,13 @@ bool VectorSelectionTool::selectStroke(int index, bool toggle) {
 
     int style = refStroke->getStyle();
 
-    if (selectState)
+    if (selectState) {
       selectedStyles.insert(style);
-    else
+      m_strokeSelection.m_levelSelection.styles().insert(style);
+    } else {
       selectedStyles.erase(style);
+      m_strokeSelection.m_levelSelection.styles().erase(style);
+    }
   } else if (vi->isStrokeGrouped(index) &&
              vi->selectable(index))  // Group selection
   {
@@ -2035,8 +2069,10 @@ void VectorSelectionTool::onImageChanged() {
 
     if (!(vi && selectedImg)  // Retain the styles selection ONLY
         || vi->getPalette() !=
-               selectedImg->getPalette())  // if palettes still match
+               selectedImg->getPalette()) {  // if palettes still match
       selectedStyles().clear();
+      m_strokeSelection.m_levelSelection.styles().clear();
+    }
   } else {
     // Remove any eventual stroke index outside the valid range
     if (!m_strokeSelection.isEmpty()) {

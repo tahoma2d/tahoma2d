@@ -141,7 +141,9 @@ public:
 
   //! Ungroup all the strokes in the group of index \b index.
   /*! Return the number of ungroped stroke.*/
-  int ungroup(int index);
+  int ungroup(int index, bool removeAll = false);
+
+  int ungroupAll(int index);
 
   bool isStrokeGrouped(UINT index) const { return getGroupDepth(index) > 0; }
   //! Return a value grater of zero if stroke of index \b index is contained in

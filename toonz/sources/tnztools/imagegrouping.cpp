@@ -72,14 +72,15 @@ void groupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
 
 //-----------------------------------------------------------------------------
 
-void ungroupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
+void ungroupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection,
+                        bool removeAll = false) {
   for (int i = 0; i < (int)vimg->getStrokeCount();)
     if (vimg->isEnteredGroupStroke(i) && selection->isSelected(i)) {
       if (!vimg->isStrokeGrouped(i)) {
         i++;
         continue;
       }
-      i += vimg->ungroup(i);
+      i += vimg->ungroup(i, removeAll);
     } else
       i++;
   TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
@@ -173,6 +174,50 @@ public:
   int getSize() const override { return sizeof(*this); }
 
   QString getToolName() override { return QObject::tr("Ungroup"); }
+};
+
+//=============================================================================
+// UngroupAllUndo
+//-----------------------------------------------------------------------------
+
+class UngroupAllUndo final : public ToolUtils::TToolUndo {
+  std::unique_ptr<StrokeSelection> m_selection;
+  std::map<int, std::vector<int>> m_origGroupStrokes;
+
+public:
+  UngroupAllUndo(TXshSimpleLevel *level, const TFrameId &frameId,
+                    StrokeSelection *selection)
+      : ToolUtils::TToolUndo(level, frameId), m_selection(selection) {
+    TVectorImageP image = m_level->getFrame(m_frameId, true);
+    if (!image) return;
+    StrokeSelection::IndexesContainer indexes =
+        m_selection.get()->getSelection();
+    for (int i = 0; i < indexes.size(); i++)
+      m_origGroupStrokes[indexes[i]] = image->getGroupIdsForStroke(indexes[i]);
+  }
+
+  void undo() const override {
+    TVectorImageP image = m_level->getFrame(m_frameId, true);
+
+    std::map<int, std::vector<int>>::const_iterator it =
+        m_origGroupStrokes.begin();
+    for (; it != m_origGroupStrokes.end(); it++)
+      image->setGroupIdsForStroke(it->first, it->second);
+
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+
+  void redo() const override {
+    TVectorImageP image = m_level->getFrame(m_frameId, true);
+    if (!image) return;
+    if (image) ungroupWithoutUndo(image.getPointer(), m_selection.get(), true);
+
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getToolName() override { return QObject::tr("Ungroup All"); }
 };
 
 //=============================================================================
@@ -687,6 +732,66 @@ void TGroupCommand::ungroup() {
 
 //-----------------------------------------------------------------------------
 
+void TGroupCommand::ungroupAll() {
+  if (!(getGroupingOptions() & UNGROUP)) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+  TVectorImage *vimg = (TVectorImage *)tool->getImage(true);
+  if (!vimg) return;
+
+  if (!m_sel->isEditable()) {
+    DVGui::error(
+        QObject::tr("The selection cannot be ungrouped. It is not editable."));
+    return;
+  }
+
+  // Let's remove entries not in a group
+  StrokeSelection *sel    = new StrokeSelection(*m_sel);
+  LevelSelection levelSel = sel->getLevelSelection();
+
+  TXshSimpleLevel *level =
+      TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+  std::vector<TFrameId> fids;
+
+  if (levelSel.framesMode() == LevelSelection::FRAMES_ALL)
+    level->getFids(fids);
+  else if (levelSel.framesMode() == LevelSelection::FRAMES_SELECTED) {
+    std::vector<TFrameId> allFids;
+    level->getFids(allFids);
+    for (int f = 0; f < allFids.size(); f++) {
+      if (tool->getCurrentFid() != allFids[f] &&
+          !tool->getSelectedFrames().count(allFids[f]))
+        continue;
+      fids.push_back(allFids[f]);
+    }
+  } else
+    fids.push_back(tool->getCurrentFid());
+
+  if (fids.size() > 1) TUndoManager::manager()->beginBlock();
+
+  for (int f = 0; f < fids.size(); f++) {
+    TVectorImageP vi = level->getFrame(fids[f], true);
+    if (!vi) continue;
+
+    StrokeSelection *strokeSelection = new StrokeSelection;
+    std::vector<int> filteredStrokes =
+        vi == vimg ? sel->getSelection() : getSelectedStrokes(*vi, levelSel);
+    for (int i = 0; i < filteredStrokes.size(); i++) {
+      TStroke *stroke = vi->getStroke(filteredStrokes[i]);
+      if (!vi->isStrokeGrouped(filteredStrokes[i])) continue;
+      strokeSelection->select(filteredStrokes[i], true);
+    }
+
+    UngroupAllUndo *undo = new UngroupAllUndo(level, fids[f], strokeSelection);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  if (fids.size() > 1) TUndoManager::manager()->endBlock();
+}
+
+//-----------------------------------------------------------------------------
+
 /*
 void computeMovingBounds(TVectorImage*vimg, int fromIndex, int toIndex,
 int&lower, int& upper)
@@ -915,8 +1020,10 @@ void TGroupCommand::addMenuItems(QMenu *menu) {
   if (optionMask & TGroupCommand::GROUP)
     menu->addAction(cm->getAction(MI_Group));
 
-  if (optionMask & TGroupCommand::UNGROUP)
+  if (optionMask & TGroupCommand::UNGROUP) {
     menu->addAction(cm->getAction(MI_Ungroup));
+    menu->addAction(cm->getAction(MI_UngroupAll));
+  }
 
   if (optionMask & (TGroupCommand::GROUP | TGroupCommand::UNGROUP) &&
       optionMask & (TGroupCommand::FORWARD | TGroupCommand::BACKWARD))
