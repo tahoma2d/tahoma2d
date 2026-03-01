@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.0] - 2026-02-02
+## [1.6.0] - 2026-03-01
 
 ### Added
 
-- Brush Tips (Raster/Smart Raster) [#1915]
+- Brush Tips (Raster/Smart Raster) [#1915, #2041]
 - Stylus Settings Popup (Raster Brush & MyPaint styles) [#1888, #1923, #2018]
 - Stylus Settings Popup (Smart Raster - Standard Brush, Vector) [#1898, #2018]
 - Column Alpha Lock [#1666, #1736]
@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - MyPaint Brush Tilt Support [#1836]
 - New and updated shortcuts [#1805]
-- Refactored and Improved Preproduction Board [#1953]
+- Refactored and Improved Preproduction Board [#1953, #2053]
 - Reverse Clipping Mask Stacking Placement [#1667]
 - Rhubarb Recognizer option [#1835]
 - Shift markers with Cell Insert/Delete [#1970]
@@ -47,28 +47,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix Capture Image using Canon EDSDK Linux [#1977]
 - Fix changing geometry opacity back to 100 [#1919]
 - Fix column status toggling and display of folder items [#2008]
+- Fix controlling Smart Raster/Vector brush resize [#2044]
 - Fix Export Vector Level Bad Resolution Crash [#1920]
 - Fix File Browser New Folder creation [#1948]
 - Fix File Browser Rename logic and UI [#1947]
+- Fix fill loss due to ghost grouping changes [#2030]
 - Fix flipped vector color picker [#2022]
+- Fix folding column folders and other operations [#2051]
 - Fix image capture default folder [#1978]
 - Fix key as last scene frame [#1976, #1999]
 - Fix last Stop Frame Hold [#2006]
 - Fix load svg crash [#1925]
 - Fix loading unknown style id [#2012]
 - Fix missing Checkboard Fx settings (Linux) [#1922]
-- Fix missing MSVC DLLs [#1938]
+- Fix missing MSVC DLLs [#1938, #2034]
 - Fix missing QString arg [#2000]
 - Fix missing viewer title bar level info [#1949]
 - Fix reading corrupted PNG crash [#1982]
 - Fix saving escaped apostrophe (linux) [#1928]
+- Fix saving TIF files in scene subfolder [#2052]
 - Fix Show Column Parent's Color context menu option [#1924]
 - Fix some Vector Inspector issues + some refactoring [#1996]
 - Fix sound cells extender controls and move selection [#2014]
+- Fix sound extender targeting when zoomed [#2039]
+- Fix starting Animate Tool mode [#2065]
 - Fix starting in unicode path [#2009]
 - Fix stop frame placement on OCA import [#2010]
 - Fix styleeditor not updating on colorswatch switch [#2020]
 - Fix SVG stroke-width at lower resolutions [#2004]
+- Fix to prevent looping 1 frame [#2042]
 - Fix to stop writing unfilled regions to SVG [#2007]
 - Fix vector fill loss due to ghost grouping changes [#1997]
 - Fix Vector Ungroup/Group undo issue [#2002]
@@ -108,7 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other
 
-- Update translation files for v1.6 [#1980, #1992, #2005, #2023, #2032]
+- Update translation files for v1.6 [#1980, #1992, #2005, #2023, #2032, #2056]
 - Fix macOS build CMake version [#1909]
 - Fix removing unnecessary files in Windows builds [#1968]
 - Github build on macos-15-intel (Sequoia)/Fix Linux build [#1917]

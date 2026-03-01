@@ -1,6 +1,6 @@
 # Welcome to Tahoma2D 1.6!
 
-Version 1.5 brings a number of new features, enhancements, and even more fixes which are listed [here](https://github.com/tahoma2d/tahoma2d/releases/tag/v1.5).
+Version 1.6 brings a number of new features, enhancements, and even more fixes which are listed [here](https://github.com/tahoma2d/tahoma2d/releases/tag/v1.5).
 
 ### Compatibility Changes
 
