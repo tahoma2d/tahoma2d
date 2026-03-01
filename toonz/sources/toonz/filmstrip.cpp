@@ -325,12 +325,27 @@ void FilmstripFrames::mouseDoubleClickEvent(QMouseEvent *event) {
   // Block movement so we can't create new images
   TXshSimpleLevel *sl = getLevel();
   if (index > 0 && sl) {
+    // For Single Frame levels, don't create anything
+    if (sl && sl->isSingleFileLevel()) {
+      if (sl->canConvertSingleFileToSequence()) {
+        // confirmation dialog
+        int ret = DVGui::MsgBox(
+            QObject::tr(
+                "In order to create a new frame in this Single Frame level, it "
+                "will need to be converted and saved as a new sequenced "
+                "file level.\nWould you like to continue?"),
+            QObject::tr("Ok"), QObject::tr("Cancel"));
+        if (ret == 0 || ret == 2) return;
+        sl->convertSingleFileToSequence(
+            TApp::instance()->getCurrentXsheet()->getXsheet());
+      } else {
+        DVGui::error(QObject::tr("Cannot add frames to a Single Frame level."));
+        return;
+      }
+    }
+
     std::vector<TFrameId> fids;
     sl->getFids(fids);
-    if (fids.empty() ||
-        (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
-                              fids[0].getNumber() == TFrameId::NO_FRAME)))
-      return;
 
     // If we overshoot last frame, move back to 1st empty spot
     int emptyIndex = 0;
@@ -904,12 +919,27 @@ void FilmstripFrames::mousePressEvent(QMouseEvent *event) {
   // If accessed after 1st frame on a Single Frame level
   // Block movement so we can't create new images
   if (index > 0) {
+    // For Single Frame levels, don't create anything
+    if (sl && sl->isSingleFileLevel()) {
+      if (sl->canConvertSingleFileToSequence()) {
+        // confirmation dialog
+        int ret = DVGui::MsgBox(
+            QObject::tr(
+                "In order to create a new frame in this Single Frame level, it "
+                "will need to be converted and saved as a new sequenced "
+                "file level.\nWould you like to continue?"),
+            QObject::tr("Ok"), QObject::tr("Cancel"));
+        if (ret == 0 || ret == 2) return;
+        sl->convertSingleFileToSequence(
+            TApp::instance()->getCurrentXsheet()->getXsheet());
+      } else {
+        DVGui::error(QObject::tr("Cannot add frames to a Single Frame level."));
+        return;
+      }
+    }
+
     std::vector<TFrameId> fids;
     sl->getFids(fids);
-    if (fids.empty() ||
-        (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
-                              fids[0].getNumber() == TFrameId::NO_FRAME)))
-      return;
 
     // If we overshoot last frame, move back to 1st empty spot
     int emptyIndex = 0;
@@ -1202,11 +1232,25 @@ void FilmstripFrames::keyPressEvent(QKeyEvent *event) {
   std::vector<TFrameId> fids;
   level->getFids(fids);
   if (fids.empty()) return;
-  // Do not allow movement on Single Frame levels
-  if (fids.empty() ||
-      (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
-                            fids[0].getNumber() == TFrameId::NO_FRAME)))
-    return;
+
+  // For Single Frame levels, don't create anything
+  if (level->isSingleFileLevel()) {
+    if (level->canConvertSingleFileToSequence()) {
+      // confirmation dialog
+      int ret = DVGui::MsgBox(
+          QObject::tr(
+              "In order to create a new frame in this Single Frame level, it "
+              "will need to be converted and saved as a new sequenced "
+              "file level.\nWould you like to continue?"),
+          QObject::tr("Ok"), QObject::tr("Cancel"));
+      if (ret == 0 || ret == 2) return;
+      level->convertSingleFileToSequence(
+          TApp::instance()->getCurrentXsheet()->getXsheet());
+    } else {
+      DVGui::error(QObject::tr("Cannot add frames to a Single Frame level."));
+      return;
+    }
+  }
 
   // If on a level frame pass the frame id after the last frame to allow
   // creating a new frame with the down arrow key

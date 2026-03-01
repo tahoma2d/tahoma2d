@@ -227,7 +227,8 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
     , m_isMyPaintStyleSelected(false)
     , m_highFreqBrushTimer(0.0)
     , m_brushTip("Brush Tip")
-    , m_enabled(false) {
+    , m_enabled(false)
+    , m_active(false) {
   bind(TTool::RasterImage | TTool::EmptyTarget);
 
   m_thickness.setNonLinearSlider();
@@ -421,9 +422,9 @@ bool FullColorBrushTool::askWrite(const TRect &rect) {
 //--------------------------------------------------------------------------------------------------
 
 bool FullColorBrushTool::preLeftButtonDown() {
-  touchImage();
+  m_active = !!touchImage();
 
-  if (m_isFrameCreated) {
+  if (m_active && m_isFrameCreated) {
     setWorkAndBackupImages();
     // When the xsheet frame is selected, whole viewer will be updated from
     // SceneViewer::onXsheetChanged() on adding a new frame.
@@ -438,20 +439,31 @@ bool FullColorBrushTool::preLeftButtonDown() {
 
 void FullColorBrushTool::leftButtonDown(const TPointD &pos,
                                         const TMouseEvent &e) {
+  if (!m_active) return;
+
   TPointD previousBrushPos = m_brushPos;
   m_brushPos = m_mousePos = pos;
   m_mousePressed          = true;
   m_mouseEvent            = e;
   Viewer *viewer          = getViewer();
-  if (!viewer) return;
+  if (!viewer) {
+    m_active = false;
+    return;
+  }
 
   TRasterImageP ri = (TRasterImageP)getImage(true);
   if (!ri) ri = (TRasterImageP)touchImage();
 
-  if (!ri) return;
+  if (!ri) {
+    m_active = false;
+    return;
+  }
 
   TTool::Application *app = TTool::getApplication();
-  if (!app) return;
+  if (!app) {
+    m_active = false;
+    return;
+  }
   TXshLevel *level = app->getCurrentLevel()->getLevel();
   if (level == NULL) {
     m_active = false;
@@ -460,7 +472,10 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
 
   int col   = app->getCurrentColumn()->getColumnIndex();
   m_enabled = col >= 0 || app->getCurrentFrame()->isEditingLevel();
-  if (!m_enabled) return;
+  if (!m_enabled) {
+    m_active = false;
+    return;
+  }
 
   if ((e.isShiftPressed() || e.isCtrlPressed()) && !e.isAltPressed()) {
     m_isStraight = true;
@@ -676,6 +691,8 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
 
 void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
                                         const TMouseEvent &e) {
+  if (!m_active) return;
+
   if (!m_enabled) {
     m_brushPos = m_mousePos = pos;
     return;
@@ -1039,6 +1056,8 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
 
 void FullColorBrushTool::leftButtonUp(const TPointD &pos,
                                       const TMouseEvent &e) {
+  if (!m_active) return;
+
   TPointD previousBrushPos = m_brushPos;
   m_brushPos = m_mousePos = pos;
 

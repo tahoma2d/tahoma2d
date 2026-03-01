@@ -112,6 +112,10 @@ public:
 
     return (m_startSeqInd == '.' ? CUSTOM_PAD : UNDERSCORE_CUSTOM_PAD);
   }
+
+  void convertToSequence() {
+    if (isEmptyFrame() || isNoFrame()) m_frame = 0;
+  }
 };
 
 //-----------------------------------------------------------------------------
