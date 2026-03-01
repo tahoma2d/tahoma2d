@@ -362,6 +362,12 @@ int main(int argc, char *argv[]) {
   if (Preferences::instance()->isHighDpiScalingEnabled())
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+#ifdef Q_OS_WIN
+  //	Since currently Tahoma does not work with OpenGL of software or
+  // angle,	force Qt to use desktop OpenGL
+  QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
+#endif
+
   QApplication a(argc, argv);
 
 #ifdef MACOSX
@@ -398,16 +404,6 @@ int main(int argc, char *argv[]) {
 
   a.installNativeEventFilter(new OSXMouseDragFilter);
 #endif
-/* In wrong spot but don't want to move it in case it causes problems when
-  forced on all the time
-#ifdef Q_OS_WIN
-  //	Since currently Tahoma does not work with OpenGL of software or
-  // angle,	force Qt to use desktop OpenGL
-  // FIXME: This options should be called before constructing the application.
-  // Thus, ANGLE seems to be enabled as of now.
-  a.setAttribute(Qt::AA_UseDesktopOpenGL, true);
-#endif
-*/
   // Some Qt objects are destroyed badly without a living qApp. So, we must
   // enforce a way to either
   // postpone the application destruction until the very end, OR ensure that
