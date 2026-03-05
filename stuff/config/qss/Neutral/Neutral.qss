@@ -777,6 +777,10 @@ QListView {
 /* -----------------------------------------------------------------------------
    Tool Options - Override DvScroll Widget
 ----------------------------------------------------------------------------- */
+#toolOptionsPanel {
+  qproperty-ArrowToolKeyFrameBorderColor: #9f6930;
+  qproperty-ArrowToolInBetweenBorderColor: #afa75e;
+}
 #toolOptionsPanel QPushButton {
   background-color: #9f9f9f;
   border: 1 solid #616161;

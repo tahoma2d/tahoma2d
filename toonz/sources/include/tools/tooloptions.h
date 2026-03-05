@@ -112,6 +112,13 @@ protected:
 
   QHBoxLayout *m_layout;
 
+  QColor m_keyFrameBorderColor;
+  QColor m_inBetweenBorderColor;
+  Q_PROPERTY(QColor ArrowToolKeyFrameBorderColor READ getKeyFrameBorderColor
+                 WRITE setKeyFrameBorderColor)
+  Q_PROPERTY(QColor ArrowToolInBetweenBorderColor READ getInBetweenBorderColor
+                 WRITE setInBetweenBorderColor)
+
 public:
   ToolOptionsBox(QWidget *parent, bool isScrollable = true);
   ~ToolOptionsBox();
@@ -128,6 +135,15 @@ public:
   QLabel *addLabel(QString name);
   void addLabel(std::string propName, QLabel *label);
   void addSeparator();
+
+  void setKeyFrameBorderColor(const QColor &color) {
+    m_keyFrameBorderColor = color;
+  }
+  QColor getKeyFrameBorderColor() const { return m_keyFrameBorderColor; }
+  void setInBetweenBorderColor(const QColor &color) {
+    m_inBetweenBorderColor = color;
+  }
+  QColor getInBetweenBorderColor() const { return m_inBetweenBorderColor; }
 };
 
 //***********************************************************************************************
@@ -263,7 +279,8 @@ class ArrowToolOptionsBox final : public ToolOptionsBox {
 
   // Flip buttons
   QPushButton *m_hFlipButton, *m_vFlipButton, *m_leftRotateButton,
-      *m_rightRotateButton;
+      *m_rightRotateButton, *m_setNoKeyButton, *m_setPartialKeyButton,
+      *m_setFullKeyButton;
 
   // enables adjusting value by dragging on the label
   void connectLabelAndField(ClickableLabel *label, MeasuredValueField *field);
@@ -282,6 +299,7 @@ protected:
 
   void setSplined(bool on);
   bool isCurrentObjectSplined() const;
+  int getKeysStatus(int axisId, bool allKeys, TStageObject::Keyframe keys);
 
 protected slots:
   void onFrameSwitched() { updateStatus(); }
@@ -298,6 +316,7 @@ protected slots:
   void onFlipVertical();
   void onRotateLeft();
   void onRotateRight();
+  void onSetKey();
 };
 
 //=============================================================================
