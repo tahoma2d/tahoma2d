@@ -745,8 +745,9 @@ void LipSyncPopup::runRhubarb() {
         TFilePath(cacheRoot + "/rhubarb/script.txt").getQString();
 
     QFile qFile(scriptPath);
-    if (qFile.open(QIODevice::WriteOnly)) {
+    if (qFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
       QTextStream out(&qFile);
+      out.setCodec("UTF-8");
       out << script;
       qFile.close();
       args << "-d" << scriptPath;
