@@ -644,6 +644,27 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_setFullKeyButton->setIconSize(QSize(20, 20));
   m_setFullKeyButton->setToolTip(tr("Set Key"));
 
+  m_interpolationCombo = new QComboBox(this);
+  m_interpolationCombo->setSizeAdjustPolicy(
+      QComboBox::SizeAdjustPolicy::AdjustToContents);
+  m_interpolationCombo->setToolTip(tr("Default Interpolation"));
+  // This list must match what's in preferences
+  m_interpolationCombo->addItem(tr("Constant"), 1);
+  m_interpolationCombo->addItem(tr("Linear"), 2);
+  m_interpolationCombo->addItem(tr("Speed In / Speed Out"), 3);
+  m_interpolationCombo->addItem(tr("Ease In / Ease Out"), 4);
+  m_interpolationCombo->addItem(tr("Ease In / Ease Out %"), 5);
+  m_interpolationCombo->addItem(tr("Exponential"), 6);
+  m_interpolationCombo->addItem(tr("Expression "), 7);
+  m_interpolationCombo->addItem(tr("File"), 8);
+
+  int interpolationType = Preferences::instance()->getKeyframeType();
+  for (int i = 0; i < m_interpolationCombo->count(); ++i)
+    if (m_interpolationCombo->itemData(i) == interpolationType) {
+      m_interpolationCombo->setCurrentIndex(i);
+      break;
+    }
+
   bool splined                        = isCurrentObjectSplined();
   if (splined != m_splined) m_splined = splined;
   setSplined(m_splined);
@@ -668,6 +689,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
     m_pickWidget->setLayout(pickLay);
     mainLay->addWidget(m_pickWidget, 0);
 
+    mainLay->addWidget(m_interpolationCombo, 0);
     mainLay->addWidget(m_setNoKeyButton, 0);
     mainLay->addWidget(m_setPartialKeyButton, 0);
     mainLay->addWidget(m_setFullKeyButton, 0);
@@ -906,6 +928,9 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   connect(m_setPartialKeyButton, SIGNAL(clicked()), SLOT(onSetKey()));
   connect(m_setFullKeyButton, SIGNAL(clicked()), SLOT(onSetKey()));
 
+  connect(m_interpolationCombo, SIGNAL(activated(int)), this,
+          SLOT(onInterpolationComboActivated(int)));
+
   connect(editTool, SIGNAL(clickFlipHorizontal()), SLOT(onFlipHorizontal()));
   connect(editTool, SIGNAL(clickFlipVertical()), SLOT(onFlipVertical()));
   connect(editTool, SIGNAL(clickRotateLeft()), SLOT(onRotateLeft()));
@@ -1058,6 +1083,86 @@ bool isChannelInterpolated(TStageObject::Channel channel, int frame,
   return upperKeyFound && lowerKeyFound;
 }
 
+bool ArrowToolOptionsBox::canSetInterpolation(int axisId, bool allKeys,
+                                              int frame,
+                                              TStageObject *stageObj) {
+  bool canSet = true;
+  int r0, r1;
+  TStageObject::KeyframeMap keyframes;
+  stageObj->getKeyframes(keyframes);
+  stageObj->getKeyframeRange(r0, r1);
+
+  if (frame >= r0 && frame <= r1) {
+    auto it    = keyframes.lower_bound(frame);
+    bool isKey = frame == it->first;
+    if ((frame == r0 && it->first == r0) || (frame == r1 && it->first == r1))
+      canSet = getKeysStatus(axisId, allKeys, it->second) != 2;
+    else {
+      int keyCount                = 0;
+      int keysFound               = 0;
+      TStageObject::Keyframe keys = it->second;
+
+      if (axisId == AXIS::Position || allKeys) {
+        if (m_splined || m_globalKey->isChecked()) {
+          keyCount += 1;
+          if ((isKey && keys.m_channels[TStageObject::T_Path].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_Path, frame, keyframes))
+            keysFound++;
+        }
+        if (!m_splined || m_globalKey->isChecked()) {
+          keyCount += 4;
+          if ((isKey && keys.m_channels[TStageObject::T_X].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_X, frame, keyframes))
+            keysFound++;
+          if ((isKey && keys.m_channels[TStageObject::T_Y].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_Y, frame, keyframes))
+            keysFound++;
+          if ((isKey && keys.m_channels[TStageObject::T_Z].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_Z, frame, keyframes))
+            keysFound++;
+          if ((isKey && keys.m_channels[TStageObject::T_SO].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_SO, frame, keyframes))
+            keysFound++;
+        }
+      }
+
+      if (axisId == AXIS::Rotation || allKeys) {
+        keyCount += 1;
+        if ((isKey && keys.m_channels[TStageObject::T_Angle].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_Angle, frame, keyframes))
+          keysFound++;
+      }
+
+      if (axisId == AXIS::Scale || allKeys) {
+        keyCount += 3;
+        if ((isKey && keys.m_channels[TStageObject::T_Scale].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_Scale, frame, keyframes))
+          keysFound++;
+        if ((isKey && keys.m_channels[TStageObject::T_ScaleX].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_ScaleX, frame, keyframes))
+          keysFound++;
+        if ((isKey && keys.m_channels[TStageObject::T_ScaleY].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_ScaleY, frame, keyframes))
+          keysFound++;
+      }
+
+      if (axisId == AXIS::Shear || allKeys) {
+        keyCount += 2;
+        if ((isKey && keys.m_channels[TStageObject::T_ShearX].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_ShearX, frame, keyframes))
+          keysFound++;
+        if ((isKey && keys.m_channels[TStageObject::T_ShearY].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_ShearY, frame, keyframes))
+          keysFound++;
+      }
+
+      canSet = keyCount != keysFound;
+    }
+  }
+
+  return canSet;
+}
+
 void ArrowToolOptionsBox::updateStatus() {
   TStageObjectId objId        = m_objHandle->getObjectId();
   TStageObject *stageObj      = m_xshHandle->getXsheet()->getStageObject(objId);
@@ -1182,16 +1287,22 @@ void ArrowToolOptionsBox::updateStatus() {
   bool splined = isCurrentObjectSplined();
   if (splined != m_splined) setSplined(splined);
 
+  m_interpolationCombo->setVisible(false);
+
   m_setNoKeyButton->setVisible(false);
   m_setPartialKeyButton->setVisible(false);
   m_setFullKeyButton->setVisible(false);
-
 
   int axisId = m_chooseActiveAxisCombo->currentIndex();
   if (axisId == AXIS::CenterPosition) return;
 
   bool allKeys = axisId == AXIS::AllAxis || m_globalKey->isChecked();
 
+  m_interpolationCombo->setVisible(true);
+
+  bool enableInterpolation =
+      canSetInterpolation(axisId, allKeys, frame, stageObj);
+  m_interpolationCombo->setEnabled(enableInterpolation);
 
   bool isKey = stageObj->isKeyframe(frame);
   if (!isKey) {
@@ -1424,6 +1535,13 @@ void ArrowToolOptionsBox::onSetKey() {
   TUndoManager::manager()->endBlock();
 
   m_xshHandle->notifyXsheetChanged();
+}
+
+//------------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onInterpolationComboActivated(int index) {
+  Preferences::instance()->setValue(keyframeType,
+                                    m_interpolationCombo->itemData(index));
 }
 
 //=============================================================================

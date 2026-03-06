@@ -224,7 +224,7 @@ class ArrowToolOptionsBox final : public ToolOptionsBox {
   ToolOptionCombo *m_chooseActiveAxisCombo;
   ToolOptionCombo *m_pickCombo;
   // enable to choose the target pegbar from the combobox
-  QComboBox *m_currentStageObjectCombo;
+  QComboBox *m_currentStageObjectCombo, *m_interpolationCombo;
 
   // Position
   PegbarChannelField *m_motionPathPosField;
@@ -300,6 +300,8 @@ protected:
   void setSplined(bool on);
   bool isCurrentObjectSplined() const;
   int getKeysStatus(int axisId, bool allKeys, TStageObject::Keyframe keys);
+  bool canSetInterpolation(int axisId, bool allKeys, int frame,
+                           TStageObject *stageObj);
 
 protected slots:
   void onFrameSwitched() { updateStatus(); }
@@ -309,6 +311,7 @@ protected slots:
   void syncCurrentStageObjectComboItem();
   // change the current stage object when user changes it via combobox by hand
   void onCurrentStageObjectComboActivated(int index);
+  void onInterpolationComboActivated(int index);
 
   void onCurrentAxisChanged(int);
 
