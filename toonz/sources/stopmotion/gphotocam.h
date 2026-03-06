@@ -170,6 +170,8 @@ public:
 
   void loadCameraConfigKeys(QString manufacturer);
 
+  QList<GPConfig> getCameraAllConfigs();
+
 #ifdef WITH_GPHOTO2
   bool initializeCamera();
   bool getCamera(int index);
@@ -197,7 +199,6 @@ public:
   QStringList getPictureStyleOptions() { return m_pictureStyleOptions; }
   QStringList getManualFocusRange() { return m_manualFocusRange;  }
 
-  QList<GPConfig> getCameraAllConfigs();
   QStringList getCameraConfigChoicesOrRange(const char *key);
   QString getCameraConfigValue(const char *key);
   bool setCameraConfigValue(const char *key, QString value);
