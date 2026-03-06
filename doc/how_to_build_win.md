@@ -95,6 +95,13 @@ Rename the following files:
   - `$tahoma2d\thirdparty\libpng-1.6.21\pnglibconf.h` 
   - Note that the destination folder is different for this file.
 
+Delete the following file:
+- [ ] Delete `$tahoma2d\thirdparty\zlib-1.2.8\zconf.h.in`
+  - A ready-to-use `zconf.h` is already present in that folder. If `zconf.h.in`
+    is left in place, CMake may regenerate `zconf.h` during the configure step
+    and produce a version that omits Windows-specific definitions, causing build
+    errors.
+
 ## Library setup for stop motion with Canon DSLR cameras.
 - You will need to get a copy of the Canon SDK.  This requires applying for the Canon developer program and downloading the SDK.
 
@@ -108,7 +115,13 @@ Rename the following files:
 - [ ] Obtain the latest Tahoma2D portable release from https://tahoma2d.org/ if you don't have it already
 - [ ] Create the folder `$tahoma2d\toonz\build\Debug` or `RelWithDebInfo`
 - [ ] Copy all files and subfolders from the latest release into the `Debug`/`RelWithDebInfo` folder, except `tahomastuff`, `ffmpeg` and `rhubarb`
-- [ ] Copy the `$tahoma2d\stuff` folder to `$tahoma2d\toonz\build\toonz` and rename it `tahomastuff`
+- [ ] Copy the `$tahoma2d\stuff` folder into `$tahoma2d\toonz\build\Debug` or `RelWithDebInfo` and rename it `tahomastuff`
+  - **Important:** `tahomastuff` must be in the **same folder as the exe** (`Debug/` or `RelWithDebInfo/`).  
+    Tahoma2D detects "portable mode" by checking whether a `tahomastuff` folder exists next to the running executable.  
+    If it is missing, the app falls back to the `TAHOMA2DROOT` registry key, which won't be set on a fresh machine and the app will fail to find its configuration.
+- [ ] Copy the OpenCV runtime DLL into `Debug/` or `RelWithDebInfo/`
+  - `$OpenCV_DIR\x64\vc15\bin\opencv_world451.dll`
+  - Optional (for video I/O): `$OpenCV_DIR\x64\vc15\bin\opencv_videoio_ffmpeg451_64.dll`
 - [ ] Copy the `ffmpeg` and `rhubarb` folders from the release to `$tahoma2d\toonz\build\toonz`
 
 ## Build/Debug
