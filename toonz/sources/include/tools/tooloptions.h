@@ -279,8 +279,7 @@ class ArrowToolOptionsBox final : public ToolOptionsBox {
 
   // Flip buttons
   QPushButton *m_hFlipButton, *m_vFlipButton, *m_leftRotateButton,
-      *m_rightRotateButton, *m_setNoKeyButton, *m_setPartialKeyButton,
-      *m_setFullKeyButton;
+      *m_rightRotateButton, *m_setKeyButton;
 
   // enables adjusting value by dragging on the label
   void connectLabelAndField(ClickableLabel *label, MeasuredValueField *field);
@@ -305,6 +304,7 @@ protected:
 
 protected slots:
   void onFrameSwitched() { updateStatus(); }
+  void onPlayingStatusChanged();
   // update the object list in combobox
   void updateStageObjectComboItems();
   // synchronize the current item in the combobox to the selected stage object

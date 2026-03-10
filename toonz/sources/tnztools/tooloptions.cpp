@@ -624,25 +624,10 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_leftRotateButton->setToolTip(tr("Rotate Object Left"));
   m_rightRotateButton->setToolTip(tr("Rotate Object Right"));
 
-  m_setNoKeyButton      = new QPushButton(this);
-  m_setPartialKeyButton = new QPushButton(this);
-  m_setFullKeyButton    = new QPushButton(this);
-
-  m_setNoKeyButton->setFixedSize(QSize(20, 20));
-  m_setPartialKeyButton->setFixedSize(QSize(20, 20));
-  m_setFullKeyButton->setFixedSize(QSize(20, 20));
-
-  m_setNoKeyButton->setIcon(createQIcon("key_off"));
-  m_setNoKeyButton->setIconSize(QSize(20, 20));
-  m_setNoKeyButton->setToolTip(tr("Set Key"));
-
-  m_setPartialKeyButton->setIcon(createQIcon("key_partial"));
-  m_setPartialKeyButton->setIconSize(QSize(20, 20));
-  m_setPartialKeyButton->setToolTip(tr("Set Key"));
-
-  m_setFullKeyButton->setIcon(createQIcon("key_on"));
-  m_setFullKeyButton->setIconSize(QSize(20, 20));
-  m_setFullKeyButton->setToolTip(tr("Set Key"));
+  m_setKeyButton = new QPushButton(this);
+  m_setKeyButton->setFixedSize(QSize(22, 20));
+  m_setKeyButton->setIconSize(QSize(20, 20));
+  m_setKeyButton->setToolTip(tr("Set Key"));
 
   m_interpolationCombo = new QComboBox(this);
   m_interpolationCombo->setSizeAdjustPolicy(
@@ -690,9 +675,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
     mainLay->addWidget(m_pickWidget, 0);
 
     mainLay->addWidget(m_interpolationCombo, 0);
-    mainLay->addWidget(m_setNoKeyButton, 0);
-    mainLay->addWidget(m_setPartialKeyButton, 0);
-    mainLay->addWidget(m_setFullKeyButton, 0);
+    mainLay->addWidget(m_setKeyButton, 0);
 
     addSeparator();
 
@@ -924,9 +907,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
   connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
 
-  connect(m_setNoKeyButton, SIGNAL(clicked()), SLOT(onSetKey()));
-  connect(m_setPartialKeyButton, SIGNAL(clicked()), SLOT(onSetKey()));
-  connect(m_setFullKeyButton, SIGNAL(clicked()), SLOT(onSetKey()));
+  connect(m_setKeyButton, SIGNAL(clicked()), SLOT(onSetKey()));
 
   connect(m_interpolationCombo, SIGNAL(activated(int)), this,
           SLOT(onInterpolationComboActivated(int)));
@@ -956,6 +937,8 @@ void ArrowToolOptionsBox::connectLabelAndField(ClickableLabel *label,
 
 void ArrowToolOptionsBox::showEvent(QShowEvent *) {
   connect(m_frameHandle, SIGNAL(frameSwitched()), SLOT(onFrameSwitched()));
+  connect(m_frameHandle, SIGNAL(isPlayingStatusChanged()),
+          SLOT(onPlayingStatusChanged()));
   // if some stage object is added/removed, then reflect it to the combobox
   connect(m_xshHandle, SIGNAL(xsheetSwitched()), this,
           SLOT(updateStageObjectComboItems()));
@@ -975,6 +958,8 @@ void ArrowToolOptionsBox::showEvent(QShowEvent *) {
 void ArrowToolOptionsBox::hideEvent(QShowEvent *) {
   disconnect(m_frameHandle, SIGNAL(frameSwitched()), this,
              SLOT(onFrameSwitched()));
+  disconnect(m_frameHandle, SIGNAL(isPlayingStatusChanged()), this,
+             SLOT(onPlayingStatusChanged()));
 
   disconnect(m_xshHandle, SIGNAL(xsheetSwitched()), this,
              SLOT(updateStageObjectComboItems()));
@@ -1175,9 +1160,12 @@ void ArrowToolOptionsBox::updateStatus() {
   QString keyColorName       = getKeyFrameBorderColor().name();
   QString inBetweenColorName = getInBetweenBorderColor().name();
 
-  QString highlightKey       = "QLineEdit {background-color: " + keyColorName + ";}";
+  bool isPlaying = m_frameHandle->isPlaying();
+  QString highlightKey =
+      isPlaying ? "" : "QLineEdit {background-color: " + keyColorName + ";}";
   QString highlightInbetween =
-      "QLineEdit {background-color: " + inBetweenColorName + ";}";
+      isPlaying ? ""
+                : "QLineEdit {background-color: " + inBetweenColorName + ";}";
 
   // General
   m_chooseActiveAxisCombo->updateStatus();
@@ -1289,34 +1277,40 @@ void ArrowToolOptionsBox::updateStatus() {
 
   m_interpolationCombo->setVisible(false);
 
-  m_setNoKeyButton->setVisible(false);
-  m_setPartialKeyButton->setVisible(false);
-  m_setFullKeyButton->setVisible(false);
-
   int axisId = m_chooseActiveAxisCombo->currentIndex();
+
+  m_setKeyButton->setVisible(axisId != AXIS::CenterPosition);
+
   if (axisId == AXIS::CenterPosition) return;
 
   bool allKeys = axisId == AXIS::AllAxis || m_globalKey->isChecked();
 
   m_interpolationCombo->setVisible(true);
-
   bool enableInterpolation =
       canSetInterpolation(axisId, allKeys, frame, stageObj);
-  m_interpolationCombo->setEnabled(enableInterpolation);
+  if (!isPlaying) m_interpolationCombo->setEnabled(enableInterpolation);
+
+  static QIcon noKeyIcon      = createQIcon("key_off");
+  static QIcon partialKeyIcon = createQIcon("key_partial");
+  static QIcon fullKeyIcon    = createQIcon("key_on");
 
   bool isKey = stageObj->isKeyframe(frame);
-  if (!isKey) {
-    m_setNoKeyButton->setVisible(true);
-    m_setPartialKeyButton->setVisible(false);
-    m_setFullKeyButton->setVisible(false);
+  if (!isKey || isPlaying) {
+    m_setKeyButton->setIcon(noKeyIcon);
     return;
   }
 
   int keysStatus = getKeysStatus(axisId, allKeys, keys);
 
-  m_setNoKeyButton->setVisible(!keysStatus);
-  m_setPartialKeyButton->setVisible(keysStatus == 1);
-  m_setFullKeyButton->setVisible(keysStatus == 2);
+  m_setKeyButton->setIcon(
+      !keysStatus ? noKeyIcon
+                  : (keysStatus == 1 ? partialKeyIcon : fullKeyIcon));
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onPlayingStatusChanged() {
+  if (!m_frameHandle->isPlaying()) updateStatus();
 }
 
 //-----------------------------------------------------------------------------
