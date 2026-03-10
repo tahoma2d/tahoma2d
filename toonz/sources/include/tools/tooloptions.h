@@ -112,6 +112,13 @@ protected:
 
   QHBoxLayout *m_layout;
 
+  QColor m_keyFrameBorderColor;
+  QColor m_inBetweenBorderColor;
+  Q_PROPERTY(QColor ArrowToolKeyFrameBorderColor READ getKeyFrameBorderColor
+                 WRITE setKeyFrameBorderColor)
+  Q_PROPERTY(QColor ArrowToolInBetweenBorderColor READ getInBetweenBorderColor
+                 WRITE setInBetweenBorderColor)
+
 public:
   ToolOptionsBox(QWidget *parent, bool isScrollable = true);
   ~ToolOptionsBox();
@@ -128,6 +135,15 @@ public:
   QLabel *addLabel(QString name);
   void addLabel(std::string propName, QLabel *label);
   void addSeparator();
+
+  void setKeyFrameBorderColor(const QColor &color) {
+    m_keyFrameBorderColor = color;
+  }
+  QColor getKeyFrameBorderColor() const { return m_keyFrameBorderColor; }
+  void setInBetweenBorderColor(const QColor &color) {
+    m_inBetweenBorderColor = color;
+  }
+  QColor getInBetweenBorderColor() const { return m_inBetweenBorderColor; }
 };
 
 //***********************************************************************************************
@@ -208,7 +224,7 @@ class ArrowToolOptionsBox final : public ToolOptionsBox {
   ToolOptionCombo *m_chooseActiveAxisCombo;
   ToolOptionCombo *m_pickCombo;
   // enable to choose the target pegbar from the combobox
-  QComboBox *m_currentStageObjectCombo;
+  QComboBox *m_currentStageObjectCombo, *m_interpolationCombo;
 
   // Position
   PegbarChannelField *m_motionPathPosField;
@@ -263,7 +279,7 @@ class ArrowToolOptionsBox final : public ToolOptionsBox {
 
   // Flip buttons
   QPushButton *m_hFlipButton, *m_vFlipButton, *m_leftRotateButton,
-      *m_rightRotateButton;
+      *m_rightRotateButton, *m_setKeyButton;
 
   // enables adjusting value by dragging on the label
   void connectLabelAndField(ClickableLabel *label, MeasuredValueField *field);
@@ -282,15 +298,20 @@ protected:
 
   void setSplined(bool on);
   bool isCurrentObjectSplined() const;
+  int getKeysStatus(int axisId, bool allKeys, TStageObject::Keyframe keys);
+  bool canSetInterpolation(int axisId, bool allKeys, int frame,
+                           TStageObject *stageObj);
 
 protected slots:
   void onFrameSwitched() { updateStatus(); }
+  void onPlayingStatusChanged();
   // update the object list in combobox
   void updateStageObjectComboItems();
   // synchronize the current item in the combobox to the selected stage object
   void syncCurrentStageObjectComboItem();
   // change the current stage object when user changes it via combobox by hand
   void onCurrentStageObjectComboActivated(int index);
+  void onInterpolationComboActivated(int index);
 
   void onCurrentAxisChanged(int);
 
@@ -298,6 +319,7 @@ protected slots:
   void onFlipVertical();
   void onRotateLeft();
   void onRotateRight();
+  void onSetKey();
 };
 
 //=============================================================================

@@ -624,6 +624,32 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_leftRotateButton->setToolTip(tr("Rotate Object Left"));
   m_rightRotateButton->setToolTip(tr("Rotate Object Right"));
 
+  m_setKeyButton = new QPushButton(this);
+  m_setKeyButton->setFixedSize(QSize(22, 20));
+  m_setKeyButton->setIconSize(QSize(20, 20));
+  m_setKeyButton->setToolTip(tr("Set Key"));
+
+  m_interpolationCombo = new QComboBox(this);
+  m_interpolationCombo->setSizeAdjustPolicy(
+      QComboBox::SizeAdjustPolicy::AdjustToContents);
+  m_interpolationCombo->setToolTip(tr("Default Interpolation"));
+  // This list must match what's in preferences
+  m_interpolationCombo->addItem(tr("Constant"), 1);
+  m_interpolationCombo->addItem(tr("Linear"), 2);
+  m_interpolationCombo->addItem(tr("Speed In / Speed Out"), 3);
+  m_interpolationCombo->addItem(tr("Ease In / Ease Out"), 4);
+  m_interpolationCombo->addItem(tr("Ease In / Ease Out %"), 5);
+  m_interpolationCombo->addItem(tr("Exponential"), 6);
+  m_interpolationCombo->addItem(tr("Expression "), 7);
+  m_interpolationCombo->addItem(tr("File"), 8);
+
+  int interpolationType = Preferences::instance()->getKeyframeType();
+  for (int i = 0; i < m_interpolationCombo->count(); ++i)
+    if (m_interpolationCombo->itemData(i) == interpolationType) {
+      m_interpolationCombo->setCurrentIndex(i);
+      break;
+    }
+
   bool splined                        = isCurrentObjectSplined();
   if (splined != m_splined) m_splined = splined;
   setSplined(m_splined);
@@ -647,6 +673,9 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
     }
     m_pickWidget->setLayout(pickLay);
     mainLay->addWidget(m_pickWidget, 0);
+
+    mainLay->addWidget(m_interpolationCombo, 0);
+    mainLay->addWidget(m_setKeyButton, 0);
 
     addSeparator();
 
@@ -878,10 +907,17 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
   connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
 
+  connect(m_setKeyButton, SIGNAL(clicked()), SLOT(onSetKey()));
+
+  connect(m_interpolationCombo, SIGNAL(activated(int)), this,
+          SLOT(onInterpolationComboActivated(int)));
+
   connect(editTool, SIGNAL(clickFlipHorizontal()), SLOT(onFlipHorizontal()));
   connect(editTool, SIGNAL(clickFlipVertical()), SLOT(onFlipVertical()));
   connect(editTool, SIGNAL(clickRotateLeft()), SLOT(onRotateLeft()));
   connect(editTool, SIGNAL(clickRotateRight()), SLOT(onRotateRight()));
+
+  updateStatus();
 }
 
 //-----------------------------------------------------------------------------
@@ -901,6 +937,8 @@ void ArrowToolOptionsBox::connectLabelAndField(ClickableLabel *label,
 
 void ArrowToolOptionsBox::showEvent(QShowEvent *) {
   connect(m_frameHandle, SIGNAL(frameSwitched()), SLOT(onFrameSwitched()));
+  connect(m_frameHandle, SIGNAL(isPlayingStatusChanged()),
+          SLOT(onPlayingStatusChanged()));
   // if some stage object is added/removed, then reflect it to the combobox
   connect(m_xshHandle, SIGNAL(xsheetSwitched()), this,
           SLOT(updateStageObjectComboItems()));
@@ -920,6 +958,8 @@ void ArrowToolOptionsBox::showEvent(QShowEvent *) {
 void ArrowToolOptionsBox::hideEvent(QShowEvent *) {
   disconnect(m_frameHandle, SIGNAL(frameSwitched()), this,
              SLOT(onFrameSwitched()));
+  disconnect(m_frameHandle, SIGNAL(isPlayingStatusChanged()), this,
+             SLOT(onPlayingStatusChanged()));
 
   disconnect(m_xshHandle, SIGNAL(xsheetSwitched()), this,
              SLOT(updateStageObjectComboItems()));
@@ -954,12 +994,214 @@ bool ArrowToolOptionsBox::isCurrentObjectSplined() const {
 
 //-----------------------------------------------------------------------------
 
+int ArrowToolOptionsBox::getKeysStatus(int axisId, bool allKeys,
+                                       TStageObject::Keyframe keys) {
+  int keyCount   = 0;
+  int keysFound  = 0;
+
+  if (axisId == AXIS::Position || allKeys) {
+    if (m_splined || m_globalKey->isChecked()) {
+      keyCount += 1;
+      if (keys.m_channels[TStageObject::T_Path].m_isKeyframe) keysFound++;
+    }
+    if (!m_splined || m_globalKey->isChecked()) {
+      keyCount += 4;
+      if (keys.m_channels[TStageObject::T_X].m_isKeyframe) keysFound++;
+      if (keys.m_channels[TStageObject::T_Y].m_isKeyframe) keysFound++;
+      if (keys.m_channels[TStageObject::T_Z].m_isKeyframe) keysFound++;
+      if (keys.m_channels[TStageObject::T_SO].m_isKeyframe) keysFound++;
+    }
+  }
+
+  if (axisId == AXIS::Rotation || allKeys) {
+    keyCount += 1;
+    if (keys.m_channels[TStageObject::T_Angle].m_isKeyframe) keysFound++;
+  }
+
+  if (axisId == AXIS::Scale || allKeys) {
+    keyCount += 3;
+    if (keys.m_channels[TStageObject::T_Scale].m_isKeyframe) keysFound++;
+    if (keys.m_channels[TStageObject::T_ScaleX].m_isKeyframe) keysFound++;
+    if (keys.m_channels[TStageObject::T_ScaleY].m_isKeyframe) keysFound++;
+  }
+
+  if (axisId == AXIS::Shear || allKeys) {
+    keyCount += 2;
+    if (keys.m_channels[TStageObject::T_ShearX].m_isKeyframe) keysFound++;
+    if (keys.m_channels[TStageObject::T_ShearY].m_isKeyframe) keysFound++;
+  }
+
+  if (keysFound > 0 && keysFound == keyCount) return 2;  // Full
+  if (keysFound > 0 && keysFound != keyCount) return 1;  // Partial
+  return 0;                                              // None
+}
+
+bool isChannelInterpolated(TStageObject::Channel channel, int frame,
+                           TStageObject::KeyframeMap keyframes) {
+  if (keyframes.empty() || frame < keyframes.begin()->first ||
+      frame > keyframes.rbegin()->first)
+    return false;
+
+  bool upperKeyFound = false, lowerKeyFound = false;
+
+  auto it = keyframes.lower_bound(frame);
+  while (it != keyframes.end()) {
+    TStageObject::Keyframe keys = it->second;
+    if (keys.m_channels[channel].m_isKeyframe) {
+      upperKeyFound = true;
+      break;
+    }
+    it++;
+  }
+
+  it = keyframes.lower_bound(frame);
+  std::map<int, TStageObject::Keyframe>::reverse_iterator rit(it);
+  while (rit != keyframes.rend()) {
+    TStageObject::Keyframe keys = rit->second;
+    if (keys.m_channels[channel].m_isKeyframe) {
+      lowerKeyFound = true;
+      break;
+    }
+    rit++;
+  }
+
+  return upperKeyFound && lowerKeyFound;
+}
+
+bool ArrowToolOptionsBox::canSetInterpolation(int axisId, bool allKeys,
+                                              int frame,
+                                              TStageObject *stageObj) {
+  bool canSet = true;
+  int r0, r1;
+  TStageObject::KeyframeMap keyframes;
+  stageObj->getKeyframes(keyframes);
+  stageObj->getKeyframeRange(r0, r1);
+
+  if (frame >= r0 && frame <= r1) {
+    auto it    = keyframes.lower_bound(frame);
+    bool isKey = frame == it->first;
+    if ((frame == r0 && it->first == r0) || (frame == r1 && it->first == r1))
+      canSet = getKeysStatus(axisId, allKeys, it->second) != 2;
+    else {
+      int keyCount                = 0;
+      int keysFound               = 0;
+      TStageObject::Keyframe keys = it->second;
+
+      if (axisId == AXIS::Position || allKeys) {
+        if (m_splined || m_globalKey->isChecked()) {
+          keyCount += 1;
+          if ((isKey && keys.m_channels[TStageObject::T_Path].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_Path, frame, keyframes))
+            keysFound++;
+        }
+        if (!m_splined || m_globalKey->isChecked()) {
+          keyCount += 4;
+          if ((isKey && keys.m_channels[TStageObject::T_X].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_X, frame, keyframes))
+            keysFound++;
+          if ((isKey && keys.m_channels[TStageObject::T_Y].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_Y, frame, keyframes))
+            keysFound++;
+          if ((isKey && keys.m_channels[TStageObject::T_Z].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_Z, frame, keyframes))
+            keysFound++;
+          if ((isKey && keys.m_channels[TStageObject::T_SO].m_isKeyframe) ||
+              isChannelInterpolated(TStageObject::T_SO, frame, keyframes))
+            keysFound++;
+        }
+      }
+
+      if (axisId == AXIS::Rotation || allKeys) {
+        keyCount += 1;
+        if ((isKey && keys.m_channels[TStageObject::T_Angle].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_Angle, frame, keyframes))
+          keysFound++;
+      }
+
+      if (axisId == AXIS::Scale || allKeys) {
+        keyCount += 3;
+        if ((isKey && keys.m_channels[TStageObject::T_Scale].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_Scale, frame, keyframes))
+          keysFound++;
+        if ((isKey && keys.m_channels[TStageObject::T_ScaleX].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_ScaleX, frame, keyframes))
+          keysFound++;
+        if ((isKey && keys.m_channels[TStageObject::T_ScaleY].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_ScaleY, frame, keyframes))
+          keysFound++;
+      }
+
+      if (axisId == AXIS::Shear || allKeys) {
+        keyCount += 2;
+        if ((isKey && keys.m_channels[TStageObject::T_ShearX].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_ShearX, frame, keyframes))
+          keysFound++;
+        if ((isKey && keys.m_channels[TStageObject::T_ShearY].m_isKeyframe) ||
+            isChannelInterpolated(TStageObject::T_ShearY, frame, keyframes))
+          keysFound++;
+      }
+
+      canSet = keyCount != keysFound;
+    }
+  }
+
+  return canSet;
+}
+
 void ArrowToolOptionsBox::updateStatus() {
+  TStageObjectId objId        = m_objHandle->getObjectId();
+  TStageObject *stageObj      = m_xshHandle->getXsheet()->getStageObject(objId);
+  int frame                   = m_frameHandle->getFrameIndex();
+  TStageObject::Keyframe keys = stageObj->getKeyframe(frame);
+
+  TStageObject::KeyframeMap keyframes;
+  stageObj->getKeyframes(keyframes);
+
+  QString keyColorName       = getKeyFrameBorderColor().name();
+  QString inBetweenColorName = getInBetweenBorderColor().name();
+
+  bool isPlaying = m_frameHandle->isPlaying();
+  QString highlightKey =
+      isPlaying ? "" : "QLineEdit {background-color: " + keyColorName + ";}";
+  QString highlightInbetween =
+      isPlaying ? ""
+                : "QLineEdit {background-color: " + inBetweenColorName + ";}";
+
   // General
   m_chooseActiveAxisCombo->updateStatus();
   m_pickCombo->updateStatus();
 
   // Position
+  m_motionPathPosField->setStyleSheet(
+      keys.m_channels[TStageObject::T_Path].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_Path, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
+  m_ewPosField->setStyleSheet(
+      keys.m_channels[TStageObject::T_X].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_X, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
+  m_nsPosField->setStyleSheet(
+      keys.m_channels[TStageObject::T_Y].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_Y, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
+  m_zField->setStyleSheet(
+      keys.m_channels[TStageObject::T_Z].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_Z, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
+  m_soField->setStyleSheet(
+      keys.m_channels[TStageObject::T_SO].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_SO, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
   m_motionPathPosField->updateStatus();
   m_ewPosField->updateStatus();
   m_nsPosField->updateStatus();
@@ -970,9 +1212,33 @@ void ArrowToolOptionsBox::updateStatus() {
   m_soField->updateStatus();
 
   // Rotation
+  m_rotationField->setStyleSheet(
+      keys.m_channels[TStageObject::T_Angle].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_Angle, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
   m_rotationField->updateStatus();
 
   // Scale
+  m_globalScaleField->setStyleSheet(
+      keys.m_channels[TStageObject::T_Scale].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_Scale, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
+  m_scaleHField->setStyleSheet(
+      keys.m_channels[TStageObject::T_ScaleX].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_ScaleX, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
+  m_scaleVField->setStyleSheet(
+      keys.m_channels[TStageObject::T_ScaleY].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_ScaleY, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
   m_globalScaleField->updateStatus();
   m_scaleHField->updateStatus();
   m_scaleVField->updateStatus();
@@ -981,6 +1247,18 @@ void ArrowToolOptionsBox::updateStatus() {
   m_maintainCombo->updateStatus();
 
   // Shear
+  m_shearHField->setStyleSheet(
+      keys.m_channels[TStageObject::T_ShearX].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_ShearX, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
+  m_shearVField->setStyleSheet(
+      keys.m_channels[TStageObject::T_ShearY].m_isKeyframe
+          ? highlightKey
+          : (isChannelInterpolated(TStageObject::T_ShearY, frame, keyframes)
+                 ? highlightInbetween
+                 : ""));
   m_shearHField->updateStatus();
   m_shearVField->updateStatus();
   m_lockShearHCheckbox->updateStatus();
@@ -996,6 +1274,43 @@ void ArrowToolOptionsBox::updateStatus() {
 
   bool splined = isCurrentObjectSplined();
   if (splined != m_splined) setSplined(splined);
+
+  m_interpolationCombo->setVisible(false);
+
+  int axisId = m_chooseActiveAxisCombo->currentIndex();
+
+  m_setKeyButton->setVisible(axisId != AXIS::CenterPosition);
+
+  if (axisId == AXIS::CenterPosition) return;
+
+  bool allKeys = axisId == AXIS::AllAxis || m_globalKey->isChecked();
+
+  m_interpolationCombo->setVisible(true);
+  bool enableInterpolation =
+      canSetInterpolation(axisId, allKeys, frame, stageObj);
+  if (!isPlaying) m_interpolationCombo->setEnabled(enableInterpolation);
+
+  static QIcon noKeyIcon      = createQIcon("key_off");
+  static QIcon partialKeyIcon = createQIcon("key_partial");
+  static QIcon fullKeyIcon    = createQIcon("key_on");
+
+  bool isKey = stageObj->isKeyframe(frame);
+  if (!isKey || isPlaying) {
+    m_setKeyButton->setIcon(noKeyIcon);
+    return;
+  }
+
+  int keysStatus = getKeysStatus(axisId, allKeys, keys);
+
+  m_setKeyButton->setIcon(
+      !keysStatus ? noKeyIcon
+                  : (keysStatus == 1 ? partialKeyIcon : fullKeyIcon));
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onPlayingStatusChanged() {
+  if (!m_frameHandle->isPlaying()) updateStatus();
 }
 
 //-----------------------------------------------------------------------------
@@ -1123,6 +1438,104 @@ void ArrowToolOptionsBox::onRotateRight() {
   m_rotationField->setValue(m_rotationField->getValue() - 90);
   emit m_rotationField->measuredValueChanged(
       m_rotationField->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onSetKey() {
+  int axisId = m_chooseActiveAxisCombo->currentIndex();
+  if (axisId == AXIS::CenterPosition) return;
+
+  TStageObjectId objId        = m_objHandle->getObjectId();
+  TStageObject *stageObj      = m_xshHandle->getXsheet()->getStageObject(objId);
+  int frame                   = m_frameHandle->getFrameIndex();
+  TStageObject::Keyframe keys = stageObj->getKeyframe(frame);
+
+  bool allKeys       = axisId == AXIS::AllAxis || m_globalKey->isChecked();
+
+  // keysStatus: 0 = none, 1 = partial, 2 = full
+  int keysStatus     = getKeysStatus(axisId, allKeys, keys);
+  bool removeAllKeys = keysStatus == 2;
+
+  TUndoManager::manager()->beginBlock();
+  if (axisId == AXIS::Position || allKeys) {
+    if (m_splined || m_globalKey->isChecked()) {
+      if (removeAllKeys)
+        emit m_motionPathPosField->measuredValueDeleted();
+      else
+        emit m_motionPathPosField->measuredValueChanged(
+            m_motionPathPosField->getMeasuredValue());
+    }
+    if (!m_splined || m_globalKey->isChecked()) {
+      if (removeAllKeys) {
+        emit m_ewPosField->measuredValueDeleted();
+        emit m_nsPosField->measuredValueDeleted();
+        emit m_zField->measuredValueDeleted();
+        emit m_soField->measuredValueDeleted();
+      } else {
+        if (!keys.m_channels[TStageObject::T_X].m_isKeyframe)
+          emit m_ewPosField->measuredValueChanged(
+              m_ewPosField->getMeasuredValue());
+        if (!keys.m_channels[TStageObject::T_Y].m_isKeyframe)
+          emit m_nsPosField->measuredValueChanged(
+              m_nsPosField->getMeasuredValue());
+        if (!keys.m_channels[TStageObject::T_Z].m_isKeyframe)
+          emit m_zField->measuredValueChanged(m_zField->getMeasuredValue());
+        if (!keys.m_channels[TStageObject::T_SO].m_isKeyframe)
+          emit m_soField->measuredValueChanged(m_soField->getMeasuredValue());
+      }
+    }
+  }
+
+  if (axisId == AXIS::Rotation || allKeys) {
+    if (removeAllKeys)
+      emit m_rotationField->measuredValueDeleted();
+    else
+      emit m_rotationField->measuredValueChanged(
+          m_rotationField->getMeasuredValue());
+  }
+
+  if (axisId == AXIS::Scale || allKeys) {
+    if (removeAllKeys) {
+      emit m_globalScaleField->measuredValueDeleted();
+      emit m_scaleHField->measuredValueDeleted();
+      emit m_scaleVField->measuredValueDeleted();
+    } else {
+      if (!keys.m_channels[TStageObject::T_Scale].m_isKeyframe)
+        emit m_globalScaleField->measuredValueChanged(
+            m_globalScaleField->getMeasuredValue());
+      if (!keys.m_channels[TStageObject::T_ScaleX].m_isKeyframe)
+        emit m_scaleHField->measuredValueChanged(
+            m_scaleHField->getMeasuredValue());
+      if (!keys.m_channels[TStageObject::T_ScaleY].m_isKeyframe)
+        emit m_scaleVField->measuredValueChanged(
+            m_scaleVField->getMeasuredValue());
+    }
+  }
+
+  if (axisId == AXIS::Shear || allKeys) {
+    if (removeAllKeys) {
+      emit m_shearHField->measuredValueDeleted();
+      emit m_shearVField->measuredValueDeleted();
+    } else {
+      if (!keys.m_channels[TStageObject::T_ShearX].m_isKeyframe)
+        emit m_shearHField->measuredValueChanged(
+            m_shearHField->getMeasuredValue());
+      if (!keys.m_channels[TStageObject::T_ShearY].m_isKeyframe)
+        emit m_shearVField->measuredValueChanged(
+            m_shearVField->getMeasuredValue());
+    }
+  }
+  TUndoManager::manager()->endBlock();
+
+  m_xshHandle->notifyXsheetChanged();
+}
+
+//------------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onInterpolationComboActivated(int index) {
+  Preferences::instance()->setValue(keyframeType,
+                                    m_interpolationCombo->itemData(index));
 }
 
 //=============================================================================
