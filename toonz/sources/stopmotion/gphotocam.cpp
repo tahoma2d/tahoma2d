@@ -483,6 +483,94 @@ void GPhotoCam::onImageReady(const bool &status) {
 
 void GPhotoCam::onFinished() { l_quitLoop = true; }
 
+//-----------------------------------------------------------------
+
+QList<GPConfig> GPhotoCam::getCameraAllConfigs() {
+  QList<GPConfig> configs;
+#ifdef WITH_GPHOTO2
+  CameraWidget *widget = NULL, *child = NULL, *section = NULL;
+  const char *cvalue;
+  int retVal;
+
+  retVal = gp_camera_get_config(m_camera, &widget, m_gpContext);
+  if (retVal < GP_OK) return configs;
+
+  for (int i = 0; i < gp_widget_count_children(widget); i++) {
+    retVal = gp_widget_get_child(widget, i, &child);
+    if (retVal < GP_OK) continue;
+
+    CameraWidgetType widgetType;
+    retVal = gp_widget_get_type(child, &widgetType);
+    if (retVal < GP_OK) continue;
+
+    if (widgetType == CameraWidgetType::GP_WIDGET_SECTION) {
+      std::string sectionName;
+
+      retVal = gp_widget_get_name(child, &cvalue);
+      if (retVal < GP_OK) continue;
+      sectionName = cvalue;
+
+      retVal = gp_widget_get_child(widget, i, &section);
+      if (retVal < GP_OK) continue;
+
+      for (int j = 0; j < gp_widget_count_children(section); j++) {
+        GPConfig config;
+
+        retVal = gp_widget_get_child(section, j, &child);
+        if (retVal < GP_OK) continue;
+
+        CameraWidgetType swidgetType;
+        retVal = gp_widget_get_type(child, &swidgetType);
+        if (retVal < GP_OK) continue;
+
+        config.section = sectionName;
+
+        retVal = gp_widget_get_name(child, &cvalue);
+        if (retVal < GP_OK) continue;
+        config.key = cvalue;
+
+        retVal = gp_widget_get_label(child, &cvalue);
+        if (retVal == GP_OK) config.label = cvalue;
+
+        int readOnly;
+        retVal = gp_widget_get_readonly(child, &readOnly);
+        if (retVal == GP_OK) config.readOnly = QString::number(readOnly);
+
+        switch (swidgetType) {
+        case CameraWidgetType::GP_WIDGET_DATE:
+          config.widgetType = "DATE";
+          break;
+        case CameraWidgetType::GP_WIDGET_MENU:
+          config.widgetType = "MENU";
+          break;
+        case CameraWidgetType::GP_WIDGET_RADIO:
+          config.widgetType = "RADIO";
+          break;
+        case CameraWidgetType::GP_WIDGET_RANGE:
+          config.widgetType = "RANGE";
+          break;
+        case CameraWidgetType::GP_WIDGET_TEXT:
+          config.widgetType = "TEXT";
+          break;
+        case CameraWidgetType::GP_WIDGET_TOGGLE:
+          config.widgetType = "TOGGLE";
+          break;
+        }
+
+        config.currentVal = getCameraConfigValue(config.key.c_str());
+
+        config.choices = getCameraConfigChoicesOrRange(config.key.c_str());
+
+        configs.push_back(config);
+      }
+    }
+  }
+
+  gp_widget_free(widget);
+#endif
+  return configs;
+}
+
 //-----------------------------------------------------------------------------
 
 #ifdef WITH_GPHOTO2
@@ -903,92 +991,6 @@ bool GPhotoCam::downloadImage() {
   delete converter;
 
   return true;
-}
-
-//-----------------------------------------------------------------
-
-QList<GPConfig> GPhotoCam::getCameraAllConfigs() {
-  QList<GPConfig> configs;
-  CameraWidget *widget = NULL, *child = NULL, *section = NULL;
-  const char *cvalue;
-  int retVal;
-
-  retVal = gp_camera_get_config(m_camera, &widget, m_gpContext);
-  if (retVal < GP_OK) return configs;
-
-  for (int i = 0; i < gp_widget_count_children(widget); i++) {
-    retVal = gp_widget_get_child(widget, i, &child);
-    if (retVal < GP_OK) continue;
-
-    CameraWidgetType widgetType;
-    retVal = gp_widget_get_type(child, &widgetType);
-    if (retVal < GP_OK) continue;
-      
-    if (widgetType == CameraWidgetType::GP_WIDGET_SECTION) {
-      std::string sectionName;
-
-      retVal = gp_widget_get_name(child, &cvalue);
-      if (retVal < GP_OK) continue;
-      sectionName = cvalue;
-
-      retVal = gp_widget_get_child(widget, i, &section);
-      if (retVal < GP_OK) continue;
-
-      for (int j = 0; j < gp_widget_count_children(section); j++) {
-        GPConfig config;
-
-        retVal = gp_widget_get_child(section, j, &child);
-        if (retVal < GP_OK) continue;
-
-        CameraWidgetType swidgetType;
-        retVal = gp_widget_get_type(child, &swidgetType);
-        if (retVal < GP_OK) continue;
-
-        config.section = sectionName;
-
-        retVal = gp_widget_get_name(child, &cvalue);
-        if (retVal < GP_OK) continue;
-        config.key = cvalue; 
-
-        retVal = gp_widget_get_label(child, &cvalue);
-        if (retVal == GP_OK) config.label = cvalue;
-
-        int readOnly;
-        retVal = gp_widget_get_readonly(child, &readOnly);
-        if (retVal == GP_OK) config.readOnly = QString::number(readOnly);
-
-        switch (swidgetType) {
-        case CameraWidgetType::GP_WIDGET_DATE:
-          config.widgetType = "DATE";
-          break;
-        case CameraWidgetType::GP_WIDGET_MENU:
-          config.widgetType = "MENU";
-          break;
-        case CameraWidgetType::GP_WIDGET_RADIO:
-          config.widgetType = "RADIO";
-          break;
-        case CameraWidgetType::GP_WIDGET_RANGE:
-          config.widgetType = "RANGE";
-          break;
-        case CameraWidgetType::GP_WIDGET_TEXT:
-          config.widgetType = "TEXT";
-          break;
-        case CameraWidgetType::GP_WIDGET_TOGGLE:
-          config.widgetType = "TOGGLE";
-          break;
-        }
-
-        config.currentVal = getCameraConfigValue(config.key.c_str());
-
-        config.choices = getCameraConfigChoicesOrRange(config.key.c_str());
-
-        configs.push_back(config);
-      }
-    }
-  }
-
-  gp_widget_free(widget);
-  return configs;
 }
 
 //-----------------------------------------------------------------

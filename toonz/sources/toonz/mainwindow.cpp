@@ -2548,8 +2548,10 @@ void MainWindow::defineActions() {
                        "web");
   createMenuHelpAction(MI_OpenViewerEventLog,
                        QT_TR_NOOP("Viewer Event Log"), "", "");
+#ifdef WITH_GPHOTO2
   createMenuHelpAction(MI_OpenGPhotoEventLog,
                        QT_TR_NOOP("GPhoto Event Log"), "", "");
+#endif
   createMenuHelpAction(MI_OpenVectorInspectorPanel,
                           QT_TR_NOOP("Vector Inspector"), "",
                           "vectorinspector");
