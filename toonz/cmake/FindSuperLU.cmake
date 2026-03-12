@@ -40,6 +40,7 @@ find_library(
         libsuperlu.so
         libsuperlu.a
         libsuperlu_4.1.a
+        libsuperlu.dylib
     HINTS
         ${_lib_hints}
     PATH_SUFFIXES
