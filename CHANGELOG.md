@@ -5,6 +5,38 @@
 > `### Upstream candidates`, `### Notes`. Poi esegui rsync (vedi AGENTS.md).
 
 ---
+## [2026-03-21] — Task 13a + Task 14: onion skin markers + startup dialog
+
+### Added
+
+- **Task 13a** — Onion skin markers on `ZtoryAnimaticRuler`:
+  - Semi-transparent downward triangles at `currentFrame + rel` for each ROS offset.
+  - Red (255,100,100,120) for frames before current; blue (100,100,255,120) for after.
+  - Includes: `onionskinmask.h`, `tonionskinmaskhandle.h`.
+  - Connected `onionSkinMaskChanged` → `m_ruler->update()` in `ZtoryAnimaticPanel`.
+
+- **Task 14** — Startup dialog (`ZtoryStartupDialog`) — new files `ztorystartup.h/cpp`:
+  - 4 sections: Project (name + location), Camera (preset, W×H, fps, duration),
+    Workflow (STORYBOARD / ANIMATIC / STOPMOTION radio), Shot Numbering (Simple / Sequence).
+  - Preferences persisted via `QSettings("Ztoryc", "StartupDefaults")`.
+  - `ZtoryStartupDialog::Config::shotName(sq, idx)` generates e.g. `sh010` or `sq01_sh010`.
+  - Integrated in `iocommand.cpp::newScene()`: replaces `SaveSceneAsPopup`.
+    - Applies camera/fps from dialog.
+    - Creates project directory via `QDir::mkpath`.
+    - Sets scene path before any content is drawn.
+    - Switches to selected room via `mw->switchToRoom()`.
+    - Pre-creates initial shots with correct names via `ZtoryModel::addShotNamed()`.
+    - Saves scene immediately to disk.
+  - New `ZtoryModel::addShotNamed(const QString &name)`: creates xsheet column +
+    sub-scene + model entry in one call; called by startup dialog.
+  - New files registered in `CMakeLists.txt`.
+
+### Notes
+
+- Tasks 4, 3, 2, 13c were already implemented in previous sessions — no changes needed.
+- Build: `ninja -j4` clean, no errors.
+
+---
 ## [2026-03-21] — Design session (Cowork): marker In/Out, scrubbing, preview bar, guard sub-scene
 
 ### Added (planning — non ancora implementato in codice)

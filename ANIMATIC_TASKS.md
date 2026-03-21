@@ -53,6 +53,74 @@ to the animatic panel.
 
 ---
 
+## 1b. BUG — Shot operations must be guarded to main xsheet only ⚠️ CRITICAL
+
+**Problem:** Any operation that modifies the main xsheet structure (reordering
+shots, inserting/deleting columns, resequencing) will **silently corrupt the
+scene** if the user is currently inside a sub-scene (`ancestorCount > 0`).
+In that state, `TApp::instance()->getCurrentXsheet()` returns the **sub-scene**
+xsheet, not the main one. Calling `insertColumn`, `removeColumn`, or
+`resequenceXsheet` on it destroys the sub-scene's content.
+
+**Affected operations (every single one needs the guard):**
+
+- `resequenceXsheet()` — both in `storyboardpanel.cpp` and `ztoryanimatic.cpp`
+- `onAddShot()`, `onDeleteShot()` — in `StoryboardPanel`
+- `onCopyShot()`, `onCloneShot()`, `onPasteShot()` — in `StoryboardPanel`
+- Shot drag-reorder in `ZtoryAnimaticTrack::mouseReleaseEvent`
+- Duration drag (`onShotDurationChanged`) in `ZtoryAnimaticTrack`
+- Any future shot operation added to either panel
+
+**The guard (add to the top of every affected function):**
+
+```cpp
+// GUARD: shot operations must run on the main xsheet only.
+ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+if (scene->getChildStack()->getAncestorCount() > 0) {
+    // Option A — silent no-op (preferred for drag operations):
+    return;
+    // Option B — warn the user (preferred for explicit button actions):
+    DVGui::warning(tr("Cannot modify shots while editing a sub-scene.\n"
+                      "Close the sub-scene first (double-click outside it)."));
+    return;
+}
+```
+
+Use **Option A** (silent return) for continuous operations like drag-resize
+or drag-reorder, to avoid flooding the user with dialogs.
+Use **Option B** (warning) for discrete actions like Add Shot, Delete Shot,
+Paste Shot, so the user knows why nothing happened.
+
+**Centralise in a helper (recommended):**
+
+Add a static helper in `ztorymodel.h`:
+```cpp
+// Returns true if at main xsheet level; shows optional warning if not.
+static bool assertMainXsheet(bool showWarning = false) {
+    ToonzScene *s = TApp::instance()->getCurrentScene()->getScene();
+    if (s->getChildStack()->getAncestorCount() == 0) return true;
+    if (showWarning)
+        DVGui::warning(QObject::tr(
+            "Cannot modify shots while editing a sub-scene."));
+    return false;
+}
+```
+
+Then every affected function starts with:
+```cpp
+if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
+```
+
+**Files:** `ztorymodel.h`, `storyboardpanel.cpp`, `ztoryanimatic.cpp`.
+
+**Pitfall:** Do NOT just use `ZtoryAnimaticController::instance()->mainXsheet()`
+as the xsheet to operate on — that resolves the *data target* correctly but the
+underlying Qt undo commands and `TApp` signals still reference
+`getCurrentXsheet()`. The correct fix is to **block the operation** if not at
+main level, rather than trying to redirect it.
+
+---
+
 ## 2. BUG — Timing desync between Board and Animatic timeline
 
 **Problem:** When the user modifies shot duration by dragging the border in the
@@ -359,35 +427,825 @@ animatic viewer via the panel's context menu or a collapse button.
 
 ---
 
+## 12. NEW — Audio waveform display + scrubbing in Animatic Timeline ⭐ PRIORITY
+
+**What:** Waveform display and audio scrubbing in `ZtoryAudioTrack` and
+`ZtoryAnimaticRuler`, replicating exactly the native Tahoma2D timeline.
+Do NOT reimplement — copy/adapt from native source.
+
+**Status:**
+- ✅ Play audio: works (refreshAnimaticSound + ZtoryAnimaticController)
+- ✅ 12a Waveform: visible (confirmed by user)
+- ❌ 12b Scrubbing on ruler drag: not working (audio only on play button)
+- ❌ 12c Sound preview bar: missing
+
+---
+
+### 12a. Fix waveform rendering in `ZtoryAudioTrack`
+
+**Root cause of broken pixel mapping:** Current code has `soundPixel = px`,
+which maps screen pixel directly to sample index, ignoring fps and m_ppf.
+
+**Where the native waveform is rendered:**
+Search `xsheetviewer.cpp` for `drawSoundColumnHead` or `paintSoundBar` or
+grep for `getSoundTrack` in `ColumnArea`. The native `CellArea::paintEvent`
+handles sound cells — look specifically for a block that calls
+`column->getSoundColumn()` then iterates over a sample range to draw
+vertical lines.
+
+**Correct pixel → sample mapping formula:**
+```cpp
+// Given: m_ppf (pixels per frame), fps from scene properties
+double fps = scene->getProperties()->getOutputProperties()->getFrameRate();
+
+// In ZtoryAudioTrack::paintEvent, for each pixel column px:
+double frame    = (px - kLabelW) / m_ppf;          // fractional frame
+TINT32 s0       = (TINT32)(frame * sampleRate / fps);
+TINT32 s1       = s0 + (TINT32)(sampleRate / fps / m_ppf) + 1;
+// s0..s1 = sample range covered by this pixel; clamp to [0, sampleCount)
+```
+
+**How to get the sound track and samples:**
+```cpp
+TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+// Find the first sound column in the main xsheet:
+for (int c = 0; c < xsh->getColumnCount(); c++) {
+    TXshSoundColumn *sc = xsh->getColumn(c)->getSoundColumn();
+    if (!sc) continue;
+    // Get the full merged sound track for the entire xsheet duration:
+    TSoundTrack *st = sc->getSoundTrack(0, xsh->getFrameCount(), false);
+    if (!st) continue;
+    TINT32 sampleRate = st->getSampleRate();
+    TINT32 sampleCount = st->getSampleCount();
+    // For each pixel, compute s0..s1 as above, then:
+    double minVal = 0, maxVal = 0;
+    for (TINT32 s = s0; s < s1 && s < sampleCount; s++) {
+        // TSoundTrack stores samples as 16-bit signed in stereo or mono:
+        // Use st->getValue(s) or cast sample buffer directly.
+        // Native code uses: TXshSoundColumn::getSoundBuffer() or
+        // iterates via TSoundTrack::getSample(s, channel)
+    }
+    // Draw vertical line from mid-height-minVal to mid-height+maxVal
+}
+```
+
+**Practical approach (copy from native):**
+1. Open `xsheetviewer.cpp`, find `CellArea::drawSoundCell` or equivalent.
+2. Copy the waveform-drawing block verbatim into
+   `ZtoryAudioTrack::paintEvent`, replacing the native `x`-coordinate
+   computation with `px = kLabelW + frame * m_ppf` (our coordinate system).
+3. Call `update()` from `ZtoryAnimaticPanel` whenever `m_ppf` changes
+   (already done via `onZoomChanged`).
+
+**Caching:** The native code caches the waveform QPixmap when zoom/size
+changes. Add a `QPixmap m_waveformCache` + `bool m_waveformDirty` flag;
+regenerate only when `m_ppf` or xsheet changes.
+
+---
+
+### 12b. Audio scrubbing on ruler drag
+
+**Where the native scrubbing is:**
+Search `xsheetviewer.cpp` in `RowArea::mouseMoveEvent` (or `mousePressEvent`)
+for a block that calls `TApp::instance()->getCurrentXsheet()` and then
+`TSoundOutputDevice`. The key call is approximately:
+
+```cpp
+// Native (from RowArea):
+TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+double fps = ...; // from scene
+TSoundTrack *st = xsh->makeSound(0);   // or makeSoundTrack(r0, r1)
+if (st) {
+    TINT32 sRate = st->getSampleRate();
+    double s      = frame * sRate / fps;
+    TINT32 s0     = std::max(0, (TINT32)(s - sRate / (2 * fps)));
+    TINT32 s1     = (TINT32)(s + sRate / (2 * fps));
+    TSoundOutputDevice::instance()->play(st, s0, s1, false, true); // scrub=true
+}
+```
+
+**Adaptation for `ZtoryAnimaticRuler::mouseMoveEvent`:**
+```cpp
+void ZtoryAnimaticRuler::mouseMoveEvent(QMouseEvent *e) {
+    if (!(e->buttons() & Qt::LeftButton)) return;
+    int frame = frameAtX(e->x());           // already exists
+    ZtoryAnimaticController::instance()->setCurrentFrame(frame);
+
+    // --- ADD: audio scrubbing ---
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    // Walk up to main xsheet (in case user is inside a sub-scene):
+    while (TApp::instance()->getCurrentScene()->getScene()
+               ->getChildStack()->getAncestorCount() > 0)
+        xsh = xsh->getScene()->getTopXsheet(); // or use ctrl->mainXsheet()
+    // Use ZtoryAnimaticController::instance()->mainXsheet() directly:
+    xsh = ZtoryAnimaticController::instance()->mainXsheet();
+
+    double fps = TApp::instance()->getCurrentScene()->getScene()
+                     ->getProperties()->getOutputProperties()->getFrameRate();
+    TSoundTrack *st = xsh->makeSound(0);
+    if (st && TSoundOutputDevice::instance()->isDeviceAvailable()) {
+        TINT32 sr = st->getSampleRate();
+        TINT32 s0 = std::max(0, (TINT32)(frame * sr / fps - sr / fps / 2));
+        TINT32 s1 = (TINT32)(frame * sr / fps + sr / fps / 2);
+        TSoundOutputDevice::instance()->play(st, s0, s1, false, true);
+    }
+    // ---------------------
+    update();
+}
+```
+
+**Stop scrub on mouse release:**
+```cpp
+void ZtoryAnimaticRuler::mouseReleaseEvent(QMouseEvent *) {
+    if (TSoundOutputDevice::instance()->isPlaying())
+        TSoundOutputDevice::instance()->stop();
+}
+```
+
+**Includes needed:** `#include "tsound.h"`, `#include "toonz/txsheet.h"`
+(check if already present; add to `ztoryanimatic.cpp` includes).
+
+**Files:** `ztoryanimatic.h/cpp`, reference: `xsheetviewer.cpp` (`RowArea`).
+
+**Pitfall:** `xsh->makeSound(0)` may return nullptr if no sound column exists
+— always null-check before using. Also, do NOT call `play()` while the
+animatic FlipConsole is already playing (check `ctrl->isPlaying()` and skip
+scrub if true, to avoid audio conflicts).
+
+---
+
+### 12b — DIAGNOSTIC: why scrubbing is still not working
+
+The spec above is correct in principle, but `makeSound(0)` is the likely
+culprit. Here are the four causes to check **in this order:**
+
+**Cause 1 — `makeSound()` returns nullptr or a stale track.**
+`TXsheet::makeSound()` rebuilds the merged soundtrack from all sound columns,
+which may fail if no sound column is at the main-xsheet level when the user
+is inside a sub-scene. Always verify with a qDebug before the `if (st)` block:
+```cpp
+qDebug() << "scrub: st=" << (void*)st << "frame=" << frame;
+```
+If nullptr → use the soundtrack already cached by `ZtoryAnimaticViewer`.
+
+**Preferred fix — use the cached sound from ZtoryAnimaticController:**
+Add a `TSoundTrackP m_soundTrack` member to `ZtoryAnimaticController` that
+`ZtoryAnimaticViewer::refreshAnimaticSound()` fills when loading audio.
+Then the ruler uses:
+```cpp
+TSoundTrackP st = ZtoryAnimaticController::instance()->soundTrack();
+```
+instead of calling `makeSound()` again. This avoids the rebuild cost and the
+nullptr problem.
+
+**Cause 2 — `TSoundOutputDevice::instance()->isDeviceAvailable()` returns false.**
+Add a qDebug to check. On some macOS/Linux builds the device is only available
+after first playback. Try removing the `isDeviceAvailable()` guard or calling
+`TSoundOutputDevice::instance()->open()` once at startup.
+
+**Cause 3 — `play()` is being called but immediately interrupted.**
+`makeSound(0)` or `play()` might be triggering an internal stop signal that
+the FlipConsole audio path then catches and kills. Check if any slot is
+connected to `TSoundOutputDevice::soundStopped` that calls `stop()` or
+resets state.
+
+**Cause 4 — Mouse events not reaching the ruler.**
+If the ruler is inside a `QScrollArea` or another widget that grabs mouse
+events, `mouseMoveEvent` may not fire during drag. Verify with a qDebug in
+`ZtoryAnimaticRuler::mouseMoveEvent`. If it never fires, add
+`setMouseTracking(false)` (not needed) but check `grabMouse()` conflicts.
+Also ensure the ruler has `Qt::LeftButton` tracked: use
+`installEventFilter` on the scroll area if needed.
+
+---
+
+### 12c. NEW — Sound preview bar in `ZtoryAudioTrack`
+
+**What:** A thin strip (≈6 px) at the bottom edge of `ZtoryAudioTrack`.
+Click+drag selects a frame range; on mouse release the selected range is
+played back. Identical to the native Tahoma2D sound column preview bar.
+
+**Where the native one is:**
+In `xsheetviewer.cpp`, search `ColumnArea` (or `SoundColumnArea`) for a
+block handling clicks near the bottom of the sound column header. May be
+under the name "playbar", "scrubbar" or just an `if (y > h - kScrubBarH)`
+branch in `mousePressEvent`. Also look in `columnarea.cpp` if it exists as
+a separate file.
+
+**Rendering in `ZtoryAudioTrack::paintEvent`:**
+```cpp
+// Constants:
+static const int kScrubBarH = 6;
+
+// At the bottom of paintEvent, after the waveform:
+QRect scrubBar(kLabelW, height() - kScrubBarH,
+               width() - kLabelW, kScrubBarH);
+painter.fillRect(scrubBar, QColor(60, 60, 60));
+
+// If a preview range is selected (m_previewR0 <= m_previewR1):
+if (m_previewR0 >= 0) {
+    int x0 = kLabelW + (int)(m_previewR0 * m_ppf);
+    int x1 = kLabelW + (int)((m_previewR1 + 1) * m_ppf);
+    painter.fillRect(x0, height() - kScrubBarH,
+                     x1 - x0, kScrubBarH, QColor(255,165,0));
+}
+```
+
+**New members in `ZtoryAudioTrack`:**
+```cpp
+int m_previewR0 = -1;   // In frame of preview selection (-1 = none)
+int m_previewR1 = -1;   // Out frame
+bool m_draggingPreview = false;
+int m_previewDragStart = -1;
+```
+
+**Mouse interaction:**
+```cpp
+void ZtoryAudioTrack::mousePressEvent(QMouseEvent *e) {
+    if (e->y() >= height() - kScrubBarH) {
+        m_draggingPreview = true;
+        int frame = std::max(0, (int)((e->x() - kLabelW) / m_ppf));
+        m_previewDragStart = frame;
+        m_previewR0 = m_previewR1 = frame;
+        update();
+    }
+}
+
+void ZtoryAudioTrack::mouseMoveEvent(QMouseEvent *e) {
+    if (!m_draggingPreview) return;
+    int frame = std::max(0, (int)((e->x() - kLabelW) / m_ppf));
+    m_previewR0 = std::min(m_previewDragStart, frame);
+    m_previewR1 = std::max(m_previewDragStart, frame);
+    update();
+}
+
+void ZtoryAudioTrack::mouseReleaseEvent(QMouseEvent *e) {
+    if (!m_draggingPreview) return;
+    m_draggingPreview = false;
+    if (m_previewR0 < 0 || m_previewR1 < m_previewR0) return;
+
+    // Play selected range:
+    TSoundTrackP st = ZtoryAnimaticController::instance()->soundTrack();
+    // fallback if controller has no cache:
+    if (!st) st = ZtoryAnimaticController::instance()->mainXsheet()->makeSound(0);
+    if (!st) return;
+
+    double fps = TApp::instance()->getCurrentScene()->getScene()
+                     ->getProperties()->getOutputProperties()->getFrameRate();
+    TINT32 sr = st->getSampleRate();
+    TINT32 s0 = (TINT32)(m_previewR0 * sr / fps);
+    TINT32 s1 = (TINT32)((m_previewR1 + 1) * sr / fps);
+    s0 = std::max(0, std::min(s0, (TINT32)st->getSampleCount() - 1));
+    s1 = std::max(s0, std::min(s1, (TINT32)st->getSampleCount()));
+    TSoundOutputDevice::instance()->play(st, s0, s1, false, false); // not scrub, plays to end
+    update();
+}
+```
+
+**Cursor:** Change cursor to `Qt::SizeHorCursor` when hovering over the
+scrub bar strip (use `mouseMoveEvent` + `unsetCursor()`/`setCursor()`).
+
+**Files:** `ztoryanimatic.h/cpp` (ZtoryAudioTrack).
+
+---
+
+## 13. NEW — Playhead, Onion skin, In/Out markers, Navigation tags in Animatic Ruler
+
+**What:** Four visual/interactive features of the native timeline ruler to
+replicate in `ZtoryAnimaticRuler`. In all cases: copy/adapt from native source,
+do NOT reimplement. Primary reference: `XsheetGUI::RowArea` in `xsheetviewer.cpp`.
+
+---
+
+### 13a. Onion skin markers on the ruler
+
+**Where the native onion skin is:**
+In `xsheetviewer.cpp`, `RowArea::paintEvent` — search for `OnionSkinMask`
+or `getCurrentOnionSkin`. The native code reads:
+```cpp
+OnionSkinMask mask =
+    TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
+// Relative offsets (frames before/after current):
+QList<int> rel = mask.getRelativeOnionSkin();
+// Absolute frames:
+QList<int> abs = mask.getFixedOnionSkin();
+```
+For each frame in `rel`, it draws a small filled dot or secondary triangle
+at `currentFrame + offset` in the ruler.
+
+**Adaptation for `ZtoryAnimaticRuler::paintEvent`:**
+```cpp
+// After drawing the main playhead, add onion skin ghosts:
+OnionSkinMask mask =
+    TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
+if (mask.isEnabled()) {
+    for (int rel : mask.getRelativeOnionSkin()) {
+        int ghostFrame = currentFrame + rel;
+        if (ghostFrame < 0) continue;
+        int gx = kLabelW + (int)(ghostFrame * m_ppf);
+        // Draw small semi-transparent triangle at gx:
+        QColor ghostColor = rel < 0 ? QColor(255,100,100,120)
+                                    : QColor(100,100,255,120);
+        // ... paint small downward triangle at gx, ruler bottom half
+    }
+}
+```
+
+**Connect:** In `ZtoryAnimaticPanel` constructor, connect
+`TApp::instance()->getCurrentOnionSkin()->onionSkinMaskChanged`
+→ `m_ruler->update()`.
+
+---
+
+### 13b. In/Out markers on the ruler ⭐ PRIORITY
+
+**Status / bugs reported by user:**
+- ❌ Markers not visible on panel open — require Cmd+Shift+Click to appear
+- ❌ No "Mark IN" / "Mark OUT" right-click menu
+- ❌ Right-click moves the playhead (must not)
+- ✅ Marker position is recorded correctly once set
+
+---
+
+#### Bug 1 — Markers invisible on open: auto-initialize play range
+
+**Root cause:** `getPlayRange()` returns `r0 = -1` (unset) when the xsheet
+has never had a play range set. The paint guard `if (r0 >= 0 && r1 > r0)`
+then skips drawing entirely. On first open the markers simply don't exist.
+
+**Fix — initialize on panel show:**
+In `ZtoryAnimaticRuler::showEvent()` (or in
+`ZtoryAnimaticPanel::updateAnimaticFrameRange()`), after computing
+`totalFrames` from the main xsheet:
+
+```cpp
+void ZtoryAnimaticRuler::initPlayRangeIfNeeded() {
+    TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+    if (!xsh) return;
+    int r0, r1, step;
+    xsh->getPlayRange(r0, r1, step);
+    // -1 means "never set" — initialize to full range
+    if (r0 < 0) {
+        int lastFrame = std::max(0, xsh->getFrameCount() - 1);
+        xsh->setPlayRange(0, lastFrame, 1);
+        // Sync FlipConsole immediately:
+        ZtoryAnimaticController::instance()->flipConsole()
+            ->setMarkers(0, lastFrame);
+    }
+}
+```
+
+Call `initPlayRangeIfNeeded()` from:
+- `ZtoryAnimaticRuler::showEvent()`
+- `ZtoryAnimaticPanel::updateAnimaticFrameRange()` — already fires on
+  `sceneSwitched` and `sceneChanged`
+
+Also call it whenever a new shot is added or removed (the total frame count
+changes, so the Out marker should extend to the new last frame if it was
+already at the previous last frame — i.e. "sticky to end" behaviour).
+
+**Paint guard fix:** Change the condition so markers are ALWAYS drawn if the
+range is valid (r0 >= 0 and r1 >= r0, allowing r0 == r1 == 0 as a valid
+single-frame range):
+
+```cpp
+// BEFORE (wrong — hides markers when r0==0, r1==0):
+if (r0 >= 0 && r1 > r0) { ... }
+
+// AFTER (correct):
+if (r0 >= 0 && r1 >= r0) { ... }
+```
+
+---
+
+#### Bug 2 — Right-click must NOT move the playhead
+
+**Root cause:** `ZtoryAnimaticRuler::mousePressEvent` calls
+`setCurrentFrame(frame)` regardless of which mouse button was pressed.
+
+**Fix:** Guard the playhead move on left button only:
+
+```cpp
+void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
+    int frame = frameAtX(e->x());
+
+    if (e->button() == Qt::LeftButton) {
+        // Handle Shift/Alt modifiers for In/Out drag (see below)
+        // Move playhead only for plain left-click:
+        if (!(e->modifiers() & (Qt::ShiftModifier | Qt::AltModifier)))
+            ZtoryAnimaticController::instance()->setCurrentFrame(frame);
+        // ... marker drag detection ...
+    }
+    // Right-click: do NOT move playhead — context menu will handle it
+    // (Qt calls contextMenuEvent automatically for right-click)
+}
+```
+
+---
+
+#### Bug 3 — "Mark IN / Mark OUT" right-click context menu
+
+**Add `contextMenuEvent` to `ZtoryAnimaticRuler`:**
+
+```cpp
+void ZtoryAnimaticRuler::contextMenuEvent(QContextMenuEvent *e) {
+    // Frame under cursor — this is the mark position, NOT the playhead
+    int frame = frameAtX(e->x());
+
+    QMenu menu(this);
+
+    QAction *actIn  = menu.addAction(tr("Mark IN"));
+    QAction *actOut = menu.addAction(tr("Mark OUT"));
+    menu.addSeparator();
+    QAction *actReset = menu.addAction(tr("Reset IN/OUT to full range"));
+
+    QAction *chosen = menu.exec(e->globalPos());
+    if (!chosen) return;
+
+    TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+    int r0, r1, step;
+    xsh->getPlayRange(r0, r1, step);
+    if (r0 < 0) { r0 = 0; r1 = xsh->getFrameCount() - 1; step = 1; }
+
+    if (chosen == actIn) {
+        r0 = frame;
+        r1 = std::max(r1, r0);   // Out must be >= In
+    } else if (chosen == actOut) {
+        r1 = frame;
+        r0 = std::min(r0, r1);   // In must be <= Out
+    } else if (chosen == actReset) {
+        r0 = 0;
+        r1 = std::max(0, xsh->getFrameCount() - 1);
+    }
+
+    xsh->setPlayRange(r0, r1, step);
+    ZtoryAnimaticController::instance()->flipConsole()->setMarkers(r0, r1);
+    update();
+
+    // Do NOT call setCurrentFrame() — playhead must not move on right-click
+}
+```
+
+**Note on naming — "Mark IN/OUT" vs sub-scene play range:**
+The native timeline's Shift+click / Alt+click shortcuts set the **xsheet
+play range** (same data). The right-click labels "Mark IN" / "Mark OUT"
+are an NLE-style alias for the same operation, identical to Premiere/Resolve.
+No conflict with sub-scene markers: sub-scene markers are only visible inside
+a sub-scene; the animatic ruler always operates on the main xsheet range.
+
+---
+
+#### Existing shortcuts — keep but fix playhead behaviour
+
+- `Shift+Left-click` → set In at clicked frame (no playhead move)
+- `Alt+Left-click` → set Out at clicked frame (no playhead move)
+- Drag In/Out triangle → move marker (no playhead move during drag)
+
+In `mousePressEvent`, when `ShiftModifier` or `AltModifier` is detected,
+**skip** the `setCurrentFrame()` call entirely. Only update the marker:
+
+```cpp
+if (e->button() == Qt::LeftButton) {
+    int frame = frameAtX(e->x());
+    if (e->modifiers() & Qt::ShiftModifier) {
+        setInFrame(frame);   // helper: clamp, setPlayRange, setMarkers, update
+        return;
+    }
+    if (e->modifiers() & Qt::AltModifier) {
+        setOutFrame(frame);
+        return;
+    }
+    // Plain left-click → move playhead + check for marker drag
+    ...
+}
+```
+
+**Reading/writing the play range always via main xsheet:**
+```cpp
+TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+int r0, r1, step;
+xsh->getPlayRange(r0, r1, step);
+// ... modify r0 or r1 ...
+xsh->setPlayRange(r0, r1, step);
+ZtoryAnimaticController::instance()->flipConsole()->setMarkers(r0, r1);
+update();
+```
+
+**Files:** `ztoryanimatic.h/cpp` (`ZtoryAnimaticRuler`).
+**Reference:** `xsheetviewer.cpp` `RowArea::mousePressEvent`,
+`RowArea::contextMenuEvent`, `RowArea::paintEvent`.
+
+---
+
+### 13c. Playhead visual style — match native triangle
+
+The current `ZtoryAnimaticRuler` likely draws a simple line or small cursor.
+Replace with the **native downward filled triangle** style:
+
+**Where the native playhead is:**
+In `RowArea::paintEvent`, search for `currentFrame` and a triangle draw
+call: `QPolygon`, `drawPolygon`, or `drawConvexPolygon`.
+
+**Typical native pattern:**
+```cpp
+int cx = kLabelW + (int)(currentFrame * m_ppf);
+QPolygon tri;
+tri << QPoint(cx-5, 0) << QPoint(cx+5, 0) << QPoint(cx, 8);
+painter.setBrush(Qt::white);   // or orange depending on play state
+painter.drawConvexPolygon(tri);
+// Draw vertical line below triangle:
+painter.drawLine(cx, 8, cx, height());
+```
+Copy and adapt the exact shape, color and size from `RowArea::paintEvent`
+to ensure visual consistency.
+
+---
+
+### 13d. Navigation tags ⚠️ brainstorming needed
+
+**Where the native tags are:**
+Search `xsheetviewer.cpp` or `xshrowviewer.cpp` for `NavigationTag`,
+`navTag`, or the context menu on the ruler that says "Add marker" /
+"Rename marker". Tags are stored in `TXsheet` via methods like
+`getNavigationTags()` / `addNavigationTag(frame, name)`.
+
+**For now — implement only visual + rename/drag, no Ztoryc sequence logic:**
+- Copy tag rendering from `RowArea::paintEvent` (small colored flag above
+  ruler, text label).
+- Copy right-click context menu: "Add tag", "Rename tag", "Delete tag".
+- Copy drag interaction: drag a tag to a new frame.
+- Store tags on the main xsheet using the same `TXsheet` API as native.
+- Do NOT implement sequence grouping logic yet — that requires a separate
+  design session (see pending item in AGENTS.md).
+
+**Files:** `ztoryanimatic.h/cpp`.
+**Key files to read for all sub-tasks:** `xsheetviewer.cpp` (`RowArea` class,
+`paintEvent`, `mousePressEvent`, `mouseMoveEvent`, `contextMenuEvent`).
+
+---
+
+## 14. NEW — Startup Window (New Project Dialog) ⭐ PRIORITY
+
+**What:** A modal dialog that appears when the user creates a new project (or
+when Ztoryc is launched with no scene). Forces the user to name and configure
+the project *before* any content is created, avoiding the "untitled" path
+problem where levels end up with broken relative paths.
+
+**Why this is needed:**
+- Currently the app opens on an "Untitled" scene. Any levels drawn before
+  saving get `+drawings/Untitled/level.tlv` paths that break when the scene
+  is later saved under a real name.
+- A startup dialog forces the save-path decision upfront, identical to how
+  ToonBoom Storyboard Pro works.
+- The existing "New Scene forced save" fix in `iocommand.cpp` already adds a
+  `SaveSceneAsPopup` at the end of `newScene()`, but this is the wrong moment
+  (after the empty scene is already open). The startup dialog replaces this with
+  a richer pre-configured dialog shown *before* the scene is opened.
+
+---
+
+### Dialog sections
+
+#### Section 1 — Project
+- **Project name** (text field): becomes the `.tnz` file name and the
+  `+drawings/projectname/` folder. Validated: no spaces, no special chars
+  (same rules as Tahoma2D scene names).
+- **Project location** (path picker): default `$HOME/Ztoryc Projects/`.
+- **Template** (dropdown, optional): list of `.tnz` templates from
+  `stuff/templates/ztoryc/`. Default: "Blank storyboard".
+
+#### Section 2 — Camera / Resolution
+- **Format preset** (dropdown): same list as Tahoma2D's output settings
+  (`TOutputSettings` presets). Default: "HDTV 1080p (1920×1080)".
+- **Width / Height** (spin boxes, px): auto-filled from preset, editable.
+- **Frame rate** (spin box, fps): default 24. Common presets: 12, 24, 25, 30.
+- **Duration** (spin box, frames or hh:mm:ss): total project duration (optional;
+  can be left at 0 = "undefined, grow as shots are added").
+
+#### Section 3 — Workflow
+- **Mode** (radio buttons or icon selector):
+  - `STORYBOARD` — Opens in BOARD room. Creates empty shots.
+  - `ANIMATIC` — Opens in ANIMATIC room. For timing-first workflows.
+  - `STOPMOTION` — Opens in CAPTURE room (Stop Motion workflow).
+- Default: `STORYBOARD`.
+
+#### Section 4 — Shot numbering
+- **Style** (dropdown):
+  - `Simple` — e.g. `sh010`, `sh020`, `sh030`
+  - `Sequence` — e.g. `sq01_sh010`, `sq01_sh020`, `sq02_sh010`
+- **Step** (spin box): default `10`. Sets the increment between shot numbers.
+  Use 10 so there is room to insert shots between existing ones.
+  Common choices: 1, 5, 10.
+- **Sequence prefix** (text field, visible only when Style=Sequence):
+  default `sq`. Example: `sq` → `sq01`, `sq02`...
+- **Shot prefix** (text field): default `sh`. Example: `sh` → `sh010`, `sh020`.
+- **Padding** (spin box): number of digits in the shot number. Default `3`
+  → `010`, `020`. Sequence padding also `2` → `01`, `02`.
+- **Start number** (spin box): default `10` (first shot = step × 1).
+- **Initial shot count** (spin box): how many empty shots to pre-create.
+  Default `1`. Set to 0 = no shots, just an empty scene.
+
+**Examples with Style=Sequence, step=10, padding=3, sq-padding=2:**
+```
+Sequence 1: sq01_sh010, sq01_sh020, sq01_sh030 ...
+Sequence 2: sq02_sh010, sq02_sh020 ...
+```
+**Example with Style=Simple, step=10, padding=3:**
+```
+sh010, sh020, sh030 ...
+```
+
+Shot names are stored in `ShotData::shotName` (already in `ZtoryModel`).
+
+---
+
+### Implementation
+
+**New files:**
+```
+toonz/sources/toonz/ztorystartup.h
+toonz/sources/toonz/ztorystartup.cpp
+```
+
+**New class `ZtoryStartupDialog : public QDialog`:**
+
+```cpp
+class ZtoryStartupDialog : public QDialog {
+    Q_OBJECT
+
+    // Section 1 — Project
+    QLineEdit *m_projectName;
+    FileField  *m_projectPath;  // reuse Tahoma2D's FileField widget
+    QComboBox  *m_templateCombo;
+
+    // Section 2 — Camera
+    QComboBox  *m_formatPreset;
+    QSpinBox   *m_width, *m_height;
+    QSpinBox   *m_fps;
+    QSpinBox   *m_totalFrames;
+
+    // Section 3 — Workflow
+    QButtonGroup *m_workflowGroup;  // STORYBOARD / ANIMATIC / STOPMOTION
+
+    // Section 4 — Numbering
+    QComboBox  *m_numberingStyle;   // Simple / Sequence
+    QSpinBox   *m_numberingStep;
+    QLineEdit  *m_seqPrefix;        // hidden when Style=Simple
+    QLineEdit  *m_shotPrefix;
+    QSpinBox   *m_numPadding;
+    QSpinBox   *m_startNumber;
+    QSpinBox   *m_initialShotCount;
+
+public:
+    explicit ZtoryStartupDialog(QWidget *parent = nullptr);
+
+    // Returns configured data after exec() == Accepted
+    struct Config {
+        QString projectName;
+        QString projectPath;
+        QString templatePath;
+
+        int     width, height, fps, totalFrames;
+
+        enum Workflow { Storyboard, Animatic, StopMotion } workflow;
+
+        enum NumberingStyle { Simple, Sequence } numberingStyle;
+        int     step, padding, seqPadding, startNumber, initialShotCount;
+        QString seqPrefix, shotPrefix;
+
+        // Generates shot name for sequence sq, shot index idx (0-based)
+        QString shotName(int sq, int idx) const;
+    };
+    Config config() const;
+};
+```
+
+**Integration in `iocommand.cpp` — `newScene()` function:**
+
+Replace the current `SaveSceneAsPopup` call at the end of `newScene()` with:
+
+```cpp
+// 1. Show startup dialog
+ZtoryStartupDialog dlg(QApplication::activeWindow());
+if (dlg.exec() != QDialog::Accepted) return;
+ZtoryStartupDialog::Config cfg = dlg.config();
+
+// 2. Set scene path (forces a named save upfront)
+TFilePath scenePath(cfg.projectPath + "/" + cfg.projectName + "/" +
+                    cfg.projectName + ".tnz");
+TSystem::mkDir(scenePath.getParentDir());
+IoCmd::saveSceneIfNeeded(tr("New Scene"));
+scene->setScenePath(scenePath);
+
+// 3. Apply camera settings
+TCamera *cam = scene->getCurrentCamera();
+cam->setRes(TDimension(cfg.width, cfg.height));
+// (fps is set on xsheet level output settings)
+
+// 4. Switch to chosen workflow room
+MainWindow::instance()->switchToRoom(
+    cfg.workflow == ZtoryStartupDialog::Config::Storyboard ? "BOARD" :
+    cfg.workflow == ZtoryStartupDialog::Config::Animatic   ? "ANIMATIC" :
+                                                             "CAPTURE");
+
+// 5. Create initial shots with correct names
+ZtoryModel *model = ZtoryModel::instance();
+for (int i = 0; i < cfg.initialShotCount; i++) {
+    QString name = cfg.shotName(1, i);  // sequence 1 for initial shots
+    model->addShot(name);  // new method: insert column + sub-scene
+}
+
+// 6. Save scene to disk immediately
+IoCmd::saveScene(scene->getScenePath(), IoCmd::SAVE_SCENE);
+```
+
+**New `ZtoryModel::addShot(const QString &name)` method:**
+- Inserts one new column at the end of the main xsheet.
+- Creates a new empty sub-scene (`cloneChildToPosition` with an empty level).
+- Sets `ShotData::shotName = name`.
+- Calls `resequenceXsheet()`.
+- Emits `modelReset()`.
+
+**Preferences persistence (`ZtoryModel` or `QSettings`):**
+- Remember last-used values per-user in `QSettings("Ztoryc", "StartupDefaults")`.
+- Restore them as defaults on the next dialog open.
+
+---
+
+### Shot name generation logic
+
+```cpp
+QString ZtoryStartupDialog::Config::shotName(int seq, int idx) const {
+    int number = startNumber + idx * step;
+    if (numberingStyle == Sequence) {
+        return QString("%1%2_%3%4")
+            .arg(seqPrefix)
+            .arg(seq, seqPadding, 10, QChar('0'))
+            .arg(shotPrefix)
+            .arg(number, padding, 10, QChar('0'));
+        // e.g. "sq01_sh010"
+    } else {
+        return QString("%1%2")
+            .arg(shotPrefix)
+            .arg(number, padding, 10, QChar('0'));
+        // e.g. "sh010"
+    }
+}
+```
+
+**Files:** `ztorystartup.h` (new), `ztorystartup.cpp` (new),
+`iocommand.cpp` (hook into `newScene()`),
+`ztorymodel.h/cpp` (add `addShot(QString)`),
+`CMakeLists.txt` (add new files).
+
+**Pitfall:** Do not call `SaveSceneAsPopup` anymore after adding this dialog —
+remove or guard the existing call in `iocommand.cpp::newScene()`.
+
+**Pitfall:** `TSystem::mkDir` creates parent dir only. Use a loop or
+`QDir().mkpath()` to create nested paths.
+
+---
+
 ## Priority Order (suggested)
 
-1. **Task 4** — Fix duplicate buttons (trivial, 5 min)
-2. **Task 1** — Fix animatic viewer visibility + TFrameHandle (critical)
-3. **Task 3** — Fix Copy vs Clone in Board (important UX)
-4. **Task 2** — Unify resequenceXsheet into ZtoryModel (prevents future bugs)
-5. **Task 7** — Double-click to enter edit mode (quick win)
-6. **Task 8** — Multi-selection in track (prerequisite for merge/razor)
-7. **Task 6a** — Zoom slider (quick)
-8. **Task 6c** — Razor tool
-9. **Task 6d** — Link/Unlink audio-video
-10. **Task 6f** — Merge shots
-11. **Task 5** — Story-strip
-12. **Task 9** — Audio export with shot
-13. **Task 10** — X-Sheet panel guard for audio import
-14. **Task 11** — Viewer toggle
+1. **Task 1b** — ~~Guard: all shot ops must check ancestorCount == 0~~ ✅ DONE
+2. **Task 14** — ~~Startup window / new-project dialog~~ ✅ DONE (2026-03-21)
+3. **Task 4** — ~~Fix duplicate buttons~~ ✅ DONE (no duplicates found)
+4. **Task 1** — ~~Fix animatic viewer visibility + TFrameHandle~~ ✅ DONE (ZtoryAnimaticController)
+4. **Task 12a** — ~~Audio waveform~~ ✅ DONE (confirmed visible)
+5. **Task 12b** — ~~Audio scrubbing on ruler drag~~ ✅ DONE (2026-03-21)
+6. **Task 12c** — Sound preview bar in ZtoryAudioTrack (click+drag range → play on release)
+7. **Task 13c** — ~~Playhead triangle style~~ ✅ DONE (2026-03-21)
+7. **Task 13b** — ~~In/Out markers on animatic ruler~~ ✅ DONE (2026-03-21)
+8. **Task 13a** — ~~Onion skin markers on ruler~~ ✅ DONE (2026-03-21)
+9. **Task 3** — ~~Fix Copy vs Clone in Board~~ ✅ DONE
+10. **Task 2** — ~~Unify resequenceXsheet into ZtoryModel~~ ✅ DONE
+11. **Task 7** — Double-click to enter edit mode (quick win)
+12. **Task 8** — Multi-selection in track (prerequisite for merge/razor)
+13. **Task 6a** — Zoom slider (quick)
+14. **Task 6c** — Razor tool
+15. **Task 6d** — Link/Unlink audio-video
+16. **Task 6f** — Merge shots
+17. **Task 5** — Story-strip
+18. **Task 9** — Audio export with shot
+19. **Task 10** — X-Sheet panel guard for audio import
+20. **Task 11** — Viewer toggle
+21. **Task 13d** — Navigation tags (⚠️ design session needed first)
 
 ---
 
 ## Reference: Current File Structure
 
 ```
-ztoryanimatic.h     — 148 lines (classes: Ruler, Track, AudioTrack, Viewer, Panel)
-ztoryanimatic.cpp   — 653 lines
-storyboardpanel.h   — 175 lines (classes: PanelWidget, StoryboardPanel)
-storyboardpanel.cpp — 1628 lines
-ztorymodel.h        — 89 lines
-ztorymodel.cpp      — 326 lines
-ztorybackpanel.h    — 13 lines
-AGENTS.md           — 218 lines (Claude Code rules)
+ztoryanimatic.h     — classes: Ruler, Track, AudioTrack, Viewer, Panel
+ztoryanimatic.cpp
+storyboardpanel.h   — classes: PanelWidget, StoryboardPanel
+storyboardpanel.cpp
+ztorymodel.h        — singleton data model
+ztorymodel.cpp
+ztorystartup.h      — ZtoryStartupDialog (NEW 2026-03-21)
+ztorystartup.cpp    — (NEW 2026-03-21)
+ztorybackpanel.h
+AGENTS.md           — Claude Code rules
 DESIGN.md           — functional spec
 ```
