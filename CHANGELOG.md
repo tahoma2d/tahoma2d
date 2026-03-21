@@ -5,6 +5,31 @@
 > `### Upstream candidates`, `### Notes`. Poi esegui rsync (vedi AGENTS.md).
 
 ---
+## [2026-03-21] — Onion skin ruler: due strip indipendenti (FOS + MOS)
+
+### Modified
+
+- **`ZtoryAnimaticRuler`**: altezza 36px (era 24px); suddivisa in tre zone:
+  - Striscia **F** (top 9px) — click aggiunge/rimuove marker **FOS** (fixed-frame,
+    punto arancione). Non si muove con la playhead.
+  - Zona centrale — ticks, numeri, playhead, In/Out come prima.
+  - Striscia **R** (bottom 9px) — click aggiunge/rimuove marker **MOS** (relativi
+    alla playhead, rosso=passato, blu=futuro).
+- **Hover feedback**: pallino semi-trasparente su hover; rosso se toglie un marker
+  esistente, colorato se ne aggiunge uno nuovo.
+- **Stato locale indipendente**: `m_localMask` (relativeFrameMode=true) salvato nel
+  ruler, NON condiviso con la timeline nativa. `syncOnionToGlobal()` pushes al
+  global handle solo quando l'animatic panel è visibile (chiamato in `showEvent`).
+- **Bottone Onion**: ora wired a `m_ruler->setOnionEnabled()`, non più a
+  `MI_OnionSkin`. Il primo click su una striscia attiva automaticamente l'onion.
+- **Rimosso** `Ctrl+click` ROS e `#include "menubarcommandids.h"`.
+
+### Notes
+
+- Task 1b (assertMainXsheet) e task 7/8 (double-click + multi-select) già
+  implementati in sessioni precedenti — confermati dal test utente.
+
+---
 ## [2026-03-21] — Startup popup fixes + animatic onion skin
 
 ### Fixed
