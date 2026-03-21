@@ -51,6 +51,10 @@ private:
   bool m_hasSoundTrack = false;
   TFilePath m_path;
   QVector<QString> m_cleanUpList;
+
+  // Unique identifier for temporary files (based on full path hash)
+  QString m_tempBaseName;
+
   QStringList m_audioArgs;
   TUINT32 m_sampleRate;
   QString cleanPathSymbols();
