@@ -1492,47 +1492,9 @@ void IoCmd::newScene() {
   TSelection::setCurrent(0);
   TUndoManager::manager()->reset();
 
-  // Show Ztoryc startup dialog — forces naming the project before content is created,
-  // so asset paths resolve correctly from the start (avoids "untitled" broken paths).
-  if (!TApp::instance()->isApplicationStarting()) {
-    ZtoryStartupDialog dlg(QApplication::activeWindow());
-    if (dlg.exec() != QDialog::Accepted) return;
-    ZtoryStartupDialog::Config cfg = dlg.config();
-
-    // Apply camera / fps from dialog
-    TCamera *cam2 = scene->getCurrentCamera();
-    TDimension camRes(cfg.width, cfg.height);
-    cam2->setRes(camRes);
-    cam2->setSize(TDimensionD((double)camRes.lx / cameraDpi,
-                              (double)camRes.ly / cameraDpi));
-    scene->getProperties()->getOutputProperties()->setFrameRate((double)cfg.fps);
-
-    // Set scene path so levels are stored in the correct project folder
-    QString sceneDirPath = cfg.projectPath + "/" + cfg.projectName;
-    QDir().mkpath(sceneDirPath);
-    TFilePath newScenePath(
-        (sceneDirPath + "/" + cfg.projectName + ".tnz").toStdString());
-    scene->setScenePath(newScenePath);
-    DvDirModel::instance()->refreshFolder(newScenePath.getParentDir());
-    app->getCurrentScene()->notifyNameSceneChange();
-
-    // Switch to the chosen workflow room
-    MainWindow *mw2 = dynamic_cast<MainWindow *>(app->getMainWindow());
-    if (mw2) {
-      QString roomName =
-          cfg.workflow == ZtoryStartupDialog::Config::Animatic   ? "ANIMATIC"
-          : cfg.workflow == ZtoryStartupDialog::Config::StopMotion ? "CAPTURE"
-                                                                    : "BOARD";
-      mw2->switchToRoom(roomName);
-    }
-
-    // Pre-create initial shots with correct names
-    for (int i = 0; i < cfg.initialShotCount; i++)
-      ZtoryModel::instance()->addShotNamed(cfg.shotName(1, i));
-
-    // Save scene to disk immediately so paths are anchored from the start
-    saveScene(newScenePath, 0);
-  }
+  // No dialog here — StartupPopup handles scene configuration and saving.
+  // It is shown by MainWindow::onNewScene() (File > New Scene) or by main.cpp
+  // (app startup). This avoids double-dialog issues.
 
   bool exist = TSystem::doesExistFileOrLevel(
       scene->decodeFilePath(scene->getScenePath()));

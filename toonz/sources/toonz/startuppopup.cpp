@@ -12,6 +12,9 @@
 #include "tenv.h"
 #include "toonz/stage.h"
 #include "projectpopup.h"
+#include "ztorymodel.h"
+#include "ztorystartup.h"
+#include "columncommand.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -50,6 +53,7 @@
 #include <QScrollBar>
 #include <QMouseEvent>
 #include <QDesktopServices>
+#include <QCloseEvent>
 
 using namespace std;
 using namespace DVGui;
@@ -102,6 +106,8 @@ StartupPopup::StartupPopup()
     : Dialog(TApp::instance()->getMainWindow(), true, true, "StartupPopup") {
   setObjectName("StartupPopup");
   setWindowTitle(tr("Tahoma2D Startup"));
+  // Disable the OS-level close button so the user can't dismiss untitled state.
+  setWindowFlag(Qt::WindowCloseButtonHint, false);
 
   m_projectBox = new QGroupBox(tr("Current Project"), this);
   m_scenesTab  = new QTabWidget();
@@ -194,6 +200,7 @@ StartupPopup::StartupPopup()
   m_recentBox->setContentsMargins(10, 10, 10, 10);
   m_recentBox->setFixedWidth(200);
   m_scenesTab->setMinimumWidth(480);
+  m_scenesTab->setMinimumHeight(420); // accommodate workflow + numbering rows
   m_projectBox->setMinimumWidth(480);
   m_buttonFrame->setFixedHeight(34);
 
@@ -277,7 +284,89 @@ StartupPopup::StartupPopup()
                              Qt::AlignRight | Qt::AlignVCenter);
       newSceneLay->addWidget(m_dpiFld, 5, 3, 1, 1);
 
-      newSceneLay->addWidget(createButton, 6, 1, 1, 3, Qt::AlignLeft);
+      // ---- Ztoryc: Workflow section ----
+      QFrame *wfSep = new QFrame(this);
+      wfSep->setFrameShape(QFrame::HLine);
+      wfSep->setStyleSheet("color:#555;");
+      newSceneLay->addWidget(wfSep, 6, 0, 1, 6);
+
+      newSceneLay->addWidget(new QLabel(tr("Workflow:")), 7, 0,
+                             Qt::AlignRight | Qt::AlignVCenter);
+      // Workflow combobox — 4 items matching the existing room-choice system
+      m_workflowCB = new QComboBox(this);
+      m_workflowCB->addItem(tr("Storyboard Mode"));     // 0 -> switchRoomChoice("Storyboard")
+      m_workflowCB->addItem(tr("2D Tradigital Mode"));  // 1 -> switchRoomChoice("Tradigital")
+      m_workflowCB->addItem(tr("Cutout Digital Mode")); // 2 -> switchRoomChoice("Cutout")
+      m_workflowCB->addItem(tr("Stop-Motion Mode"));    // 3 -> switchRoomChoice("StopMotion")
+      newSceneLay->addWidget(m_workflowCB, 7, 1, 1, 5);
+
+      // ---- Ztoryc: Shot numbering (Storyboard Mode only) ----
+      // All numbering controls live in m_numberingBox for easy show/hide.
+      m_numberingBox = new QWidget(this);
+      QGridLayout *numLay = new QGridLayout(m_numberingBox);
+      numLay->setContentsMargins(0, 4, 0, 0);
+      numLay->setSpacing(4);
+      numLay->setColumnStretch(5, 1);
+
+      numLay->addWidget(new QLabel(tr("Numbering:")), 0, 0,
+                        Qt::AlignRight | Qt::AlignVCenter);
+      m_numberingStyleCB = new QComboBox(m_numberingBox);
+      m_numberingStyleCB->addItem(tr("Simple  (sh010, sh020, sh030...)"));
+      m_numberingStyleCB->addItem(tr("Sequence  (sq01_sh010, sq01_sh020...)"));
+      numLay->addWidget(m_numberingStyleCB, 0, 1, 1, 3);
+
+      m_seqPrefixLabel = new QLabel(tr("Seq prefix:"), m_numberingBox);
+      m_seqPrefixFld   = new QLineEdit("sq", m_numberingBox);
+      m_seqPrefixFld->setMaximumWidth(40);
+      m_seqPrefixLabel->hide();
+      m_seqPrefixFld->hide();
+      numLay->addWidget(m_seqPrefixLabel, 0, 4, Qt::AlignRight);
+      numLay->addWidget(m_seqPrefixFld,   0, 5);
+
+      numLay->addWidget(new QLabel(tr("Shot prefix:")), 1, 0,
+                        Qt::AlignRight | Qt::AlignVCenter);
+      m_shotPrefixFld = new QLineEdit("sh", m_numberingBox);
+      m_shotPrefixFld->setMaximumWidth(40);
+      numLay->addWidget(m_shotPrefixFld, 1, 1);
+
+      numLay->addWidget(new QLabel(tr("Step:")), 1, 2, Qt::AlignRight);
+      m_numberingStepSB = new QSpinBox(m_numberingBox);
+      m_numberingStepSB->setRange(1, 1000);
+      m_numberingStepSB->setValue(10);
+      numLay->addWidget(m_numberingStepSB, 1, 3);
+
+      numLay->addWidget(new QLabel(tr("Padding:")), 1, 4, Qt::AlignRight);
+      m_numPaddingSB = new QSpinBox(m_numberingBox);
+      m_numPaddingSB->setRange(1, 6);
+      m_numPaddingSB->setValue(3);
+      numLay->addWidget(m_numPaddingSB, 1, 5);
+
+      numLay->addWidget(new QLabel(tr("Start #:")), 2, 0,
+                        Qt::AlignRight | Qt::AlignVCenter);
+      m_startNumberSB = new QSpinBox(m_numberingBox);
+      m_startNumberSB->setRange(1, 9999);
+      m_startNumberSB->setValue(10);
+      numLay->addWidget(m_startNumberSB, 2, 1);
+
+      numLay->addWidget(new QLabel(tr("Initial shots:")), 2, 2, Qt::AlignRight);
+      m_initialShotCountSB = new QSpinBox(m_numberingBox);
+      m_initialShotCountSB->setRange(0, 100);
+      m_initialShotCountSB->setValue(1);
+      numLay->addWidget(m_initialShotCountSB, 2, 3);
+
+      newSceneLay->addWidget(m_numberingBox, 8, 0, 1, 6);
+
+      // Show numbering only for Storyboard Mode (index 0)
+      connect(m_workflowCB, QOverload<int>::of(&QComboBox::currentIndexChanged),
+              this, [this](int idx) { m_numberingBox->setVisible(idx == 0); });
+      // Show sequence prefix only for Sequence numbering style (index 1)
+      connect(m_numberingStyleCB, QOverload<int>::of(&QComboBox::currentIndexChanged),
+              this, [this](int idx) {
+                m_seqPrefixLabel->setVisible(idx == 1);
+                m_seqPrefixFld->setVisible(idx == 1);
+              });
+
+      newSceneLay->addWidget(createButton, 9, 1, 1, 3, Qt::AlignLeft);
       newSceneLay->setColumnStretch(4, 1);
     }
     newSceneWidget->setLayout(newSceneLay);
@@ -301,7 +390,8 @@ StartupPopup::StartupPopup()
   m_buttonLayout->setContentsMargins(0, 0, 0, 0);
   m_buttonLayout->setSpacing(10);
   {
-    m_buttonLayout->addWidget(m_showAtStartCB, Qt::AlignLeft);
+    // "Show at startup" removed — startup screen is mandatory
+    // m_buttonLayout->addWidget(m_showAtStartCB, Qt::AlignLeft);
     m_buttonLayout->addStretch();
     m_buttonLayout->addWidget(m_autoSaveOnCB);
     m_buttonLayout->addWidget(m_autoSaveTimeFld);
@@ -356,6 +446,13 @@ StartupPopup::StartupPopup()
                        SLOT(onProjectComboChanged(int)));
   ret = ret && connect(m_existingList, SIGNAL(itemClicked(int)), this,
                        SLOT(onExistingSceneClicked(int)));
+  // Ztoryc: toggle sequence prefix visibility
+  connect(m_numberingStyleCB, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          this, [this](int idx){
+    bool isSeq = (idx == 1);
+    m_seqPrefixLabel->setVisible(isSeq);
+    m_seqPrefixFld->setVisible(isSeq);
+  });
   assert(ret);
 }
 
@@ -447,6 +544,20 @@ void StartupPopup::showEvent(QShowEvent *) {
   QPoint thisPopupCenter         = this->rect().center();
   QPoint centeredOnActiveMonitor = activeMonitorCenter - thisPopupCenter;
   this->move(centeredOnActiveMonitor);
+}
+
+//-----------------------------------------------------------------------------
+
+void StartupPopup::closeEvent(QCloseEvent *e) {
+  // Block closing if the scene is still untitled — user must create or open one.
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (scene && scene->isUntitled()) {
+    e->ignore();
+    DVGui::warning(tr("Please create a new scene or load an existing one "
+                      "before continuing."));
+    return;
+  }
+  DVGui::Dialog::closeEvent(e);
 }
 
 //-----------------------------------------------------------------------------
@@ -636,6 +747,8 @@ void StartupPopup::onExistingSceneClicked(int index) {
     m_scenesTab->setCurrentIndex(1);
     m_nameFld->setFocus();
   } else {
+    // Clear dirty flag so no "save untitled?" dialog appears
+    TApp::instance()->getCurrentScene()->setDirtyFlag(false);
     IoCmd::loadScene(TFilePath(path.toStdWString()), true, true);
     hide();
   }
@@ -697,27 +810,71 @@ void StartupPopup::onCreateButton() {
       ;
     }
   }
-  CommandManager::instance()->execute(MI_NewScene);
-  TApp::instance()->getCurrentScene()->getScene()->setScenePath(scenePath);
+  // Do NOT call IoCmd::newScene() here — the scene is already blank
+  // (created by TApp::init() at startup, or by MainWindow::onNewScene()
+  // for File > New Scene). Just apply settings to the current scene.
+  TApp *app2    = TApp::instance();
+  ToonzScene *s = app2->getCurrentScene()->getScene();
+  s->setScenePath(scenePath);
   TDimensionD size =
       TDimensionD(m_widthFld->getValue(), m_heightFld->getValue());
   TDimension res = TDimension(m_xRes, m_yRes);
   double fps     = m_fpsFld->getValue();
-  TApp::instance()
-      ->getCurrentScene()
-      ->getScene()
-      ->getProperties()
-      ->getOutputProperties()
-      ->setFrameRate(fps);
-  TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera()->setSize(
-      size);
-  TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera()->setRes(
-      res);
-  // save the scene right away
-  IoCmd::saveScene();
+  s->getProperties()->getOutputProperties()->setFrameRate(fps);
+  s->getCurrentCamera()->setSize(size);
+  s->getCurrentCamera()->setRes(res);
+
+  // ---- Ztoryc: apply workflow + switch rooms ----
+  int wfIdx = m_workflowCB->currentIndex();
+  {
+    // Trigger the appropriate MI_Workflow* command — this calls the protected
+    // switchRoomChoice() + room switch through the normal command path.
+    static const char *kCmds[] = {
+      MI_WorkflowStoryboard, MI_Workflow2D,
+      MI_WorkflowCutout,     MI_WorkflowStopMotion
+    };
+    const char *cmd = (wfIdx >= 0 && wfIdx < 4) ? kCmds[wfIdx] : MI_WorkflowStoryboard;
+    CommandManager::instance()->execute(cmd);
+  }
+
+  // Create initial shots only for Storyboard Mode
+  if (wfIdx == 0) {
+    // Clear any phantom shots from a previous scene loaded at startup
+    TXsheet *xsh2 = app2->getCurrentXsheet()->getXsheet();
+    if (xsh2) {
+      for (int c = xsh2->getColumnCount() - 1; c >= 0; c--)
+        ColumnCmd::deleteColumn(c);
+    }
+    ZtoryModel::instance()->clearShots();
+
+    int shotCount  = m_initialShotCountSB->value();
+    int step       = m_numberingStepSB->value();
+    int padding    = m_numPaddingSB->value();
+    int startNum   = m_startNumberSB->value();
+    QString shotPx = m_shotPrefixFld->text();
+    bool isSeq     = (m_numberingStyleCB->currentIndex() == 1);
+    QString seqPx  = m_seqPrefixFld->text();
+
+    ZtoryStartupDialog::Config cfg;
+    cfg.numberingStyle   = isSeq ? ZtoryStartupDialog::Config::Sequence
+                                 : ZtoryStartupDialog::Config::Simple;
+    cfg.step             = step;
+    cfg.padding          = padding;
+    cfg.seqPadding       = 2;
+    cfg.startNumber      = startNum;
+    cfg.initialShotCount = shotCount;
+    cfg.seqPrefix        = seqPx;
+    cfg.shotPrefix       = shotPx;
+
+    for (int i = 0; i < shotCount; i++)
+      ZtoryModel::instance()->addShotNamed(cfg.shotName(1, i));
+  }
+
+  // Save directly to the configured path (no Save As dialog)
+  IoCmd::saveScene(scenePath, 0);
   // this makes sure the scene viewers update to the right fps
-  TApp::instance()->getCurrentScene()->notifySceneSwitched();
-  TApp::instance()->getCurrentScene()->notifyNameSceneChange();
+  app2->getCurrentScene()->notifySceneSwitched();
+  app2->getCurrentScene()->notifyNameSceneChange();
 
   hide();
 }
@@ -1077,6 +1234,7 @@ void StartupPopup::onDpiChanged() {
 //-----------------------------------------------------------------------------
 
 void StartupPopup::onLoadSceneButtonPressed() {
+  TApp::instance()->getCurrentScene()->setDirtyFlag(false);
   CommandManager::instance()->execute(MI_LoadScene);
 }
 
@@ -1105,6 +1263,7 @@ void StartupPopup::onRecentSceneClicked(int index) {
     //    TProjectManager::instance()->setCurrentProjectPath(projectFp);
     //  }
     //}
+    TApp::instance()->getCurrentScene()->setDirtyFlag(false);
     IoCmd::loadScene(TFilePath(path.toStdWString()), false, true);
     QString origProjectName = RecentFiles::instance()->getFileProject(index);
     QString projectName     = QString::fromStdString(TApp::instance()

@@ -60,6 +60,8 @@ public:
   // Creates a fully-wired shot (xsheet column + sub-scene) with a given name.
   // Used by ZtoryStartupDialog to pre-populate a new project.
   void addShotNamed(const QString &name);
+  // Clears model data only (no xsheet changes). Call before re-populating.
+  void clearShots() { m_shots.clear(); m_previews.clear(); }
   void removeShot(int shotIdx);
   void moveShot(int fromIdx, int toIdx);
   void cloneShot(int shotIdx);

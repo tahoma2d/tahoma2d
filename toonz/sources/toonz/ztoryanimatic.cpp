@@ -4,6 +4,7 @@
 #include "toonz/tcolumnhandle.h"
 #include "subscenecommand.h"
 #include "toonzqt/menubarcommand.h"
+#include "menubarcommandids.h"
 #include "columncommand.h"
 #include "tapp.h"
 #include "toonz/toonzscene.h"
@@ -122,7 +123,10 @@ void ZtoryAnimaticRuler::paintEvent(QPaintEvent *) {
   static const int kM = 8; // marker size
   if (r1 >= r0) {
     int x0 = kLabelW + (int)(r0 * m_ppf);
-    int x1 = kLabelW + (int)(r1 * m_ppf);
+    // r1 is the last included frame (0-based); the right edge of that frame is
+    // at (r1+1)*ppf — same convention as the orange bar — so the out marker
+    // sits at the true end of the range, not one frame before it.
+    int x1 = kLabelW + (int)((r1 + 1) * m_ppf);
     p.setPen(Qt::NoPen);
     p.setBrush(QColor(255, 200, 0));
     // In marker: right-pointing triangle at top-left of x0
@@ -200,6 +204,23 @@ void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
     int x1 = (int)(r1 * m_ppf);
     if (std::abs(mx - x0) <= kM) { m_dragMode = DragIn;  return; }
     if (std::abs(mx - x1) <= kM) { m_dragMode = DragOut; return; }
+  }
+
+  // Ctrl+click: toggle this frame as a relative onion skin offset
+  if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier)) {
+    int rel = frame - m_currentFrame;
+    if (rel != 0) {
+      TOnionSkinMaskHandle *osmh = TApp::instance()->getCurrentOnionSkin();
+      OnionSkinMask osm = osmh->getOnionSkinMask();
+      // Enable onion skin if not already on
+      if (!osm.isEnabled()) osm.enable(true);
+      // Toggle the relative offset using setRos(drow, bool)
+      osm.setRos(rel, !osm.isRos(rel));
+      osmh->setOnionSkinMask(osm);
+      osmh->notifyOnionSkinMaskChanged();
+      update();
+    }
+    return;
   }
 
   // Only move playhead on plain left-click (no modifiers)
@@ -1213,7 +1234,37 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   tbLay->addWidget(linkBtn);
   tbLay->addSpacing(8);
   tbLay->addWidget(mergeBtn);
+  tbLay->addSpacing(12);
+
+  // Onion skin toggle button — mirrors MI_OnionSkin but accessible from the
+  // animatic room without needing the native xsheet timeline open.
+  QPushButton *onionBtn = new QPushButton("Onion", toolbar);
+  onionBtn->setCheckable(true);
+  onionBtn->setMaximumWidth(60);
+  onionBtn->setToolTip(tr("Toggle onion skin (Ctrl+click ruler frames to set offsets)"));
+  onionBtn->setStyleSheet(
+    "QPushButton{background:#3a3a3a;color:#ccc;border-radius:3px;padding:2px 6px;font-size:11px;}"
+    "QPushButton:checked{background:#5a3a6a;color:white;}"
+    "QPushButton:hover{background:#4a4a4a;}");
+  tbLay->addWidget(onionBtn);
   tbLay->addStretch(1);
+
+  // Sync button checked state with global onion skin state
+  auto syncOnionBtn = [onionBtn]() {
+    TOnionSkinMaskHandle *osmh = TApp::instance()->getCurrentOnionSkin();
+    bool on = osmh->getOnionSkinMask().isEnabled();
+    onionBtn->blockSignals(true);
+    onionBtn->setChecked(on);
+    onionBtn->blockSignals(false);
+  };
+  syncOnionBtn();
+  connect(TApp::instance()->getCurrentOnionSkin(),
+          &TOnionSkinMaskHandle::onionSkinMaskChanged,
+          toolbar, syncOnionBtn);
+  connect(onionBtn, &QPushButton::toggled, toolbar, [](bool checked) {
+    CommandManager::instance()->execute(MI_OnionSkin);
+    Q_UNUSED(checked);
+  });
 
   connect(selectBtn, &QPushButton::clicked, this, [this, selectBtn, razorBtn](){
     m_track->setTool(ZtoryAnimaticTrack::SelectTool);

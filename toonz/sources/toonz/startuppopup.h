@@ -13,6 +13,7 @@
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QListWidget>
+#include <QSpinBox>
 
 // forward declaration
 class QLabel;
@@ -59,6 +60,19 @@ class StartupPopup final : public DVGui::Dialog {
   int m_xRes, m_yRes;
   const int RECENT_SCENES_MAX_COUNT = 10;
   bool m_updating                   = false;
+
+  // Ztoryc: workflow + shot numbering
+  QComboBox *m_workflowCB;   // 4-entry: Storyboard/2D Tradigital/Cutout/StopMotion
+  QComboBox *m_numberingStyleCB;
+  QSpinBox *m_numberingStepSB;
+  QLineEdit *m_seqPrefixFld;
+  QLineEdit *m_shotPrefixFld;
+  QSpinBox *m_numPaddingSB;
+  QSpinBox *m_startNumberSB;
+  QSpinBox *m_initialShotCountSB;
+  QLabel *m_seqPrefixLabel;
+  // Numbering widgets to show/hide based on workflow
+  QWidget *m_numberingBox;
   QString m_presetListFile;
   QGroupBox *m_projectBox;
   QTabWidget *m_scenesTab;
@@ -72,6 +86,7 @@ public:
 
 protected:
   void showEvent(QShowEvent *) override;
+  void closeEvent(QCloseEvent *) override;
   void loadPresetList();
   void savePresetList();
   void refreshRecentScenes();

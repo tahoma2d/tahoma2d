@@ -1,6 +1,7 @@
 
 
 #include "mainwindow.h"
+#include "startuppopup.h"
 
 // Tnz6 includes
 #include "menubar.h"
@@ -1141,6 +1142,15 @@ void MainWindow::onNewScene() {
   cm->setChecked(MI_NoShift, false);
   cm->setChecked(MI_ShowShiftOrigin, false);
   cm->setChecked(MI_VectorGuidedDrawing, false);
+
+  // Show startup popup so the user can configure the new scene
+  // (camera, workflow, shot numbering) before working.
+  if (Preferences::instance()->isStartupPopupEnabled()) {
+    StartupPopup *popup = new StartupPopup();
+    popup->show();
+    popup->raise();
+    popup->activateWindow();
+  }
 }
 
 //-----------------------------------------------------------------------------
