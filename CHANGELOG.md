@@ -5,6 +5,33 @@
 > `### Upstream candidates`, `### Notes`. Poi esegui rsync (vedi AGENTS.md).
 
 ---
+## [2026-03-21] — Startup popup fixes + animatic onion skin
+
+### Fixed
+
+- **StartupPopup workflow menu**: sostituiti radio button con QComboBox (4 voci:
+  Storyboard Mode / 2D Tradigital / Cutout Digital / Stop-Motion); switch room
+  via `CommandManager::execute(MI_WorkflowXxx)` (evita `switchRoomChoice` protetto).
+- **Numbering box visibilità**: la sezione Shot Numbering appare solo con Storyboard
+  workflow; nascosta per tutti gli altri.
+- **Shot di default**: rimossa la colonna default prima di `addShotNamed` — al
+  create non appare più uno shot in più.
+- **Out-marker triangolo**: posizione corretta `(r1+1)*ppf` invece di `r1*ppf`.
+- **Chiusura dialog**: `closeEvent` impedisce la chiusura se la scena è untitled.
+- **"Save Untitled?" dialog**: `setDirtyFlag(false)` prima di caricare scene
+  esistenti/recenti — eliminato il prompt spurio.
+- **Show-at-startup checkbox**: rimossa dalla barra pulsanti (flusso obbligato).
+- **Onion skin animatic**: aggiunto bottone "Onion" in toolbar (`MI_OnionSkin`);
+  Ctrl+click sul ruler per toggle ROS frame individuale.
+- **TAHOMA2DROOT crash**: `SystemVar.ini` mancante da `Contents/Resources/` —
+  ripristinato; stabilita procedura post-build (rsync + restore ini + codesign).
+
+### Notes
+
+- Il crash segnalato (Crash-20260321-204832.log) era SIGTERM esterno, non un
+  bug nel codice (backtrace: `main → QEventLoop::exec()` senza stack Ztoryc).
+
+---
 ## [2026-03-21] — Task 13a + Task 14: onion skin markers + startup dialog
 
 ### Added
