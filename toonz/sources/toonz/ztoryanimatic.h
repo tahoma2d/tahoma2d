@@ -5,6 +5,7 @@
 #include "viewerpane.h"
 #include "tapp.h"
 #include "pane.h"
+#include "toonz/onionskinmask.h"
 #include <QWidget>
 #include <QScrollArea>
 #include <QSplitter>
@@ -47,21 +48,36 @@ public:
   void setCurrentFrame(int f) { m_currentFrame = f; update(); }
   int currentFrame() const { return m_currentFrame; }
   void initPlayRangeIfNeeded();
+
+  // Local (independent) onion skin — does NOT share state with native timeline
+  void setOnionEnabled(bool on);
+  bool onionEnabled() const { return m_onionEnabled; }
+  void syncOnionToGlobal() const; // push local mask to global handle
+
 protected:
   void paintEvent(QPaintEvent *) override;
   void mousePressEvent(QMouseEvent *) override;
   void mouseMoveEvent(QMouseEvent *) override;
   void mouseReleaseEvent(QMouseEvent *) override;
+  void leaveEvent(QEvent *) override;
   void contextMenuEvent(QContextMenuEvent *) override;
 signals:
   void frameChanged(int frame);
+  void onionEnabledChanged(bool on);
 private:
   double m_fps = 24.0;
-  double m_ppf = 8.0; // pixels per frame
+  double m_ppf = 8.0;
   int m_currentFrame = 0;
   // In/Out marker drag state (13b)
   enum DragMode { None, DragIn, DragOut };
   DragMode m_dragMode = None;
+  // Onion skin — local state, independent from native timeline
+  OnionSkinMask m_localMask;  // relative frame mode; FOS=fixed, MOS=relative
+  bool m_onionEnabled = false;
+  // Hover feedback
+  int m_hoverFrame = -1;
+  enum HoverZone { HoverNone, HoverFOS, HoverMOS };
+  HoverZone m_hoverZone = HoverNone;
 };
 
 class ZtoryAnimaticTrack : public QWidget {

@@ -4,7 +4,6 @@
 #include "toonz/tcolumnhandle.h"
 #include "subscenecommand.h"
 #include "toonzqt/menubarcommand.h"
-#include "menubarcommandids.h"
 #include "columncommand.h"
 #include "tapp.h"
 #include "toonz/toonzscene.h"
@@ -71,24 +70,44 @@ int ZtoryAnimaticController::currentFrame() const {
 // ---- ZtoryAnimaticRuler ----
 
 ZtoryAnimaticRuler::ZtoryAnimaticRuler(QWidget *parent) : QWidget(parent) {
-  setFixedHeight(24);
+  setFixedHeight(36);
   setMouseTracking(true);
+  m_localMask.setRelativeFrameMode(true); // MOS = relative offsets, FOS = fixed frames
 }
 
 void ZtoryAnimaticRuler::paintEvent(QPaintEvent *) {
   QPainter p(this);
   p.setRenderHint(QPainter::Antialiasing);
-  const int h = height();
+  const int h = height();  // 36px
+
+  // Strip heights: 9px top (FOS), 9px bottom (MOS), 18px middle (ruler)
+  static const int kFosH = 9;
+  static const int kMosH = 9;
+  const int rulerY  = kFosH;
+  const int rulerH  = h - kFosH - kMosH;
+  const int mosY    = h - kMosH;
+
+  // Full background
   p.fillRect(rect(), QColor(40, 40, 40));
 
-  // Label area
-  p.fillRect(0, 0, kLabelW, h, QColor(30, 30, 30));
+  // FOS strip (top) + MOS strip (bottom) — slightly darker
+  p.fillRect(kLabelW, 0,    width() - kLabelW, kFosH, QColor(28, 28, 28));
+  p.fillRect(kLabelW, mosY, width() - kLabelW, kMosH, QColor(28, 28, 28));
+  // Strip labels in label area
+  p.fillRect(0, 0, kLabelW, h, QColor(25, 25, 25));
+  p.setPen(QColor(100, 100, 100));
+  p.setFont(QFont("Arial", 7));
+  p.drawText(QRect(0, 0, kLabelW - 2, kFosH), Qt::AlignRight | Qt::AlignVCenter, "F");
+  p.drawText(QRect(0, mosY, kLabelW - 2, kMosH), Qt::AlignRight | Qt::AlignVCenter, "R");
+  // Strip separator lines
+  p.setPen(QColor(55, 55, 55));
+  p.drawLine(0, kFosH, width(), kFosH);
+  p.drawLine(0, mosY,  width(), mosY);
+  // Label-area right border
   p.setPen(QColor(60, 60, 60));
   p.drawLine(kLabelW, 0, kLabelW, h);
 
-  // ---- 13b: In/Out range highlight ----
-  // Always compute r0/r1: use play range when enabled, else 0..lastFrame.
-  // Mirrors native RowArea::drawPlayRange which always draws markers.
+  // ---- In/Out range highlight (middle ruler zone only) ----
   int r0 = 0, r1 = 0, step = 1;
   bool rangeEnabled = XsheetGUI::getPlayRange(r0, r1, step);
   if (!rangeEnabled) {
@@ -99,90 +118,139 @@ void ZtoryAnimaticRuler::paintEvent(QPaintEvent *) {
   if (r1 >= r0) {
     int x0 = kLabelW + (int)(r0 * m_ppf);
     int x1 = kLabelW + (int)((r1 + 1) * m_ppf);
-    p.fillRect(x0, 0, x1 - x0, h, QColor(255, 165, 0, rangeEnabled ? 45 : 20));
+    p.fillRect(x0, rulerY, x1 - x0, rulerH,
+               QColor(255, 165, 0, rangeEnabled ? 45 : 20));
   }
 
-  // Tick marks
+  // ---- Tick marks (middle zone) ----
+  p.setFont(QFont());
   p.setPen(QColor(180, 180, 180));
   int w = width() - kLabelW;
-  // adaptive tick interval: always show a reasonable density
   int tickEvery = 1;
   if (m_ppf < 4)       tickEvery = 24;
   else if (m_ppf < 12) tickEvery = 6;
   for (int f = 0; f * m_ppf < w; f++) {
     int x = kLabelW + (int)(f * m_ppf);
     if (f % 24 == 0) {
-      p.drawLine(x, 0, x, 16);
-      p.drawText(x + 2, 14, QString::number(f));
+      p.drawLine(x, rulerY, x, rulerY + 12);
+      p.drawText(x + 2, rulerY + 11, QString::number(f));
     } else if (f % tickEvery == 0) {
-      p.drawLine(x, 10, x, 16);
+      p.drawLine(x, rulerY + 6, x, rulerY + 12);
     }
   }
 
-  // ---- 13b: In/Out triangular markers (always drawn) ----
-  static const int kM = 8; // marker size
+  // ---- In/Out triangular markers (middle zone top edge) ----
+  static const int kM = 8;
   if (r1 >= r0) {
     int x0 = kLabelW + (int)(r0 * m_ppf);
-    // r1 is the last included frame (0-based); the right edge of that frame is
-    // at (r1+1)*ppf — same convention as the orange bar — so the out marker
-    // sits at the true end of the range, not one frame before it.
     int x1 = kLabelW + (int)((r1 + 1) * m_ppf);
     p.setPen(Qt::NoPen);
     p.setBrush(QColor(255, 200, 0));
-    // In marker: right-pointing triangle at top-left of x0
     QPolygon inTri;
-    inTri << QPoint(x0, 0) << QPoint(x0 + kM, 0) << QPoint(x0, kM);
+    inTri << QPoint(x0, rulerY) << QPoint(x0 + kM, rulerY) << QPoint(x0, rulerY + kM);
     p.drawConvexPolygon(inTri);
-    // Out marker: left-pointing triangle at top-right of x1
     QPolygon outTri;
-    outTri << QPoint(x1, 0) << QPoint(x1 - kM, 0) << QPoint(x1, kM);
+    outTri << QPoint(x1, rulerY) << QPoint(x1 - kM, rulerY) << QPoint(x1, rulerY + kM);
     p.drawConvexPolygon(outTri);
   }
 
-  // ---- 13c: Playhead — downward triangle + vertical line ----
-  static const int kPH = 8; // triangle height
+  // ---- Playhead — downward triangle + line (middle zone) ----
+  static const int kPH = 8;
   int px = kLabelW + (int)(m_currentFrame * m_ppf);
   p.setPen(Qt::NoPen);
   p.setBrush(QColor(255, 100, 0));
   QPolygon tri;
-  tri << QPoint(px - 5, 0) << QPoint(px + 5, 0) << QPoint(px, kPH);
+  tri << QPoint(px - 5, rulerY) << QPoint(px + 5, rulerY) << QPoint(px, rulerY + kPH);
   p.drawConvexPolygon(tri);
   p.setPen(QPen(QColor(255, 100, 0), 1));
-  p.drawLine(px, kPH, px, h);
+  p.drawLine(px, rulerY + kPH, px, mosY);
 
-  // ---- 13a: Onion skin markers — small triangles for relative frames ----
-  {
-    OnionSkinMask osMask =
-        TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
-    if (osMask.isEnabled()) {
-      static const int kOS = 6; // smaller than playhead triangle
-      for (int i = 0; i < osMask.getRosCount(); i++) {
-        int rel = osMask.getRos(i);
-        int ox = kLabelW + (int)((m_currentFrame + rel) * m_ppf);
-        // Red for previous frames, blue for future frames
-        QColor mc = (rel < 0) ? QColor(255, 100, 100, 120)
-                               : QColor(100, 100, 255, 120);
-        p.setPen(Qt::NoPen);
+  // ---- Onion skin markers ----
+  if (m_onionEnabled) {
+    p.setPen(Qt::NoPen);
+
+    // FOS strip — fixed-frame dots (orange), top strip
+    for (int i = 0; i < m_localMask.getFosCount(); i++) {
+      int frame = m_localMask.getFos(i);
+      int ox = kLabelW + (int)(frame * m_ppf) + (int)(m_ppf / 2);
+      p.setBrush(QColor(255, 165, 0));
+      p.drawEllipse(QPoint(ox, kFosH / 2), 4, 4);
+    }
+
+    // MOS strip — relative dots (red=past, blue=future), bottom strip
+    for (int i = 0; i < m_localMask.getMosCount(); i++) {
+      int rel   = m_localMask.getMos(i);
+      int frame = m_currentFrame + rel;
+      if (frame < 0) continue;
+      int ox = kLabelW + (int)(frame * m_ppf) + (int)(m_ppf / 2);
+      QColor mc = (rel < 0) ? QColor(255, 100, 100) : QColor(100, 150, 255);
+      p.setBrush(mc);
+      p.drawEllipse(QPoint(ox, mosY + kMosH / 2), 4, 4);
+    }
+  }
+
+  // ---- Hover feedback ----
+  if (m_hoverFrame >= 0 && m_hoverZone != HoverNone) {
+    int ox = kLabelW + (int)(m_hoverFrame * m_ppf) + (int)(m_ppf / 2);
+    p.setPen(Qt::NoPen);
+    if (m_hoverZone == HoverFOS) {
+      bool exists = m_localMask.isFos(m_hoverFrame);
+      // Red hint if removing, orange hint if adding
+      p.setBrush(exists ? QColor(255, 60, 60, 160) : QColor(255, 165, 0, 100));
+      p.drawEllipse(QPoint(ox, kFosH / 2), 5, 5);
+    } else { // HoverMOS
+      int rel = m_hoverFrame - m_currentFrame;
+      if (rel != 0) {
+        bool exists = m_localMask.isMos(rel);
+        QColor mc = exists ? QColor(255, 60, 60, 160)
+                   : (rel < 0 ? QColor(255, 100, 100, 100)
+                              : QColor(100, 150, 255, 100));
         p.setBrush(mc);
-        QPolygon osTri;
-        osTri << QPoint(ox - 4, 0) << QPoint(ox + 4, 0) << QPoint(ox, kOS);
-        p.drawConvexPolygon(osTri);
+        p.drawEllipse(QPoint(ox, mosY + kMosH / 2), 5, 5);
       }
     }
   }
 }
 
 void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
-  int mx = qMax(0, e->x() - kLabelW);
+  if (e->button() != Qt::LeftButton) return;
+
+  const int my = e->y();
+  const int h  = height();
+  static const int kFosH = 9;
+  static const int kMosH = 9;
+  const int mosY = h - kMosH;
+
+  int mx    = qMax(0, e->x() - kLabelW);
   int frame = (int)(mx / m_ppf);
 
-  // 13b: Shift+click = set In, Alt+click = set Out
+  // ── FOS strip (top): click toggles a fixed-frame onion skin point ──────
+  if (my < kFosH) {
+    if (!m_onionEnabled) { setOnionEnabled(true); emit onionEnabledChanged(true); }
+    m_localMask.setFos(frame, !m_localMask.isFos(frame));
+    syncOnionToGlobal();
+    update();
+    return;
+  }
+
+  // ── MOS strip (bottom): click toggles a relative onion skin point ───────
+  if (my >= mosY) {
+    int rel = frame - m_currentFrame;
+    if (rel != 0) {
+      if (!m_onionEnabled) { setOnionEnabled(true); emit onionEnabledChanged(true); }
+      m_localMask.setMos(rel, !m_localMask.isMos(rel));
+      syncOnionToGlobal();
+      update();
+    }
+    return;
+  }
+
+  // ── Middle ruler zone ────────────────────────────────────────────────────
+  // Shift+click = set In, Alt+click = set Out
   if (e->modifiers() & Qt::ShiftModifier) {
     int r0, r1, step;
     if (!XsheetGUI::getPlayRange(r0, r1, step)) { r0 = frame; r1 = frame; step = 1; }
     XsheetGUI::setPlayRange(frame, std::max(frame, r1), step);
-    // Sync FlipConsole markers
-    ZtoryAnimaticController::instance()->frameHandle(); // keep ref
     update();
     return;
   }
@@ -194,7 +262,7 @@ void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
     return;
   }
 
-  // 13b: hit-test In/Out markers for drag (8px tolerance)
+  // Hit-test In/Out markers for drag (8px tolerance)
   static const int kM = 8;
   m_dragMode = None;
   if (XsheetGUI::isPlayRangeEnabled()) {
@@ -206,44 +274,50 @@ void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
     if (std::abs(mx - x1) <= kM) { m_dragMode = DragOut; return; }
   }
 
-  // Ctrl+click: toggle this frame as a relative onion skin offset
-  if (e->button() == Qt::LeftButton && (e->modifiers() & Qt::ControlModifier)) {
-    int rel = frame - m_currentFrame;
-    if (rel != 0) {
-      TOnionSkinMaskHandle *osmh = TApp::instance()->getCurrentOnionSkin();
-      OnionSkinMask osm = osmh->getOnionSkinMask();
-      // Enable onion skin if not already on
-      if (!osm.isEnabled()) osm.enable(true);
-      // Toggle the relative offset using setRos(drow, bool)
-      osm.setRos(rel, !osm.isRos(rel));
-      osmh->setOnionSkinMask(osm);
-      osmh->notifyOnionSkinMaskChanged();
-      update();
-    }
-    return;
-  }
-
-  // Only move playhead on plain left-click (no modifiers)
-  if (e->button() == Qt::LeftButton && e->modifiers() == Qt::NoModifier) {
+  // Plain click: move playhead
+  if (e->modifiers() == Qt::NoModifier) {
     m_currentFrame = frame;
     update();
     emit frameChanged(m_currentFrame);
-    // Audio scrub (12b: use cached sound track)
+    // Audio scrub
     auto *ctrl = ZtoryAnimaticController::instance();
     TSoundTrackP st = ctrl->soundTrack();
     TXsheet *xsh = ctrl->mainXsheet();
     if (st && xsh) {
       ToonzScene *sc = TApp::instance()->getCurrentScene()->getScene();
-      double fps = (sc && m_fps <= 0) ? sc->getProperties()->getOutputProperties()->getFrameRate() : (m_fps > 0 ? m_fps : 24.0);
+      double fps = (sc && m_fps <= 0)
+                   ? sc->getProperties()->getOutputProperties()->getFrameRate()
+                   : (m_fps > 0 ? m_fps : 24.0);
       TINT32 sr = st->getSampleRate();
-      TINT32 s0 = qBound((TINT32)0, (TINT32)(m_currentFrame * sr / fps), st->getSampleCount()-1);
-      TINT32 s1 = qBound(s0+1, (TINT32)((m_currentFrame+1) * sr / fps), st->getSampleCount());
+      TINT32 s0 = qBound((TINT32)0, (TINT32)(m_currentFrame * sr / fps),
+                         st->getSampleCount() - 1);
+      TINT32 s1 = qBound(s0 + 1, (TINT32)((m_currentFrame + 1) * sr / fps),
+                         st->getSampleCount());
       if (s0 < s1) xsh->play(st, s0, s1, false);
     }
   }
 }
 
 void ZtoryAnimaticRuler::mouseMoveEvent(QMouseEvent *e) {
+  // Hover feedback (no button required)
+  {
+    const int my = e->y();
+    const int h  = height();
+    static const int kFosH = 9;
+    static const int kMosH = 9;
+    int newFrame = (int)(qMax(0, e->x() - kLabelW) / m_ppf);
+    HoverZone newZone = HoverNone;
+    if (my < kFosH)               newZone = HoverFOS;
+    else if (my >= h - kMosH)     newZone = HoverMOS;
+    if (newFrame != m_hoverFrame || newZone != m_hoverZone) {
+      m_hoverFrame = newFrame;
+      m_hoverZone  = newZone;
+      // Cursor hint: cross when over a strip, default otherwise
+      setCursor(newZone != HoverNone ? Qt::CrossCursor : Qt::ArrowCursor);
+      update();
+    }
+  }
+
   if (!(e->buttons() & Qt::LeftButton)) return;
   int mx = qMax(0, e->x() - kLabelW);
   int frame = (int)(mx / m_ppf);
@@ -283,6 +357,37 @@ void ZtoryAnimaticRuler::mouseMoveEvent(QMouseEvent *e) {
 void ZtoryAnimaticRuler::mouseReleaseEvent(QMouseEvent *) {
   m_dragMode = None;
   ZtoryAnimaticController::instance()->frameHandle()->stopScrubbing();
+}
+
+void ZtoryAnimaticRuler::leaveEvent(QEvent *) {
+  m_hoverFrame = -1;
+  m_hoverZone  = HoverNone;
+  setCursor(Qt::ArrowCursor);
+  update();
+}
+
+void ZtoryAnimaticRuler::setOnionEnabled(bool on) {
+  m_onionEnabled = on;
+  syncOnionToGlobal();
+  update();
+}
+
+void ZtoryAnimaticRuler::syncOnionToGlobal() const {
+  // Push local animatic onion skin state to the global handle so the
+  // viewer renders the correct onion frames. This does NOT touch the
+  // native timeline's conceptual state — the local mask is restored
+  // every time the animatic panel becomes visible.
+  TOnionSkinMaskHandle *osmh = TApp::instance()->getCurrentOnionSkin();
+  if (m_onionEnabled) {
+    OnionSkinMask mask = m_localMask;
+    mask.enable(true);
+    osmh->setOnionSkinMask(mask);
+  } else {
+    OnionSkinMask off;
+    off.enable(false);
+    osmh->setOnionSkinMask(off);
+  }
+  osmh->notifyOnionSkinMaskChanged();
 }
 
 void ZtoryAnimaticRuler::initPlayRangeIfNeeded() {
@@ -1236,12 +1341,17 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   tbLay->addWidget(mergeBtn);
   tbLay->addSpacing(12);
 
-  // Onion skin toggle button — mirrors MI_OnionSkin but accessible from the
-  // animatic room without needing the native xsheet timeline open.
+  // Onion skin toggle — controls the animatic's local onion state,
+  // independent from the native timeline.
   QPushButton *onionBtn = new QPushButton("Onion", toolbar);
   onionBtn->setCheckable(true);
+  onionBtn->setChecked(false);
   onionBtn->setMaximumWidth(60);
-  onionBtn->setToolTip(tr("Toggle onion skin (Ctrl+click ruler frames to set offsets)"));
+  onionBtn->setToolTip(tr(
+    "Toggle onion skin.\n"
+    "Click the F strip (top ruler) to pin fixed-frame markers.\n"
+    "Click the R strip (bottom ruler) to add relative markers.\n"
+    "Click an existing marker to remove it."));
   onionBtn->setStyleSheet(
     "QPushButton{background:#3a3a3a;color:#ccc;border-radius:3px;padding:2px 6px;font-size:11px;}"
     "QPushButton:checked{background:#5a3a6a;color:white;}"
@@ -1249,22 +1359,15 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   tbLay->addWidget(onionBtn);
   tbLay->addStretch(1);
 
-  // Sync button checked state with global onion skin state
-  auto syncOnionBtn = [onionBtn]() {
-    TOnionSkinMaskHandle *osmh = TApp::instance()->getCurrentOnionSkin();
-    bool on = osmh->getOnionSkinMask().isEnabled();
+  // Ruler ↔ button sync (ruler can auto-enable when first marker is placed)
+  connect(m_ruler, &ZtoryAnimaticRuler::onionEnabledChanged,
+          toolbar, [onionBtn](bool on) {
     onionBtn->blockSignals(true);
     onionBtn->setChecked(on);
     onionBtn->blockSignals(false);
-  };
-  syncOnionBtn();
-  connect(TApp::instance()->getCurrentOnionSkin(),
-          &TOnionSkinMaskHandle::onionSkinMaskChanged,
-          toolbar, syncOnionBtn);
-  connect(onionBtn, &QPushButton::toggled, toolbar, [](bool checked) {
-    CommandManager::instance()->execute(MI_OnionSkin);
-    Q_UNUSED(checked);
   });
+  connect(onionBtn, &QPushButton::toggled, m_ruler,
+          &ZtoryAnimaticRuler::setOnionEnabled);
 
   connect(selectBtn, &QPushButton::clicked, this, [this, selectBtn, razorBtn](){
     m_track->setTool(ZtoryAnimaticTrack::SelectTool);
@@ -1399,6 +1502,9 @@ void ZtoryAnimaticPanel::showEvent(QShowEvent *e) {
   TPanel::showEvent(e);
   refreshFromScene();
   m_ruler->initPlayRangeIfNeeded();
+  // Restore animatic-local onion skin state to global handle so the viewer
+  // shows the correct onion frames (overrides any native-timeline state).
+  m_ruler->syncOnionToGlobal();
 }
 
 void ZtoryAnimaticPanel::onShotClicked(int col) {
