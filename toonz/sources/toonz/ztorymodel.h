@@ -57,6 +57,9 @@ public:
 
   // ── Operazioni su shot ────────────────────────────────────────────────────
   void addShot(int insertAt = -1);
+  // Creates a fully-wired shot (xsheet column + sub-scene) with a given name.
+  // Used by ZtoryStartupDialog to pre-populate a new project.
+  void addShotNamed(const QString &name);
   void removeShot(int shotIdx);
   void moveShot(int fromIdx, int toIdx);
   void cloneShot(int shotIdx);

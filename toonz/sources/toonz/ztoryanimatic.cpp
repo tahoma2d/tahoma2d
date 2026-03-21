@@ -16,6 +16,8 @@
 #include "toonz/tframehandle.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tscenehandle.h"
+#include "toonz/onionskinmask.h"
+#include "toonz/tonionskinmaskhandle.h"
 #include "iocommand.h"
 #include "xsheetdragtool.h"
 #include "toonz/sceneproperties.h"
@@ -143,6 +145,27 @@ void ZtoryAnimaticRuler::paintEvent(QPaintEvent *) {
   p.drawConvexPolygon(tri);
   p.setPen(QPen(QColor(255, 100, 0), 1));
   p.drawLine(px, kPH, px, h);
+
+  // ---- 13a: Onion skin markers — small triangles for relative frames ----
+  {
+    OnionSkinMask osMask =
+        TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
+    if (osMask.isEnabled()) {
+      static const int kOS = 6; // smaller than playhead triangle
+      for (int i = 0; i < osMask.getRosCount(); i++) {
+        int rel = osMask.getRos(i);
+        int ox = kLabelW + (int)((m_currentFrame + rel) * m_ppf);
+        // Red for previous frames, blue for future frames
+        QColor mc = (rel < 0) ? QColor(255, 100, 100, 120)
+                               : QColor(100, 100, 255, 120);
+        p.setPen(Qt::NoPen);
+        p.setBrush(mc);
+        QPolygon osTri;
+        osTri << QPoint(ox - 4, 0) << QPoint(ox + 4, 0) << QPoint(ox, kOS);
+        p.drawConvexPolygon(osTri);
+      }
+    }
+  }
 }
 
 void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
@@ -1275,6 +1298,9 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
     if (scene && scene->getChildStack()->getAncestorCount() == 0)
       refreshFromScene();
   });
+  // 13a: refresh ruler when onion skin changes (markers update)
+  connect(TApp::instance()->getCurrentOnionSkin(),
+          SIGNAL(onionSkinMaskChanged()), m_ruler, SLOT(update()));
 }
 
 void ZtoryAnimaticPanel::refreshFromScene() {

@@ -6,6 +6,7 @@
 #include "toonz/txshsimplelevel.h"
 #include "tparamcontainer.h"
 #include "toonz/txshchildlevel.h"
+#include "toonz/txshleveltypes.h"
 #include "toonz/childstack.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/txsheethandle.h"
@@ -103,6 +104,43 @@ void ZtoryModel::addShot(int insertAt) {
     emit shotAdded(insertAt);
   }
   save();
+}
+
+void ZtoryModel::addShotNamed(const QString &name) {
+  // Creates a fully-wired shot: xsheet column + sub-scene + model entry.
+  // Used by ZtoryStartupDialog to pre-populate new projects.
+  if (!assertMainXsheet(false)) return;
+  TApp *app = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+  if (!scene || !xsh) return;
+
+  static const int kDefaultDuration = 24;
+  int col = xsh->getColumnCount();  // append at end
+
+  // Create a new sub-scene (child level)
+  TXshLevel *xl = scene->createNewLevel(CHILD_XSHLEVEL);
+  if (!xl || !xl->getChildLevel()) return;
+  TXshChildLevel *cl = xl->getChildLevel();
+
+  xsh->insertColumn(col);
+  for (int r = 0; r < kDefaultDuration; r++)
+    xsh->setCell(r, col, TXshCell(cl, TFrameId(r + 1)));
+  xsh->updateFrameCount();
+
+  // Build model entry
+  ShotData s;
+  s.xsheetColumn = col;
+  s.shotNumber   = name;
+  PanelData pd;
+  pd.duration = kDefaultDuration;
+  s.panels.push_back(pd);
+  m_shots.push_back(s);
+  m_previews.push_back({QPixmap()});
+
+  app->getCurrentXsheet()->notifyXsheetChanged();
+  resequenceXsheet();
+  emit modelReset();
 }
 
 void ZtoryModel::removeShot(int si) {
