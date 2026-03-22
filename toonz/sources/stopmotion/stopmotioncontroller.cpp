@@ -2676,9 +2676,10 @@ void StopMotionController::refreshCameraList(QString activeCamera) {
     int maxTextLength = 0;
     m_cameraListCombo->addItem(tr("- Select camera -"));
     for (int c = 0; c < webcams.size(); c++) {
-      std::string name = webcams.at(c).deviceName().toStdString();
-      QString camDesc  = webcams.at(c).description();
-      m_cameraListCombo->addItem(camDesc, QVariant::fromValue(c));
+      QString deviceName = webcams.at(c).deviceName();
+      QString camDesc    = webcams.at(c).description();
+      // Store deviceName (stable UUID) instead of index (changes on re-enumeration)
+      m_cameraListCombo->addItem(camDesc, QVariant::fromValue(deviceName));
       maxTextLength =
           std::max(maxTextLength, fontMetrics().horizontalAdvance(camDesc));
     }
@@ -3297,14 +3298,26 @@ void StopMotionController::onCameraListComboActivated(int comboIndex) {
   int cameraIndex               = 0;
   CameraType selectedCameraType = CameraType::None;
   if (comboIndex > 0) {
-    cameraIndex       = m_cameraListCombo->itemData(comboIndex).toInt();
     int adjComboIndex = comboIndex - 1;  // Adjust for "Select camera" option
-    if (adjComboIndex < webCount)
-      selectedCameraType = CameraType::Web;
-    else if (adjComboIndex < (webCount + canonCount))
+    if (adjComboIndex < webCount) {
+      selectedCameraType  = CameraType::Web;
+      // Use stable deviceName UUID to find the correct camera index
+      // even if Qt re-enumerates cameras in different order after refresh
+      QString targetUID = m_cameraListCombo->itemData(comboIndex).toString();
+      cameraIndex       = adjComboIndex;  // fallback
+      for (int i = 0; i < cameras.size(); i++) {
+        if (cameras.at(i).deviceName() == targetUID) {
+          cameraIndex = i;
+          break;
+        }
+      }
+    } else if (adjComboIndex < (webCount + canonCount)) {
       selectedCameraType = CameraType::CanonDSLR;
-    else if (adjComboIndex < (cameraCount))
+      cameraIndex        = adjComboIndex - webCount;
+    } else if (adjComboIndex < (cameraCount)) {
       selectedCameraType = CameraType::GPhoto;
+      cameraIndex        = adjComboIndex - webCount - canonCount;
+    }
   }
 
   m_stopMotion->changeCameras(comboIndex, selectedCameraType, cameraIndex);

@@ -3330,13 +3330,16 @@ void StopMotion::changeCameras(int comboIndex, CameraType cameraType,
   m_currentCameraTypeIndex = cameraIndex;
 
   if (m_currentCameraType == CameraType::Web) {
-    m_webcam->setWebcamIndex(cameraIndex);
-
     QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
 
-    m_webcam->setWebcam(new QCamera(cameras.at(cameraIndex)));
-    m_webcam->setWebcamDeviceName(cameras.at(cameraIndex).deviceName());
+    // Set description and deviceName BEFORE translateIndex so it can match
+    // the device UID to the correct OpenCV index on macOS.
     m_webcam->setWebcamDescription(cameras.at(cameraIndex).description());
+    m_webcam->setWebcamDeviceName(cameras.at(cameraIndex).deviceName());
+    // Resolve the correct OpenCV index once at selection time (not per-frame)
+    m_webcam->translateIndex(cameraIndex);
+
+    m_webcam->setWebcam(new QCamera(cameras.at(cameraIndex)));
 
     // loading new camera
     m_webcam->getWebcam()->load();

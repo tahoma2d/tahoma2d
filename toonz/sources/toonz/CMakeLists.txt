@@ -392,7 +392,7 @@ set(SOURCES
     motionpathpanel.cpp
     ../stopmotion/stopmotion.cpp
     ../stopmotion/stopmotioncontroller.cpp
-    ../stopmotion/webcam.cpp
+    # ../stopmotion/webcam.cpp  (moved to OBJCSOURCES for macOS ObjC++)
     ../stopmotion/jpgconverter.cpp
     ../stopmotion/canon.cpp
     ../stopmotion/stopmotionserial.cpp
@@ -412,7 +412,7 @@ if(WITH_TRANSLATION)
     add_translation(toonz ${HEADERS} ${SOURCES})
 endif()
 
-set(OBJCSOURCES filebrowsermodel.cpp)
+set(OBJCSOURCES filebrowsermodel.cpp ../stopmotion/webcam.cpp)
 
 # Resource file(s)
 set(RESOURCES toonz.qrc)
@@ -528,6 +528,7 @@ elseif(BUILD_ENV_APPLE AND WITH_CANON)
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
+        "-framework AVFoundation"
     )
 
 elseif(BUILD_ENV_APPLE)
@@ -549,6 +550,7 @@ elseif(BUILD_ENV_APPLE)
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
+        "-framework AVFoundation"
     )
 
 elseif(BUILD_ENV_UNIXLIKE AND WITH_CANON)

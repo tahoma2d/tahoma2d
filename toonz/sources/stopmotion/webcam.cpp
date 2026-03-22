@@ -17,6 +17,10 @@
 #include <QCameraInfo>
 #include <QApplication>
 
+#ifdef Q_OS_MAC
+#import <AVFoundation/AVFoundation.h>
+#endif
+
 TEnv::IntVar StopMotionUseDirectShow("StopMotionUseDirectShow", 1);
 TEnv::IntVar StopMotionUseMjpg("StopMotionUseMjpg", 1);
 //-----------------------------------------------------------------------------
@@ -48,14 +52,19 @@ void Webcam::setWebcam(QCamera* camera) { m_webcam = camera; }
 bool Webcam::initWebcam(int index) {
 #ifdef WIN32
   if (!m_useDirectShow) {
-    // the webcam order obtained from Qt isn't always the same order as
-    // the one obtained from OpenCV without DirectShow
-    translateIndex(index);
+    // m_webcamIndex already resolved by translateIndex() at camera selection
     m_cvWebcam.open(m_webcamIndex);
   } else {
     m_webcamIndex = index;
     m_cvWebcam.open(m_webcamIndex, cv::CAP_DSHOW);
   }
+  if (m_cvWebcam.isOpened() == false) {
+    return false;
+  }
+#elif defined(Q_OS_MAC)
+  // m_webcamIndex is resolved once by translateIndex() at camera selection time.
+  // Do NOT re-enumerate AVFoundation here — device order changes dynamically.
+  m_cvWebcam.open(m_webcamIndex, cv::CAP_AVFOUNDATION);
   if (m_cvWebcam.isOpened() == false) {
     return false;
   }
@@ -66,18 +75,6 @@ bool Webcam::initWebcam(int index) {
     return false;
   }
 #endif
-  // mjpg is used by many webcams
-  // opencv runs very slow on some webcams without it.
-  if (m_useMjpg) {
-    m_cvWebcam.set(cv::CAP_PROP_FOURCC,
-                   cv::VideoWriter::fourcc('m', 'j', 'p', 'g'));
-    m_cvWebcam.set(cv::CAP_PROP_FOURCC,
-                   cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
-  }
-  m_cvWebcam.set(3, m_webcamWidth);
-  m_cvWebcam.set(4, m_webcamHeight);
-
-  return true;
 }
 
 //-----------------------------------------------------------------
@@ -207,6 +204,33 @@ void Webcam::refreshWebcamResolutions() {
   clearWebcamResolutions();
   m_webcamResolutions = getWebcam()->supportedViewfinderResolutions();
   if (m_webcamResolutions.size() == 0) {
+    // Qt could not enumerate resolutions (common with virtual cameras like
+    // Iriun, Insta360, NDI). Try querying OpenCV directly.
+#ifdef Q_OS_MAC
+    if (m_cvWebcam.isOpened()) {
+      // Probe common resolutions via OpenCV
+      QList<QSize> probeList = {
+        QSize(3840, 2160), QSize(1920, 1080), QSize(1280, 720),
+        QSize(960, 540),   QSize(640, 480),   QSize(640, 360)
+      };
+      double origW = m_cvWebcam.get(cv::CAP_PROP_FRAME_WIDTH);
+      double origH = m_cvWebcam.get(cv::CAP_PROP_FRAME_HEIGHT);
+      for (const QSize& s : probeList) {
+        m_cvWebcam.set(cv::CAP_PROP_FRAME_WIDTH,  s.width());
+        m_cvWebcam.set(cv::CAP_PROP_FRAME_HEIGHT, s.height());
+        double w = m_cvWebcam.get(cv::CAP_PROP_FRAME_WIDTH);
+        double h = m_cvWebcam.get(cv::CAP_PROP_FRAME_HEIGHT);
+        QSize actual((int)w, (int)h);
+        if (!m_webcamResolutions.contains(actual))
+          m_webcamResolutions.push_back(actual);
+      }
+      // Restore original resolution
+      m_cvWebcam.set(cv::CAP_PROP_FRAME_WIDTH,  origW);
+      m_cvWebcam.set(cv::CAP_PROP_FRAME_HEIGHT, origH);
+    }
+    if (m_webcamResolutions.size() == 0) {
+#endif
+    // Final fallback: standard resolution list
     m_webcamResolutions.push_back(QSize(640, 360));
     m_webcamResolutions.push_back(QSize(640, 480));
     m_webcamResolutions.push_back(QSize(800, 448));
@@ -221,6 +245,9 @@ void Webcam::refreshWebcamResolutions() {
     m_webcamResolutions.push_back(QSize(1600, 900));
     m_webcamResolutions.push_back(QSize(1920, 1080));
     m_webcamResolutions.push_back(QSize(3840, 2160));
+#ifdef Q_OS_MAC
+    }
+#endif
   }
 }
 
@@ -501,7 +528,51 @@ bool Webcam::translateIndex(int index) {
   // So this checks the name against the correct index.
   m_webcamIndex = index;
 
-#ifdef WIN32
+#ifdef Q_OS_MAC
+  // On macOS, use AVFoundation uniqueID (stable hardware identifier) to find
+  // the correct OpenCV index, regardless of enumeration order.
+  @autoreleasepool {
+    NSArray<AVCaptureDevice*>* devices = nil;
+    if (@available(macOS 10.15, *)) {
+      AVCaptureDeviceDiscoverySession* session =
+        [AVCaptureDeviceDiscoverySession
+          discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera,
+                                            AVCaptureDeviceTypeExternalUnknown]
+          mediaType:AVMediaTypeVideo
+          position:AVCaptureDevicePositionUnspecified];
+      devices = session.devices;
+    } else {
+      devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    }
+
+    // Match by uniqueID first (stable, not affected by enumeration order)
+    NSString* targetUID =
+      [NSString stringWithUTF8String:m_webcamDeviceName.toUtf8().constData()];
+    fprintf(stderr, "[Ztoryc] deviceName(Qt)=%s desc=%s\n", m_webcamDeviceName.toUtf8().constData(), m_webcamDescription.toUtf8().constData());
+    for (NSUInteger i = 0; i < devices.count; i++) {
+      fprintf(stderr, "[Ztoryc] AVF device[%lu] uid=%s name=%s\n", (unsigned long)i, [devices[i].uniqueID UTF8String], [devices[i].localizedName UTF8String]);
+      if ([devices[i].uniqueID isEqualToString:targetUID]) {
+        m_webcamIndex = (int)i;
+        return true;
+      }
+    }
+
+    // Fallback: match by localizedName
+    NSString* targetName =
+      [NSString stringWithUTF8String:m_webcamDescription.toUtf8().constData()];
+    for (NSUInteger i = 0; i < devices.count; i++) {
+      if ([devices[i].localizedName isEqualToString:targetName]) {
+        m_webcamIndex = (int)i;
+        return true;
+      }
+    }
+
+    // Last resort: use Qt index
+    m_webcamIndex = index;
+  }
+  return true;
+
+#elif defined(WIN32)
 
 // Thanks to:
 // https://elcharolin.wordpress.com/2017/08/28/webcam-capture-with-the-media-foundation-sdk/
