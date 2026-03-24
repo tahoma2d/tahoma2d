@@ -42,15 +42,24 @@ designed to work natively inside an animation application.
 
 ## Build & Run
 
-```bash
-# Build (sempre filtrare gli errori)
-touch [file] && ninja -j4 -C /Volumes/ZioSam/tahoma2d-workspace/tahoma2d/toonz/build 2>&1 | grep "error:" | head -10
+> ⚠️ REGOLA OBBLIGATORIA: usare SEMPRE `./build_and_deploy.sh` per compilare.
+> MAI eseguire ninja direttamente e poi aprire l'app — i binari helper
+> `lzocompress`/`lzodecompress` non vengono copiati nel bundle e il salvataggio
+> TLV crasha silenziosamente senza messaggi di errore.
 
-# Apri app
-open /Volumes/ZioSam/tahoma2d-workspace/tahoma2d/toonz/Tahoma2D.app
+```bash
+# Build + deploy (SEMPRE usare questo)
+cd /Volumes/ZioSam/tahoma2d-workspace/tahoma2d
+./build_and_deploy.sh [file.cpp opzionale da toccare]
 
 # Forza ricompilazione file specifico
-touch toonz/sources/toonz/ztoryanimatic.cpp && ninja -j4 -C /Volumes/ZioSam/tahoma2d-workspace/tahoma2d/toonz/build 2>&1 | grep "error:" | head -10
+./build_and_deploy.sh toonz/sources/toonz/ztoryanimatic.cpp
+```
+
+**Solo per debug rapido (senza aprire l'app):**
+```bash
+touch [file] && ninja -j4 -C /Volumes/ZioSam/tahoma2d-workspace/tahoma2d/toonz/build 2>&1 | grep "error:" | head -10
+# Poi OBBLIGATORIAMENTE: ./build_and_deploy.sh prima di aprire l'app
 ```
 
 -----

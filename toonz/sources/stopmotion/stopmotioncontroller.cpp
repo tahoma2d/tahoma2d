@@ -3320,15 +3320,40 @@ void StopMotionController::onCameraListComboActivated(int comboIndex) {
     }
   }
 
-  m_stopMotion->changeCameras(comboIndex, selectedCameraType, cameraIndex);
-
-  m_stopMotion->updateStopMotionControls();
-
-  if (m_calibrationUI.groupBox->isChecked() && comboIndex > 0) {
-    m_stopMotion->m_calibration.isValid = false;
-    m_calibrationUI.exportBtn->setEnabled(false);
-    if (m_stopMotion->m_currentCameraType == CameraType::Web)
-      resetCalibSettingsFromFile();
+  // When switching directly from one active camera to another, AVFoundation
+  // needs time to release the current session before opening the next one.
+  // The manual workaround (select "Select Camera" first, then pick the new
+  // camera) works because human reaction time gives AVFoundation ~1-2 s to
+  // tear down. We replicate that here automatically.
+  bool needTwoStep = (comboIndex > 0) &&
+                     (m_stopMotion->m_currentCameraType != CameraType::None);
+  if (needTwoStep) {
+    // Step 1: release current camera (same path as selecting "- Select camera -")
+    m_stopMotion->changeCameras(0, CameraType::None, 0);
+    m_stopMotion->updateStopMotionControls();
+    // Step 2: init new camera after AVFoundation teardown window (~800 ms)
+    bool calibChecked = m_calibrationUI.groupBox->isChecked();
+    QTimer::singleShot(800, this,
+        [this, comboIndex, selectedCameraType, cameraIndex, calibChecked]() {
+          m_stopMotion->changeCameras(comboIndex, selectedCameraType,
+                                     cameraIndex);
+          m_stopMotion->updateStopMotionControls();
+          if (calibChecked) {
+            m_stopMotion->m_calibration.isValid = false;
+            m_calibrationUI.exportBtn->setEnabled(false);
+            if (m_stopMotion->m_currentCameraType == CameraType::Web)
+              resetCalibSettingsFromFile();
+          }
+        });
+  } else {
+    m_stopMotion->changeCameras(comboIndex, selectedCameraType, cameraIndex);
+    m_stopMotion->updateStopMotionControls();
+    if (m_calibrationUI.groupBox->isChecked() && comboIndex > 0) {
+      m_stopMotion->m_calibration.isValid = false;
+      m_calibrationUI.exportBtn->setEnabled(false);
+      if (m_stopMotion->m_currentCameraType == CameraType::Web)
+        resetCalibSettingsFromFile();
+    }
   }
 }
 

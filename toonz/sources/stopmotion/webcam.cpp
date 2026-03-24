@@ -16,9 +16,59 @@
 #include <QCamera>
 #include <QCameraInfo>
 #include <QApplication>
+#include <QMutex>
 
 #ifdef Q_OS_MAC
 #import <AVFoundation/AVFoundation.h>
+
+// Serial queue used for ALL AVCaptureSession start/stop operations.
+// This ensures that a stopRunning from one camera switch always completes
+// before startRunning for the next camera begins, preventing race conditions
+// with virtual cameras (Iriun, Insta360) that can take 1-3s to stop.
+static dispatch_queue_t avOpsQueue() {
+  static dispatch_queue_t q = nil;
+  static dispatch_once_t once;
+  dispatch_once(&once, ^{
+    q = dispatch_queue_create("ztoryc.avcapture.ops", DISPATCH_QUEUE_SERIAL);
+  });
+  return q;
+}
+
+// Delegate che riceve i frame da AVCaptureSession
+@interface ZtoryAVDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
+@property (nonatomic, assign) cv::Mat* targetFrame;
+@property (nonatomic, assign) QMutex* frameMutex;
+@property (atomic, assign) BOOL active;
+@end
+
+@implementation ZtoryAVDelegate
+- (void)captureOutput:(AVCaptureOutput*)output
+didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
+       fromConnection:(AVCaptureConnection*)connection {
+  // Check active flag before acquiring mutex to avoid deadlock on release
+  if (!self.active) return;
+
+  CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+  CVPixelBufferLockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+
+  int width  = (int)CVPixelBufferGetWidth(imageBuffer);
+  int height = (int)CVPixelBufferGetHeight(imageBuffer);
+  void* data = CVPixelBufferGetBaseAddress(imageBuffer);
+  int stride = (int)CVPixelBufferGetBytesPerRow(imageBuffer);
+
+  // BGRA → cv::Mat (no copy, then clone to own memory)
+  cv::Mat frame(height, width, CV_8UC4, data, stride);
+
+  if (self.frameMutex->tryLock(5)) {
+    if (self.active)
+      *(self.targetFrame) = frame.clone();
+    self.frameMutex->unlock();
+  }
+
+  CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+}
+@end
+
 #endif
 
 TEnv::IntVar StopMotionUseDirectShow("StopMotionUseDirectShow", 1);
@@ -62,8 +112,13 @@ bool Webcam::initWebcam(int index) {
     return false;
   }
 #elif defined(Q_OS_MAC)
-  // m_webcamIndex is resolved once by translateIndex() at camera selection time.
-  // Do NOT re-enumerate AVFoundation here — device order changes dynamically.
+  // On macOS use AVCaptureSession which opens devices by uniqueID —
+  // no index arithmetic, no enumeration order issues.
+  releaseWebcamAVCapture();
+  if (initWebcamAVCapture()) {
+    return true;
+  }
+  // Fallback to OpenCV if AVCaptureSession fails
   m_cvWebcam.open(m_webcamIndex, cv::CAP_AVFOUNDATION);
   if (m_cvWebcam.isOpened() == false) {
     return false;
@@ -79,7 +134,12 @@ bool Webcam::initWebcam(int index) {
 
 //-----------------------------------------------------------------
 
-void Webcam::releaseWebcam() { m_cvWebcam.release(); }
+void Webcam::releaseWebcam() {
+#ifdef Q_OS_MAC
+  releaseWebcamAVCapture();
+#endif
+  m_cvWebcam.release();
+}
 
 //-----------------------------------------------------------------
 
@@ -90,11 +150,16 @@ int Webcam::getIndexOfResolution() {
 //-----------------------------------------------------------------
 
 bool Webcam::getWebcamImage(TRaster32P& tempImage) {
+#ifdef Q_OS_MAC
+  if (m_useAVCapture) {
+    return getWebcamImageAVCapture(tempImage);
+  }
+#endif
   bool error = false;
   cv::Mat imgOriginal;
   cv::Mat imgCorrected;
 
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     // mjpg is used by many webcams
@@ -189,6 +254,8 @@ void Webcam::setUseMjpg(bool on) {
 //-----------------------------------------------------------------
 
 void Webcam::clearWebcam() {
+  // Note: AVCaptureSession is released by releaseWebcam()
+  // which is always called before clearWebcam() in disconnectAllCameras()
   m_webcamDescription = QString();
   m_webcamDeviceName  = QString();
   m_webcamIndex       = -1;
@@ -254,7 +321,7 @@ void Webcam::refreshWebcamResolutions() {
 //-----------------------------------------------------------------
 
 bool Webcam::getWebcamAutofocusStatus() {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -274,7 +341,7 @@ bool Webcam::getWebcamAutofocusStatus() {
 
 //-----------------------------------------------------------------
 void Webcam::setWebcamAutofocusStatus(bool on) {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -290,7 +357,7 @@ void Webcam::setWebcamAutofocusStatus(bool on) {
 
 //-----------------------------------------------------------------
 int Webcam::getWebcamFocusValue() {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -307,7 +374,7 @@ int Webcam::getWebcamFocusValue() {
 //-----------------------------------------------------------------
 
 void Webcam::setWebcamFocusValue(int value) {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -320,7 +387,7 @@ void Webcam::setWebcamFocusValue(int value) {
 
 //-----------------------------------------------------------------
 int Webcam::getWebcamExposureValue() {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -337,7 +404,7 @@ int Webcam::getWebcamExposureValue() {
 //-----------------------------------------------------------------
 
 void Webcam::setWebcamExposureValue(int value) {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -352,7 +419,7 @@ void Webcam::setWebcamExposureValue(int value) {
 
 //-----------------------------------------------------------------
 int Webcam::getWebcamBrightnessValue() {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -369,7 +436,7 @@ int Webcam::getWebcamBrightnessValue() {
 //-----------------------------------------------------------------
 
 void Webcam::setWebcamBrightnessValue(int value) {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -382,7 +449,7 @@ void Webcam::setWebcamBrightnessValue(int value) {
 
 //-----------------------------------------------------------------
 int Webcam::getWebcamContrastValue() {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -399,7 +466,7 @@ int Webcam::getWebcamContrastValue() {
 //-----------------------------------------------------------------
 
 void Webcam::setWebcamContrastValue(int value) {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -412,7 +479,7 @@ void Webcam::setWebcamContrastValue(int value) {
 
 //-----------------------------------------------------------------
 int Webcam::getWebcamGainValue() {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -429,7 +496,7 @@ int Webcam::getWebcamGainValue() {
 //-----------------------------------------------------------------
 
 void Webcam::setWebcamGainValue(int value) {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -442,7 +509,7 @@ void Webcam::setWebcamGainValue(int value) {
 
 //-----------------------------------------------------------------
 int Webcam::getWebcamSaturationValue() {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -459,7 +526,7 @@ int Webcam::getWebcamSaturationValue() {
 //-----------------------------------------------------------------
 
 void Webcam::setWebcamSaturationValue(int value) {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -473,7 +540,7 @@ void Webcam::setWebcamSaturationValue(int value) {
 //-----------------------------------------------------------------
 
 void Webcam::openSettingsWindow() {
-  if (m_cvWebcam.isOpened() == false) {
+  if (m_cvWebcam.isOpened() == false && !m_useAVCapture) {
     initWebcam(m_webcamIndex);
 
     if (!m_cvWebcam.isOpened()) {
@@ -518,6 +585,208 @@ void Webcam::computeLut() {
     p[i] = (uchar)std::floor(value * maxChannelValueF);
   }
 }
+
+//-----------------------------------------------------------------
+
+#ifdef Q_OS_MAC
+
+bool Webcam::initWebcamAVCapture() {
+  fprintf(stderr, "[AV] initWebcamAVCapture uid=%s\n",
+          m_webcamDeviceName.toUtf8().constData());
+  if (m_webcamDeviceName.isEmpty()) {
+    fprintf(stderr, "[AV] FAIL: empty deviceName\n");
+    return false;
+  }
+
+  // Wait for any in-progress stopRunning to complete before creating
+  // the new session.  dispatch_sync on the serial avOpsQueue() blocks
+  // until the queue is empty.  Acceptable here because the user explicitly
+  // triggered live view and expects a brief startup delay anyway.
+  dispatch_sync(avOpsQueue(), ^{});
+
+  @autoreleasepool {
+    NSString* uid = [NSString stringWithUTF8String:
+                     m_webcamDeviceName.toUtf8().constData()];
+    AVCaptureDevice* device = [AVCaptureDevice deviceWithUniqueID:uid];
+    if (!device) {
+      fprintf(stderr, "[AV] FAIL: device not found\n");
+      return false;
+    }
+    fprintf(stderr, "[AV] device found: %s\n",
+            [device.localizedName UTF8String]);
+
+    AVCaptureSession* session = [[AVCaptureSession alloc] init];
+
+    // Set resolution preset
+    if (m_webcamWidth >= 3840)
+      session.sessionPreset = AVCaptureSessionPreset3840x2160;
+    else if (m_webcamWidth >= 1920)
+      session.sessionPreset = AVCaptureSessionPreset1920x1080;
+    else if (m_webcamWidth >= 1280)
+      session.sessionPreset = AVCaptureSessionPreset1280x720;
+    else
+      session.sessionPreset = AVCaptureSessionPresetMedium;
+
+    NSError* err = nil;
+    AVCaptureDeviceInput* input =
+      [AVCaptureDeviceInput deviceInputWithDevice:device error:&err];
+    if (!input || err) return false;
+
+    if (![session canAddInput:input]) return false;
+    [session addInput:input];
+
+    AVCaptureVideoDataOutput* output =
+      [[AVCaptureVideoDataOutput alloc] init];
+    output.videoSettings = @{
+      (NSString*)kCVPixelBufferPixelFormatTypeKey:
+        @(kCVPixelFormatType_32BGRA)
+    };
+    output.alwaysDiscardsLateVideoFrames = YES;
+
+    if (!m_avFrameMutex) m_avFrameMutex = new QMutex();
+
+    ZtoryAVDelegate* delegate = [[ZtoryAVDelegate alloc] init];
+    delegate.targetFrame = &m_avCurrentFrame;
+    delegate.frameMutex  = m_avFrameMutex;
+    delegate.active      = YES;
+
+    dispatch_queue_t queue =
+      dispatch_queue_create("ztoryc.webcam", DISPATCH_QUEUE_SERIAL);
+    [output setSampleBufferDelegate:delegate queue:queue];
+
+    if (![session canAddOutput:output]) return false;
+    [session addOutput:output];
+
+    [session startRunning];
+    fprintf(stderr, "[AV] session started\n");
+
+    m_avSession   = (__bridge_retained void*)session;
+    m_avInput     = (__bridge_retained void*)input;
+    m_avOutput    = (__bridge_retained void*)output;
+    m_avDelegate  = (__bridge_retained void*)delegate;
+    m_useAVCapture = true;
+
+    return true;
+  }
+}
+
+void Webcam::releaseWebcamAVCapture() {
+  fprintf(stderr, "[AV] releaseWebcamAVCapture useAVCapture=%d\n", m_useAVCapture);
+  if (!m_useAVCapture) return;
+
+  m_useAVCapture = false;
+
+  // 1. Deactivate delegate immediately (atomic property — visible to
+  //    callback queue without mutex).  Any frame in flight returns early.
+  if (m_avDelegate) {
+    ZtoryAVDelegate* d = (__bridge ZtoryAVDelegate*)m_avDelegate;
+    d.active = NO;
+  }
+
+  // 2. Capture current refs for async cleanup, then null out our pointers
+  //    so initWebcamAVCapture can proceed immediately with a new session.
+  void* oldSession  = m_avSession;
+  void* oldOutput   = m_avOutput;
+  void* oldDelegate = m_avDelegate;
+  void* oldInput    = m_avInput;
+
+  m_avSession  = nullptr;
+  m_avOutput   = nullptr;
+  m_avDelegate = nullptr;
+  m_avInput    = nullptr;
+
+  // 3. Post stopRunning to the dedicated serial ops queue.  Because it is
+  //    serial, any subsequent initWebcamAVCapture will use dispatch_sync on
+  //    the same queue to wait for this block to finish before starting the
+  //    new session.  The main thread is NOT blocked here.
+  dispatch_async(avOpsQueue(), ^{
+      @autoreleasepool {
+        if (oldSession) {
+          AVCaptureSession* s =
+            (__bridge_transfer AVCaptureSession*)oldSession;
+          [s stopRunning];
+          fprintf(stderr, "[AV] old session stopped (background)\n");
+        }
+        if (oldOutput)   CFRelease(oldOutput);
+        if (oldDelegate) CFRelease(oldDelegate);
+        if (oldInput)    CFRelease(oldInput);
+      }
+    });
+
+  // 4. Clear the shared frame buffer so stale frames don't leak into
+  //    the next camera.
+  if (m_avFrameMutex) {
+    if (m_avFrameMutex->tryLock(10)) {
+      m_avCurrentFrame.release();
+      m_avFrameMutex->unlock();
+    }
+    // If tryLock fails, the buffer will be overwritten by the new session.
+  }
+}
+
+bool Webcam::getWebcamImageAVCapture(TRaster32P& tempImage) {
+  cv::Mat imgOriginal;
+
+  // Get latest frame — use tryLock to never block the main thread
+  if (!m_avFrameMutex->tryLock(10)) return false;
+  if (!m_avCurrentFrame.empty())
+    imgOriginal = m_avCurrentFrame.clone();
+  m_avFrameMutex->unlock();
+
+  if (imgOriginal.empty()) {
+    // Session just started — no frame yet. Return last good frame if available.
+    if (!m_webcamImage.empty()) {
+      int width  = m_webcamImage.cols;
+      int height = m_webcamImage.rows;
+      int size   = m_webcamImage.total() * m_webcamImage.elemSize();
+      tempImage = TRaster32P(width, height);
+      tempImage->lock();
+      memcpy(tempImage->getRawData(), m_webcamImage.data, size);
+      tempImage->unlock();
+      return true;
+    }
+    return false;
+  }
+  fprintf(stderr, "[AV] getWebcamImage: frame %dx%d\n",
+          imgOriginal.cols, imgOriginal.rows);
+
+  cv::Mat imgCorrected;
+  cv::flip(imgOriginal, imgCorrected, 0);
+  emit updateHistogram(imgCorrected);
+
+  bool convertBack = false;
+  if (m_colorMode != 0) {
+    cv::cvtColor(imgCorrected, imgCorrected, cv::COLOR_BGRA2GRAY);
+    convertBack = true;
+  }
+
+  if (m_colorMode != 2)
+    adjustLevel(imgCorrected);
+  else
+    binarize(imgCorrected);
+
+  if (convertBack)
+    cv::cvtColor(imgCorrected, imgCorrected, cv::COLOR_GRAY2BGRA);
+
+  if (m_useCalibration)
+    cv::remap(imgCorrected, imgCorrected, m_calibrationMapX,
+              m_calibrationMapY, cv::INTER_LINEAR);
+
+  m_webcamImage = imgCorrected;
+
+  int width  = imgCorrected.cols;
+  int height = imgCorrected.rows;
+  int size   = imgCorrected.total() * imgCorrected.elemSize();
+
+  tempImage = TRaster32P(width, height);
+  tempImage->lock();
+  memcpy(tempImage->getRawData(), imgCorrected.data, size);
+  tempImage->unlock();
+
+  return true;
+}
+
+#endif  // Q_OS_MAC
 
 //-----------------------------------------------------------------
 

@@ -145,13 +145,13 @@ StartupPopup::StartupPopup()
   QPushButton *createButton = new QPushButton(tr("Create Scene"), this);
   QPushButton *newProjectButton = new QPushButton(tr("New Project..."), this);
 
-  QPushButton *loadOtherSceneButton =
-      new QPushButton(tr("Open Another Scene..."), this);
+  // "Open Another Scene" removed — Explore Folder covers this use case.
   QStringList type;
   type << tr("pixel") << tr("cm") << tr("mm") << tr("inch") << tr("field");
   m_unitsCB->addItems(type);
 
-  QPushButton *openProjectButton = new QPushButton(tr("Open Project..."), this);
+  QPushButton *openProjectButton =
+      new QPushButton(tr("Open Project..."), this);
   QPushButton *exploreProjectButton =
       new QPushButton(tr("Explore Folder"), this);
 
@@ -184,6 +184,7 @@ StartupPopup::StartupPopup()
   m_autoSaveTimeFld->setValue(Preferences::instance()->getAutosavePeriod());
   m_showAtStartCB->setChecked(Preferences::instance()->isStartupPopupEnabled());
   m_showAtStartCB->setStyleSheet("QCheckBox{ background-color: none; }");
+  m_showAtStartCB->hide();  // startup screen is always shown; preference removed from UI
   m_addPresetBtn->setStyleSheet(
       "QPushButton { padding-left: 4px; padding-right: 4px;}");
   m_removePresetBtn->setStyleSheet(
@@ -200,7 +201,7 @@ StartupPopup::StartupPopup()
   m_recentBox->setContentsMargins(10, 10, 10, 10);
   m_recentBox->setFixedWidth(200);
   m_scenesTab->setMinimumWidth(480);
-  m_scenesTab->setMinimumHeight(420); // accommodate workflow + numbering rows
+  m_scenesTab->setMinimumHeight(460); // fixed height: rows 0-7 + numbering + stretch + button
   m_projectBox->setMinimumWidth(480);
   m_buttonFrame->setFixedHeight(34);
 
@@ -356,6 +357,15 @@ StartupPopup::StartupPopup()
 
       newSceneLay->addWidget(m_numberingBox, 8, 0, 1, 6);
 
+      // Row 9: elastic empty area — absorbs space when numbering box is hidden,
+      // so rows 0-7 (including the workflow combobox) keep their fixed position.
+      // Future workflow-specific widgets can be placed here.
+      newSceneLay->setRowStretch(9, 1);
+
+      // Create button always at the bottom (row 10).
+      newSceneLay->addWidget(createButton, 10, 1, 1, 3, Qt::AlignLeft);
+      newSceneLay->setColumnStretch(4, 1);
+
       // Show numbering only for Storyboard Mode (index 0)
       connect(m_workflowCB, QOverload<int>::of(&QComboBox::currentIndexChanged),
               this, [this](int idx) { m_numberingBox->setVisible(idx == 0); });
@@ -365,9 +375,6 @@ StartupPopup::StartupPopup()
                 m_seqPrefixLabel->setVisible(idx == 1);
                 m_seqPrefixFld->setVisible(idx == 1);
               });
-
-      newSceneLay->addWidget(createButton, 9, 1, 1, 3, Qt::AlignLeft);
-      newSceneLay->setColumnStretch(4, 1);
     }
     newSceneWidget->setLayout(newSceneLay);
     m_scenesTab->addTab(newSceneWidget, tr("Create a New Scene"));
@@ -382,7 +389,7 @@ StartupPopup::StartupPopup()
       m_recentBox->setLayout(m_recentSceneLay);
       guiLay->addWidget(m_recentBox, 1, 1, 4, 1,
                         Qt::AlignTop | Qt::AlignHCenter);
-      guiLay->addWidget(loadOtherSceneButton, 5, 1, 1, 1, Qt::AlignRight);
+      // loadOtherSceneButton removed — use Explore Folder instead
     }
     m_topLayout->addLayout(guiLay, 0);
   }
@@ -411,12 +418,10 @@ StartupPopup::StartupPopup()
                        SLOT(onSceneChanged()));
   ret = ret && connect(newProjectButton, SIGNAL(clicked()), this,
                        SLOT(onNewProjectButtonPressed()));
-  ret      = ret && connect(openProjectButton, SIGNAL(clicked()), this,
+  ret = ret && connect(openProjectButton, SIGNAL(clicked()), this,
                        SLOT(onOpenProjectButtonPressed()));
   ret      = ret && connect(exploreProjectButton, SIGNAL(clicked()), this,
                        SLOT(onExploreProjectButtonPressed()));
-  ret = ret && connect(loadOtherSceneButton, SIGNAL(clicked()), this,
-                       SLOT(onLoadSceneButtonPressed()));
   ret = ret &&
         connect(createButton, SIGNAL(clicked()), this, SLOT(onCreateButton()));
   ret = ret && connect(m_showAtStartCB, SIGNAL(stateChanged(int)), this,
@@ -865,6 +870,19 @@ void StartupPopup::onCreateButton() {
     cfg.initialShotCount = shotCount;
     cfg.seqPrefix        = seqPx;
     cfg.shotPrefix       = shotPx;
+
+    // Store the numbering config in the model so the Board can continue
+    // generating consistent names when adding shots later.
+    NumberingConfig numCfg;
+    numCfg.style       = isSeq ? NumberingConfig::Sequence : NumberingConfig::Simple;
+    numCfg.shotPrefix  = shotPx;
+    numCfg.seqPrefix   = seqPx;
+    numCfg.step        = step;
+    numCfg.padding     = padding;
+    numCfg.seqPadding  = 2;
+    numCfg.startNumber = startNum;
+    numCfg.seqNumber   = 1;
+    ZtoryModel::instance()->setNumberingConfig(numCfg);
 
     for (int i = 0; i < shotCount; i++)
       ZtoryModel::instance()->addShotNamed(cfg.shotName(1, i));

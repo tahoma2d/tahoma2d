@@ -102,6 +102,7 @@ class StoryboardPanel final : public TPanel {
   QPushButton *m_cloneButton;
   QPushButton *m_pasteButton;
   QPushButton *m_refreshButton;
+  QPushButton *m_numberingBtn;   // ⚙ Numbering config button
   QTimer      *m_panelDetectTimer;
   QPushButton *m_exportPdfButton;
   QPushButton *m_exportShotsButton;
@@ -164,12 +165,14 @@ protected:
   void onMoveShot(int fromShot, int toShot);
   void onColumnsChanged(int value);
   void onNumberingChanged(int comboIndex);
+  void onNumberingConfig();   // opens the numbering settings dialog
   void onRefreshPreviews();
   void onExportPdf();
   void onExportShots();
   void onExportAnimatic();
   void onXsheetChanged();
   void onModelResequenced(); // called when ZtoryModel::resequenceXsheet runs
+  void onShotInserted(int col); // called when razor/external op inserts a shot at col
   void onBackToBoard();
 };
 

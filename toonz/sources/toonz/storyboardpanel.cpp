@@ -429,6 +429,12 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
     "QPushButton{background:#4a3a6a;color:white;border-radius:4px;padding:4px 12px;}"
     "QPushButton:hover{background:#6a4a8a;}");
 
+  m_numberingBtn = new QPushButton(tr("⚙ Numbering…"));
+  m_numberingBtn->setToolTip(tr("Configure shot numbering style, prefix, step and padding"));
+  m_numberingBtn->setStyleSheet(
+    "QPushButton{background:#3a3a5a;color:white;border-radius:4px;padding:4px 10px;}"
+    "QPushButton:hover{background:#5a5a8a;}");
+
   m_refreshButton = new QPushButton("Refresh Preview");
   m_refreshButton->setStyleSheet(
     "QPushButton{background:#4a4a2a;color:white;border-radius:4px;padding:4px 12px;}"
@@ -456,6 +462,7 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
   tb->addWidget(m_pasteButton);
   tb->addSpacing(8);
   tb->addWidget(m_numberingCombo);
+  tb->addWidget(m_numberingBtn);
   tb->addSpacing(8);
   tb->addWidget(colLabel);
   tb->addWidget(m_columnsPerRowSpin);
@@ -544,6 +551,8 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
           this, &StoryboardPanel::onColumnsChanged);
   connect(m_numberingCombo, QOverload<int>::of(&QComboBox::activated),
           this, &StoryboardPanel::onNumberingChanged);
+  connect(m_numberingBtn, &QPushButton::clicked,
+          this, &StoryboardPanel::onNumberingConfig);
   connect(TApp::instance()->getCurrentScene(), &TSceneHandle::sceneSwitched,
           this, &StoryboardPanel::refreshFromScene);
   connect(TApp::instance()->getCurrentXsheet(), &TXsheetHandle::xsheetChanged,
@@ -551,6 +560,8 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
   // Sync durations when ZtoryModel resequences (works even inside sub-scenes)
   connect(ZtoryModel::instance(), &ZtoryModel::modelReset,
           this, &StoryboardPanel::onModelResequenced);
+  connect(ZtoryModel::instance(), &ZtoryModel::shotAdded,
+          this, &StoryboardPanel::onShotInserted);
   // Debounce timer per refresh thumbnail
   QTimer *refreshTimer = new QTimer(this);
   refreshTimer->setSingleShot(true);
@@ -644,12 +655,15 @@ void StoryboardPanel::connectPanelWidget(PanelWidget *pw) {
 }
 
 void StoryboardPanel::renumberAll() {
+  const NumberingConfig &cfg = ZtoryModel::instance()->numberingConfig();
   for (int i = 0; i < (int)m_shots.size(); i++) {
     Shot &shot = m_shots[i];
     if (m_autoRenumber) {
-      shot.data.shotNumber = QString("%1").arg(i + 1, 2, 10, QChar(48));
+      // Use the project's numbering config for consistent naming
+      shot.data.shotNumber = cfg.shotName(i);
     } else if (shot.data.shotNumber.isEmpty()) {
-      shot.data.shotNumber = QString("%1").arg(i + 1, 2, 10, QChar(48));
+      // Keep-# mode: only fill in shots that have no number yet
+      shot.data.shotNumber = cfg.shotName(i);
     }
     updateColumnName(i);
     for (PanelWidget *pw : shot.panels) {
@@ -1027,6 +1041,47 @@ void StoryboardPanel::onModelResequenced() {
         m_shots[si].panels[0]->setDuration(duration);
     }
   }
+}
+
+void StoryboardPanel::onShotInserted(int col) {
+  // Called when the animatic razor (or any external op) inserts a new shot
+  // column at position 'col'.  We insert a corresponding Shot entry at that
+  // position, then renumber and save — bypassing loadZtoryc() which would
+  // map by stale index and assign wrong numbers to existing shots.
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return;
+  TXsheet *xsh = scene->getChildStack()->getTopXsheet();
+  if (!xsh) return;
+
+  if (col < 0 || col > (int)m_shots.size()) return;
+
+  // Build new Shot from xsheet column
+  Shot shot;
+  shot.data.xsheetColumn = col;
+  TXshColumn *column = xsh->getColumn(col);
+  if (column) {
+    int r0 = 0, r1 = 0;
+    column->getRange(r0, r1);
+    PanelData pd;
+    pd.duration = (r1 >= r0) ? (r1 - r0 + 1) : 24;
+    shot.data.panels.push_back(pd);
+  } else {
+    PanelData pd; pd.duration = 24;
+    shot.data.panels.push_back(pd);
+  }
+
+  // Update xsheetColumn for all shots at col or later (they shifted right)
+  for (int i = 0; i < (int)m_shots.size(); i++)
+    if (m_shots[i].data.xsheetColumn >= col)
+      m_shots[i].data.xsheetColumn++;
+
+  m_shots.insert(m_shots.begin() + col, shot);
+  addPanelWidget(col, 0);
+
+  if (!m_autoRenumber) assignKeepNumbers(col);
+  renumberAll();
+  rebuildGrid();
+  saveZtoryc();
 }
 
 void StoryboardPanel::onXsheetChanged() {
@@ -1491,6 +1546,101 @@ void StoryboardPanel::onNumberingChanged(int comboIndex) {
     m_numberingCombo->blockSignals(false);
   }
   saveZtoryc();
+}
+
+void StoryboardPanel::onNumberingConfig() {
+  // Inline dialog for configuring the project's shot numbering scheme.
+  NumberingConfig &cfg = ZtoryModel::instance()->numberingConfig();
+
+  QDialog dlg(this);
+  dlg.setWindowTitle(tr("Shot Numbering Config"));
+  dlg.setMinimumWidth(340);
+  auto *lay = new QGridLayout(&dlg);
+  lay->setColumnStretch(1, 1);
+  lay->setSpacing(6);
+  lay->setContentsMargins(12, 12, 12, 12);
+
+  // Style
+  auto *styleCB = new QComboBox(&dlg);
+  styleCB->addItem(tr("Simple   (sh010, sh020…)"));
+  styleCB->addItem(tr("Sequence  (sq01_sh010…)"));
+  styleCB->setCurrentIndex((int)cfg.style);
+  lay->addWidget(new QLabel(tr("Style:"), &dlg),    0, 0);
+  lay->addWidget(styleCB,                            0, 1, 1, 3);
+
+  // Shot prefix
+  auto *shotPxFld = new QLineEdit(cfg.shotPrefix, &dlg);
+  shotPxFld->setMaximumWidth(60);
+  lay->addWidget(new QLabel(tr("Shot prefix:"), &dlg), 1, 0);
+  lay->addWidget(shotPxFld, 1, 1);
+
+  // Seq prefix
+  auto *seqPxLabel = new QLabel(tr("Seq prefix:"), &dlg);
+  auto *seqPxFld   = new QLineEdit(cfg.seqPrefix, &dlg);
+  seqPxFld->setMaximumWidth(60);
+  lay->addWidget(seqPxLabel, 1, 2);
+  lay->addWidget(seqPxFld,   1, 3);
+
+  // Step
+  auto *stepSB = new QSpinBox(&dlg);
+  stepSB->setRange(1, 1000); stepSB->setValue(cfg.step);
+  lay->addWidget(new QLabel(tr("Step:"), &dlg),    2, 0);
+  lay->addWidget(stepSB,                            2, 1);
+
+  // Padding
+  auto *padSB = new QSpinBox(&dlg);
+  padSB->setRange(1, 6); padSB->setValue(cfg.padding);
+  lay->addWidget(new QLabel(tr("Padding:"), &dlg), 2, 2);
+  lay->addWidget(padSB,                             2, 3);
+
+  // Start number
+  auto *startSB = new QSpinBox(&dlg);
+  startSB->setRange(1, 9999); startSB->setValue(cfg.startNumber);
+  lay->addWidget(new QLabel(tr("Start #:"), &dlg), 3, 0);
+  lay->addWidget(startSB,                           3, 1);
+
+  // Seq number
+  auto *seqNumSB = new QSpinBox(&dlg);
+  seqNumSB->setRange(1, 999); seqNumSB->setValue(cfg.seqNumber);
+  auto *seqNumLabel = new QLabel(tr("Seq #:"), &dlg);
+  lay->addWidget(seqNumLabel, 3, 2);
+  lay->addWidget(seqNumSB,    3, 3);
+
+  // Show/hide seq controls based on style
+  auto syncSeqVisibility = [&](int idx) {
+    bool isSeq = (idx == 1);
+    seqPxLabel->setVisible(isSeq);
+    seqPxFld->setVisible(isSeq);
+    seqNumLabel->setVisible(isSeq);
+    seqNumSB->setVisible(isSeq);
+  };
+  syncSeqVisibility(styleCB->currentIndex());
+  connect(styleCB, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          &dlg, syncSeqVisibility);
+
+  // Buttons
+  auto *btns = new QDialogButtonBox(
+      QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dlg);
+  lay->addWidget(btns, 4, 0, 1, 4);
+  connect(btns, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+  connect(btns, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+  if (dlg.exec() != QDialog::Accepted) return;
+
+  // Apply changes
+  cfg.style       = (NumberingConfig::Style)styleCB->currentIndex();
+  cfg.shotPrefix  = shotPxFld->text().trimmed().isEmpty() ? "sh" : shotPxFld->text().trimmed();
+  cfg.seqPrefix   = seqPxFld->text().trimmed().isEmpty()  ? "sq" : seqPxFld->text().trimmed();
+  cfg.step        = stepSB->value();
+  cfg.padding     = padSB->value();
+  cfg.startNumber = startSB->value();
+  cfg.seqNumber   = seqNumSB->value();
+
+  // If in auto-renumber mode, renumber all shots immediately
+  if (m_autoRenumber) {
+    renumberAll();
+    saveZtoryc();
+  }
 }
 
 void StoryboardPanel::onRefreshPreviews() {

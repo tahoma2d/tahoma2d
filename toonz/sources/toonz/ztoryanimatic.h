@@ -118,6 +118,7 @@ signals:
   void zoomChanged(double ppf);
   void matchSubsceneDuration(int col);
   void razorRequested(int col, int splitFrame);
+  void mergeWithNextRequested(int col);
 
 private:
   double m_ppf = 8.0;
@@ -296,6 +297,7 @@ private slots:
   void onRazorRequested(int col, int splitFrame);
   void onShotMoved(int col, int newStartFrame);
   void onMergeShots();
+  void onMergeWithNext(int col);
   void resequenceXsheet();
   void onZoomChanged(double ppf);
   void onMatchSubsceneDuration(int col);

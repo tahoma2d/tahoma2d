@@ -551,6 +551,8 @@ elseif(BUILD_ENV_APPLE)
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
         "-framework AVFoundation"
+        "-framework CoreMedia"
+        "-framework CoreVideo"
     )
 
 elseif(BUILD_ENV_UNIXLIKE AND WITH_CANON)

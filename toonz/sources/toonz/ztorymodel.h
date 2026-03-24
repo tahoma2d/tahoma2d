@@ -4,6 +4,23 @@
 #include <QString>
 #include <vector>
 
+// ─── NumberingConfig ─────────────────────────────────────────────────────────
+// Persistent numbering scheme used both at startup and during Board editing.
+
+struct NumberingConfig {
+  enum Style { Simple, Sequence } style = Simple;
+  QString shotPrefix  = "sh";
+  QString seqPrefix   = "sq";
+  int     step        = 10;
+  int     padding     = 3;
+  int     seqPadding  = 2;
+  int     startNumber = 10;
+  int     seqNumber   = 1;   // active sequence number (for Sequence style)
+
+  // Returns the shot name for a 0-based index, e.g. shotName(0)="sh010"
+  QString shotName(int idx) const;
+};
+
 // ─── Strutture dati ───────────────────────────────────────────────────────────
 
 struct PanelData {
@@ -38,6 +55,7 @@ class ZtoryModel : public QObject {
   QString                       m_ztoryPath;
 
   ZtoryModel();
+  NumberingConfig m_numberingConfig;
 
 public:
   static ZtoryModel *instance();
@@ -67,8 +85,12 @@ public:
   void cloneShot(int shotIdx);
 
   // ── Numerazione ───────────────────────────────────────────────────────────
-  void renumberAll();
-  void assignKeepNumbers(int insertAt);
+  void renumberAll();                       // full renumber using m_numberingConfig
+  void assignKeepNumbers(int insertAt);     // letter-suffix for Keep-# mode
+  QString nextShotName() const;             // next auto name after existing shots
+  void setNumberingConfig(const NumberingConfig &cfg);
+  NumberingConfig       &numberingConfig()       { return m_numberingConfig; }
+  const NumberingConfig &numberingConfig() const { return m_numberingConfig; }
 
   // ── Panel automatici ──────────────────────────────────────────────────────
   void detectAndUpdatePanels(int shotIdx);

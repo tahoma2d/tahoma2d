@@ -20,6 +20,21 @@
 #include <QXmlStreamReader>
 #include <QDir>
 #include <QMessageBox>
+#include <QRegularExpression>
+
+// ─── NumberingConfig ──────────────────────────────────────────────────────────
+
+QString NumberingConfig::shotName(int idx) const {
+  int number = startNumber + idx * step;
+  if (style == Sequence) {
+    return QString("%1%2_%3%4")
+        .arg(seqPrefix)
+        .arg(seqNumber, seqPadding, 10, QChar('0'))
+        .arg(shotPrefix)
+        .arg(number, padding, 10, QChar('0'));
+  }
+  return QString("%1%2").arg(shotPrefix).arg(number, padding, 10, QChar('0'));
+}
 
 // ─── Singleton ────────────────────────────────────────────────────────────────
 
@@ -185,9 +200,47 @@ void ZtoryModel::cloneShot(int si) {
 
 // ─── Numerazione ─────────────────────────────────────────────────────────────
 
+void ZtoryModel::setNumberingConfig(const NumberingConfig &cfg) {
+  m_numberingConfig = cfg;
+  // Don't call save() here — caller decides when to persist
+}
+
+QString ZtoryModel::nextShotName() const {
+  const NumberingConfig &cfg = m_numberingConfig;
+  // Parse existing shot numbers to find the highest matching number
+  QRegularExpression re;
+  if (cfg.style == NumberingConfig::Sequence) {
+    re.setPattern(
+        QString("^%1\\d+_%2(\\d+)$")
+            .arg(QRegularExpression::escape(cfg.seqPrefix),
+                 QRegularExpression::escape(cfg.shotPrefix)));
+  } else {
+    re.setPattern(
+        QString("^%1(\\d+)$")
+            .arg(QRegularExpression::escape(cfg.shotPrefix)));
+  }
+  int maxNum = cfg.startNumber - cfg.step;
+  for (const auto &s : m_shots) {
+    auto m = re.match(s.shotNumber);
+    if (m.hasMatch()) {
+      int n = m.captured(1).toInt();
+      if (n > maxNum) maxNum = n;
+    }
+  }
+  int next = qMax(cfg.startNumber, maxNum + cfg.step);
+  if (cfg.style == NumberingConfig::Sequence) {
+    return QString("%1%2_%3%4")
+        .arg(cfg.seqPrefix)
+        .arg(cfg.seqNumber, cfg.seqPadding, 10, QChar('0'))
+        .arg(cfg.shotPrefix)
+        .arg(next, cfg.padding, 10, QChar('0'));
+  }
+  return QString("%1%2").arg(cfg.shotPrefix).arg(next, cfg.padding, 10, QChar('0'));
+}
+
 void ZtoryModel::renumberAll() {
   for (int i = 0; i < (int)m_shots.size(); i++) {
-    m_shots[i].shotNumber = QString("%1").arg(i + 1, 2, 10, QChar('0'));
+    m_shots[i].shotNumber = m_numberingConfig.shotName(i);
     updateColumnName(i);
   }
 }
@@ -303,7 +356,18 @@ void ZtoryModel::save() {
   xml.setAutoFormatting(true);
   xml.writeStartDocument();
   xml.writeStartElement("ztoryc");
-  xml.writeAttribute("version", "2");
+  xml.writeAttribute("version", "3");
+  // ── Numbering config ──
+  xml.writeStartElement("numberingConfig");
+  xml.writeAttribute("style",       QString::number((int)m_numberingConfig.style));
+  xml.writeAttribute("shotPrefix",  m_numberingConfig.shotPrefix);
+  xml.writeAttribute("seqPrefix",   m_numberingConfig.seqPrefix);
+  xml.writeAttribute("step",        QString::number(m_numberingConfig.step));
+  xml.writeAttribute("padding",     QString::number(m_numberingConfig.padding));
+  xml.writeAttribute("seqPadding",  QString::number(m_numberingConfig.seqPadding));
+  xml.writeAttribute("startNumber", QString::number(m_numberingConfig.startNumber));
+  xml.writeAttribute("seqNumber",   QString::number(m_numberingConfig.seqNumber));
+  xml.writeEndElement();
   for (int si = 0; si < (int)m_shots.size(); si++) {
     const ShotData &s = m_shots[si];
     xml.writeStartElement("shot");
@@ -338,7 +402,21 @@ void ZtoryModel::load() {
   while (!xml.atEnd()) {
     xml.readNext();
     if (xml.isStartElement()) {
-      if (xml.name() == QLatin1String("shot")) {
+      if (xml.name() == QLatin1String("numberingConfig")) {
+        m_numberingConfig.style =
+            (NumberingConfig::Style)xml.attributes().value("style").toInt();
+        m_numberingConfig.shotPrefix  = xml.attributes().value("shotPrefix").toString();
+        m_numberingConfig.seqPrefix   = xml.attributes().value("seqPrefix").toString();
+        m_numberingConfig.step        = xml.attributes().value("step").toInt();
+        m_numberingConfig.padding     = xml.attributes().value("padding").toInt();
+        m_numberingConfig.seqPadding  = xml.attributes().value("seqPadding").toInt();
+        m_numberingConfig.startNumber = xml.attributes().value("startNumber").toInt();
+        m_numberingConfig.seqNumber   = xml.attributes().value("seqNumber").toInt();
+        // Safety: ensure sensible defaults if loading old files without this element
+        if (m_numberingConfig.step <= 0) m_numberingConfig.step = 10;
+        if (m_numberingConfig.padding <= 0) m_numberingConfig.padding = 3;
+        if (m_numberingConfig.shotPrefix.isEmpty()) m_numberingConfig.shotPrefix = "sh";
+      } else if (xml.name() == QLatin1String("shot")) {
         si = xml.attributes().value("index").toInt();
         while ((int)m_shots.size() <= si) m_shots.push_back(ShotData());
         m_shots[si].shotNumber   = xml.attributes().value("number").toString();

@@ -23,6 +23,7 @@
 #include "toonz/sceneproperties.h"
 #include "toutputproperties.h"
 #include "toonzqt/gutil.h"
+#include "toonzqt/icongenerator.h"
 #include "orientation.h"
 #include <QPainter>
 #include <QMouseEvent>
@@ -35,6 +36,9 @@
 #include <QFileDialog>
 #include <QContextMenuEvent>
 #include "tsound.h"
+#include "toonz/tstageobject.h"
+#include "toonz/tstageobjecttree.h"
+#include "toonz/tstageobjectid.h"
 
 // Shared label column width — must match ZtoryAudioTrack::labelW (80px).
 // Used by ZtoryAnimaticRuler and ZtoryAnimaticTrack to align with audio tracks.
@@ -155,8 +159,10 @@ void ZtoryAnimaticRuler::paintEvent(QPaintEvent *) {
   }
 
   // ---- Playhead — downward triangle + line (middle zone) ----
+  // Centered on the frame column (+ half-frame offset) so the triangle tip
+  // points to the middle of the frame, not its left edge.
   static const int kPH = 8;
-  int px = kLabelW + (int)(m_currentFrame * m_ppf);
+  int px = kLabelW + (int)(m_currentFrame * m_ppf) + (int)(m_ppf / 2);
   p.setPen(Qt::NoPen);
   p.setBrush(QColor(255, 100, 0));
   QPolygon tri;
@@ -177,13 +183,19 @@ void ZtoryAnimaticRuler::paintEvent(QPaintEvent *) {
       p.drawEllipse(QPoint(ox, kFosH / 2), 4, 4);
     }
 
-    // MOS strip — relative dots (red=past, blue=future), bottom strip
+    // MOS strip — relative dots (red=past, blue=future), bottom strip.
+    // A line connects each dot back to the playhead, matching the native
+    // timeline's visual style that shows the relative distance at a glance.
     for (int i = 0; i < m_localMask.getMosCount(); i++) {
       int rel   = m_localMask.getMos(i);
       int frame = m_currentFrame + rel;
       if (frame < 0) continue;
       int ox = kLabelW + (int)(frame * m_ppf) + (int)(m_ppf / 2);
       QColor mc = (rel < 0) ? QColor(255, 100, 100) : QColor(100, 150, 255);
+      // Connecting line from playhead to this MOS dot
+      p.setPen(QPen(mc.darker(130), 1));
+      p.drawLine(px, mosY + kMosH / 2, ox, mosY + kMosH / 2);
+      p.setPen(Qt::NoPen);
       p.setBrush(mc);
       p.drawEllipse(QPoint(ox, mosY + kMosH / 2), 4, 4);
     }
@@ -269,7 +281,7 @@ void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
     int r0, r1, step;
     XsheetGUI::getPlayRange(r0, r1, step);
     int x0 = (int)(r0 * m_ppf);
-    int x1 = (int)(r1 * m_ppf);
+    int x1 = (int)((r1 + 1) * m_ppf);  // Out marker is at right edge of frame r1
     if (std::abs(mx - x0) <= kM) { m_dragMode = DragIn;  return; }
     if (std::abs(mx - x1) <= kM) { m_dragMode = DragOut; return; }
   }
@@ -547,8 +559,8 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
     p.fillRect(x0, trackH - kScrubBarH, x1 - x0, kScrubBarH, QColor(255, 165, 0));
   }
 
-  // Playhead (always on top, not cached)
-  int phx = labelW + (int)(m_currentFrame * m_ppf);
+  // Playhead (always on top, not cached) — centered on frame like the ruler
+  int phx = labelW + (int)(m_currentFrame * m_ppf) + (int)(m_ppf / 2);
   p.setPen(QColor(255, 100, 0));
   p.drawLine(phx, 0, phx, trackH);
 }
@@ -659,6 +671,28 @@ void ZtoryAnimaticTrack::refreshFromScene() {
     QString colName = QString::fromStdString(
         mainXsh->getStageObject(mainXsh->getColumnObjectId(col))->getName());
     b.shotNumber = colName.isEmpty() ? QString("%1").arg(col + 1, 2, 10, QChar('0')) : colName;
+
+    // Generate thumbnail from the first drawing in the sub-scene
+    if (cl) {
+      TXsheet *subXsh = cl->getXsheet();
+      if (subXsh) {
+        bool found = false;
+        for (int c = 0; c < subXsh->getColumnCount() && !found; c++) {
+          TXshColumn *subCol = subXsh->getColumn(c);
+          if (!subCol || subCol->isEmpty()) continue;
+          int sr0 = 0, sr1 = 0;
+          subCol->getRange(sr0, sr1);
+          for (int r = sr0; r <= sr1 && !found; r++) {
+            TXshCell cell = subXsh->getCell(r, c);
+            if (!cell.isEmpty() && cell.getSimpleLevel()) {
+              b.thumbnail = IconGenerator::instance()->getIcon(
+                cell.m_level.getPointer(), cell.getFrameId());
+              found = !b.thumbnail.isNull();
+            }
+          }
+        }
+      }
+    }
     m_blocks.push_back(b);
   }
   // Ordina per startFrameInMain per garantire ordine corretto nel ripple
@@ -709,20 +743,33 @@ void ZtoryAnimaticTrack::paintEvent(QPaintEvent *) {
       p.drawRect(x + 2, 3, w - 4, h - 2);
     }
 
-    // Thumbnail
-    if (!b.thumbnail.isNull())
-      p.drawPixmap(x + 2, 4, qMin(w - 4, 60), h - 4, b.thumbnail);
+    // Thumbnail — visible when block is wide enough to show a useful preview
+    int thumbW = 0;
+    if (!b.thumbnail.isNull() && w > 40) {
+      double aspect = b.thumbnail.width() / (double)qMax(b.thumbnail.height(), 1);
+      int thumbH = h - 4;
+      thumbW = (int)(thumbH * aspect);
+      thumbW = qMin(thumbW, w - 6);
+      p.setOpacity(0.85);
+      p.drawPixmap(x + 2, 4, thumbW, thumbH, b.thumbnail);
+      p.setOpacity(1.0);
+    }
 
-    // Numero shot
+    // Numero shot — to the right of the thumbnail if present
     p.setPen(Qt::white);
-    p.drawText(x + 4, 2, w - 8, h, Qt::AlignBottom | Qt::AlignLeft, b.shotNumber);
+    int textX = x + 4 + (thumbW > 0 ? thumbW + 2 : 0);
+    int textW = w - 8 - (thumbW > 0 ? thumbW + 2 : 0);
+    if (textW > 10)
+      p.drawText(textX, 2, textW, h, Qt::AlignBottom | Qt::AlignLeft, b.shotNumber);
+    else
+      p.drawText(x + 4, 2, w - 8, h, Qt::AlignBottom | Qt::AlignLeft, b.shotNumber);
 
     // Handle resize (bordo destro)
     p.fillRect(x + w - 4, 2, 4, h, QColor(180, 180, 80));
   }
 
-  // Playhead
-  int px = kLabelW + (int)(m_currentFrame * m_ppf);
+  // Playhead — centered on frame like the ruler
+  int px = kLabelW + (int)(m_currentFrame * m_ppf) + (int)(m_ppf / 2);
   p.setPen(QColor(255, 100, 0));
   p.drawLine(px, 0, px, height());
 }
@@ -755,10 +802,13 @@ void ZtoryAnimaticTrack::mousePressEvent(QMouseEvent *e) {
       int w = (int)(duration * m_ppf);
       if (mx >= x && mx < x + w) {
         QMenu menu(this);
-        QAction *matchAct = menu.addAction(tr("Match Subscene Duration"));
+        QAction *matchAct   = menu.addAction(tr("Match Subscene Duration"));
+        QAction *mergeAct   = menu.addAction(tr("Merge with Next Shot"));
         QAction *chosen = menu.exec(e->globalPos());
         if (chosen == matchAct)
           emit matchSubsceneDuration(b.col);
+        else if (chosen == mergeAct)
+          emit mergeWithNextRequested(b.col);
         return;
       }
     }
@@ -1029,6 +1079,12 @@ ZtoryAnimaticViewer::ZtoryAnimaticViewer(QWidget *parent)
   connect(ctrl->frameHandle(), &TFrameHandle::frameSwitched, this, [this]() {
     if (m_sceneViewer) m_sceneViewer->update();
   });
+
+  // Repaint when onion skin mask changes so the viewer shows the onion frames.
+  // Without this connection, syncOnionToGlobal() pushes the new mask to the
+  // global handle but the viewer never receives a repaint request.
+  connect(TApp::instance()->getCurrentOnionSkin(),
+          SIGNAL(onionSkinMaskChanged()), m_sceneViewer, SLOT(update()));
 
   // Set up layout: scene viewer + flip console (like SceneViewerPanel)
   m_mainLayout->insertWidget(0, m_fsWidget, 1);
@@ -1418,6 +1474,8 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
           this, &ZtoryAnimaticPanel::onMatchSubsceneDuration);
   connect(m_track, &ZtoryAnimaticTrack::razorRequested,
           this, &ZtoryAnimaticPanel::onRazorRequested);
+  connect(m_track, &ZtoryAnimaticTrack::mergeWithNextRequested,
+          this, &ZtoryAnimaticPanel::onMergeWithNext);
   connect(m_track, &ZtoryAnimaticTrack::shotDurationChanged,
           this, &ZtoryAnimaticPanel::onShotDurationChanged);
   connect(m_track, &ZtoryAnimaticTrack::shotMoved,
@@ -1578,6 +1636,7 @@ void ZtoryAnimaticPanel::onShotMoved(int col, int newStartFrame) {
 }
 
 void ZtoryAnimaticPanel::onMergeShots() {
+  if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
   const std::set<int> &sel = m_track->selectedCols();
   if (sel.size() < 2) return;
 
@@ -1637,10 +1696,95 @@ void ZtoryAnimaticPanel::onMergeShots() {
   xsh->updateFrameCount();
   app->getCurrentXsheet()->notifyXsheetChanged();
   ZtoryModel::instance()->resequenceXsheet();
+  emit ZtoryModel::instance()->modelReset();
   m_track->refreshFromScene();
 }
 
+void ZtoryAnimaticPanel::onMergeWithNext(int col) {
+  if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
+
+  TApp *app = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  if (!scene) return;
+  TXsheet *xsh = scene->getChildStack()->getTopXsheet();
+  if (!xsh) return;
+
+  // Find the next non-empty column after 'col'
+  TXshColumn *dstColumn = xsh->getColumn(col);
+  if (!dstColumn) return;
+  int dstR0 = 0, dstR1 = 0;
+  dstColumn->getRange(dstR0, dstR1);
+
+  // Find next shot column
+  int nextCol = -1;
+  for (int c = col + 1; c < xsh->getColumnCount(); c++) {
+    TXshColumn *nc = xsh->getColumn(c);
+    if (!nc || nc->isEmpty()) continue;
+    // Check it's a child level (shot), not audio
+    int nr0 = 0, nr1 = 0;
+    nc->getRange(nr0, nr1);
+    for (int r = nr0; r <= nr1; r++) {
+      TXshCell cell = xsh->getCell(r, c);
+      if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
+        nextCol = c;
+        break;
+      }
+    }
+    if (nextCol >= 0) break;
+  }
+  if (nextCol < 0) return;
+
+  // Find child level of destination
+  TXshChildLevel *dstCl = nullptr;
+  for (int r = dstR0; r <= dstR1; r++) {
+    TXshCell cell = xsh->getCell(r, col);
+    if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
+      dstCl = cell.m_level->getChildLevel();
+      break;
+    }
+  }
+  if (!dstCl) return;
+
+  // Append next shot's cells to dst column
+  TXshColumn *srcColumn = xsh->getColumn(nextCol);
+  int srcR0 = 0, srcR1 = 0;
+  srcColumn->getRange(srcR0, srcR1);
+  int appendAt = dstR1 + 1;
+  int lastFrameNum = dstR1 - dstR0 + 1;
+  int duration = srcR1 - srcR0 + 1;
+  for (int r = 0; r < duration; r++)
+    xsh->setCell(appendAt + r, col, TXshCell(dstCl, TFrameId(++lastFrameNum)));
+
+  ColumnCmd::deleteColumn(nextCol);
+
+  xsh->updateFrameCount();
+  app->getCurrentXsheet()->notifyXsheetChanged();
+  ZtoryModel::instance()->resequenceXsheet();
+  emit ZtoryModel::instance()->modelReset();
+  m_track->refreshFromScene();
+}
+
+// Helper: insert a TStageObject keyframe (without undo) on every column
+// and the first camera of the given child xsheet at 0-based |frame|.
+static void addRazorKeyframes(TXshChildLevel *cl, int frame) {
+  if (!cl) return;
+  TXsheet *childXsh = cl->getXsheet();
+  if (!childXsh) return;
+  TStageObjectTree *tree = childXsh->getStageObjectTree();
+  if (!tree) return;
+  int numCols = childXsh->getColumnCount();
+  for (int c = 0; c < numCols; c++) {
+    TStageObject *obj =
+        tree->getStageObject(TStageObjectId::ColumnId(c), false);
+    if (obj) obj->setKeyframeWithoutUndo(frame);
+  }
+  TStageObject *cam =
+      tree->getStageObject(TStageObjectId::CameraId(0), false);
+  if (cam) cam->setKeyframeWithoutUndo(frame);
+}
+
 void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
+  if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
   TApp *app = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (!scene) return;
@@ -1651,32 +1795,79 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
   if (!srcColumn) return;
   int r0 = 0, r1 = 0;
   srcColumn->getRange(r0, r1);
-  // splitFrame is absolute; compute relative position within shot
+  // splitRel = # frames that stay in the original shot (rows r0..splitFrame-1)
   int splitRel = splitFrame - r0;
   if (splitRel <= 0 || splitRel >= r1 - r0 + 1) return;
 
-  // Find the child level of the source column
-  TXshChildLevel *cl = nullptr;
+  int totalDuration     = r1 - r0 + 1;
+  int secondHalf        = totalDuration - splitRel; // frames for the new shot
+
+  // Grab original child level before cloning.
+  TXshChildLevel *origCL = nullptr;
   for (int r = r0; r <= r1; r++) {
     TXshCell cell = mainXsh->getCell(r, col);
     if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
-      cl = cell.m_level->getChildLevel();
+      origCL = cell.m_level->getChildLevel();
       break;
     }
   }
-  if (!cl) return;
 
-  // Insert a new column right after 'col' for the second half
+  // Clone → creates a fully independent sub-scene at col+1 with cells r0..r1.
+  ColumnCmd::cloneChild(col);
   int newCol = col + 1;
-  mainXsh->insertColumn(newCol);
 
-  // Move cells from splitFrame..r1 to the new column (starting at row 0 of new col)
-  for (int r = splitFrame; r <= r1; r++) {
-    TXshCell cell = mainXsh->getCell(r, col);
-    if (!cell.isEmpty())
-      mainXsh->setCell(r - splitFrame + r0, newCol, cell);
-    mainXsh->clearCells(r, col);
+  // Grab clone's child level.
+  TXshChildLevel *cloneCL = nullptr;
+  for (int r = r0; r <= r1; r++) {
+    TXshCell cell = mainXsh->getCell(r, newCol);
+    if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
+      cloneCL = cell.m_level->getChildLevel();
+      break;
+    }
   }
+
+  // Fix clone's child xsheet: remove the first splitRel frames so that
+  // frame 1 of the new sub-scene corresponds to the cut point.
+  // (resequenceXsheet always maps cell r → TFrameId(r+1), so without this
+  //  the clone would show the shot from frame 1 instead of from splitRel+1.)
+  if (cloneCL) {
+    TXsheet *childXsh = cloneCL->getXsheet();
+    if (childXsh) {
+      int maxF  = childXsh->getFrameCount();
+      int nCols = childXsh->getColumnCount();
+      for (int c = 0; c < nCols; c++) {
+        // Shift surviving frames to the front.
+        for (int r = 0; r < secondHalf && (splitRel + r) < maxF; r++)
+          childXsh->setCell(r, c, childXsh->getCell(splitRel + r, c));
+        // Clear the now-stale tail.
+        for (int r = secondHalf; r < maxF; r++)
+          childXsh->clearCells(r, c);
+      }
+      childXsh->updateFrameCount();
+    }
+  }
+
+  // Trim original (col): keep only r0..splitFrame-1.
+  for (int r = splitFrame; r <= r1; r++)
+    mainXsh->clearCells(r, col);
+
+  // Trim clone (col+1): keep only splitFrame..r1, shift to start at r0.
+  for (int r = r0; r < splitFrame; r++)
+    mainXsh->clearCells(r, newCol);
+  for (int r = 0; r < secondHalf; r++) {
+    TXshCell cell = mainXsh->getCell(splitFrame + r, newCol);
+    mainXsh->setCell(r0 + r, newCol, cell);
+    if (splitFrame + r != r0 + r)
+      mainXsh->clearCells(splitFrame + r, newCol);
+  }
+
+  // Insert keyframes at the cut boundary so both sub-scenes have a
+  // "pose locked" marker: last frame of original, first frame of clone.
+  addRazorKeyframes(origCL, splitRel - 1); // 0-based last frame of original
+  addRazorKeyframes(cloneCL, 0);           // 0-based first frame of clone
+
+  // Notify the board FIRST (before resequenceXsheet emits modelReset).
+  emit ZtoryModel::instance()->shotAdded(newCol);
 
   mainXsh->updateFrameCount();
   app->getCurrentXsheet()->notifyXsheetChanged();

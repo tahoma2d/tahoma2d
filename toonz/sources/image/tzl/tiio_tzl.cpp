@@ -157,8 +157,9 @@ bool readHeaderAndOffsets(FILE *chan, TzlOffsetMap &frameOffsTable,
   TINT32 iconOffsetTablePos;
   // char magic[8];
 
-  assert(frameOffsTable.empty());
-  assert(iconOffsTable.empty());
+  // Guard: tables must be empty on entry. Use return false instead of assert
+  // so a corrupt file never triggers abort() during a paint event.
+  if (!frameOffsTable.empty() || !iconOffsTable.empty()) return false;
 
   if (!readVersion(chan, version)) return false;
 
@@ -206,8 +207,12 @@ bool readHeaderAndOffsets(FILE *chan, TzlOffsetMap &frameOffsTable,
       QByteArray suffix;
       fread(&number, sizeof(TINT32), 1, chan);
       if (version >= 15) {
-        TINT32 suffixLength;
+        TINT32 suffixLength = 0;
         fread(&suffixLength, sizeof(TINT32), 1, chan);
+        // Guard: a corrupt suffixLength could be huge and trigger an OOM
+        // abort() via malloc when resize() is called. 256 chars is far more
+        // than any real suffix (typically 1–2 chars like 'a', 'aa').
+        if (suffixLength < 0 || suffixLength > 256) return false;
         suffix.resize(suffixLength);
         fread(suffix.data(), sizeof(char), suffixLength, chan);
       } else {
@@ -236,11 +241,13 @@ bool readHeaderAndOffsets(FILE *chan, TzlOffsetMap &frameOffsTable,
         if (i > 0) {
           frameOffsTable[oldFid].m_length =
               offs - frameOffsTable[oldFid].m_offs;
-          assert(frameOffsTable[oldFid].m_length > 0);
+          // Corrupt offset table: frame lengths must be positive.
+          // Return false instead of asserting to avoid abort() during paint.
+          if (frameOffsTable[oldFid].m_length <= 0) return false;
         }
         if (i == frameCount - 1) {
           frameOffsTable[fid].m_length = offsetTablePos - offs;
-          assert(frameOffsTable[fid].m_length > 0);
+          if (frameOffsTable[fid].m_length <= 0) return false;
         }
       }
       oldFid = fid;
@@ -255,8 +262,9 @@ bool readHeaderAndOffsets(FILE *chan, TzlOffsetMap &frameOffsTable,
         QByteArray suffix;
         fread(&number, sizeof(TINT32), 1, chan);
         if (version >= 15) {
-          TINT32 suffixLength;
+          TINT32 suffixLength = 0;
           fread(&suffixLength, sizeof(TINT32), 1, chan);
+          if (suffixLength < 0 || suffixLength > 256) return false;
           suffix.resize(suffixLength);
           fread(suffix.data(), sizeof(char), suffixLength, chan);
         } else {

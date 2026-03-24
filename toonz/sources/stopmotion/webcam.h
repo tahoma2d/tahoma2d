@@ -11,6 +11,14 @@
 
 #include <QObject>
 
+#ifdef Q_OS_MAC
+// Forward declare AVFoundation types to avoid ObjC in header
+typedef void AVCaptureSession_t;
+typedef void AVCaptureDeviceInput_t;
+typedef void AVCaptureVideoDataOutput_t;
+typedef void AVCaptureDelegate_t;
+#endif
+
 class QCamera;
 class QCameraInfo;
 
@@ -96,6 +104,12 @@ public:
 
   bool isWebcamActive() { return m_cvWebcam.isOpened(); }
 
+#ifdef Q_OS_MAC
+  bool initWebcamAVCapture();
+  void releaseWebcamAVCapture();
+  bool getWebcamImageAVCapture(TRaster32P& tempImage);
+#endif
+
 private:
   // Webcam Properties
   QList<QCameraInfo> m_webcams;
@@ -123,6 +137,16 @@ private:
 
   bool m_useCalibration;
   cv::Mat m_calibrationMapX, m_calibrationMapY;
+
+#ifdef Q_OS_MAC
+  AVCaptureSession_t*          m_avSession   = nullptr;
+  AVCaptureDeviceInput_t*      m_avInput     = nullptr;
+  AVCaptureVideoDataOutput_t*  m_avOutput    = nullptr;
+  AVCaptureDelegate_t*         m_avDelegate  = nullptr;
+  bool                         m_useAVCapture = false;
+  cv::Mat                      m_avCurrentFrame;
+  QMutex*                      m_avFrameMutex = nullptr;
+#endif
 
   void adjustLevel(cv::Mat& image);
   void binarize(cv::Mat& image);
