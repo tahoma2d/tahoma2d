@@ -326,7 +326,8 @@ private:
   QSlider *m_zoomSlider = nullptr;
   bool m_audioLinked = true;
   double m_ppf = 8.0;
-  bool m_refreshing = false; // re-entrancy guard for refreshFromScene
+  bool m_refreshing = false;      // re-entrancy guard for refreshFromScene
+  bool m_refreshingAudio = false; // re-entrancy guard for refreshAudioTracks
 };
 
 #endif

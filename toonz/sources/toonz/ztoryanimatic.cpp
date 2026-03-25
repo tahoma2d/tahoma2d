@@ -1543,6 +1543,9 @@ void ZtoryAnimaticPanel::refreshFromScene() {
 }
 
 void ZtoryAnimaticPanel::refreshAudioTracks() {
+  if (m_refreshingAudio) return;
+  m_refreshingAudio = true;
+
   // Rimuovi tracce audio esistenti
   for (auto *at : m_audioTracks) {
     m_scrollLay->removeWidget(at);
@@ -1580,6 +1583,7 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     m_scrollLay->insertWidget(insertIdx, at);
     m_audioTracks.append(at);
   }
+  m_refreshingAudio = false;
 }
 
 void ZtoryAnimaticPanel::showEvent(QShowEvent *e) {
@@ -1949,10 +1953,19 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
       int nCols = childXsh->getColumnCount();
       if (dbg) fprintf(dbg, "  clone childXsh: maxF=%d nCols=%d\n", maxF, nCols);
       for (int c = 0; c < nCols; c++) {
+        // Collect source cells into a temp buffer first — writing to the
+        // same column we read from can trigger vector reallocation inside
+        // TXshCellColumn::setCell, invalidating the source data.
+        std::vector<TXshCell> buf(secondHalf);
         for (int r = 0; r < secondHalf && (splitRel + r) < maxF; r++)
-          childXsh->setCell(r, c, childXsh->getCell(splitRel + r, c));
-        for (int r = secondHalf; r < maxF; r++)
+          buf[r] = childXsh->getCell(splitRel + r, c);
+        // Clear entire column range, then write back from buffer.
+        for (int r = 0; r < maxF; r++)
           childXsh->clearCells(r, c);
+        for (int r = 0; r < secondHalf; r++) {
+          if (!buf[r].isEmpty())
+            childXsh->setCell(r, c, buf[r]);
+        }
       }
       childXsh->updateFrameCount();
       if (dbg) fprintf(dbg, "  clone childXsh after shift: frameCount=%d\n", childXsh->getFrameCount());
