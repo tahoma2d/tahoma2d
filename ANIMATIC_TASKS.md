@@ -1214,18 +1214,18 @@ remove or guard the existing call in `iocommand.cpp::newScene()`.
 4. **Task 1** — ~~Fix animatic viewer visibility + TFrameHandle~~ ✅ DONE (ZtoryAnimaticController)
 4. **Task 12a** — ~~Audio waveform~~ ✅ DONE (confirmed visible)
 5. **Task 12b** — ~~Audio scrubbing on ruler drag~~ ✅ DONE (2026-03-21)
-6. **Task 12c** — Sound preview bar in ZtoryAudioTrack (click+drag range → play on release)
+6. **Task 12c** — ~~Sound preview bar in ZtoryAudioTrack~~ ✅ DONE (confermato 2026-03-25)
 7. **Task 13c** — ~~Playhead triangle style~~ ✅ DONE (2026-03-21)
 7. **Task 13b** — ~~In/Out markers on animatic ruler~~ ✅ DONE (2026-03-21)
 8. **Task 13a** — ~~Onion skin markers on ruler~~ ✅ DONE (2026-03-21)
 9. **Task 3** — ~~Fix Copy vs Clone in Board~~ ✅ DONE
 10. **Task 2** — ~~Unify resequenceXsheet into ZtoryModel~~ ✅ DONE
-11. **Task 7** — Double-click to enter edit mode (quick win)
-12. **Task 8** — Multi-selection in track (prerequisite for merge/razor)
+11. **Task 7** — ~~Double-click to enter edit mode~~ ✅ DONE (confermato 2026-03-25)
+12. **Task 8** — ~~Multi-selection in track~~ ✅ DONE (confermato 2026-03-25)
 13. **Task 6a** — ~~Zoom slider~~ ✅ DONE (confermato 2026-03-24)
-14. **Task 6c** — Razor tool
-15. **Task 6d** — Link/Unlink audio-video
-16. **Task 6f** — Merge shots
+14. **Task 6c** — ~~Razor tool (video)~~ ✅ DONE (2026-03-25) ⚠️ BUG: non funziona su tracce audio
+15. **Task 6d** — Link/Unlink audio-video ⚠️ BUG: audio non segue il video in drag
+16. **Task 6f** — Merge shots ⚠️ BUG: aggiunge frames ma non copia il contenuto del secondo shot
 17. **Task 5** — Story-strip
 18. **Task 9** — Audio export with shot
 19. **Task 10** — X-Sheet panel guard for audio import

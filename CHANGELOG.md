@@ -6,6 +6,34 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-03-25] — Stability fixes: re-entrancy guards, razor crash, duplicate crash, webcam UX
+
+### Fixed
+
+- **Razor SIGSEGV** (ztoryanimatic.cpp:1957): in-place cell-shift sul clone child xsheet
+  causava crash per realloc del vettore interno. Fix: buffer temporaneo per raccogliere
+  le celle sorgente prima di svuotare e riscrivere la colonna.
+- **Stack overflow / hang** (ztoryanimatic.cpp): `refreshFromScene` e `refreshAudioTracks`
+  potevano rientrare durante `insertWidget` (Qt processa eventi queued). Aggiunto
+  `m_refreshing` e `m_refreshingAudio` come guard di rientranza.
+- **DuplicatePopup SIGABRT** (txsheet.cpp:829): `assert(upTo >= r1 + 1)` sostituito con
+  `if (upTo < r1 + 1) return;` — crash quando upTo era dentro il range selezionato.
+- **Webcam switch two-step UX** (stopmotioncontroller.cpp): eliminato il reset a
+  "Select Camera"; ora mantiene la selezione dell'utente e riconnette con QTimer(300ms).
+- **Razor child xsheet trim** (ztoryanimatic.cpp): il sotto-xscene del primo shot
+  ora viene correttamente trimmato dopo il taglio (i frame in eccesso venivano mantenuti).
+- **Workflow StopMotion room** (mainwindow.cpp): ripristinato `switchRoomChoice("StopMotion")`
+  e corrette le room case-sensitive ("Capture" non "CAPTURE").
+
+### Notes
+
+- Bug vettoriale (crash disegno vettoriale) confermato come problema preesistente
+  Tahoma2D (issues #1545, #1712, #1715, #1826) — non collegato a Ztoryc.
+- Nuovi task aperti per prossima sessione: merge con keyframe camera/colonne,
+  load audio solo da main xsheet, razor audio linked/unlinked, traccia audio
+  selezionabile/draggabile con cut-copy-paste.
+
+---
 ## [2026-03-24] — Razor fix (parziale), webcam two-step switch (regressione), RecentFiles bug
 
 ### Fixed
@@ -36,12 +64,14 @@
 
 ### Bug aperti da risolvere nella prossima sessione
 
-1. **Webcam feed perso**: il two-step switch ha introdotto una regressione.
-   - Ipotesi: `changeCameras(0, None, 0)` rilascia risorse che non vengono
-     riacquisite correttamente dalla seconda chiamata.
-   - Alternativa da provare: bypass del two-step, tornare al comportamento originale
-     ma aumentare il timeout del semaforo a 3-4s, oppure usare `dispatch_sync`
-     sulla `sampleBufferCallbackQueue` prima di `stopRunning`.
+1. **Webcam switch**: il two-step ha introdotto regressione (feed perso).
+   - **Soluzione approvata:** forzare il passaggio obbligato attraverso `selectCamera()`
+     prima di ogni switch. Osservazione: se l'utente clicca manualmente "Select Camera"
+     tra uno switch e l'altro, il cambio funziona perfettamente. Quindi invece di
+     replicare il cleanup in modo asincrono, chiamare automaticamente `selectCamera()`
+     (o il codepath equivalente) come primo step nel handler di cambio camera.
+     Comportamento risultante: ogni switch fa sempre SELECT → INIT, mai INIT diretto.
+   - Revertire il two-step e il QTimer. Non usare dispatch_async né semafori.
 
 2. **Razor prima parte troppo lunga**: le celle in coda all'originale non vengono
    cancellate. Verificare che `clearCells(splitFrame..r1, col)` venga eseguito
