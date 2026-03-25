@@ -3310,7 +3310,11 @@ void StopMotion::changeCameras(int comboIndex, CameraType cameraType,
   }
 
   // close current camera if open
+  // releaseWebcam() must be called before clearWebcam() to properly stop the
+  // AVCaptureSession (same sequence as disconnectAllCameras()); without it the
+  // old session keeps running and initWebcamAVCapture() for the new camera hangs.
   if (m_currentCameraType == CameraType::Web) {
+    m_webcam->releaseWebcam();
     m_webcam->clearWebcam();
   }
 #ifdef WITH_CANON

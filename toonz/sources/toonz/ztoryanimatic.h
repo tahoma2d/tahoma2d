@@ -119,6 +119,7 @@ signals:
   void matchSubsceneDuration(int col);
   void razorRequested(int col, int splitFrame);
   void mergeWithNextRequested(int col);
+  void returnToMainRequested();
 
 private:
   double m_ppf = 8.0;
@@ -150,6 +151,10 @@ public:
   int trackHeight() const { return m_trackHeight; }
   void setTrackHeight(int h) { m_trackHeight = h; m_waveformDirty = true; setFixedHeight(h); update(); }
   int columnIndex() const { return m_col; }
+  void setRazorActive(bool on);
+
+signals:
+  void razorRequested(int col, int frame);
 
 protected:
   void paintEvent(QPaintEvent *) override;
@@ -170,6 +175,7 @@ private:
   int  m_previewR1        = -1;
   bool m_draggingPreview  = false;
   int  m_previewDragStart = -1;
+  bool m_razorActive      = false;
 };
 
 // ---- ZtoryStoryStrip ----
@@ -293,6 +299,7 @@ protected:
 private slots:
   void onShotClicked(int col);
   void onShotDoubleClicked(int col);
+  void onReturnToMain();
   void onShotDurationChanged(int col, int newF1);
   void onRazorRequested(int col, int splitFrame);
   void onShotMoved(int col, int newStartFrame);
@@ -302,6 +309,7 @@ private slots:
   void onZoomChanged(double ppf);
   void onMatchSubsceneDuration(int col);
   void onFrameChanged(int frame);
+  void onAudioRazorRequested(int col, int frame);
 
 public:
   void refreshAudioTracks();

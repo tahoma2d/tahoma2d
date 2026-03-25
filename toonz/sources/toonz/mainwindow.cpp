@@ -49,6 +49,7 @@
 #include "tthread.h"
 
 // Qt includes
+#include "../stopmotion/stopmotion.h"
 #include <QStackedWidget>
 #include <QSettings>
 #include <QApplication>
@@ -1341,6 +1342,10 @@ static bool switchToFirstRoom(MainWindow *mw, const QStringList &names) {
 }
 
 void MainWindow::onWorkflowStoryboard() {
+  // Stop live view if active before switching workflows
+  StopMotion *sm = StopMotion::instance();
+  if (sm && sm->m_liveViewStatus > StopMotion::LiveViewClosed)
+    sm->stopLiveView();
   switchRoomChoice("Storyboard");
   if (switchToFirstRoom(this, {"BOARD", "Storyboard", "ANIMATIC", "SHOTEDITOR"}))
     return;
@@ -1355,6 +1360,9 @@ void MainWindow::onWorkflowStoryboard() {
 }
 
 void MainWindow::onWorkflow2D() {
+  StopMotion *sm = StopMotion::instance();
+  if (sm && sm->m_liveViewStatus > StopMotion::LiveViewClosed)
+    sm->stopLiveView();
   switchRoomChoice("Tradigital");
   if (switchToFirstRoom(this, {"2D", "Animation", "Drawing"})) return;
   DVGui::warning(tr("2D room not found."));
@@ -1367,9 +1375,18 @@ void MainWindow::onWorkflowCutout() {
 }
 
 void MainWindow::onWorkflowStopMotion() {
+  // Stop live view if active before switching rooms
+  StopMotion *sm = StopMotion::instance();
+  if (sm && sm->m_liveViewStatus > StopMotion::LiveViewClosed)
+    sm->stopLiveView();
   switchRoomChoice("StopMotion");
-  if (switchToFirstRoom(this, {"StopMotion", "Stop Motion"})) return;
-  DVGui::warning(tr("Stop Motion room not found."));
+  // Room names are case-sensitive: the StopMotion layout has "Capture" (not
+  // "CAPTURE" or "StopMotion").
+  if (switchToFirstRoom(this, {"Capture", "Camera", "StopMotion", "Stop Motion"}))
+    return;
+  DVGui::warning(
+      tr("Stop Motion room not found.\n"
+         "Please create a room named 'Capture' or 'StopMotion'."));
 }
 
 void MainWindow::maximizePanel() {

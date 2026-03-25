@@ -243,24 +243,32 @@ cd toonz/sources && ./beautification.sh
 
 When the user says **"nuova sessione"**, automatically:
 1. Read `~/ZtorYc/AGENTS.md` (this file) for rules and architecture
-2. Read `~/ZtorYc/CHANGELOG.md` for context on previous sessions
-3. Read `~/ZtorYc/ANIMATIC_TASKS.md` for the current task list
+2. Read `~/ZtorYc/CHANGELOG.md` for context — **ONLY the first 60 lines** (recent sessions)
+3. Read `~/ZtorYc/ANIMATIC_TASKS.md` — **ONLY the Priority Order section** (last ~40 lines,
+   starting from `## Priority Order`). Read full task details only when about to implement them.
 4. Report briefly: last session summary + what you'll work on today (starting from
    the highest-priority pending task in ANIMATIC_TASKS.md)
 
+This keeps startup token cost low. Do NOT read full ANIMATIC_TASKS.md upfront.
+
 ### Context window — avviso token
 
-Monitor the context window usage throughout the session. When you estimate that
-roughly **20–25% of the context window remains**, stop what you are doing and
-warn the user immediately:
+⚠️ **CRITICO: avvisare PRESTO, non tardi.**
 
-> ⚠️ **Token in esaurimento** — siamo al ~75-80% del contesto. Suggerisco di
+Monitor context window usage continuously. When you estimate that roughly
+**40% of the context window remains** (i.e. ~60% used), stop immediately
+and warn the user:
+
+> ⚠️ **Token in esaurimento** — siamo al ~60% del contesto. Suggerisco di
 > chiudere la sessione ora con "sessione chiusa" così aggiorno CHANGELOG e faccio
 > il commit prima di perdere il contesto.
 
-Do this **before** starting any new task or tool call that could consume the
-remaining tokens. The goal is to always have enough context left to complete
-the full "sessione chiusa" procedure (CHANGELOG + git commit + rsync + cp docs).
+Do this **before** starting any new task or tool call. The "sessione chiusa"
+procedure itself (CHANGELOG write + git add + commit + push + rsync + cp 3 docs)
+consumes ~15–20% of context. You need that margin.
+
+**Non aspettare che sia troppo tardi.** Se stai per iniziare un task lungo
+e sei già al 50% del contesto, avvisa prima di iniziare.
 
 ---
 

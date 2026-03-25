@@ -1222,7 +1222,7 @@ remove or guard the existing call in `iocommand.cpp::newScene()`.
 10. **Task 2** — ~~Unify resequenceXsheet into ZtoryModel~~ ✅ DONE
 11. **Task 7** — Double-click to enter edit mode (quick win)
 12. **Task 8** — Multi-selection in track (prerequisite for merge/razor)
-13. **Task 6a** — Zoom slider (quick)
+13. **Task 6a** — ~~Zoom slider~~ ✅ DONE (confermato 2026-03-24)
 14. **Task 6c** — Razor tool
 15. **Task 6d** — Link/Unlink audio-video
 16. **Task 6f** — Merge shots

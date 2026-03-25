@@ -826,7 +826,7 @@ bool TXsheet::incrementCells(int r0, int c0, int r1, int c1,
 //-----------------------------------------------------------------------------
 
 void TXsheet::duplicateCells(int r0, int c0, int r1, int c1, int upTo) {
-  assert(upTo >= r1 + 1);
+  if (upTo < r1 + 1) return;
   int chunk = r1 - r0 + 1;
 
   for (int j = c0; j <= c1; j++) {

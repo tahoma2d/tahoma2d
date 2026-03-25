@@ -565,10 +565,21 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
   p.drawLine(phx, 0, phx, trackH);
 }
 
-// ---- ZtoryAudioTrack mouse events (12c: preview bar) ----
+void ZtoryAudioTrack::setRazorActive(bool on) {
+  m_razorActive = on;
+  setCursor(on ? Qt::CrossCursor : Qt::ArrowCursor);
+}
+
+// ---- ZtoryAudioTrack mouse events (12c: preview bar, razor) ----
 
 void ZtoryAudioTrack::mousePressEvent(QMouseEvent *e) {
   static const int kScrubBarH = 6;
+  // Razor tool: click anywhere on the waveform area (not in the scrub bar)
+  if (m_razorActive && e->y() < height() - kScrubBarH) {
+    int frame = std::max(0, (int)((e->x() - kLabelW) / m_ppf));
+    emit razorRequested(m_col, frame);
+    return;
+  }
   if (e->y() >= height() - kScrubBarH) {
     m_draggingPreview  = true;
     int frame = std::max(0, (int)((e->x() - kLabelW) / m_ppf));
@@ -927,6 +938,8 @@ void ZtoryAnimaticTrack::mouseDoubleClickEvent(QMouseEvent *e) {
       return;
     }
   }
+  // Double-click on empty space → return to main xsheet (close any open sub-scene)
+  emit returnToMainRequested();
 }
 
 void ZtoryAnimaticTrack::wheelEvent(QWheelEvent *e) {
@@ -1429,11 +1442,15 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
     m_track->setTool(ZtoryAnimaticTrack::SelectTool);
     selectBtn->setChecked(true);
     razorBtn->setChecked(false);
+    for (auto *at : m_audioTracks) at->setRazorActive(false);
   });
   connect(razorBtn, &QPushButton::clicked, this, [this, selectBtn, razorBtn](){
     m_track->setTool(ZtoryAnimaticTrack::RazorTool);
     razorBtn->setChecked(true);
     selectBtn->setChecked(false);
+    // Independent audio razor only when link is OFF; linked razor is handled
+    // automatically in onRazorRequested when a video shot is cut.
+    for (auto *at : m_audioTracks) at->setRazorActive(!m_audioLinked);
   });
   connect(linkBtn, &QPushButton::toggled, this, [this](bool checked){
     m_audioLinked = checked;
@@ -1476,6 +1493,8 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
           this, &ZtoryAnimaticPanel::onRazorRequested);
   connect(m_track, &ZtoryAnimaticTrack::mergeWithNextRequested,
           this, &ZtoryAnimaticPanel::onMergeWithNext);
+  connect(m_track, &ZtoryAnimaticTrack::returnToMainRequested,
+          this, &ZtoryAnimaticPanel::onReturnToMain);
   connect(m_track, &ZtoryAnimaticTrack::shotDurationChanged,
           this, &ZtoryAnimaticPanel::onShotDurationChanged);
   connect(m_track, &ZtoryAnimaticTrack::shotMoved,
@@ -1547,6 +1566,10 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     ZtoryAudioTrack *at = new ZtoryAudioTrack(col, name, m_scrollContent);
     at->setPixelsPerFrame(m_ppf);
     at->setCurrentFrame(m_track->property("currentFrame").toInt());
+    // Propagate current razor state (independent mode = razor ON + link OFF)
+    at->setRazorActive(m_track->tool() == ZtoryAnimaticTrack::RazorTool && !m_audioLinked);
+    connect(at, &ZtoryAudioTrack::razorRequested,
+            this, &ZtoryAnimaticPanel::onAudioRazorRequested);
 
     // Inserisci prima dello stretch finale
     int insertIdx = m_scrollLay->count() - 1;
@@ -1594,45 +1617,66 @@ void ZtoryAnimaticPanel::onShotDoubleClicked(int col) {
   }
 }
 
-void ZtoryAnimaticPanel::onShotMoved(int col, int newStartFrame) {
-  if (!m_audioLinked) return;
-  TApp *app = TApp::instance();
-  ToonzScene *scene = app->getCurrentScene()->getScene();
+void ZtoryAnimaticPanel::onReturnToMain() {
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   if (!scene) return;
-  TXsheet *xsh = scene->getChildStack()->getTopXsheet();
-  if (!xsh) return;
+  while (scene->getChildStack()->getAncestorCount() > 0)
+    CommandManager::instance()->execute("MI_CloseChild");
+}
 
-  // Compute delta from old start frame
-  TXshColumn *column = xsh->getColumn(col);
-  if (!column) return;
-  int r0 = 0, r1 = 0;
-  column->getRange(r0, r1);
-  int delta = newStartFrame - r0;
-  if (delta == 0) return;
+void ZtoryAnimaticPanel::onShotMoved(int col, int newStartFrame) {
+  // NOTE: this signal fires after resequenceXsheet() has already run, so
+  // delta computation from getRange() would always be 0.  Audio shifting
+  // on ripple is handled directly inside onShotDurationChanged().
+  Q_UNUSED(col); Q_UNUSED(newStartFrame);
+}
 
-  // Shift all audio columns by the same delta
-  for (auto *at : m_audioTracks) {
-    int audioCol = at->columnIndex();
-    TXshColumn *ac = xsh->getColumn(audioCol);
-    if (!ac) continue;
-    int ar0 = 0, ar1 = 0;
-    ac->getRange(ar0, ar1);
-    int duration = ar1 - ar0 + 1;
-    // Collect cells
-    std::vector<TXshCell> cells(duration);
-    for (int r = ar0; r <= ar1; r++)
-      cells[r - ar0] = xsh->getCell(r, audioCol);
-    // Clear and rewrite at new position
-    for (int r = ar0; r <= ar1; r++) xsh->clearCells(r, audioCol);
-    int newAr0 = qMax(0, ar0 + delta);
-    for (int r = 0; r < duration; r++) {
-      if (!cells[r].isEmpty())
-        xsh->setCell(newAr0 + r, audioCol, cells[r]);
+// Helper: split a sound column at |splitFrame| in the main xsheet.
+// Cells from splitFrame..ar1 are moved to a new column appended at the end.
+// If splitFrame is outside the column range, nothing happens.
+static void splitAudioColumn(TXsheet *xsh, int audioCol, int splitFrame) {
+  TXshColumn *col = xsh->getColumn(audioCol);
+  if (!col) return;
+  int ar0 = 0, ar1 = 0;
+  col->getRange(ar0, ar1);
+  if (splitFrame <= ar0 || splitFrame > ar1) return;
+  // Collect cells after split point
+  int afterCount = ar1 - splitFrame + 1;
+  std::vector<TXshCell> cells(afterCount);
+  for (int r = splitFrame; r <= ar1; r++)
+    cells[r - splitFrame] = xsh->getCell(r, audioCol);
+  // Remove them from original
+  for (int r = splitFrame; r <= ar1; r++)
+    xsh->clearCells(r, audioCol);
+  // Place in a new column appended at the end
+  int newCol = xsh->getColumnCount();
+  for (int i = 0; i < afterCount; i++) {
+    if (!cells[i].isEmpty())
+      xsh->setCell(splitFrame + i, newCol, cells[i]);
+  }
+  xsh->updateFrameCount();
+}
+
+// Helper: copy all cell content from srcCl's child xsheet into dstCl's
+// child xsheet starting at frame offset |dstOffset| (0-based).
+// Used by merge operations so that the destination sub-scene contains
+// the actual drawings/animation of the absorbed shot, not just empty frames.
+static void copyChildXsheetFrames(TXshChildLevel *dstCl, TXshChildLevel *srcCl,
+                                   int dstOffset) {
+  if (!dstCl || !srcCl) return;
+  TXsheet *dstXsh = dstCl->getXsheet();
+  TXsheet *srcXsh = srcCl->getXsheet();
+  if (!dstXsh || !srcXsh) return;
+  int srcMaxF = srcXsh->getFrameCount();
+  int srcNCols = srcXsh->getColumnCount();
+  for (int c = 0; c < srcNCols; c++) {
+    for (int r = 0; r < srcMaxF; r++) {
+      TXshCell cell = srcXsh->getCell(r, c);
+      if (!cell.isEmpty())
+        dstXsh->setCell(dstOffset + r, c, cell);
     }
   }
-
-  xsh->updateFrameCount();
-  app->getCurrentXsheet()->notifyXsheetChanged();
+  dstXsh->updateFrameCount();
 }
 
 void ZtoryAnimaticPanel::onMergeShots() {
@@ -1683,7 +1727,19 @@ void ZtoryAnimaticPanel::onMergeShots() {
     int r0 = 0, r1 = 0;
     srcColumn->getRange(r0, r1);
     int duration = r1 - r0 + 1;
-    // Append cells pointing to dstCl (same sub-scene, extended)
+
+    // Find src child level and copy its sub-scene content into dstCl
+    TXshChildLevel *srcCl = nullptr;
+    for (int r = r0; r <= r1; r++) {
+      TXshCell cell = xsh->getCell(r, srcCol);
+      if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
+        srcCl = cell.m_level->getChildLevel();
+        break;
+      }
+    }
+    copyChildXsheetFrames(dstCl, srcCl, lastFrameNum);
+
+    // Extend main xsheet column to cover the merged duration
     for (int r = 0; r < duration; r++)
       xsh->setCell(appendAt + r, dstCol, TXshCell(dstCl, TFrameId(++lastFrameNum)));
     appendAt += duration;
@@ -1745,12 +1801,26 @@ void ZtoryAnimaticPanel::onMergeWithNext(int col) {
   }
   if (!dstCl) return;
 
-  // Append next shot's cells to dst column
+  // Find child level of source (next) shot
+  TXshChildLevel *srcCl = nullptr;
   TXshColumn *srcColumn = xsh->getColumn(nextCol);
   int srcR0 = 0, srcR1 = 0;
   srcColumn->getRange(srcR0, srcR1);
+  for (int r = srcR0; r <= srcR1; r++) {
+    TXshCell cell = xsh->getCell(r, nextCol);
+    if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
+      srcCl = cell.m_level->getChildLevel();
+      break;
+    }
+  }
+
+  // Copy src sub-scene content into dst sub-scene at the correct offset
+  int dstDuration = dstR1 - dstR0 + 1;
+  copyChildXsheetFrames(dstCl, srcCl, dstDuration);
+
+  // Extend dst column in main xsheet to cover the merged duration
   int appendAt = dstR1 + 1;
-  int lastFrameNum = dstR1 - dstR0 + 1;
+  int lastFrameNum = dstDuration;
   int duration = srcR1 - srcR0 + 1;
   for (int r = 0; r < duration; r++)
     xsh->setCell(appendAt + r, col, TXshCell(dstCl, TFrameId(++lastFrameNum)));
@@ -1783,6 +1853,17 @@ static void addRazorKeyframes(TXshChildLevel *cl, int frame) {
   if (cam) cam->setKeyframeWithoutUndo(frame);
 }
 
+// Helper: log column range to debug file
+static void razorLog(FILE *f, TXsheet *xsh, int col, const char *label) {
+  TXshColumn *c = xsh->getColumn(col);
+  if (!c) { fprintf(f, "  %s: col %d NULL\n", label, col); return; }
+  int r0 = 0, r1 = -1;
+  c->getRange(r0, r1);
+  bool locked = c->isLocked();
+  fprintf(f, "  %s: col %d range %d..%d (dur %d) locked=%d empty=%d\n",
+          label, col, r0, r1, r1 >= r0 ? r1 - r0 + 1 : 0, locked, c->isEmpty());
+}
+
 void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
   if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
   TApp *app = TApp::instance();
@@ -1791,16 +1872,25 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
   TXsheet *mainXsh = scene->getChildStack()->getTopXsheet();
   if (!mainXsh) return;
 
+  FILE *dbg = fopen("/tmp/razor_debug.log", "a");
+  if (dbg) fprintf(dbg, "\n=== RAZOR col=%d splitFrame=%d ===\n", col, splitFrame);
+
   TXshColumn *srcColumn = mainXsh->getColumn(col);
-  if (!srcColumn) return;
+  if (!srcColumn) { if (dbg) { fprintf(dbg, "  srcColumn NULL\n"); fclose(dbg); } return; }
   int r0 = 0, r1 = 0;
   srcColumn->getRange(r0, r1);
   // splitRel = # frames that stay in the original shot (rows r0..splitFrame-1)
   int splitRel = splitFrame - r0;
-  if (splitRel <= 0 || splitRel >= r1 - r0 + 1) return;
+  if (splitRel <= 0 || splitRel >= r1 - r0 + 1) {
+    if (dbg) { fprintf(dbg, "  ABORT: splitRel=%d out of range (r0=%d r1=%d)\n", splitRel, r0, r1); fclose(dbg); }
+    return;
+  }
 
-  int totalDuration     = r1 - r0 + 1;
-  int secondHalf        = totalDuration - splitRel; // frames for the new shot
+  int totalDuration = r1 - r0 + 1;
+  int secondHalf    = totalDuration - splitRel;  // frames for the new shot
+
+  if (dbg) fprintf(dbg, "  r0=%d r1=%d totalDur=%d splitRel=%d secondHalf=%d\n",
+                   r0, r1, totalDuration, splitRel, secondHalf);
 
   // Grab original child level before cloning.
   TXshChildLevel *origCL = nullptr;
@@ -1811,10 +1901,13 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
       break;
     }
   }
+  if (dbg) fprintf(dbg, "  origCL=%p\n", (void *)origCL);
 
   // Clone → creates a fully independent sub-scene at col+1 with cells r0..r1.
+  if (dbg) { fprintf(dbg, "  before cloneChild:\n"); razorLog(dbg, mainXsh, col, "orig"); }
   ColumnCmd::cloneChild(col);
   int newCol = col + 1;
+  if (dbg) { fprintf(dbg, "  after cloneChild:\n"); razorLog(dbg, mainXsh, col, "orig"); razorLog(dbg, mainXsh, newCol, "clone"); }
 
   // Grab clone's child level.
   TXshChildLevel *cloneCL = nullptr;
@@ -1825,46 +1918,61 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
       break;
     }
   }
+  if (dbg) fprintf(dbg, "  cloneCL=%p\n", (void *)cloneCL);
+
+  // Trim original's child xsheet: remove frames after splitRel so that
+  // the sub-scene only contains the first part of the shot.
+  if (origCL) {
+    TXsheet *childXsh = origCL->getXsheet();
+    if (childXsh) {
+      int maxF  = childXsh->getFrameCount();
+      int nCols = childXsh->getColumnCount();
+      if (dbg) fprintf(dbg, "  orig childXsh: maxF=%d nCols=%d, trimming to %d\n", maxF, nCols, splitRel);
+      for (int c = 0; c < nCols; c++) {
+        for (int r = splitRel; r < maxF; r++)
+          childXsh->clearCells(r, c);
+      }
+      childXsh->updateFrameCount();
+      if (dbg) fprintf(dbg, "  orig childXsh after trim: frameCount=%d\n", childXsh->getFrameCount());
+    }
+  }
 
   // Fix clone's child xsheet: remove the first splitRel frames so that
   // frame 1 of the new sub-scene corresponds to the cut point.
-  // (resequenceXsheet always maps cell r → TFrameId(r+1), so without this
-  //  the clone would show the shot from frame 1 instead of from splitRel+1.)
   if (cloneCL) {
     TXsheet *childXsh = cloneCL->getXsheet();
     if (childXsh) {
       int maxF  = childXsh->getFrameCount();
       int nCols = childXsh->getColumnCount();
+      if (dbg) fprintf(dbg, "  clone childXsh: maxF=%d nCols=%d\n", maxF, nCols);
       for (int c = 0; c < nCols; c++) {
-        // Shift surviving frames to the front.
         for (int r = 0; r < secondHalf && (splitRel + r) < maxF; r++)
           childXsh->setCell(r, c, childXsh->getCell(splitRel + r, c));
-        // Clear the now-stale tail.
         for (int r = secondHalf; r < maxF; r++)
           childXsh->clearCells(r, c);
       }
       childXsh->updateFrameCount();
+      if (dbg) fprintf(dbg, "  clone childXsh after shift: frameCount=%d\n", childXsh->getFrameCount());
     }
   }
 
-  // Trim original (col): keep only r0..splitFrame-1.
-  for (int r = splitFrame; r <= r1; r++)
-    mainXsh->clearCells(r, col);
+  // Trim original column: remove the tail (secondHalf cells).
+  if (dbg) { fprintf(dbg, "  before removeCells(%d, %d, %d):\n", r0 + splitRel, col, secondHalf); razorLog(dbg, mainXsh, col, "orig"); }
+  mainXsh->removeCells(r0 + splitRel, col, secondHalf);
+  if (dbg) { fprintf(dbg, "  after removeCells:\n"); razorLog(dbg, mainXsh, col, "orig"); }
 
-  // Trim clone (col+1): keep only splitFrame..r1, shift to start at r0.
-  for (int r = r0; r < splitFrame; r++)
-    mainXsh->clearCells(r, newCol);
-  for (int r = 0; r < secondHalf; r++) {
-    TXshCell cell = mainXsh->getCell(splitFrame + r, newCol);
-    mainXsh->setCell(r0 + r, newCol, cell);
-    if (splitFrame + r != r0 + r)
-      mainXsh->clearCells(splitFrame + r, newCol);
+  // Rebuild clone column: wipe then repopulate with TFrameId(1..secondHalf).
+  mainXsh->clearCells(r0, newCol, totalDuration + 2);
+  if (dbg) { fprintf(dbg, "  after clearCells clone:\n"); razorLog(dbg, mainXsh, newCol, "clone"); }
+  if (cloneCL) {
+    for (int r = 0; r < secondHalf; r++)
+      mainXsh->setCell(r0 + r, newCol, TXshCell(cloneCL, TFrameId(r + 1)));
   }
+  if (dbg) { fprintf(dbg, "  after repopulate clone:\n"); razorLog(dbg, mainXsh, newCol, "clone"); }
 
-  // Insert keyframes at the cut boundary so both sub-scenes have a
-  // "pose locked" marker: last frame of original, first frame of clone.
-  addRazorKeyframes(origCL, splitRel - 1); // 0-based last frame of original
-  addRazorKeyframes(cloneCL, 0);           // 0-based first frame of clone
+  // Insert keyframes at the cut boundary.
+  addRazorKeyframes(origCL, splitRel - 1);
+  addRazorKeyframes(cloneCL, 0);
 
   // Notify the board FIRST (before resequenceXsheet emits modelReset).
   emit ZtoryModel::instance()->shotAdded(newCol);
@@ -1872,7 +1980,36 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
   mainXsh->updateFrameCount();
   app->getCurrentXsheet()->notifyXsheetChanged();
   ZtoryModel::instance()->resequenceXsheet();
+
+  // Linked razor: also split audio tracks at the same absolute frame.
+  if (m_audioLinked) {
+    // splitFrame is already an absolute frame in the main xsheet.
+    // We must iterate a copy because splitAudioColumn may add columns,
+    // which would invalidate the audio tracks list.
+    QList<int> audioCols;
+    for (auto *at : m_audioTracks) audioCols.append(at->columnIndex());
+    for (int ac : audioCols) splitAudioColumn(mainXsh, ac, splitFrame);
+  }
+
+  // Log final state of ALL columns.
+  if (dbg) {
+    fprintf(dbg, "  === FINAL STATE ===\n");
+    for (int c = 0; c < mainXsh->getColumnCount(); c++)
+      razorLog(dbg, mainXsh, c, "final");
+    fclose(dbg);
+  }
+
   m_track->refreshFromScene();
+  refreshAudioTracks();
+}
+
+void ZtoryAnimaticPanel::onAudioRazorRequested(int col, int frame) {
+  if (!ZtoryModel::assertMainXsheet(/*showWarning=*/false)) return;
+  TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+  if (!xsh) return;
+  splitAudioColumn(xsh, col, frame);
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  refreshAudioTracks();
 }
 
 void ZtoryAnimaticPanel::onShotDurationChanged(int col, int newF1) {
@@ -1917,6 +2054,37 @@ void ZtoryAnimaticPanel::onShotDurationChanged(int col, int newF1) {
     }
   } else if (newDuration < currentDuration) {
     mainXsh->removeCells(r0 + newDuration, col, currentDuration - newDuration);
+  }
+
+  // Audio link: if shot duration changed, shift audio tracks that start
+  // after the shot's (shorter) endpoint by the same durationDelta.
+  // Must happen BEFORE resequenceXsheet() moves video columns, otherwise
+  // we'd need to re-read positions afterward.
+  int durationDelta = newDuration - currentDuration;
+  if (m_audioLinked && durationDelta != 0) {
+    // Boundary: first frame after the shorter of old/new shot end.
+    // Audio starting at or after this point belongs to subsequent shots.
+    int boundary = r0 + qMin(currentDuration, newDuration);
+    for (auto *at : m_audioTracks) {
+      int audioCol = at->columnIndex();
+      TXshColumn *ac = mainXsh->getColumn(audioCol);
+      if (!ac) continue;
+      int ar0 = 0, ar1 = 0;
+      ac->getRange(ar0, ar1);
+      if (ar0 < boundary) continue; // audio starts inside or before this shot
+      int dur = ar1 - ar0 + 1;
+      std::vector<TXshCell> cells(dur);
+      for (int r = ar0; r <= ar1; r++)
+        cells[r - ar0] = mainXsh->getCell(r, audioCol);
+      for (int r = ar0; r <= ar1; r++)
+        mainXsh->clearCells(r, audioCol);
+      int newAr0 = qMax(0, ar0 + durationDelta);
+      for (int r = 0; r < dur; r++) {
+        if (!cells[r].isEmpty())
+          mainXsh->setCell(newAr0 + r, audioCol, cells[r]);
+      }
+    }
+    mainXsh->updateFrameCount();
   }
 
   resequenceXsheet();
