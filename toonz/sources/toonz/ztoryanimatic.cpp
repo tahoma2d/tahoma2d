@@ -1535,8 +1535,11 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
 }
 
 void ZtoryAnimaticPanel::refreshFromScene() {
+  if (m_refreshing) return;
+  m_refreshing = true;
   m_track->refreshFromScene();
   refreshAudioTracks();
+  m_refreshing = false;
 }
 
 void ZtoryAnimaticPanel::refreshAudioTracks() {
