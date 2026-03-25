@@ -107,6 +107,10 @@ public:
   // Returns true if at main xsheet level; optionally shows a warning dialog.
   static bool assertMainXsheet(bool showWarning = true);
 
+  // Returns true if the current scene is a storyboard/animatic project.
+  // Checks both the in-memory model and the presence of a .ztoryc file.
+  bool isStoryboardWorkflow() const;
+
   // ── Sincronizzazione scena ────────────────────────────────────────────────
   void onXsheetChanged();
   void onSceneChanged();

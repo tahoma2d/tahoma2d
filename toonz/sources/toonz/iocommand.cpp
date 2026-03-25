@@ -69,6 +69,10 @@
 #include "toonz/studiopalette.h"
 #include "toonz/tpalettehandle.h"
 #include "toonz/tstageobjectcmd.h"
+#include "toonz/childstack.h"
+
+// Ztoryc includes
+#include "ztorymodel.h"
 
 // TnzCore includes
 #include "tofflinegl.h"
@@ -2648,6 +2652,26 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
   // use current frame/column if row/col is not set
   if (row0 == -1) row0 = app->getCurrentFrame()->getFrameIndex();
   if (col0 == -1) col0 = app->getCurrentColumn()->getColumnIndex();
+
+  // In Ztoryc storyboard workflow, block audio import inside sub-scenes.
+  // Audio must be loaded from the main xsheet only.
+  if (ZtoryModel::instance()->isStoryboardWorkflow() &&
+      scene->getChildStack()->getAncestorCount() > 0) {
+    bool hasAudio = false;
+    for (auto &rd : args.resourceDatas) {
+      TFilePath decoded = scene->decodeFilePath(rd.m_path);
+      if (TFileType::getInfo(decoded) == TFileType::AUDIO_LEVEL) {
+        hasAudio = true;
+        break;
+      }
+    }
+    if (hasAudio) {
+      DVGui::warning(QObject::tr(
+          "In storyboard workflow, audio can only be loaded from the main "
+          "xsheet.\nPlease close the sub-scene first."));
+      return 0;
+    }
+  }
 
   int rCount = args.resourceDatas.size(), loadedCount = 0;
   bool isSoundLevel = false;

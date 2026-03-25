@@ -456,6 +456,38 @@ ZtoryAudioTrack::ZtoryAudioTrack(int col, const QString &name, QWidget *parent)
     : QWidget(parent), m_col(col), m_name(name) {
   setFixedHeight(m_trackHeight);
   setMinimumWidth(100);
+  setFocusPolicy(Qt::ClickFocus);  // needed for keyPressEvent
+}
+
+int ZtoryAudioTrack::frameAtX(int x) const {
+  return std::max(0, (int)((x - kLabelW) / m_ppf));
+}
+
+// Static clipboard for audio segments
+static struct {
+  int col = -1;
+  int r0 = -1, r1 = -1;
+  std::vector<TXshCell> cells;
+  bool isCut = false;
+} s_audioClipboard;
+
+std::vector<ZtoryAudioTrack::Segment> ZtoryAudioTrack::findSegments() const {
+  std::vector<Segment> segs;
+  TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+  if (!xsh) return segs;
+  TXshColumn *column = xsh->getColumn(m_col);
+  if (!column) return segs;
+  int r0 = 0, r1 = 0;
+  column->getRange(r0, r1);
+  if (r1 < r0) return segs;
+  bool inSeg = false;
+  int segStart = 0;
+  for (int r = r0; r <= r1 + 1; r++) {
+    bool empty = (r > r1) || xsh->getCell(r, m_col).isEmpty();
+    if (!empty && !inSeg) { segStart = r; inSeg = true; }
+    else if (empty && inSeg) { segs.push_back({segStart, r - 1}); inSeg = false; }
+  }
+  return segs;
 }
 
 void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
@@ -550,6 +582,29 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
   // Blit cached waveform
   p.drawPixmap(labelW, 0, m_waveformCache);
 
+  // Draw separators at gaps between audio segments
+  {
+    auto segs = findSegments();
+    for (int i = 0; i + 1 < (int)segs.size(); i++) {
+      // Draw a separator at the gap between segment i and i+1
+      int gapStart = segs[i].r1 + 1;
+      int gapEnd = segs[i + 1].r0;
+      int x0 = labelW + (int)(gapStart * m_ppf);
+      int x1 = labelW + (int)(gapEnd * m_ppf);
+      if (x1 - x0 < 2) x1 = x0 + 2;  // minimum visible width
+      p.fillRect(x0, 0, x1 - x0, trackH, QColor(255, 80, 80, 120));
+    }
+  }
+
+  // Highlight selected segment
+  if (m_selSeg.r0 >= 0 && m_selSeg.r1 >= m_selSeg.r0) {
+    int x0 = labelW + (int)(m_selSeg.r0 * m_ppf);
+    int x1 = labelW + (int)((m_selSeg.r1 + 1) * m_ppf);
+    p.fillRect(x0, 0, x1 - x0, trackH, QColor(100, 180, 255, 50));
+    p.setPen(QColor(100, 180, 255, 150));
+    p.drawRect(x0, 0, x1 - x0 - 1, trackH - 1);
+  }
+
   // Preview bar (12c) — thin strip at bottom, orange selection
   static const int kScrubBarH = 6;
   p.fillRect(labelW, trackH - kScrubBarH, trackW, kScrubBarH, QColor(55, 55, 55));
@@ -576,58 +631,198 @@ void ZtoryAudioTrack::mousePressEvent(QMouseEvent *e) {
   static const int kScrubBarH = 6;
   // Razor tool: click anywhere on the waveform area (not in the scrub bar)
   if (m_razorActive && e->y() < height() - kScrubBarH) {
-    int frame = std::max(0, (int)((e->x() - kLabelW) / m_ppf));
+    int frame = frameAtX(e->x());
     emit razorRequested(m_col, frame);
     return;
   }
+  // Scrub bar drag
   if (e->y() >= height() - kScrubBarH) {
     m_draggingPreview  = true;
-    int frame = std::max(0, (int)((e->x() - kLabelW) / m_ppf));
+    int frame = frameAtX(e->x());
     m_previewDragStart = frame;
     m_previewR0 = m_previewR1 = frame;
+    update();
+    return;
+  }
+  // Select / drag segment
+  if (e->button() == Qt::LeftButton && !m_razorActive) {
+    int frame = frameAtX(e->x());
+    auto segs = findSegments();
+    m_selSeg = {-1, -1};
+    for (auto &s : segs) {
+      if (frame >= s.r0 && frame <= s.r1) {
+        m_selSeg = s;
+        m_draggingSeg = true;
+        m_dragStartFrame = frame;
+        m_dragOrigR0 = s.r0;
+        setCursor(Qt::ClosedHandCursor);
+        break;
+      }
+    }
     update();
   }
 }
 
 void ZtoryAudioTrack::mouseMoveEvent(QMouseEvent *e) {
-  if (!m_draggingPreview) return;
-  int frame = std::max(0, (int)((e->x() - kLabelW) / m_ppf));
-  m_previewR0 = std::min(m_previewDragStart, frame);
-  m_previewR1 = std::max(m_previewDragStart, frame);
-  update();
+  if (m_draggingPreview) {
+    int frame = frameAtX(e->x());
+    m_previewR0 = std::min(m_previewDragStart, frame);
+    m_previewR1 = std::max(m_previewDragStart, frame);
+    update();
+    return;
+  }
+  if (m_draggingSeg && m_selSeg.r0 >= 0) {
+    int frame = frameAtX(e->x());
+    int delta = frame - m_dragStartFrame;
+    int newR0 = m_dragOrigR0 + delta;
+    if (newR0 < 0) newR0 = 0;
+    int segLen = m_selSeg.r1 - m_selSeg.r0;
+    // Update visual selection to show where the segment would land
+    m_selSeg.r0 = newR0;
+    m_selSeg.r1 = newR0 + segLen;
+    update();
+    return;
+  }
 }
 
-void ZtoryAudioTrack::mouseReleaseEvent(QMouseEvent *) {
-  if (!m_draggingPreview) return;
-  m_draggingPreview = false;
-  if (m_previewR0 < 0 || m_previewR1 < m_previewR0) return;
-
-  // Play selected range: compute exact sample range and play in one call.
-  // Do NOT use scrubXsheet(r0,r1) — it calls scrub() per frame in a tight
-  // loop which only plays the first frame on most audio devices.
-  auto *ctrl = ZtoryAnimaticController::instance();
-  TXsheet *xsh = ctrl->mainXsheet();
-  if (!xsh) return;
-  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-  double fps = scene ? scene->getProperties()->getOutputProperties()->getFrameRate() : 24.0;
-
-  // Use cached sound track if available; rebuild if not.
-  TSoundTrackP st = ctrl->soundTrack();
-  if (!st) {
-    TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
-    prop->m_isPreview = true;
-    st = TSoundTrackP(xsh->makeSound(prop));
-    if (st) ctrl->setSoundTrack(st);
+void ZtoryAudioTrack::mouseReleaseEvent(QMouseEvent *e) {
+  // Finish segment drag — move cells in xsheet
+  if (m_draggingSeg) {
+    m_draggingSeg = false;
+    setCursor(m_razorActive ? Qt::CrossCursor : Qt::ArrowCursor);
+    int frame = frameAtX(e->x());
+    int delta = frame - m_dragStartFrame;
+    if (delta != 0 && m_dragOrigR0 >= 0) {
+      int origR0 = m_dragOrigR0;
+      int segLen = m_selSeg.r1 - m_selSeg.r0;
+      int origR1 = origR0 + segLen;
+      int newR0 = origR0 + delta;
+      if (newR0 < 0) { delta = -origR0; newR0 = 0; }
+      TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+      if (xsh) {
+        // Collect cells from original position
+        int count = segLen + 1;
+        std::vector<TXshCell> cells(count);
+        for (int i = 0; i < count; i++)
+          cells[i] = xsh->getCell(origR0 + i, m_col);
+        // Clear original
+        for (int i = 0; i < count; i++)
+          xsh->clearCells(origR0 + i, m_col);
+        // Place at new position
+        for (int i = 0; i < count; i++)
+          xsh->setCell(newR0 + i, m_col, cells[i]);
+        xsh->updateFrameCount();
+        m_selSeg = {newR0, newR0 + segLen};
+        m_waveformDirty = true;
+        TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+      }
+    }
+    update();
+    return;
   }
-  if (!st) return;
 
-  TINT32 sr = st->getSampleRate();
-  TINT32 s0 = (TINT32)(m_previewR0 * sr / fps);
-  TINT32 s1 = (TINT32)((m_previewR1 + 1) * sr / fps);
-  s0 = qBound((TINT32)0, s0, st->getSampleCount() - 1);
-  s1 = qBound((TINT32)0, s1, st->getSampleCount() - 1);
-  if (s0 >= s1) return;
-  xsh->play(st, s0, s1, false);
+  // Finish preview bar drag
+  if (m_draggingPreview) {
+    m_draggingPreview = false;
+    if (m_previewR0 < 0 || m_previewR1 < m_previewR0) return;
+
+    auto *ctrl = ZtoryAnimaticController::instance();
+    TXsheet *xsh = ctrl->mainXsheet();
+    if (!xsh) return;
+    ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+    double fps = scene ? scene->getProperties()->getOutputProperties()->getFrameRate() : 24.0;
+
+    TSoundTrackP st = ctrl->soundTrack();
+    if (!st) {
+      TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
+      prop->m_isPreview = true;
+      st = TSoundTrackP(xsh->makeSound(prop));
+      if (st) ctrl->setSoundTrack(st);
+    }
+    if (!st) return;
+
+    TINT32 sr = st->getSampleRate();
+    TINT32 s0 = (TINT32)(m_previewR0 * sr / fps);
+    TINT32 s1 = (TINT32)((m_previewR1 + 1) * sr / fps);
+    s0 = qBound((TINT32)0, s0, st->getSampleCount() - 1);
+    s1 = qBound((TINT32)0, s1, st->getSampleCount() - 1);
+    if (s0 >= s1) return;
+    xsh->play(st, s0, s1, false);
+  }
+}
+
+// ---- Clipboard operations ----
+
+void ZtoryAudioTrack::clipboardCopy(ZtoryAudioTrack *src) {
+  if (!src || src->m_selSeg.r0 < 0) return;
+  TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+  if (!xsh) return;
+  int r0 = src->m_selSeg.r0, r1 = src->m_selSeg.r1;
+  s_audioClipboard.col = src->m_col;
+  s_audioClipboard.r0 = r0;
+  s_audioClipboard.r1 = r1;
+  s_audioClipboard.isCut = false;
+  s_audioClipboard.cells.clear();
+  for (int r = r0; r <= r1; r++)
+    s_audioClipboard.cells.push_back(xsh->getCell(r, src->m_col));
+}
+
+void ZtoryAudioTrack::clipboardCut(ZtoryAudioTrack *src) {
+  clipboardCopy(src);
+  if (s_audioClipboard.cells.empty()) return;
+  s_audioClipboard.isCut = true;
+  TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+  if (!xsh) return;
+  int r0 = src->m_selSeg.r0, r1 = src->m_selSeg.r1;
+  for (int r = r0; r <= r1; r++)
+    xsh->clearCells(r, src->m_col);
+  xsh->updateFrameCount();
+  src->m_selSeg = {-1, -1};
+  src->m_waveformDirty = true;
+  src->update();
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+void ZtoryAudioTrack::clipboardPaste(ZtoryAudioTrack *dst, int frame) {
+  if (s_audioClipboard.cells.empty()) return;
+  TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+  if (!xsh) return;
+  int count = (int)s_audioClipboard.cells.size();
+  for (int i = 0; i < count; i++)
+    xsh->setCell(frame + i, dst->m_col, s_audioClipboard.cells[i]);
+  xsh->updateFrameCount();
+  dst->m_selSeg = {frame, frame + count - 1};
+  dst->m_waveformDirty = true;
+  dst->update();
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+void ZtoryAudioTrack::keyPressEvent(QKeyEvent *e) {
+  bool ctrl = (e->modifiers() & Qt::ControlModifier);
+  if (ctrl && e->key() == Qt::Key_X) { clipboardCut(this); return; }
+  if (ctrl && e->key() == Qt::Key_C) { clipboardCopy(this); return; }
+  if (ctrl && e->key() == Qt::Key_V) {
+    // Paste at the start of the selected segment, or at current frame
+    int frame = (m_selSeg.r0 >= 0) ? m_selSeg.r0 : m_currentFrame;
+    clipboardPaste(this, frame);
+    return;
+  }
+  if (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace) {
+    if (m_selSeg.r0 >= 0) {
+      TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+      if (xsh) {
+        for (int r = m_selSeg.r0; r <= m_selSeg.r1; r++)
+          xsh->clearCells(r, m_col);
+        xsh->updateFrameCount();
+        m_selSeg = {-1, -1};
+        m_waveformDirty = true;
+        update();
+        TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+      }
+    }
+    return;
+  }
+  QWidget::keyPressEvent(e);
 }
 
 // ---- ZtoryAnimaticTrack ----
@@ -1576,6 +1771,7 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     at->setRazorActive(m_track->tool() == ZtoryAnimaticTrack::RazorTool && !m_audioLinked);
     connect(at, &ZtoryAudioTrack::razorRequested,
             this, &ZtoryAnimaticPanel::onAudioRazorRequested);
+    // segmentMoved just invalidates the waveform (no full refresh needed)
 
     // Inserisci prima dello stretch finale
     int insertIdx = m_scrollLay->count() - 1;
@@ -1641,27 +1837,36 @@ void ZtoryAnimaticPanel::onShotMoved(int col, int newStartFrame) {
 // Helper: split a sound column at |splitFrame| in the main xsheet.
 // Cells from splitFrame..ar1 are moved to a new column appended at the end.
 // If splitFrame is outside the column range, nothing happens.
+// Split audio in-place: clear the cell at the split frame so the waveform
+// shows two distinct segments in the same column (no extra track created).
 static void splitAudioColumn(TXsheet *xsh, int audioCol, int splitFrame) {
   TXshColumn *col = xsh->getColumn(audioCol);
   if (!col) return;
   int ar0 = 0, ar1 = 0;
   col->getRange(ar0, ar1);
   if (splitFrame <= ar0 || splitFrame > ar1) return;
-  // Collect cells after split point
-  int afterCount = ar1 - splitFrame + 1;
-  std::vector<TXshCell> cells(afterCount);
-  for (int r = splitFrame; r <= ar1; r++)
-    cells[r - splitFrame] = xsh->getCell(r, audioCol);
-  // Remove them from original
-  for (int r = splitFrame; r <= ar1; r++)
-    xsh->clearCells(r, audioCol);
-  // Place in a new column appended at the end
-  int newCol = xsh->getColumnCount();
-  for (int i = 0; i < afterCount; i++) {
-    if (!cells[i].isEmpty())
-      xsh->setCell(splitFrame + i, newCol, cells[i]);
-  }
+  // Clear a single cell at the split point to create a visible gap
+  xsh->clearCells(splitFrame, audioCol);
   xsh->updateFrameCount();
+}
+
+// Helper: insert a TStageObject keyframe (without undo) on every column
+// and the first camera of the given child xsheet at 0-based |frame|.
+static void addRazorKeyframes(TXshChildLevel *cl, int frame) {
+  if (!cl) return;
+  TXsheet *childXsh = cl->getXsheet();
+  if (!childXsh) return;
+  TStageObjectTree *tree = childXsh->getStageObjectTree();
+  if (!tree) return;
+  int numCols = childXsh->getColumnCount();
+  for (int c = 0; c < numCols; c++) {
+    TStageObject *obj =
+        tree->getStageObject(TStageObjectId::ColumnId(c), false);
+    if (obj) obj->setKeyframeWithoutUndo(frame);
+  }
+  TStageObject *cam =
+      tree->getStageObject(TStageObjectId::CameraId(0), false);
+  if (cam) cam->setKeyframeWithoutUndo(frame);
 }
 
 // Helper: copy all cell content from srcCl's child xsheet into dstCl's
@@ -1674,6 +1879,8 @@ static void copyChildXsheetFrames(TXshChildLevel *dstCl, TXshChildLevel *srcCl,
   TXsheet *dstXsh = dstCl->getXsheet();
   TXsheet *srcXsh = srcCl->getXsheet();
   if (!dstXsh || !srcXsh) return;
+
+  // Copy cells (drawings)
   int srcMaxF = srcXsh->getFrameCount();
   int srcNCols = srcXsh->getColumnCount();
   for (int c = 0; c < srcNCols; c++) {
@@ -1683,6 +1890,36 @@ static void copyChildXsheetFrames(TXshChildLevel *dstCl, TXshChildLevel *srcCl,
         dstXsh->setCell(dstOffset + r, c, cell);
     }
   }
+
+  // Copy stage object keyframes (column transforms + camera) with offset
+  TStageObjectTree *srcTree = srcXsh->getStageObjectTree();
+  TStageObjectTree *dstTree = dstXsh->getStageObjectTree();
+  if (srcTree && dstTree) {
+    // Copy column keyframes
+    for (int c = 0; c < srcNCols; c++) {
+      TStageObject *srcObj =
+          srcTree->getStageObject(TStageObjectId::ColumnId(c), false);
+      TStageObject *dstObj =
+          dstTree->getStageObject(TStageObjectId::ColumnId(c), false);
+      if (!srcObj || !dstObj) continue;
+      TStageObject::KeyframeMap kfs;
+      srcObj->getKeyframes(kfs);
+      for (auto &kv : kfs)
+        dstObj->setKeyframeWithoutUndo(kv.first + dstOffset, kv.second);
+    }
+    // Copy camera keyframes
+    TStageObject *srcCam =
+        srcTree->getStageObject(TStageObjectId::CameraId(0), false);
+    TStageObject *dstCam =
+        dstTree->getStageObject(TStageObjectId::CameraId(0), false);
+    if (srcCam && dstCam) {
+      TStageObject::KeyframeMap kfs;
+      srcCam->getKeyframes(kfs);
+      for (auto &kv : kfs)
+        dstCam->setKeyframeWithoutUndo(kv.first + dstOffset, kv.second);
+    }
+  }
+
   dstXsh->updateFrameCount();
 }
 
@@ -1723,9 +1960,16 @@ void ZtoryAnimaticPanel::onMergeShots() {
   }
   if (!dstCl) return;
 
-  // Append frames from each subsequent shot into dstCol
+  // Append frames from each subsequent shot into dstCol.
+  // Insert keyframes at merge boundaries to preserve camera/level movement:
+  // - last frame of the first shot
+  // - first and last frame of each subsequent shot segment
   int appendAt = dstR1 + 1;
-  int lastFrameNum = dstR1 - dstR0 + 1; // 1-based frame index for continuation
+  int dstDuration = dstR1 - dstR0 + 1;
+  int lastFrameNum = dstDuration; // 1-based frame index for continuation
+
+  // Keyframe on last frame of first shot (0-based in child xsheet)
+  addRazorKeyframes(dstCl, dstDuration - 1);
 
   for (int i = 1; i < (int)sortedCols.size(); i++) {
     int srcCol = sortedCols[i];
@@ -1744,7 +1988,13 @@ void ZtoryAnimaticPanel::onMergeShots() {
         break;
       }
     }
+    int segmentStart = lastFrameNum; // 0-based offset in dst child xsheet
     copyChildXsheetFrames(dstCl, srcCl, lastFrameNum);
+
+    // Keyframe at first frame of this segment
+    addRazorKeyframes(dstCl, segmentStart);
+    // Keyframe at last frame of this segment
+    addRazorKeyframes(dstCl, segmentStart + duration - 1);
 
     // Extend main xsheet column to cover the merged duration
     for (int r = 0; r < duration; r++)
@@ -1821,14 +2071,19 @@ void ZtoryAnimaticPanel::onMergeWithNext(int col) {
     }
   }
 
-  // Copy src sub-scene content into dst sub-scene at the correct offset
+  // Copy src sub-scene content into dst sub-scene at the correct offset.
+  // Insert keyframes at merge boundary to preserve camera/level movement.
   int dstDuration = dstR1 - dstR0 + 1;
+  addRazorKeyframes(dstCl, dstDuration - 1); // last frame of first shot
   copyChildXsheetFrames(dstCl, srcCl, dstDuration);
+  int srcDuration = srcR1 - srcR0 + 1;
+  addRazorKeyframes(dstCl, dstDuration);                    // first frame of second shot
+  addRazorKeyframes(dstCl, dstDuration + srcDuration - 1);  // last frame of second shot
 
   // Extend dst column in main xsheet to cover the merged duration
   int appendAt = dstR1 + 1;
   int lastFrameNum = dstDuration;
-  int duration = srcR1 - srcR0 + 1;
+  int duration = srcDuration;
   for (int r = 0; r < duration; r++)
     xsh->setCell(appendAt + r, col, TXshCell(dstCl, TFrameId(++lastFrameNum)));
 
@@ -1839,25 +2094,6 @@ void ZtoryAnimaticPanel::onMergeWithNext(int col) {
   ZtoryModel::instance()->resequenceXsheet();
   emit ZtoryModel::instance()->modelReset();
   m_track->refreshFromScene();
-}
-
-// Helper: insert a TStageObject keyframe (without undo) on every column
-// and the first camera of the given child xsheet at 0-based |frame|.
-static void addRazorKeyframes(TXshChildLevel *cl, int frame) {
-  if (!cl) return;
-  TXsheet *childXsh = cl->getXsheet();
-  if (!childXsh) return;
-  TStageObjectTree *tree = childXsh->getStageObjectTree();
-  if (!tree) return;
-  int numCols = childXsh->getColumnCount();
-  for (int c = 0; c < numCols; c++) {
-    TStageObject *obj =
-        tree->getStageObject(TStageObjectId::ColumnId(c), false);
-    if (obj) obj->setKeyframeWithoutUndo(frame);
-  }
-  TStageObject *cam =
-      tree->getStageObject(TStageObjectId::CameraId(0), false);
-  if (cam) cam->setKeyframeWithoutUndo(frame);
 }
 
 // Helper: log column range to debug file
@@ -2108,7 +2344,91 @@ void ZtoryAnimaticPanel::onShotDurationChanged(int col, int newF1) {
 }
 
 void ZtoryAnimaticPanel::resequenceXsheet() {
+  if (!m_audioLinked) {
+    ZtoryModel::instance()->resequenceXsheet();
+    return;
+  }
+
+  // Audio-video link: shift audio segments to follow their associated shots.
+  TApp *app = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  if (!scene) { ZtoryModel::instance()->resequenceXsheet(); return; }
+  TXsheet *xsh = scene->getChildStack()->getTopXsheet();
+  if (!xsh) { ZtoryModel::instance()->resequenceXsheet(); return; }
+
+  // 1. Record shot positions BEFORE resequence
+  struct ShotPos { int col; int r0; int duration; };
+  std::vector<ShotPos> oldPositions;
+  for (int col = 0; col < xsh->getColumnCount(); col++) {
+    TXshColumn *column = xsh->getColumn(col);
+    if (!column || column->isEmpty()) continue;
+    int r0 = 0, r1 = 0;
+    column->getRange(r0, r1);
+    // Only child-level columns (video shots)
+    bool isChild = false;
+    for (int r = r0; r <= r1; r++) {
+      TXshCell cell = xsh->getCell(r, col);
+      if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
+        isChild = true; break;
+      }
+    }
+    if (isChild) oldPositions.push_back({col, r0, r1 - r0 + 1});
+  }
+
+  // 2. Record audio segment positions BEFORE resequence
+  struct AudioSeg { int col; int r0; int r1; std::vector<TXshCell> cells; };
+  std::vector<AudioSeg> audioSegs;
+  for (auto *at : m_audioTracks) {
+    auto segs = at->findSegments();
+    for (auto &s : segs) {
+      AudioSeg as;
+      as.col = at->columnIndex();
+      as.r0 = s.r0;
+      as.r1 = s.r1;
+      for (int r = s.r0; r <= s.r1; r++)
+        as.cells.push_back(xsh->getCell(r, as.col));
+      audioSegs.push_back(as);
+    }
+  }
+
+  // 3. Clear all audio cells
+  for (auto &as : audioSegs)
+    for (int r = as.r0; r <= as.r1; r++)
+      xsh->clearCells(r, as.col);
+
+  // 4. Run resequence on video columns
   ZtoryModel::instance()->resequenceXsheet();
+
+  // 5. Read new shot positions AFTER resequence
+  std::map<int, int> shotDelta; // col -> delta
+  for (auto &op : oldPositions) {
+    TXshColumn *column = xsh->getColumn(op.col);
+    if (!column || column->isEmpty()) continue;
+    int nr0 = 0, nr1 = 0;
+    column->getRange(nr0, nr1);
+    shotDelta[op.col] = nr0 - op.r0;
+  }
+
+  // 6. For each audio segment, find which shot it overlapped, apply same delta
+  for (auto &as : audioSegs) {
+    int audioMid = (as.r0 + as.r1) / 2;
+    int bestDelta = 0;
+    // Find the shot whose old range contains the audio segment's midpoint
+    for (auto &op : oldPositions) {
+      if (audioMid >= op.r0 && audioMid < op.r0 + op.duration) {
+        auto it = shotDelta.find(op.col);
+        if (it != shotDelta.end()) bestDelta = it->second;
+        break;
+      }
+    }
+    int newR0 = qMax(0, as.r0 + bestDelta);
+    int count = (int)as.cells.size();
+    for (int i = 0; i < count; i++) {
+      if (!as.cells[i].isEmpty())
+        xsh->setCell(newR0 + i, as.col, as.cells[i]);
+    }
+  }
+  xsh->updateFrameCount();
 }
 
 void ZtoryAnimaticPanel::onMatchSubsceneDuration(int col) {

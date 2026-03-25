@@ -21,6 +21,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QFileInfo>
 
 // ─── NumberingConfig ──────────────────────────────────────────────────────────
 
@@ -90,6 +91,17 @@ void ZtoryModel::updateAllPreviews() {
 }
 
 // ─── Operazioni su shot ───────────────────────────────────────────────────────
+
+bool ZtoryModel::isStoryboardWorkflow() const {
+  if (!m_shots.empty()) return true;
+  // Check if a .ztoryc file exists alongside the current scene
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return false;
+  TFilePath scenePath = scene->getScenePath();
+  if (scenePath.isEmpty()) return false;
+  QString ztoryc = QString::fromStdWString(scenePath.withType("ztoryc").getWideString());
+  return QFileInfo::exists(ztoryc);
+}
 
 bool ZtoryModel::assertMainXsheet(bool showWarning) {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();

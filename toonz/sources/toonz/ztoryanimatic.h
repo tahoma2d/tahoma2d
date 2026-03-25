@@ -14,6 +14,7 @@
 #include <QSlider>
 #include <QHBoxLayout>
 #include <set>
+#include <QKeyEvent>
 
 // ---- ZtoryAnimaticController ----
 // Singleton that owns the dedicated frame state for the animatic timeline
@@ -153,16 +154,33 @@ public:
   int columnIndex() const { return m_col; }
   void setRazorActive(bool on);
 
+  // Audio segment: a contiguous range of non-empty cells in this column
+  struct Segment { int r0; int r1; };  // inclusive frame range
+  std::vector<Segment> findSegments() const;
+
+  // Selection
+  bool hasSelection() const { return m_selSeg.r0 >= 0; }
+  Segment selectedSegment() const { return m_selSeg; }
+
+  // Clipboard (shared across all audio tracks)
+  static void clipboardCut(ZtoryAudioTrack *src);
+  static void clipboardCopy(ZtoryAudioTrack *src);
+  static void clipboardPaste(ZtoryAudioTrack *dst, int frame);
+
 signals:
   void razorRequested(int col, int frame);
+  void segmentMoved();  // emitted after a drag-move completes
 
 protected:
   void paintEvent(QPaintEvent *) override;
   void mousePressEvent(QMouseEvent *) override;
   void mouseMoveEvent(QMouseEvent *) override;
   void mouseReleaseEvent(QMouseEvent *) override;
+  void keyPressEvent(QKeyEvent *) override;
 
 private:
+  int frameAtX(int x) const;
+
   int m_col;
   QString m_name;
   double m_ppf = 8.0;
@@ -176,6 +194,11 @@ private:
   bool m_draggingPreview  = false;
   int  m_previewDragStart = -1;
   bool m_razorActive      = false;
+  // Segment selection & drag
+  Segment m_selSeg{-1, -1};
+  bool m_draggingSeg      = false;
+  int  m_dragStartFrame   = -1;
+  int  m_dragOrigR0       = -1;
 };
 
 // ---- ZtoryStoryStrip ----
