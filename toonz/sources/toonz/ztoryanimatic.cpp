@@ -29,6 +29,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QPushButton>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QSplitter>
@@ -70,6 +71,20 @@ void ZtoryAnimaticController::setCurrentFrame(int frame) {
 
 int ZtoryAnimaticController::currentFrame() const {
   return m_frameHandle->getFrame();
+}
+
+TSoundTrackP ZtoryAnimaticController::requireSoundTrack() {
+  if (m_soundTrack) return m_soundTrack;
+  TXsheet *xsh = mainXsheet();
+  if (!xsh) return TSoundTrackP();
+  try {
+    TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
+    prop->m_isPreview = true;
+    m_soundTrack = TSoundTrackP(xsh->makeSound(prop));
+  } catch (...) {
+    m_soundTrack = TSoundTrackP();
+  }
+  return m_soundTrack;
 }
 
 // ---- ZtoryAnimaticRuler ----
@@ -292,9 +307,9 @@ void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
     m_currentFrame = frame;
     update();
     emit frameChanged(m_currentFrame);
-    // Audio scrub
+    // Audio scrub — requireSoundTrack() builds the track lazily if not cached
     auto *ctrl = ZtoryAnimaticController::instance();
-    TSoundTrackP st = ctrl->soundTrack();
+    TSoundTrackP st = ctrl->requireSoundTrack();
     TXsheet *xsh = ctrl->mainXsheet();
     if (st && xsh) {
       ToonzScene *sc = TApp::instance()->getCurrentScene()->getScene();
@@ -353,9 +368,9 @@ void ZtoryAnimaticRuler::mouseMoveEvent(QMouseEvent *e) {
   m_currentFrame = frame;
   update();
   emit frameChanged(m_currentFrame);
-  // Audio scrub (12b: use cached sound track instead of makeSound per frame)
+  // Audio scrub (12b) — requireSoundTrack() builds lazily if not cached yet
   auto *ctrl = ZtoryAnimaticController::instance();
-  TSoundTrackP st = ctrl->soundTrack();
+  TSoundTrackP st = ctrl->requireSoundTrack();
   TXsheet *xsh = ctrl->mainXsheet();
   if (st && xsh) {
     ToonzScene *sc = TApp::instance()->getCurrentScene()->getScene();
@@ -478,13 +493,18 @@ std::vector<ZtoryAudioTrack::Segment> ZtoryAudioTrack::findSegments() const {
   if (!xsh) return segs;
   TXshColumn *column = xsh->getColumn(m_col);
   if (!column) return segs;
+  TXshSoundColumn *sc = column->getSoundColumn();
+  if (!sc) return segs;
   int r0 = 0, r1 = 0;
   column->getRange(r0, r1);
   if (r1 < r0) return segs;
   bool inSeg = false;
   int segStart = 0;
   for (int r = r0; r <= r1 + 1; r++) {
-    bool empty = (r > r1) || xsh->getCell(r, m_col).isEmpty();
+    // Copy cell by value — TXshSoundColumn::getCell returns *new TXshCell
+    // (heap-leaked), so we copy to avoid a dangling reference.
+    TXshCell cell = (r <= r1) ? xsh->getCell(r, m_col) : TXshCell();
+    bool empty = cell.isEmpty();
     if (!empty && !inSeg) { segStart = r; inSeg = true; }
     else if (empty && inSeg) { segs.push_back({segStart, r - 1}); inSeg = false; }
   }
@@ -520,9 +540,13 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
     TXshSoundColumn *sc = column ? column->getSoundColumn() : nullptr;
 
     if (sc) {
-      // Get merged sound track for the full xsheet duration
+      // Get merged sound track for the full xsheet duration.
+      // getOverallSoundTrack() may throw TSoundDeviceException on macOS if
+      // the default audio device is unavailable — catch to prevent crash.
       int totalFrames = xsh->getFrameCount();
-      TSoundTrackP st = sc->getOverallSoundTrack(0, totalFrames - 1);
+      TSoundTrackP st;
+      try { st = sc->getOverallSoundTrack(0, totalFrames - 1); }
+      catch (...) { st = TSoundTrackP(); }
 
       if (st) {
         double fps = 24.0;
@@ -580,20 +604,39 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
     }
   }
 
-  // Blit cached waveform
-  p.drawPixmap(labelW, 0, m_waveformCache);
-
-  // Draw separators at gaps between audio segments
+  // Draw segments and gaps:
+  // - Gaps (empty areas between segments) → gray background, no waveform
+  // - Segments → blit only the corresponding slice of the waveform cache
+  // - Segment edges → 1px dark border
   {
     auto segs = findSegments();
-    for (int i = 0; i + 1 < (int)segs.size(); i++) {
-      // Draw a separator at the gap between segment i and i+1
-      int gapStart = segs[i].r1 + 1;
-      int gapEnd = segs[i + 1].r0;
-      int x0 = labelW + (int)(gapStart * m_ppf);
-      int x1 = labelW + (int)(gapEnd * m_ppf);
-      if (x1 - x0 < 2) x1 = x0 + 2;  // minimum visible width
-      p.fillRect(x0, 0, x1 - x0, trackH, QColor(255, 80, 80, 120));
+
+    if (segs.empty()) {
+      // No segments at all — fill entire track area with gap color
+      p.fillRect(labelW, 0, trackW, trackH, QColor(42, 42, 42));
+    } else {
+      // 1. Fill entire area with gap color first (covers gaps before first
+      //    segment, between segments, and after last segment)
+      p.fillRect(labelW, 0, trackW, trackH, QColor(42, 42, 42));
+
+      // 2. For each segment, blit the corresponding slice from the waveform
+      //    cache (cache is position-aware: pixel px = frame px/ppf)
+      for (auto &s : segs) {
+        int x0 = (int)(s.r0 * m_ppf);          // offset within cache
+        int x1 = (int)((s.r1 + 1) * m_ppf);
+        int w  = x1 - x0;
+        if (w <= 0) continue;
+        p.drawPixmap(labelW + x0, 0, m_waveformCache, x0, 0, w, trackH);
+      }
+
+      // 3. Draw 1px borders at each segment edge
+      p.setPen(QColor(70, 70, 70));
+      for (auto &s : segs) {
+        int x0 = labelW + (int)(s.r0 * m_ppf);
+        int x1 = labelW + (int)((s.r1 + 1) * m_ppf);
+        p.drawLine(x0, 0, x0, trackH - 1);
+        p.drawLine(x1 - 1, 0, x1 - 1, trackH - 1);
+      }
     }
   }
 
@@ -687,22 +730,35 @@ void ZtoryAudioTrack::mouseMoveEvent(QMouseEvent *e) {
 }
 
 void ZtoryAudioTrack::mouseReleaseEvent(QMouseEvent *e) {
-  // Finish segment drag — move cells in xsheet
+  // Finish segment drag — commit via shiftLevelInRange on the ColumnLevel
   if (m_draggingSeg) {
     m_draggingSeg = false;
     setCursor(m_razorActive ? Qt::CrossCursor : Qt::ArrowCursor);
-    int frame = frameAtX(e->x());
-    int delta = frame - m_dragStartFrame;
-    if (delta != 0 && m_dragOrigR0 >= 0) {
-      // TODO(audio-drag): TXshSoundColumn stores audio via ColumnLevel
-      // (startFrame/startOffset/endOffset), not individual cells.
-      // Using generic clearCells/setCell on a sound column corrupts the heap.
-      // Drag visual feedback is shown but the actual move is NOT committed
-      // until the proper TXshSoundColumn API is used.
-      // Reset selection to original position.
-      int origR0 = m_dragOrigR0;
-      int segLen  = m_selSeg.r1 - m_selSeg.r0;
-      m_selSeg = {origR0, origR0 + segLen};
+
+    // m_selSeg.r0 was updated live during mouseMoveEvent (with clamping to ≥0).
+    // Use that as the final committed position.
+    int segLen    = m_selSeg.r1 - m_selSeg.r0;
+    int finalDelta = m_selSeg.r0 - m_dragOrigR0;
+
+    if (finalDelta != 0 && m_dragOrigR0 >= 0) {
+      TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+      TXshColumn *column = xsh ? xsh->getColumn(m_col) : nullptr;
+      TXshSoundColumn *sc = column ? column->getSoundColumn() : nullptr;
+      if (sc) {
+        // Shift the ColumnLevel whose visible midpoint falls in the original
+        // segment range. shiftLevelInRange is a new public API on TXshSoundColumn
+        // that avoids the broken clearCells/setCell path on sound columns.
+        sc->shiftLevelInRange(m_dragOrigR0, m_dragOrigR0 + segLen, finalDelta);
+        // Invalidate waveform cache and merged sound track — both stale now.
+        invalidateWaveform();
+        ZtoryAnimaticController::instance()->invalidateSoundTrack();
+        // Defer xsheet notification (QueuedConnection): cannot call
+        // notifyXsheetChanged() here — would delete this widget mid-event.
+        emit segmentMoved();
+      } else {
+        // No sound column found — reset visual to original
+        m_selSeg = {m_dragOrigR0, m_dragOrigR0 + segLen};
+      }
     }
     update();
     return;
@@ -719,13 +775,7 @@ void ZtoryAudioTrack::mouseReleaseEvent(QMouseEvent *e) {
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
     double fps = scene ? scene->getProperties()->getOutputProperties()->getFrameRate() : 24.0;
 
-    TSoundTrackP st = ctrl->soundTrack();
-    if (!st) {
-      TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
-      prop->m_isPreview = true;
-      st = TSoundTrackP(xsh->makeSound(prop));
-      if (st) ctrl->setSoundTrack(st);
-    }
+    TSoundTrackP st = ctrl->requireSoundTrack();
     if (!st) return;
 
     TINT32 sr = st->getSampleRate();
@@ -1330,34 +1380,38 @@ void ZtoryAnimaticViewer::updateAnimaticFrameMarkers() {
 }
 
 // ---- refreshAnimaticSound ----
-// Builds m_sound from the MAIN xsheet's audio columns.
-// The base hasSoundtrack() uses TApp::getCurrentXsheet() which, when inside a
-// sub-scene, returns the sub-scene (no audio) → m_sound null → no playback.
+// Sets m_sound / m_hasSoundtrack from the controller's CACHED sound track.
+//
+// IMPORTANT: do NOT call makeSound() here.
+// makeSound() for a long audio file can take 1–3 seconds. It is called from
+// onAnimaticPlayingStatusChanged() which fires AFTER PlaybackExecutor has
+// already started. Because the executor uses BlockingQueuedConnection, it
+// blocks waiting for the main thread, accumulating the makeSound() delay.
+// When it finally unblocks it skips frames to catch up — but audio starts
+// from the original frame, creating an audio-vs-video desync of several
+// seconds.  Using the pre-built cache (requireSoundTrack) is instantaneous
+// and eliminates the skip entirely.
 void ZtoryAnimaticViewer::refreshAnimaticSound() {
   m_sound         = nullptr;
   m_hasSoundtrack = false;
   m_first         = true;
-  TXsheet *mainXsh = ZtoryAnimaticController::instance()->mainXsheet();
-  if (!mainXsh) return;
-  TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
-  if (m_sceneViewer && !m_sceneViewer->isPreviewEnabled())
-    prop->m_isPreview = true;
-  try {
-    m_sound = mainXsh->makeSound(prop);
-    // Cache merged track in controller for ruler scrubbing and preview bar
-    ZtoryAnimaticController::instance()->setSoundTrack(
-        TSoundTrackP(m_sound));
-  } catch (...) {}
-  m_hasSoundtrack = (m_sound != nullptr);
+  // requireSoundTrack() builds lazily on first call and caches the result.
+  // The cache is invalidated (set to null) whenever audio ColumnLevels change.
+  auto *ctrl       = ZtoryAnimaticController::instance();
+  TSoundTrackP st  = ctrl->requireSoundTrack();
+  m_sound          = st.getPointer();   // raw ptr; ctrl keeps the ref alive
+  m_hasSoundtrack  = (m_sound != nullptr);
 }
 
 // ---- playAnimaticAudioFrame ----
-// Like BaseViewerPanel::playAudioFrame but calls play()/stopScrub() on
-// ctrl->mainXsheet() instead of TApp::getCurrentXsheet()->getXsheet().
+// Used ONLY for per-frame scrub audio (ruler drag, preview bar drag).
+// During continuous play the audio streams on its own — this function is a
+// no-op so it does not interrupt or replace the streaming buffer.
 void ZtoryAnimaticViewer::playAnimaticAudioFrame(int frame) {
+  if (m_continuousPlay) return;   // audio already streaming — do nothing
   if (!m_sound) return;
   if (m_first) {
-    m_first         = false;
+    m_first           = false;
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
     if (!scene) return;
     m_fps             = scene->getProperties()->getOutputProperties()
@@ -1366,9 +1420,9 @@ void ZtoryAnimaticViewer::playAnimaticAudioFrame(int frame) {
   }
   TXsheet *mainXsh = ZtoryAnimaticController::instance()->mainXsheet();
   if (!mainXsh) return;
-  m_viewerFps      = m_flipConsole->getCurrentFps();
-  double s0        = frame * m_samplesPerFrame;
-  double s1        = s0 + m_samplesPerFrame;
+  m_viewerFps = m_flipConsole->getCurrentFps();
+  double s0   = frame * m_samplesPerFrame;
+  double s1   = s0 + m_samplesPerFrame;
   if (m_fps < m_viewerFps) mainXsh->stopScrub();
   mainXsh->play(m_sound, s0, s1, false);
 }
@@ -1376,9 +1430,59 @@ void ZtoryAnimaticViewer::playAnimaticAudioFrame(int frame) {
 // ---- onAnimaticPlayingStatusChanged ----
 // Runs AFTER base's onPlayingStatusChanged (both connected to playStateChanged).
 // Base calls hasSoundtrack() using the sub-scene xsheet → m_sound = null.
-// We immediately override with the correct main-xsheet sound.
+// We immediately override with the correct main-xsheet sound, then start a
+// single continuous-play call from the current frame to end-of-track.
+// Continuous play avoids per-frame buffer replacement (which causes glitches).
 void ZtoryAnimaticViewer::onAnimaticPlayingStatusChanged(bool playing) {
-  if (playing) refreshAnimaticSound();
+  TXsheet *mainXsh = ZtoryAnimaticController::instance()->mainXsheet();
+  if (!playing) {
+    // Stop the continuous audio stream.
+    m_continuousPlay = false;
+    if (mainXsh) mainXsh->stopScrub();
+    return;
+  }
+
+  // Rebuild m_sound from the main xsheet (base's hasSoundtrack() used the
+  // wrong sub-scene xsheet, giving null m_sound and m_hasSoundtrack=false).
+  refreshAnimaticSound();
+
+  if (!m_sound || !m_hasSoundtrack || !mainXsh) return;
+
+  // Compute the sample position that corresponds to the current animatic frame.
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return;
+  double fps = scene->getProperties()->getOutputProperties()->getFrameRate();
+  if (fps <= 0.0) fps = 24.0;
+  double spf           = m_sound->getSampleRate() / fps;
+  int startFrame       = ZtoryAnimaticController::instance()->currentFrame();
+  TINT32 startSample  = (TINT32)(startFrame * spf);
+  TINT32 totalSamples = (TINT32)m_sound->getSampleCount();
+  if (startSample >= totalSamples) return;
+
+  // Cap endSample at the animatic timeline length, NOT the raw audio file
+  // length.  After a razor cut the trailing ColumnLevel keeps endOffset=0, so
+  // its visibleEndFrame equals the raw file length (potentially hours).
+  // makeSound() then produces a track with getSampleCount() = raw file size.
+  // play(st, s0, rawEnd) calls m_buffer.resize(rawBytes) + memcpy which can
+  // allocate/copy hundreds of MB — causing 1-3 s startup delay while the
+  // PlaybackExecutor has already advanced video frames, causing A/V desync.
+  int    animFrames      = mainXsh->getFrameCount();
+  TINT32 animEndSample   = (TINT32)(animFrames * spf);
+  TINT32 endSample       = std::min(animEndSample, totalSamples - 1);
+  if (startSample > endSample) return;
+
+  // Also cache fps/samplesPerFrame for any scrub calls that happen before
+  // the next refreshAnimaticSound (e.g., if play is cancelled mid-frame).
+  m_fps             = fps;
+  m_samplesPerFrame = spf;
+  m_first           = false;
+
+  // Start streaming audio from current frame to animatic end in one shot.
+  // TSoundOutputDeviceImp uses QAudioOutput with a 100 ms hardware buffer,
+  // refilled every 50 ms via QAudioOutput::notify.  One call avoids the
+  // per-frame m_buffer replacement that caused glitches in the old approach.
+  mainXsh->play(m_sound, startSample, endSample, false);
+  m_continuousPlay = true;
 }
 
 void ZtoryAnimaticViewer::showEvent(QShowEvent *e) {
@@ -1434,6 +1538,27 @@ void ZtoryAnimaticViewer::showEvent(QShowEvent *e) {
   // Set correct range and markers immediately (overrides what base just set).
   updateAnimaticFrameRange();
   updateAnimaticFrameMarkers();
+
+  // Pre-build the merged sound track while the panel is showing — before the
+  // user presses play.  requireSoundTrack() is a no-op if the track is already
+  // cached.  Building it here means refreshAnimaticSound() (called at
+  // play-start) is instant: it just reads the cached raw pointer.
+  // This eliminates the 1-3 s makeSound() call that was happening on the
+  // main thread while the PlaybackExecutor had already started running,
+  // causing the executor to skip frames and creating audio-video desync.
+  QTimer::singleShot(0, this, [this]() {
+    // Deferred to after the panel fully shows (avoids blocking the show event).
+    auto *ctrl = ZtoryAnimaticController::instance();
+    TSoundTrackP st = ctrl->requireSoundTrack();
+    // Pre-warm the QAudioOutput device so it is already initialised when play
+    // starts.  Playing 1 sample initialises the device without audible output;
+    // stopScrub() clears the buffer but leaves the device alive (idle state).
+    // A subsequent full-track play() call reuses the device with zero startup
+    // latency because the format is unchanged.
+    TXsheet *mainXsh = ctrl->mainXsheet();
+    if (st && mainXsh && st->getSampleCount() > 0)
+      mainXsh->play(st, 0, 0, false);  // 1 silent sample → device initialised
+  });
 
   if (m_sceneViewer) m_sceneViewer->update();
 }
@@ -1709,10 +1834,15 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
 
   m_refreshingAudio = true;
 
-  // Rimuovi tracce audio esistenti
+  // Rimuovi tracce audio esistenti.
+  // cancelDrag() prevents spurious shiftLevelInRange commits on stale widgets.
+  // deleteLater() (not delete) defers destruction until after the current
+  // event finishes — avoids SIGABRT when refreshAudioTracks() is called
+  // from inside a ZtoryAudioTrack event handler (e.g. razorRequested).
   for (auto *at : m_audioTracks) {
+    at->cancelDrag();
     m_scrollLay->removeWidget(at);
-    delete at;
+    at->deleteLater();
   }
   m_audioTracks.clear();
 
@@ -1733,7 +1863,18 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     at->setRazorActive(m_track->tool() == ZtoryAnimaticTrack::RazorTool && !m_audioLinked);
     connect(at, &ZtoryAudioTrack::razorRequested,
             this, &ZtoryAnimaticPanel::onAudioRazorRequested);
-    // segmentMoved just invalidates the waveform (no full refresh needed)
+    // segmentMoved: audio segment was dragged. Notify the xsheet via a queued
+    // (deferred) call so we are NOT inside the widget's event handler when
+    // notifyXsheetChanged fires — that would trigger refreshAudioTracks() and
+    // delete the widget mid-event.
+    connect(at, &ZtoryAudioTrack::segmentMoved, this, [this]() {
+      TApp *app = TApp::instance();
+      ToonzScene *scene = app->getCurrentScene()->getScene();
+      TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
+      if (xsh) xsh->updateFrameCount();
+      // Mark the project modified so Save becomes active.
+      app->getCurrentScene()->notifyCastChange();
+    }, Qt::QueuedConnection);
 
     // Inserisci prima dello stretch finale
     int insertIdx = m_scrollLay->count() - 1;
@@ -2374,37 +2515,10 @@ void ZtoryAnimaticPanel::onShotDurationChanged(int col, int newF1) {
     mainXsh->removeCells(r0 + newDuration, col, currentDuration - newDuration);
   }
 
-  // Audio link: if shot duration changed, shift audio tracks that start
-  // after the shot's (shorter) endpoint by the same durationDelta.
-  // Must happen BEFORE resequenceXsheet() moves video columns, otherwise
-  // we'd need to re-read positions afterward.
-  int durationDelta = newDuration - currentDuration;
-  if (m_audioLinked && durationDelta != 0) {
-    // Boundary: first frame after the shorter of old/new shot end.
-    // Audio starting at or after this point belongs to subsequent shots.
-    int boundary = r0 + qMin(currentDuration, newDuration);
-    for (auto *at : m_audioTracks) {
-      int audioCol = at->columnIndex();
-      TXshColumn *ac = mainXsh->getColumn(audioCol);
-      if (!ac) continue;
-      int ar0 = 0, ar1 = 0;
-      ac->getRange(ar0, ar1);
-      if (ar0 < boundary) continue; // audio starts inside or before this shot
-      int dur = ar1 - ar0 + 1;
-      std::vector<TXshCell> cells(dur);
-      for (int r = ar0; r <= ar1; r++)
-        cells[r - ar0] = mainXsh->getCell(r, audioCol);
-      for (int r = ar0; r <= ar1; r++)
-        mainXsh->clearCells(r, audioCol);
-      int newAr0 = qMax(0, ar0 + durationDelta);
-      for (int r = 0; r < dur; r++) {
-        if (!cells[r].isEmpty())
-          mainXsh->setCell(newAr0 + r, audioCol, cells[r]);
-      }
-    }
-    mainXsh->updateFrameCount();
-  }
-
+  // Audio shift for subsequent shots is handled entirely by resequenceXsheet()
+  // (audio-linked variant records deltas before/after and applies them).
+  // Do NOT shift audio here — doing so and then calling resequenceXsheet()
+  // causes a double-shift that pushes audio too far and makes it disappear.
   resequenceXsheet();
   m_track->refreshFromScene();
 }
@@ -2415,14 +2529,17 @@ void ZtoryAnimaticPanel::resequenceXsheet() {
     return;
   }
 
-  // Audio-video link: shift audio segments to follow their associated shots.
+  // Audio-video link: shift audio ColumnLevels to follow their associated shots.
+  // We shift startFrame directly on each ColumnLevel instead of the broken
+  // clear+setCell approach (TXshSoundColumn::setCell is designed for sequential
+  // insertion, not for restoring cells read via getCell from different positions).
   TApp *app = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (!scene) { ZtoryModel::instance()->resequenceXsheet(); return; }
   TXsheet *xsh = scene->getChildStack()->getTopXsheet();
   if (!xsh) { ZtoryModel::instance()->resequenceXsheet(); return; }
 
-  // 1. Record shot positions BEFORE resequence
+  // 1. Record shot positions BEFORE resequence.
   struct ShotPos { int col; int r0; int duration; };
   std::vector<ShotPos> oldPositions;
   for (int col = 0; col < xsh->getColumnCount(); col++) {
@@ -2430,7 +2547,6 @@ void ZtoryAnimaticPanel::resequenceXsheet() {
     if (!column || column->isEmpty()) continue;
     int r0 = 0, r1 = 0;
     column->getRange(r0, r1);
-    // Only child-level columns (video shots)
     bool isChild = false;
     for (int r = r0; r <= r1; r++) {
       TXshCell cell = xsh->getCell(r, col);
@@ -2441,32 +2557,11 @@ void ZtoryAnimaticPanel::resequenceXsheet() {
     if (isChild) oldPositions.push_back({col, r0, r1 - r0 + 1});
   }
 
-  // 2. Record audio segment positions BEFORE resequence
-  struct AudioSeg { int col; int r0; int r1; std::vector<TXshCell> cells; };
-  std::vector<AudioSeg> audioSegs;
-  for (auto *at : m_audioTracks) {
-    auto segs = at->findSegments();
-    for (auto &s : segs) {
-      AudioSeg as;
-      as.col = at->columnIndex();
-      as.r0 = s.r0;
-      as.r1 = s.r1;
-      for (int r = s.r0; r <= s.r1; r++)
-        as.cells.push_back(xsh->getCell(r, as.col));
-      audioSegs.push_back(as);
-    }
-  }
-
-  // 3. Clear all audio cells
-  for (auto &as : audioSegs)
-    for (int r = as.r0; r <= as.r1; r++)
-      xsh->clearCells(r, as.col);
-
-  // 4. Run resequence on video columns
+  // 2. Run resequence on video columns.
   ZtoryModel::instance()->resequenceXsheet();
 
-  // 5. Read new shot positions AFTER resequence
-  std::map<int, int> shotDelta; // col -> delta
+  // 3. Read new shot positions AFTER resequence → delta per video column.
+  std::map<int, int> shotDelta;
   for (auto &op : oldPositions) {
     TXshColumn *column = xsh->getColumn(op.col);
     if (!column || column->isEmpty()) continue;
@@ -2475,25 +2570,53 @@ void ZtoryAnimaticPanel::resequenceXsheet() {
     shotDelta[op.col] = nr0 - op.r0;
   }
 
-  // 6. For each audio segment, find which shot it overlapped, apply same delta
-  for (auto &as : audioSegs) {
-    int audioMid = (as.r0 + as.r1) / 2;
-    int bestDelta = 0;
-    // Find the shot whose old range contains the audio segment's midpoint
+  // 4. Shift audio ColumnLevels so they follow their associated shots.
+  //
+  //    OLD approach (wrong): call shiftLevelInRange(shotR0, shotR1, delta) for
+  //    each shot that moved. This only shifts ColumnLevels whose vsf falls
+  //    inside exactly that shot's old range. A long (uncut) audio segment
+  //    spanning multiple shots has vsf=0 → is never matched. A razor-cut
+  //    segment for Shot C has vsf=146 → is not matched when we process Shot B
+  //    with range [89,145]. Result: only the first cut segment ever shifts.
+  //
+  //    NEW approach: find the earliest shot that moved → shiftFrom.
+  //    All shots after that point have the same delta (resequence packs
+  //    tightly, so a single duration change propagates uniformly).
+  //    Shift ALL audio ColumnLevels with vsf >= shiftFrom by that delta.
+  //    This correctly handles: uncut tracks spanning all shots, tracks cut
+  //    at shot boundaries, and any number of razor-cut segments.
+  {
+    int shiftFrom   = INT_MAX;
+    int commonDelta = 0;
     for (auto &op : oldPositions) {
-      if (audioMid >= op.r0 && audioMid < op.r0 + op.duration) {
-        auto it = shotDelta.find(op.col);
-        if (it != shotDelta.end()) bestDelta = it->second;
-        break;
+      int d = shotDelta.count(op.col) ? shotDelta.at(op.col) : 0;
+      if (d != 0 && op.r0 < shiftFrom) {
+        shiftFrom   = op.r0;
+        commonDelta = d;
       }
     }
-    int newR0 = qMax(0, as.r0 + bestDelta);
-    int count = (int)as.cells.size();
-    for (int i = 0; i < count; i++) {
-      if (!as.cells[i].isEmpty())
-        xsh->setCell(newR0 + i, as.col, as.cells[i]);
+    if (commonDelta != 0 && shiftFrom != INT_MAX) {
+      for (auto *at : m_audioTracks) {
+        int audioCol = at->columnIndex();
+        TXshColumn *ac = xsh->getColumn(audioCol);
+        if (!ac) continue;
+        TXshSoundColumn *sc = ac->getSoundColumn();
+        if (!sc) continue;
+        sc->shiftLevelFromFrame(shiftFrom, commonDelta);
+      }
     }
   }
+
+  // Invalidate waveform caches and repaint all audio tracks.
+  // xsheetChanged (fired inside ZtoryModel::resequenceXsheet) rebuilds the
+  // widgets via refreshAudioTracks() BEFORE the shift, so the cache is stale.
+  // A plain update() won't rebuild the cache — we must mark it dirty first.
+  for (auto *at : m_audioTracks) at->invalidateWaveform();
+
+  // Invalidate the cached merged sound track so the next scrub/play rebuilds
+  // it with the updated ColumnLevel positions.
+  ZtoryAnimaticController::instance()->invalidateSoundTrack();
+
   xsh->updateFrameCount();
 }
 

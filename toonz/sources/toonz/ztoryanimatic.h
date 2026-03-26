@@ -30,9 +30,14 @@ public:
   TXsheet *mainXsheet() const;
   void setCurrentFrame(int frame);
   int currentFrame() const;
-  // Cached merged sound track — filled by ZtoryAnimaticViewer::refreshAnimaticSound
+  // Cached merged sound track — filled lazily on first scrub / on play start.
+  // Call invalidateSoundTrack() after any ColumnLevel shift to force rebuild.
   TSoundTrackP soundTrack() const { return m_soundTrack; }
   void setSoundTrack(TSoundTrackP st) { m_soundTrack = st; }
+  void invalidateSoundTrack() { m_soundTrack = TSoundTrackP(); }
+  // Build (or return cached) merged track from the main xsheet.
+  // Safe to call from any scrub handler — returns null if no audio.
+  TSoundTrackP requireSoundTrack();
 
 private:
   ZtoryAnimaticController();
@@ -149,6 +154,9 @@ public:
   }
   void setCurrentFrame(int f) { m_currentFrame = f; update(); }
   void invalidateWaveform() { m_waveformDirty = true; update(); }
+  // Abort any in-progress drag without committing the move.
+  // Call before deleting the widget to prevent stale drag state from firing.
+  void cancelDrag() { m_draggingSeg = false; m_draggingPreview = false; }
   int trackHeight() const { return m_trackHeight; }
   void setTrackHeight(int h) { m_trackHeight = h; m_waveformDirty = true; setFixedHeight(h); update(); }
   int columnIndex() const { return m_col; }
@@ -286,9 +294,13 @@ private slots:
 private:
   // Rebuilds m_sound from the main xsheet (not the current/sub-scene xsheet).
   void refreshAnimaticSound();
-  // Like BaseViewerPanel::playAudioFrame but uses ctrl->mainXsheet()->play()
-  // instead of TApp::getCurrentXsheet()->getXsheet()->play().
+  // Per-frame audio for scrubbing only (not during play — play uses continuous
+  // streaming started in onAnimaticPlayingStatusChanged).
   void playAnimaticAudioFrame(int frame);
+
+  // True while the full-track continuous play is active.
+  // When true, playAnimaticAudioFrame is a no-op (audio already streaming).
+  bool m_continuousPlay = false;
 
   // Tracks ctrl-handle connections so they aren't duplicated across show/hide.
   QMetaObject::Connection m_frameRangeConn;

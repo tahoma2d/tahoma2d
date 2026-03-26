@@ -205,6 +205,18 @@ when the user play a single level and hence the audio behind..*/
                               int fromFrame = -1, int toFram = -1,
                               double fps = -1);
 
+  /*! Shift all ColumnLevels whose visible start frame falls in [fromFrame,
+   * toFrame] by delta frames. Used by animatic drag-move of a specific
+   * segment (the dragged segment's original vsf is known). */
+  void shiftLevelInRange(int fromFrame, int toFrame, int delta);
+
+  /*! Shift all ColumnLevels whose visible start frame is >= fromFrame by
+   * delta frames. Used by animatic AV-link resequencing, where all audio
+   * from a given point onwards must follow the shifted shots. This handles
+   * long (uncut) segments that span multiple shots whose vsf < the modified
+   * shot's range and would therefore be missed by shiftLevelInRange. */
+  void shiftLevelFromFrame(int fromFrame, int delta);
+
 protected:
   bool setCell(int row, const TXshCell &cell, bool updateSequence);
   void removeCells(int row, int rowCount, bool shift, bool keepCellMarks);

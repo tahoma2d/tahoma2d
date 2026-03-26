@@ -621,6 +621,38 @@ void TXshSoundColumn::removeCells(int row, int rowCount, bool keepCellMarks) {
 
 //-----------------------------------------------------------------------------
 
+void TXshSoundColumn::shiftLevelInRange(int fromFrame, int toFrame, int delta) {
+  if (delta == 0) return;
+  // Use the visible start frame (not the midpoint) to identify which shot
+  // a ColumnLevel belongs to. The razor cut only adjusts startOffset, so
+  // the midpoint of a cut segment can be far outside the shot range.
+  for (int i = 0; i < m_levels.count(); i++) {
+    ColumnLevel *l = m_levels.at(i);
+    int vsf = l->getVisibleStartFrame();
+    if (vsf >= fromFrame && vsf <= toFrame)
+      l->setStartFrame(l->getStartFrame() + delta);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshSoundColumn::shiftLevelFromFrame(int fromFrame, int delta) {
+  if (delta == 0) return;
+  // Shift every ColumnLevel whose visible start frame is at or after
+  // fromFrame.  Unlike shiftLevelInRange this handles long (uncut) audio
+  // segments that span multiple shots: their vsf may be before the modified
+  // shot's range, so they would be missed by a range check.  For AV-link
+  // resequencing we want all audio from the first moved shot onwards to
+  // follow together, regardless of where each segment originally started.
+  for (int i = 0; i < m_levels.count(); i++) {
+    ColumnLevel *l = m_levels.at(i);
+    if (l->getVisibleStartFrame() >= fromFrame)
+      l->setStartFrame(l->getStartFrame() + delta);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void TXshSoundColumn::updateCells(int row, int rowCount) {
   int r;
   for (r = row; r < row + rowCount; r++) {

@@ -6,6 +6,42 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-03-26b] — RecentFiles cap, merge camera fix, workflow path bug
+
+### Fixed
+
+- **RecentFiles hang (Task 15)** (`mainwindow.cpp`): `loadRecentFiles()` ora cappa
+  ogni lista a `maxSize=10` tramite `qMin()` — previene deadlock Cocoa/Qt se il file
+  su disco è cresciuto oltre il limite. `addFilePath()` usa `while` invece di singolo
+  `removeAt` — trim corretto anche se la lista era già gonfia in memoria.
+
+- **Merge camera keyframe giunzione (Task 6f)** (`ztoryanimatic.cpp`):
+  `mergeChildXsheetContent` eseguiva `addRazorKeyframes(dstOffset)` DOPO la copia
+  delle srcCam keyframes, sovrascrivendo il valore corretto con quello interpolato
+  del primo shot. Fix doppio:
+  1. `addRazorKeyframes(dstOffset)` spostato PRIMA della copia camera.
+  2. Dopo la copia, inserito esplicitamente `kfs.begin()->second` a `dstOffset` —
+     garantisce che la key di giunzione abbia i valori della prima key del secondo shot
+     anche se questa non è a frame 0.
+
+- **`ensureStoryboardRoomsTemplate` path bug** (`mainwindow.cpp`): la funzione usava
+  `getMyRoomsDir()` (basato sul workflow corrente, non ancora aggiornato) invece di
+  costruire il path direttamente da `choice`. Poteva controllare la directory del
+  workflow sbagliato (es. Tradigital) e triggerare una migrazione errata.
+
+### Modified
+
+- Debug prints rimossi: `[ZTORY]`, `[RS]`, backtrace, `#include <execinfo.h>`
+  da `mainwindow.cpp` (aggiunti nella sessione precedente per diagnostica).
+
+### Notes
+
+- Crash intermittente su workflow switch (empty room → SIGSEGV) non riprodotto
+  dopo i fix. Causa root non identificata — da monitorare.
+- Task 6f camera confermato funzionante dall'utente.
+- Task 15 RecentFiles confermato (file .bak2 da 2.5 MB era la causa del hang precedente).
+
+---
 ## [2026-03-26] — Fix hang su workflow switch (RecentFiles.ini + guard rientranza)
 
 ### Fixed
