@@ -6,6 +6,52 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-03-26c] — AV-link multi-segmento + audio play sync
+
+### Fixed
+
+- **AV-link multi-segmento non funzionava** (`txshsoundcolumn.h/.cpp`, `ztoryanimatic.cpp`):
+  `shiftLevelInRange(r0, r1, delta)` cercava ColumnLevel con vsf ∈ [r0, r1] — falliva per:
+  1. Tracce audio non tagliate (vsf=0, non in nessun intervallo shot)
+  2. Tagli multipli: il secondo segmento (es. vsf=89 per Shot B) non veniva trovato
+     quando si processava Shot C con range [146,200]
+  Fix: aggiunto `shiftLevelFromFrame(fromFrame, delta)` che sposta tutti i ColumnLevel
+  con vsf ≥ fromFrame in un'unica chiamata. `resequenceXsheet()` ora trova il primo
+  shot con delta≠0 e chiama `shiftLevelFromFrame` una volta sola per tutto l'audio.
+
+- **Audio-video desync al play (3 cause, risolte tutte)**:
+  1. **Buffer enorme dalla razor cut**: il ColumnLevel tail aveva `endOffset=0` →
+     `visibleEndFrame` = intera lunghezza del file audio grezzo (potenzialmente ore).
+     `makeSound()` creava un track di quella lunghezza. `play(st, s0, rawEnd)` faceva
+     `m_buffer.resize(centinaia_MB) + memcpy` bloccando il main thread 1-3 s mentre
+     il `PlaybackExecutor` girava già su un altro thread → video skippava frame →
+     desync. **Fix**: cap `endSample = min(animaticFrames × spf, totalSamples-1)`.
+  2. **makeSound() ad ogni play-start**: `refreshAnimaticSound()` chiamava `makeSound()`
+     ogni volta che si premeva play. Ora usa `ctrl->requireSoundTrack()` (cached).
+  3. **Per-frame buffer replacement**: ogni frame chiamava `play(st, s0, s1)` che
+     sovrascriveva `m_buffer` con 1 frame di audio → micro-glitch continui.
+     Fix: streaming continuo — al play-start si chiama `play(st, startSample, animEnd)`
+     una volta sola; per-frame `playAnimaticAudioFrame` è no-op durante il play.
+
+- **SIGABRT razor tool audio** (sessione precedente, confermato risolto):
+  `delete at` dentro `refreshAudioTracks()` durante evento del widget → `deleteLater()`.
+
+### Added
+
+- `TXshSoundColumn::shiftLevelFromFrame(int fromFrame, int delta)` — nuovo metodo
+  pubblico in `txshsoundcolumn.h/.cpp`.
+- Pre-warmup `QAudioOutput` in `ZtoryAnimaticViewer::showEvent` via `QTimer::singleShot(0)`:
+  inizializza il device prima che l'utente prema play → zero startup latency.
+- `bool m_continuousPlay` in `ZtoryAnimaticViewer` per coordinare play/scrub.
+
+### Notes
+
+- Il sync A/V è sensibilmente migliorato ("molto meglio" dall'utente). Residui di drift
+  su animatici molto lunghi sono intrinseci all'architettura (video timer indipendente
+  dall'audio clock). Fix definitivo richiederebbe esporre `QAudioOutput::processedUSecs`
+  da `TSoundOutputDevice` e usarlo come master clock in `onDrawFrame`.
+
+---
 ## [2026-03-26b] — RecentFiles cap, merge camera fix, workflow path bug
 
 ### Fixed
