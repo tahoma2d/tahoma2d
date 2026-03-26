@@ -1229,19 +1229,33 @@ remove or guard the existing call in `iocommand.cpp::newScene()`.
 11. **Task 7** — ~~Double-click to enter edit mode~~ ✅ DONE (confermato 2026-03-25)
 12. **Task 8** — ~~Multi-selection in track~~ ✅ DONE (confermato 2026-03-25)
 13. **Task 6a** — ~~Zoom slider~~ ✅ DONE (confermato 2026-03-24)
-14. **Task 6c** — ~~Razor tool (video)~~ ✅ DONE (2026-03-25) ⚠️ BUG: non funziona su tracce audio
-15. **Task 6d** — Link/Unlink audio-video ⚠️ BUG: audio non segue il video in drag
-16. **Task 6f** — Merge shots ✅ funziona, BUG residuo: camera keyframe
-    Il keyframe camera all'inizio del secondo segmento eredita i valori del primo
-    segmento invece dei valori originali della prima camera key del secondo shot.
-    **Fix**: prima di copiare il contenuto del secondo shot nello shot unificato,
-    leggere i valori della prima camera keyframe del secondo shot e reinserirla
-    esplicitamente dopo il merge (al frame di giunzione) per preservarli.
-17. **Task 5** — Story-strip
-18. **Task 9** — Audio export with shot
-19. **Task 10** — X-Sheet panel guard for audio import
-20. **Task 11** — Viewer toggle
-21. **Task 13d** — Navigation tags (⚠️ design session needed first)
+14. **Task 6c** — ~~Razor tool audio~~ ✅ DONE (2026-03-26c, SIGABRT fix + shiftLevelFromFrame)
+15. **Task 6d** — ~~Link/Unlink audio-video~~ ✅ DONE (2026-03-26c, shiftLevelFromFrame)
+    Da confermare con test estesi.
+16. **Task 6f** — ~~Merge shots camera keyframe~~ ✅ DONE (2026-03-26b)
+17. **Task 16** — 🔴 Audio sync play — **PRIORITARIO prossima sessione**
+    Residui di desync A/V dopo i fix di 2026-03-26c. Il sync è "molto meglio"
+    ma ancora non perfetto. Causa root probabile: video timer (PlaybackExecutor)
+    e QAudioOutput usano clock diversi → drift nel tempo.
+    **Approccio suggerito**: esporre `QAudioOutput::processedUSecs()` da
+    `TSoundOutputDevice` → `TXsheet::getAudioPlayedUSecs()`, poi in
+    `ZtoryAnimaticViewer::onDrawFrame` usare l'audio clock come master:
+    ```
+    qint64 audioUs = mainXsh->getAudioPlayedUSecs();
+    int audioFrame = playStartFrame + (audioUs * fps / 1e6);
+    // se audioFrame != currentFrame → forza avanzamento/ritardo video
+    ```
+    File da toccare: `tsound.h`, `tsound_qt.cpp`, `txsheet.h/.cpp`,
+    `ztoryanimatic.h/.cpp`.
+    Alternativa più semplice (solo ztoryanimatic): usare un `QElapsedTimer`
+    avviato al momento di `mainXsh->play()` come proxy del clock audio.
+    Meno preciso ma non richiede modifiche ai file Tahoma2D core.
+
+18. **Task 5** — Story-strip
+19. **Task 9** — Audio export with shot
+20. **Task 10** — X-Sheet panel guard for audio import
+21. **Task 11** — Viewer toggle
+22. **Task 13d** — Navigation tags (⚠️ design session needed first)
 
 ---
 
