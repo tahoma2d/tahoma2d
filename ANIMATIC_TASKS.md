@@ -1208,6 +1208,12 @@ remove or guard the existing call in `iocommand.cpp::newScene()`.
 
 ## Priority Order (suggested)
 
+0. **Task 15** — **🔴 PRIORITARIO: Limit RecentFiles.ini** — troncare a max 50 entry
+   in `RecentFiles::addFilePath()` (o equivalente). Senza questo il file cresce
+   indefinitamente e causa hang da deadlock Cocoa Qt su ogni `readSettings()`.
+   File: cercare `RecentFiles` in `toonz/sources/toonzqt/` o `toonz/sources/toonz/`.
+   Soluzione: dopo `addFilePath`, se lista > 50 entry → rimuovi le più vecchie.
+
 1. **Task 1b** — ~~Guard: all shot ops must check ancestorCount == 0~~ ✅ DONE
 2. **Task 14** — ~~Startup window / new-project dialog~~ ✅ DONE (2026-03-21)
 3. **Task 4** — ~~Fix duplicate buttons~~ ✅ DONE (no duplicates found)
@@ -1225,7 +1231,12 @@ remove or guard the existing call in `iocommand.cpp::newScene()`.
 13. **Task 6a** — ~~Zoom slider~~ ✅ DONE (confermato 2026-03-24)
 14. **Task 6c** — ~~Razor tool (video)~~ ✅ DONE (2026-03-25) ⚠️ BUG: non funziona su tracce audio
 15. **Task 6d** — Link/Unlink audio-video ⚠️ BUG: audio non segue il video in drag
-16. **Task 6f** — Merge shots ⚠️ BUG: aggiunge frames ma non copia il contenuto del secondo shot
+16. **Task 6f** — Merge shots ✅ funziona, BUG residuo: camera keyframe
+    Il keyframe camera all'inizio del secondo segmento eredita i valori del primo
+    segmento invece dei valori originali della prima camera key del secondo shot.
+    **Fix**: prima di copiare il contenuto del secondo shot nello shot unificato,
+    leggere i valori della prima camera keyframe del secondo shot e reinserirla
+    esplicitamente dopo il merge (al frame di giunzione) per preservarli.
 17. **Task 5** — Story-strip
 18. **Task 9** — Audio export with shot
 19. **Task 10** — X-Sheet panel guard for audio import

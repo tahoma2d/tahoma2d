@@ -1982,7 +1982,19 @@ static void mergeChildXsheetContent(TXshChildLevel *dstCl,
       for (auto &kv : kfs)
         dstObj->setKeyframeWithoutUndo(kv.first + dstOffset, kv.second);
     }
-    // Step 6: merge camera keyframes (shared camera track).
+  }
+
+  // Step 7a: boundary keyframe at start of new segment — pins all columns
+  // (including the new drawing columns) at their current interpolated values.
+  // Must run BEFORE copying the src camera keyframes: the single-arg
+  // setKeyframeWithoutUndo() materialises the interpolated value at that frame,
+  // so it would overwrite the correct second-shot camera value if called after.
+  addRazorKeyframes(dstCl, dstOffset);
+
+  // Step 6: merge camera keyframes (shared camera track).
+  // Runs AFTER addRazorKeyframes so the correct srcCam value at dstOffset
+  // overwrites the interpolated first-shot value written by step 7a.
+  if (srcTree && dstTree) {
     TStageObject *srcCam =
         srcTree->getStageObject(TStageObjectId::CameraId(0), false);
     TStageObject *dstCam =
@@ -1992,12 +2004,19 @@ static void mergeChildXsheetContent(TXshChildLevel *dstCl,
       srcCam->getKeyframes(kfs);
       for (auto &kv : kfs)
         dstCam->setKeyframeWithoutUndo(kv.first + dstOffset, kv.second);
+      // The junction keyframe at dstOffset was set by addRazorKeyframes (step 7a)
+      // to the first-shot's interpolated value. Override it with the second shot's
+      // first camera keyframe value so the junction is clean.
+      // If srcCam has no explicit keyframe at frame 0, we use its first keyframe;
+      // if it has no keyframes at all, addRazorKeyframes already set the right hold.
+      if (!kfs.empty()) {
+        dstCam->setKeyframeWithoutUndo(dstOffset, kfs.begin()->second);
+      }
     }
   }
 
-  // Step 7: boundary keyframes — AFTER inserting new cols (hits all columns).
-  addRazorKeyframes(dstCl, dstOffset);                    // start of new segment
-  addRazorKeyframes(dstCl, dstOffset + srcDuration - 1);  // end of new segment
+  // Step 7b: boundary keyframe at end of new segment.
+  addRazorKeyframes(dstCl, dstOffset + srcDuration - 1);
 
   dstXsh->updateFrameCount();
 }

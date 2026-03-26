@@ -1,5 +1,4 @@
 
-#include <execinfo.h>
 #include "mainwindow.h"
 #include "startuppopup.h"
 
@@ -176,8 +175,13 @@ void writeRoomList(std::vector<Room *> &rooms) {
 static bool ensureStoryboardRoomsTemplate(const QString &choice) {
   if (choice != "Storyboard") return false;
 
-  TFilePath layoutsPath =
-      ToonzFolder::getMyRoomsDir() + TFilePath("layouts.txt");
+  // Build the target path from 'choice' directly — do NOT use getMyRoomsDir()
+  // which reads the *current* room-choice preference. This function is called
+  // inside switchRoomChoice() BEFORE the preference is updated to 'choice', so
+  // getMyRoomsDir() would return the OLD workflow's directory (e.g. Tradigital).
+  TFilePath myDir = ToonzFolder::getMyModuleDir() +
+                    TFilePath(L"layouts/" + choice.toStdWString());
+  TFilePath layoutsPath = myDir + TFilePath("layouts.txt");
   if (!TFileStatus(layoutsPath).doesExist()) return false;
 
   bool hasBoard    = false;
@@ -210,8 +214,7 @@ static bool ensureStoryboardRoomsTemplate(const QString &choice) {
   if (hasCustom) return false;
 
   // Backup old layouts list so the new storyboard templates can be copied in.
-  TFilePath backupPath =
-      ToonzFolder::getMyRoomsDir() + TFilePath("layouts_legacy.txt");
+  TFilePath backupPath = myDir + TFilePath("layouts_legacy.txt");
   if (TFileStatus(backupPath).doesExist()) {
     TSystem::deleteFile(backupPath);
   }
@@ -699,14 +702,11 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   }
 
   int i;
-  { static FILE *_rd = fopen("/tmp/ztory_switch.log","a"); if(_rd) { fprintf(_rd,"[RS] roomPaths.size=%d\n",(int)roomPaths.size()); fflush(_rd); } }
   for (i = 0; i < (int)roomPaths.size(); i++) {
     TFilePath roomPath = roomPaths[i];
-    { static FILE *_rd = fopen("/tmp/ztory_switch.log","a"); if(_rd) { fprintf(_rd,"[RS] room[%d] load start: %s\n",i,roomPath.getName().c_str()); fflush(_rd); } }
     if (TFileStatus(roomPath).doesExist()) {
       Room *room = new Room(this);
       m_panelStates.push_back(room->load(roomPath));
-      { static FILE *_rd = fopen("/tmp/ztory_switch.log","a"); if(_rd) { fprintf(_rd,"[RS] room[%d] load done: %s\n",i,room->getName().toStdString().c_str()); fflush(_rd); } }
       m_stackedWidget->addWidget(room);
       roomTabWidget->addTab(room->getTrName());
 
@@ -716,7 +716,6 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
       rooms.push_back(room);
     }
   }
-  { static FILE *_rd = fopen("/tmp/ztory_switch.log","a"); if(_rd) { fprintf(_rd,"[RS] all rooms loaded\n"); fflush(_rd); } }
 
   // Read the flipbook history
   FlipBookPool::instance()->load(ToonzFolder::getMyModuleDir() +
@@ -1302,7 +1301,6 @@ void MainWindow::clearRooms() {
 }
 
 void MainWindow::switchRoomChoice(const QString &choice) {
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice('%s') start\n", choice.toStdString().c_str()); fflush(_dbg); } }
   if (choice.isEmpty()) return;
   bool already = (Preferences::instance()->getCurrentRoomChoice() == choice);
   bool migrated = ensureStoryboardRoomsTemplate(choice);
@@ -1316,7 +1314,6 @@ void MainWindow::switchRoomChoice(const QString &choice) {
   disconnect(roomTabWidget, SIGNAL(currentChanged(int)),
              m_stackedWidget, SLOT(setCurrentIndex(int)));
 
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: writeSettings\n"); fflush(_dbg); } }
   writeSettings();
   Preferences::instance()->setValue(CurrentRoomChoice, choice);
   m_currentRoomsChoice = choice;
@@ -1324,9 +1321,7 @@ void MainWindow::switchRoomChoice(const QString &choice) {
   bool watchFs = Preferences::instance()->isWatchFileSystemEnabled();
   if (watchFs) Preferences::instance()->setValue(watchFileSystemEnabled, false);
 
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: clearRooms\n"); fflush(_dbg); } }
   clearRooms();
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: readSettings\n"); fflush(_dbg); } }
   readSettings("");
 
   if (watchFs) Preferences::instance()->setValue(watchFileSystemEnabled, true);
@@ -1340,14 +1335,12 @@ void MainWindow::switchRoomChoice(const QString &choice) {
     m_oldRoomIndex = 0;
   }
 
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: update/reconnect\n"); fflush(_dbg); } }
   update();
   connect(m_stackedWidget, SIGNAL(currentChanged(int)),
           SLOT(onCurrentRoomChanged(int)));
   connect(roomTabWidget, SIGNAL(currentChanged(int)), m_stackedWidget,
           SLOT(setCurrentIndex(int)));
   m_isSwitchingRooms = false;
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: done\n"); fflush(_dbg); } }
 }
 
 static bool switchToFirstRoom(MainWindow *mw, const QStringList &names) {
@@ -1362,29 +1355,20 @@ static bool switchToFirstRoom(MainWindow *mw, const QStringList &names) {
 }
 
 void MainWindow::onWorkflowStoryboard() {
-  if (m_isHandlingWorkflow) {
-    static FILE *_dbg = fopen("/tmp/ztory_switch.log","a");
-    if (_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: BLOCKED (re-entrant)\n"); fflush(_dbg); }
-    return;
-  }
+  if (m_isHandlingWorkflow) return;
   m_isHandlingWorkflow = true;
   // Defer reset to next event loop pass so any MI_Workflow* QAction posted
   // during room loading (sendPostedEvents) is blocked after we return.
   QTimer::singleShot(0, this, [this]() { m_isHandlingWorkflow = false; });
   // User selected Storyboard workflow from menu / startup
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 1 setWorkflow\n"); fflush(_dbg); } }
   ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::Storyboard);
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 2 stopLiveView check\n"); fflush(_dbg); } }
   StopMotion *sm = StopMotion::instance();
   if (sm && sm->m_liveViewStatus > StopMotion::LiveViewClosed)
     sm->stopLiveView();
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 3 switchRoomChoice\n"); fflush(_dbg); } }
   switchRoomChoice("Storyboard");
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 4 switchToFirstRoom\n"); fflush(_dbg); } }
   if (switchToFirstRoom(this, {"BOARD", "Storyboard", "ANIMATIC", "SHOTEDITOR"}))
     return;
 
-  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 5 ensureStoryboard fallback\n"); fflush(_dbg); } }
   // If rooms are still missing, reset storyboard layouts to template once.
   if (ensureStoryboardRoomsTemplate("Storyboard")) {
     switchRoomChoice("Storyboard");
@@ -1395,25 +1379,10 @@ void MainWindow::onWorkflowStoryboard() {
 }
 
 void MainWindow::onWorkflow2D() {
-  if (m_isHandlingWorkflow) {
-    static FILE *_dbg = fopen("/tmp/ztory_switch.log","a");
-    if (_dbg) { fprintf(_dbg, "[ZTORY] onWorkflow2D: BLOCKED (re-entrant)\n"); fflush(_dbg); }
-    return;
-  }
+  if (m_isHandlingWorkflow) return;
   m_isHandlingWorkflow = true;
   QTimer::singleShot(0, this, [this]() { m_isHandlingWorkflow = false; });
   // User selected 2D Tradigital workflow from menu / startup
-  {
-    static FILE *_dbg2 = fopen("/tmp/ztory_switch.log","a");
-    if (_dbg2) {
-      fprintf(_dbg2, "[ZTORY] onWorkflow2D CALLED — backtrace:\n");
-      void *_bt[32]; int _n = backtrace(_bt, 32);
-      char **_syms = backtrace_symbols(_bt, _n);
-      for (int _i = 0; _i < _n; _i++) fprintf(_dbg2, "  %s\n", _syms[_i]);
-      free(_syms);
-      fflush(_dbg2);
-    }
-  }
   ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::Tradigital);
   StopMotion *sm = StopMotion::instance();
   if (sm && sm->m_liveViewStatus > StopMotion::LiveViewClosed)
@@ -3990,9 +3959,12 @@ void RecentFiles::addFilePath(QString path, FileType fileType,
   files.insert(0, path);
   if (fileType == Scene) m_recentSceneProjects.insert(0, projectName);
   int maxSize = 10;
-  if (files.size() > maxSize) {
-    files.removeAt(maxSize);
-    if (fileType == Scene) m_recentSceneProjects.removeAt(maxSize);
+  // Trim with a loop — a single removeAt only removes one entry, but the list
+  // may have grown beyond maxSize if loadRecentFiles() loaded a corrupt file.
+  while (files.size() > maxSize) {
+    files.removeLast();
+    if (fileType == Scene && m_recentSceneProjects.size() > maxSize)
+      m_recentSceneProjects.removeLast();
   }
 
   if (fileType == Scene)
@@ -4092,11 +4064,14 @@ void RecentFiles::clearAllRecentFilesList(bool saveNow) {
 void RecentFiles::loadRecentFiles() {
   TFilePath fp = ToonzFolder::getMyModuleDir() + TFilePath("RecentFiles.ini");
   QSettings settings(toQString(fp), QSettings::IniFormat);
+  // Cap all lists on load so a bloated file on disk does not cause a deadlock
+  // in the Cocoa/Qt IniFormat parser during readSettings().
+  const int maxSize = 10;
   int i;
 
   QList<QVariant> scenes = settings.value(QString("Scenes")).toList();
   if (!scenes.isEmpty()) {
-    for (i = 0; i < scenes.size(); i++)
+    for (i = 0; i < qMin(scenes.size(), maxSize); i++)
       m_recentScenes.append(scenes.at(i).toString());
   } else {
     QString scene = settings.value(QString("Scenes")).toString();
@@ -4108,7 +4083,7 @@ void RecentFiles::loadRecentFiles() {
   QList<QVariant> sceneProjects =
       settings.value(QString("SceneProjects")).toList();
   if (!sceneProjects.isEmpty()) {
-    for (i = 0; i < sceneProjects.size(); i++)
+    for (i = 0; i < qMin(sceneProjects.size(), maxSize); i++)
       m_recentSceneProjects.append(sceneProjects.at(i).toString());
   } else {
     QString sceneProject = settings.value(QString("SceneProjects")).toString();
@@ -4120,10 +4095,8 @@ void RecentFiles::loadRecentFiles() {
 
   QList<QVariant> levels = settings.value(QString("Levels")).toList();
   if (!levels.isEmpty()) {
-    for (i = 0; i < levels.size(); i++) {
-      QString path = levels.at(i).toString();
-      m_recentLevels.append(path);
-    }
+    for (i = 0; i < qMin(levels.size(), maxSize); i++)
+      m_recentLevels.append(levels.at(i).toString());
   } else {
     QString level = settings.value(QString("Levels")).toString();
     if (!level.isEmpty()) m_recentLevels.append(level);
@@ -4131,7 +4104,7 @@ void RecentFiles::loadRecentFiles() {
 
   QList<QVariant> projects = settings.value(QString("Projects")).toList();
   if (!projects.isEmpty()) {
-    for (i = 0; i < projects.size(); i++)
+    for (i = 0; i < qMin(projects.size(), maxSize); i++)
       m_recentProjects.append(projects.at(i).toString());
   } else {
     QString project = settings.value(QString("Projects")).toString();
@@ -4141,7 +4114,7 @@ void RecentFiles::loadRecentFiles() {
   QList<QVariant> flipImages =
       settings.value(QString("FlipbookImages")).toList();
   if (!flipImages.isEmpty()) {
-    for (i = 0; i < flipImages.size(); i++)
+    for (i = 0; i < qMin(flipImages.size(), maxSize); i++)
       m_recentFlipbookImages.append(flipImages.at(i).toString());
   } else {
     QString flipImage = settings.value(QString("FlipbookImages")).toString();

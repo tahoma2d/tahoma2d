@@ -6,6 +6,37 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-03-26] — Fix hang su workflow switch (RecentFiles.ini + guard rientranza)
+
+### Fixed
+
+- **Hang ~1 min su ogni workflow switch** (mainwindow.cpp): causa doppia:
+  1. `RecentFiles.ini` ricresciuto a 2.5 MB — causa deadlock nel plugin Cocoa Qt
+     durante `readSettings()` → `loadRecentFiles()`. Fix immediato: reset del file
+     (backup in `.bak2`). **Fix permanente da implementare (PRIORITARIO)**: limitare
+     le entry in `RecentFiles.ini` a max ~50 voci (era già in TODO da sessione 2026-03-24).
+  2. `MI_Workflow2D` QAction postata (queued via `sendPostedEvents`) durante caricamento
+     Storyboard rooms, processata dopo il ritorno di `onWorkflowStoryboard` →
+     secondo `switchRoomChoice("Tradigital")` → secondo `readSettings` lento.
+     Fix: `m_isHandlingWorkflow` flag con reset differito via `QTimer::singleShot(0)`
+     in tutti e 4 i workflow handler (`onWorkflowStoryboard`, `onWorkflow2D`,
+     `onWorkflowCutout`, `onWorkflowStopMotion`).
+
+### Added
+
+- `m_isHandlingWorkflow` flag in `MainWindow` — guard rientranza per workflow switch.
+- `#include <execinfo.h>` + backtrace debug in `onWorkflow2D` (da rimuovere).
+- Debug prints `[RS]` in `readSettings` loop room-by-room (da rimuovere).
+
+### Notes
+
+- Il backtrace ha rivelato: `DVAction::onTriggered` → `QAction::activate` via
+  `sendPostedEvents` — probabilmente un panel nelle Storyboard rooms ha una
+  `QAction`/`QToolButton` per `MI_Workflow2D` che viene attivata al primo show.
+  Root cause non rimosso — il guard è il fix definitivo.
+- Debug prints da rimuovere nella prossima sessione dopo conferma stabilità.
+
+---
 ## [2026-03-25b] — Merge keyframes, audio track interactions, audio import guard
 
 ### Added
