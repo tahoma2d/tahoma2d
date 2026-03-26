@@ -44,6 +44,17 @@ struct ShotData {
   }
 };
 
+// ─── Workflow ─────────────────────────────────────────────────────────────────
+// Authoritative global workflow state.  Set via ZtoryModel::setWorkflow() at
+// every transition point; query via ZtoryModel::currentWorkflow().
+
+enum class ZtoryWorkflow {
+  Storyboard,   // Storyboard Mode
+  Tradigital,   // 2D Tradigital Mode
+  CutoutDigital, // Cutout Digital Mode
+  StopMotion,   // Stop-Motion Mode
+};
+
 // ─── ZtoryModel ───────────────────────────────────────────────────────────────
 
 class ZtoryModel : public QObject {
@@ -53,6 +64,7 @@ class ZtoryModel : public QObject {
   std::vector<std::vector<QPixmap>> m_previews; // [shotIdx][panelIdx]
   int                           m_fps;
   QString                       m_ztoryPath;
+  ZtoryWorkflow                 m_workflow = ZtoryWorkflow::Tradigital;
 
   ZtoryModel();
   NumberingConfig m_numberingConfig;
@@ -107,9 +119,14 @@ public:
   // Returns true if at main xsheet level; optionally shows a warning dialog.
   static bool assertMainXsheet(bool showWarning = true);
 
-  // Returns true if the current scene is a storyboard/animatic project.
-  // Checks both the in-memory model and the presence of a .ztoryc file.
-  bool isStoryboardWorkflow() const;
+  // ── Workflow state ──────────────────────────────────────────────────────────
+  ZtoryWorkflow currentWorkflow() const { return m_workflow; }
+  void setWorkflow(ZtoryWorkflow w);
+
+  // Convenience: true when currentWorkflow() == ZtoryWorkflow::Storyboard.
+  bool isStoryboardWorkflow() const {
+    return m_workflow == ZtoryWorkflow::Storyboard;
+  }
 
   // ── Sincronizzazione scena ────────────────────────────────────────────────
   void onXsheetChanged();
@@ -117,6 +134,7 @@ public:
   void updateColumnName(int shotIdx);
 
 signals:
+  void workflowChanged(ZtoryWorkflow workflow);
   void modelReset();                          // tutto cambiato
   void shotAdded(int shotIdx);
   void shotRemoved(int shotIdx);

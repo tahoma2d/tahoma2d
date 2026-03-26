@@ -24,6 +24,7 @@
 #include "toutputproperties.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/icongenerator.h"
+#include "toonzqt/dvdialog.h"
 #include "orientation.h"
 #include <QPainter>
 #include <QMouseEvent>
@@ -693,29 +694,15 @@ void ZtoryAudioTrack::mouseReleaseEvent(QMouseEvent *e) {
     int frame = frameAtX(e->x());
     int delta = frame - m_dragStartFrame;
     if (delta != 0 && m_dragOrigR0 >= 0) {
+      // TODO(audio-drag): TXshSoundColumn stores audio via ColumnLevel
+      // (startFrame/startOffset/endOffset), not individual cells.
+      // Using generic clearCells/setCell on a sound column corrupts the heap.
+      // Drag visual feedback is shown but the actual move is NOT committed
+      // until the proper TXshSoundColumn API is used.
+      // Reset selection to original position.
       int origR0 = m_dragOrigR0;
-      int segLen = m_selSeg.r1 - m_selSeg.r0;
-      int origR1 = origR0 + segLen;
-      int newR0 = origR0 + delta;
-      if (newR0 < 0) { delta = -origR0; newR0 = 0; }
-      TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
-      if (xsh) {
-        // Collect cells from original position
-        int count = segLen + 1;
-        std::vector<TXshCell> cells(count);
-        for (int i = 0; i < count; i++)
-          cells[i] = xsh->getCell(origR0 + i, m_col);
-        // Clear original
-        for (int i = 0; i < count; i++)
-          xsh->clearCells(origR0 + i, m_col);
-        // Place at new position
-        for (int i = 0; i < count; i++)
-          xsh->setCell(newR0 + i, m_col, cells[i]);
-        xsh->updateFrameCount();
-        m_selSeg = {newR0, newR0 + segLen};
-        m_waveformDirty = true;
-        TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-      }
+      int segLen  = m_selSeg.r1 - m_selSeg.r0;
+      m_selSeg = {origR0, origR0 + segLen};
     }
     update();
     return;
@@ -768,33 +755,15 @@ void ZtoryAudioTrack::clipboardCopy(ZtoryAudioTrack *src) {
 }
 
 void ZtoryAudioTrack::clipboardCut(ZtoryAudioTrack *src) {
+  // TODO(audio-drag): TXshSoundColumn requires ColumnLevel API, not clearCells.
+  // For now, cut is a copy-only operation (no delete of the source).
   clipboardCopy(src);
-  if (s_audioClipboard.cells.empty()) return;
-  s_audioClipboard.isCut = true;
-  TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
-  if (!xsh) return;
-  int r0 = src->m_selSeg.r0, r1 = src->m_selSeg.r1;
-  for (int r = r0; r <= r1; r++)
-    xsh->clearCells(r, src->m_col);
-  xsh->updateFrameCount();
-  src->m_selSeg = {-1, -1};
-  src->m_waveformDirty = true;
-  src->update();
-  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 }
 
 void ZtoryAudioTrack::clipboardPaste(ZtoryAudioTrack *dst, int frame) {
-  if (s_audioClipboard.cells.empty()) return;
-  TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
-  if (!xsh) return;
-  int count = (int)s_audioClipboard.cells.size();
-  for (int i = 0; i < count; i++)
-    xsh->setCell(frame + i, dst->m_col, s_audioClipboard.cells[i]);
-  xsh->updateFrameCount();
-  dst->m_selSeg = {frame, frame + count - 1};
-  dst->m_waveformDirty = true;
-  dst->update();
-  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  // TODO(audio-drag): TXshSoundColumn requires ColumnLevel API, not setCell.
+  // Paste is disabled until the proper API is implemented.
+  Q_UNUSED(dst); Q_UNUSED(frame);
 }
 
 void ZtoryAudioTrack::keyPressEvent(QKeyEvent *e) {
@@ -808,18 +777,8 @@ void ZtoryAudioTrack::keyPressEvent(QKeyEvent *e) {
     return;
   }
   if (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace) {
-    if (m_selSeg.r0 >= 0) {
-      TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
-      if (xsh) {
-        for (int r = m_selSeg.r0; r <= m_selSeg.r1; r++)
-          xsh->clearCells(r, m_col);
-        xsh->updateFrameCount();
-        m_selSeg = {-1, -1};
-        m_waveformDirty = true;
-        update();
-        TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-      }
-    }
+    // TODO(audio-drag): TXshSoundColumn requires ColumnLevel API, not clearCells.
+    // Delete is disabled until the proper API is implemented.
     return;
   }
   QWidget::keyPressEvent(e);
@@ -1739,6 +1698,15 @@ void ZtoryAnimaticPanel::refreshFromScene() {
 
 void ZtoryAnimaticPanel::refreshAudioTracks() {
   if (m_refreshingAudio) return;
+
+  // Check preconditions BEFORE setting the re-entrancy guard so that an early
+  // return never leaves m_refreshingAudio stuck at true.
+  TApp *app = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  if (!scene) return;
+  TXsheet *xsh = scene->getChildStack()->getTopXsheet();
+  if (!xsh) return;
+
   m_refreshingAudio = true;
 
   // Rimuovi tracce audio esistenti
@@ -1747,12 +1715,6 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     delete at;
   }
   m_audioTracks.clear();
-
-  TApp *app = TApp::instance();
-  ToonzScene *scene = app->getCurrentScene()->getScene();
-  if (!scene) return;
-  TXsheet *xsh = scene->getChildStack()->getTopXsheet();
-  if (!xsh) return;
 
   // Trova tutte le colonne audio nel main xsheet
   for (int col = 0; col < xsh->getColumnCount(); col++) {
@@ -1869,45 +1831,158 @@ static void addRazorKeyframes(TXshChildLevel *cl, int frame) {
   if (cam) cam->setKeyframeWithoutUndo(frame);
 }
 
-// Helper: copy all cell content from srcCl's child xsheet into dstCl's
-// child xsheet starting at frame offset |dstOffset| (0-based).
-// Used by merge operations so that the destination sub-scene contains
-// the actual drawings/animation of the absorbed shot, not just empty frames.
-static void copyChildXsheetFrames(TXshChildLevel *dstCl, TXshChildLevel *srcCl,
-                                   int dstOffset) {
+// Helper: materialize "hold" cells in a child xsheet.
+// In Tahoma2D, drawing cells are stored only at transition points; intermediate
+// frames are "held" (empty in storage but rendered as the previous drawing).
+// Before trimming/shifting we must make held frames explicit so that neither
+// shot ends up with empty columns at the cut boundary.
+// |duration| = total number of frames that the child xsheet must cover.
+static void materializeCells(TXshChildLevel *cl, int duration) {
+  if (!cl) return;
+  TXsheet *xsh = cl->getXsheet();
+  if (!xsh) return;
+  int nCols = xsh->getColumnCount();
+  for (int c = 0; c < nCols; c++) {
+    TXshCell last;
+    for (int r = 0; r < duration; r++) {
+      TXshCell cell = xsh->getCell(r, c);
+      if (!cell.isEmpty()) {
+        last = cell;
+      } else if (!last.isEmpty()) {
+        // Held frame: write the last explicit cell so it becomes explicit.
+        xsh->setCell(r, c, last);
+      }
+    }
+  }
+}
+
+// Helper: trim a child xsheet to |keepFrames| frames.
+// Removes cells >= keepFrames and removes stage-object keyframes >= keepFrames.
+static void trimChildXsheetTo(TXshChildLevel *cl, int keepFrames) {
+  if (!cl) return;
+  TXsheet *xsh = cl->getXsheet();
+  if (!xsh) return;
+  int maxF  = xsh->getFrameCount();
+  int nCols = xsh->getColumnCount();
+  for (int c = 0; c < nCols; c++)
+    for (int r = keepFrames; r < maxF; r++)
+      xsh->clearCells(r, c);
+  TStageObjectTree *tree = xsh->getStageObjectTree();
+  if (tree) {
+    auto trim = [&](TStageObject *obj) {
+      if (!obj) return;
+      TStageObject::KeyframeMap kfs;
+      obj->getKeyframes(kfs);
+      for (auto &kv : kfs)
+        if (kv.first >= keepFrames)
+          obj->removeKeyframeWithoutUndo(kv.first);
+    };
+    for (int c = 0; c < nCols; c++)
+      trim(tree->getStageObject(TStageObjectId::ColumnId(c), false));
+    trim(tree->getStageObject(TStageObjectId::CameraId(0), false));
+  }
+  xsh->updateFrameCount();
+}
+
+// Helper: shift a child xsheet left by |offset| frames.
+// Cells at [offset .. end] become [0 .. end-offset].
+// Stage-object keyframes are shifted by -offset; keyframes < 0 are removed.
+static void shiftChildXsheetBy(TXshChildLevel *cl, int offset) {
+  if (!cl || offset <= 0) return;
+  TXsheet *xsh = cl->getXsheet();
+  if (!xsh) return;
+  int maxF  = xsh->getFrameCount();
+  int nCols = xsh->getColumnCount();
+  int keep  = maxF - offset;
+  if (keep <= 0) { /* nothing would remain */ return; }
+  for (int c = 0; c < nCols; c++) {
+    std::vector<TXshCell> buf(keep);
+    for (int r = 0; r < keep; r++)
+      buf[r] = (offset + r < maxF) ? xsh->getCell(offset + r, c) : TXshCell();
+    for (int r = 0; r < maxF; r++) xsh->clearCells(r, c);
+    for (int r = 0; r < keep; r++)
+      if (!buf[r].isEmpty()) xsh->setCell(r, c, buf[r]);
+  }
+  TStageObjectTree *tree = xsh->getStageObjectTree();
+  if (tree) {
+    auto shift = [&](TStageObject *obj) {
+      if (!obj) return;
+      TStageObject::KeyframeMap kfs;
+      obj->getKeyframes(kfs);
+      // Remove all existing keyframes first (collect positions, then remove).
+      for (auto &kv : kfs) obj->removeKeyframeWithoutUndo(kv.first);
+      // Re-add with offset applied; discard those that fall before frame 0.
+      for (auto &kv : kfs) {
+        int newF = kv.first - offset;
+        if (newF >= 0) obj->setKeyframeWithoutUndo(newF, kv.second);
+      }
+    };
+    for (int c = 0; c < nCols; c++)
+      shift(tree->getStageObject(TStageObjectId::ColumnId(c), false));
+    shift(tree->getStageObject(TStageObjectId::CameraId(0), false));
+  }
+  xsh->updateFrameCount();
+}
+
+// Helper: merge srcCl's content into dstCl starting at |dstOffset|.
+//
+// Design rules (matching the cut behaviour):
+//  - Each drawing column of srcCl is appended as a NEW column in dstCl so
+//    that the two shots never share column indices (no cell/keyframe mixing).
+//  - The camera track IS shared: srcCl's camera keyframes are copied (with
+//    offset) into dstCl's existing camera object.
+//  - Boundary keyframes are inserted at the junction to freeze animation:
+//      dstOffset-1 : added BEFORE inserting new cols (only existing cols)
+//      dstOffset   : added AFTER  inserting new cols (all cols incl. new)
+//      dstOffset+srcDuration-1 : added AFTER (end of the new segment, needed
+//                                for 3+-shot merges where it becomes a middle).
+//  - srcCl's cells are materialized (held cells → explicit) before copying.
+static void mergeChildXsheetContent(TXshChildLevel *dstCl,
+                                    TXshChildLevel *srcCl,
+                                    int dstOffset, int srcDuration) {
   if (!dstCl || !srcCl) return;
   TXsheet *dstXsh = dstCl->getXsheet();
   TXsheet *srcXsh = srcCl->getXsheet();
   if (!dstXsh || !srcXsh) return;
 
-  // Copy cells (drawings)
-  int srcMaxF = srcXsh->getFrameCount();
-  int srcNCols = srcXsh->getColumnCount();
+  // Step 1: materialize srcCl's held cells for its full duration.
+  materializeCells(srcCl, srcDuration);
+
+  // Step 2: keyframe at end of previous content — BEFORE inserting new cols.
+  // This pins only the already-existing dst columns at that boundary.
+  addRazorKeyframes(dstCl, dstOffset - 1);
+
+  // Step 3: append new columns in dstXsh for each drawing column of srcCl.
+  int srcNCols    = srcXsh->getColumnCount();
+  int dstColBase  = dstXsh->getColumnCount(); // first new column index
+  for (int c = 0; c < srcNCols; c++)
+    dstXsh->insertColumn(dstColBase + c);
+
+  // Step 4: copy cells into the new columns at dstOffset.
   for (int c = 0; c < srcNCols; c++) {
-    for (int r = 0; r < srcMaxF; r++) {
+    for (int r = 0; r < srcDuration; r++) {
       TXshCell cell = srcXsh->getCell(r, c);
       if (!cell.isEmpty())
-        dstXsh->setCell(dstOffset + r, c, cell);
+        dstXsh->setCell(dstOffset + r, dstColBase + c, cell);
     }
   }
 
-  // Copy stage object keyframes (column transforms + camera) with offset
+  // Step 5: copy stage-object keyframes for drawing columns (shifted).
   TStageObjectTree *srcTree = srcXsh->getStageObjectTree();
   TStageObjectTree *dstTree = dstXsh->getStageObjectTree();
   if (srcTree && dstTree) {
-    // Copy column keyframes
     for (int c = 0; c < srcNCols; c++) {
       TStageObject *srcObj =
           srcTree->getStageObject(TStageObjectId::ColumnId(c), false);
       TStageObject *dstObj =
-          dstTree->getStageObject(TStageObjectId::ColumnId(c), false);
+          dstTree->getStageObject(TStageObjectId::ColumnId(dstColBase + c), false);
       if (!srcObj || !dstObj) continue;
       TStageObject::KeyframeMap kfs;
       srcObj->getKeyframes(kfs);
       for (auto &kv : kfs)
         dstObj->setKeyframeWithoutUndo(kv.first + dstOffset, kv.second);
     }
-    // Copy camera keyframes
+    // Step 6: merge camera keyframes (shared camera track).
     TStageObject *srcCam =
         srcTree->getStageObject(TStageObjectId::CameraId(0), false);
     TStageObject *dstCam =
@@ -1919,6 +1994,10 @@ static void copyChildXsheetFrames(TXshChildLevel *dstCl, TXshChildLevel *srcCl,
         dstCam->setKeyframeWithoutUndo(kv.first + dstOffset, kv.second);
     }
   }
+
+  // Step 7: boundary keyframes — AFTER inserting new cols (hits all columns).
+  addRazorKeyframes(dstCl, dstOffset);                    // start of new segment
+  addRazorKeyframes(dstCl, dstOffset + srcDuration - 1);  // end of new segment
 
   dstXsh->updateFrameCount();
 }
@@ -1960,16 +2039,12 @@ void ZtoryAnimaticPanel::onMergeShots() {
   }
   if (!dstCl) return;
 
-  // Append frames from each subsequent shot into dstCol.
-  // Insert keyframes at merge boundaries to preserve camera/level movement:
-  // - last frame of the first shot
-  // - first and last frame of each subsequent shot segment
-  int appendAt = dstR1 + 1;
+  int appendAt    = dstR1 + 1;
   int dstDuration = dstR1 - dstR0 + 1;
   int lastFrameNum = dstDuration; // 1-based frame index for continuation
 
-  // Keyframe on last frame of first shot (0-based in child xsheet)
-  addRazorKeyframes(dstCl, dstDuration - 1);
+  // Materialize held cells in the first shot before merging.
+  materializeCells(dstCl, dstDuration);
 
   for (int i = 1; i < (int)sortedCols.size(); i++) {
     int srcCol = sortedCols[i];
@@ -1979,7 +2054,7 @@ void ZtoryAnimaticPanel::onMergeShots() {
     srcColumn->getRange(r0, r1);
     int duration = r1 - r0 + 1;
 
-    // Find src child level and copy its sub-scene content into dstCl
+    // Find src child level
     TXshChildLevel *srcCl = nullptr;
     for (int r = r0; r <= r1; r++) {
       TXshCell cell = xsh->getCell(r, srcCol);
@@ -1988,15 +2063,11 @@ void ZtoryAnimaticPanel::onMergeShots() {
         break;
       }
     }
-    int segmentStart = lastFrameNum; // 0-based offset in dst child xsheet
-    copyChildXsheetFrames(dstCl, srcCl, lastFrameNum);
+    // Merge srcCl into dstCl: new columns per shot, shared camera,
+    // boundary keyframes at junction and end of segment.
+    mergeChildXsheetContent(dstCl, srcCl, lastFrameNum, duration);
 
-    // Keyframe at first frame of this segment
-    addRazorKeyframes(dstCl, segmentStart);
-    // Keyframe at last frame of this segment
-    addRazorKeyframes(dstCl, segmentStart + duration - 1);
-
-    // Extend main xsheet column to cover the merged duration
+    // Extend main xsheet column to cover the merged duration.
     for (int r = 0; r < duration; r++)
       xsh->setCell(appendAt + r, dstCol, TXshCell(dstCl, TFrameId(++lastFrameNum)));
     appendAt += duration;
@@ -2071,19 +2142,20 @@ void ZtoryAnimaticPanel::onMergeWithNext(int col) {
     }
   }
 
-  // Copy src sub-scene content into dst sub-scene at the correct offset.
-  // Insert keyframes at merge boundary to preserve camera/level movement.
   int dstDuration = dstR1 - dstR0 + 1;
-  addRazorKeyframes(dstCl, dstDuration - 1); // last frame of first shot
-  copyChildXsheetFrames(dstCl, srcCl, dstDuration);
   int srcDuration = srcR1 - srcR0 + 1;
-  addRazorKeyframes(dstCl, dstDuration);                    // first frame of second shot
-  addRazorKeyframes(dstCl, dstDuration + srcDuration - 1);  // last frame of second shot
 
-  // Extend dst column in main xsheet to cover the merged duration
-  int appendAt = dstR1 + 1;
+  // Materialize held cells in the first shot before merging.
+  materializeCells(dstCl, dstDuration);
+
+  // Merge srcCl into dstCl: new columns per shot, shared camera,
+  // boundary keyframes at junction and end of segment.
+  mergeChildXsheetContent(dstCl, srcCl, dstDuration, srcDuration);
+
+  // Extend dst column in main xsheet to cover the merged duration.
+  int appendAt     = dstR1 + 1;
   int lastFrameNum = dstDuration;
-  int duration = srcDuration;
+  int duration     = srcDuration;
   for (int r = 0; r < duration; r++)
     xsh->setCell(appendAt + r, col, TXshCell(dstCl, TFrameId(++lastFrameNum)));
 
@@ -2146,7 +2218,19 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
   }
   if (dbg) fprintf(dbg, "  origCL=%p\n", (void *)origCL);
 
-  // Clone → creates a fully independent sub-scene at col+1 with cells r0..r1.
+  // ── Step 1: materialize held cells for the full shot duration ──────────────
+  // Tahoma2D stores drawing cells only at transition points; intermediate
+  // frames are empty in storage ("held"). We must make them explicit so that
+  // after trim/shift neither shot has gaps at the cut boundary.
+  materializeCells(origCL, totalDuration);
+
+  // ── Step 2: bake boundary keyframes BEFORE cloning ────────────────────────
+  // Adding keyframes to origCL now means the clone inherits them automatically.
+  // splitRel-1 = last frame of shot 1; splitRel = first frame of shot 2.
+  addRazorKeyframes(origCL, splitRel - 1);
+  addRazorKeyframes(origCL, splitRel);
+
+  // ── Step 3: Clone ──────────────────────────────────────────────────────────
   if (dbg) { fprintf(dbg, "  before cloneChild:\n"); razorLog(dbg, mainXsh, col, "orig"); }
   ColumnCmd::cloneChild(col);
   int newCol = col + 1;
@@ -2163,51 +2247,19 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
   }
   if (dbg) fprintf(dbg, "  cloneCL=%p\n", (void *)cloneCL);
 
-  // Trim original's child xsheet: remove frames after splitRel so that
-  // the sub-scene only contains the first part of the shot.
-  if (origCL) {
-    TXsheet *childXsh = origCL->getXsheet();
-    if (childXsh) {
-      int maxF  = childXsh->getFrameCount();
-      int nCols = childXsh->getColumnCount();
-      if (dbg) fprintf(dbg, "  orig childXsh: maxF=%d nCols=%d, trimming to %d\n", maxF, nCols, splitRel);
-      for (int c = 0; c < nCols; c++) {
-        for (int r = splitRel; r < maxF; r++)
-          childXsh->clearCells(r, c);
-      }
-      childXsh->updateFrameCount();
-      if (dbg) fprintf(dbg, "  orig childXsh after trim: frameCount=%d\n", childXsh->getFrameCount());
-    }
-  }
+  // ── Step 4: Trim original child xsheet to splitRel frames ─────────────────
+  // Also removes stage-object keyframes beyond the cut point.
+  trimChildXsheetTo(origCL, splitRel);
+  if (dbg) fprintf(dbg, "  orig childXsh after trim: frameCount=%d\n",
+                   origCL ? origCL->getXsheet()->getFrameCount() : -1);
 
-  // Fix clone's child xsheet: remove the first splitRel frames so that
-  // frame 1 of the new sub-scene corresponds to the cut point.
-  if (cloneCL) {
-    TXsheet *childXsh = cloneCL->getXsheet();
-    if (childXsh) {
-      int maxF  = childXsh->getFrameCount();
-      int nCols = childXsh->getColumnCount();
-      if (dbg) fprintf(dbg, "  clone childXsh: maxF=%d nCols=%d\n", maxF, nCols);
-      for (int c = 0; c < nCols; c++) {
-        // Collect source cells into a temp buffer first — writing to the
-        // same column we read from can trigger vector reallocation inside
-        // TXshCellColumn::setCell, invalidating the source data.
-        std::vector<TXshCell> buf(secondHalf);
-        for (int r = 0; r < secondHalf && (splitRel + r) < maxF; r++)
-          buf[r] = childXsh->getCell(splitRel + r, c);
-        // Clear entire column range, then write back from buffer.
-        for (int r = 0; r < maxF; r++)
-          childXsh->clearCells(r, c);
-        for (int r = 0; r < secondHalf; r++) {
-          if (!buf[r].isEmpty())
-            childXsh->setCell(r, c, buf[r]);
-        }
-      }
-      childXsh->updateFrameCount();
-      if (dbg) fprintf(dbg, "  clone childXsh after shift: frameCount=%d\n", childXsh->getFrameCount());
-    }
-  }
+  // ── Step 5: Shift clone child xsheet left by splitRel ─────────────────────
+  // Cells and keyframes at [splitRel..end] become [0..secondHalf-1].
+  shiftChildXsheetBy(cloneCL, splitRel);
+  if (dbg) fprintf(dbg, "  clone childXsh after shift: frameCount=%d\n",
+                   cloneCL ? cloneCL->getXsheet()->getFrameCount() : -1);
 
+  // ── Step 6: Fix main-xsheet columns ───────────────────────────────────────
   // Trim original column: remove the tail (secondHalf cells).
   if (dbg) { fprintf(dbg, "  before removeCells(%d, %d, %d):\n", r0 + splitRel, col, secondHalf); razorLog(dbg, mainXsh, col, "orig"); }
   mainXsh->removeCells(r0 + splitRel, col, secondHalf);
@@ -2215,16 +2267,11 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
 
   // Rebuild clone column: wipe then repopulate with TFrameId(1..secondHalf).
   mainXsh->clearCells(r0, newCol, totalDuration + 2);
-  if (dbg) { fprintf(dbg, "  after clearCells clone:\n"); razorLog(dbg, mainXsh, newCol, "clone"); }
   if (cloneCL) {
     for (int r = 0; r < secondHalf; r++)
       mainXsh->setCell(r0 + r, newCol, TXshCell(cloneCL, TFrameId(r + 1)));
   }
   if (dbg) { fprintf(dbg, "  after repopulate clone:\n"); razorLog(dbg, mainXsh, newCol, "clone"); }
-
-  // Insert keyframes at the cut boundary.
-  addRazorKeyframes(origCL, splitRel - 1);
-  addRazorKeyframes(cloneCL, 0);
 
   // Notify the board FIRST (before resequenceXsheet emits modelReset).
   emit ZtoryModel::instance()->shotAdded(newCol);
@@ -2505,6 +2552,18 @@ void ZtoryAnimaticPanel::contextMenuEvent(QContextMenuEvent *e) {
   QAction *loadAudio = menu.addAction(tr("Load Audio..."));
   QAction *chosen = menu.exec(e->globalPos());
   if (chosen == loadAudio) {
+    // In storyboard workflow, audio can only be loaded from the main xsheet.
+    // Show the warning before opening the file dialog so the user doesn't
+    // waste time selecting a file only to be rejected afterward.
+    if (ZtoryModel::instance()->isStoryboardWorkflow()) {
+      ToonzScene *checkScene = TApp::instance()->getCurrentScene()->getScene();
+      if (checkScene && checkScene->getChildStack()->getAncestorCount() > 0) {
+        DVGui::warning(tr(
+            "In storyboard workflow, audio can only be loaded from the main "
+            "xsheet.\nPlease close the current sub-scene first."));
+        return;
+      }
+    }
     // Formati nativi: wav, aiff. mp3/ogg richiedono FFmpeg configurato.
     QString path = QFileDialog::getOpenFileName(
         this, tr("Load Audio"),

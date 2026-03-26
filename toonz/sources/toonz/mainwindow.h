@@ -57,6 +57,7 @@ class MainWindow final : public QMainWindow {
   bool m_shownOnce = false;
   int m_oldRoomIndex;
   bool m_isSwitchingRooms;
+  bool m_isHandlingWorkflow = false;  // re-entrancy guard for workflow handlers
   QString m_currentRoomsChoice;
   UpdateChecker *m_updateChecker;
 

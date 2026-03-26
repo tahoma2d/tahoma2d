@@ -751,7 +751,7 @@ void StoryboardPanel::updatePreview(int shotIdx, int panelIdx) {
   TXsheet *subXsh = cl->getXsheet();
   if (not subXsh) return;
   int frame = shot.data.panels[panelIdx].startFrame;
-  QPixmap px = IconGenerator::renderXsheetFrame(subXsh, frame, TDimension(1920, 1080));
+  QPixmap px = IconGenerator::renderXsheetFrame(subXsh, frame, TDimension(320, 180));
   if (not px.isNull())
     shot.panels[panelIdx]->setPreviewPixmap(px);
 }

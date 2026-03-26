@@ -6,6 +6,42 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-03-25b] — Merge keyframes, audio track interactions, audio import guard
+
+### Added
+- **Merge with keyframes (6f)**: `onMergeShots()` e `onMergeWithNext()` ora inseriscono
+  keyframes su tutte le colonne + camera ai bordi dei segmenti uniti via `addRazorKeyframes`.
+  `copyChildXsheetFrames` copia anche le keyframes degli stage objects dal source al
+  destination con offset.
+- **Audio import guard**: In `IoCmd::loadResources()`, file audio bloccati nelle sottoscene
+  quando `ZtoryModel::isStoryboardWorkflow()` è true. Nuovo metodo che verifica sia gli
+  shot in memoria sia l'esistenza del file `.ztoryc`.
+- **Audio track interattiva**: `findSegments()` identifica segmenti contigui. Click per
+  selezionare (highlight blu), drag per spostare, Ctrl+X/C/V per clipboard, Delete per
+  cancellare. Separatori rossi semitrasparenti tra segmenti dopo split.
+- **Razor AV-linked in-place**: `splitAudioColumn()` ora cancella solo la cella al punto
+  di taglio invece di creare una nuova colonna/traccia.
+- **Audio-video link su resequence**: `resequenceXsheet()` salva posizioni prima/dopo e
+  applica lo stesso delta ai segmenti audio associati (per midpoint overlap).
+
+### Known bugs (da risolvere nella prossima sessione)
+- **Merge keyframes confuse**: `copyChildXsheetFrames` copia nelle stesse colonne del dst
+  xsheet, ma gli shot uniti dovrebbero avere colonne separate nella child xsheet di
+  destinazione per evitare che le keyframes si confondano e i movimenti vengano sfalsati.
+  **Fix necessario**: copiare il contenuto dei source shot in NUOVE colonne nel dst xsheet
+  (appendere colonne, non sovrascrivere le stesse).
+- **Audio guard falso positivo**: `isStoryboardWorkflow()` controlla l'esistenza del file
+  `.ztoryc` ma non distingue quando l'utente cambia workflow (es. da storyboard a
+  tradigital). Serve un flag esplicito sul workflow attivo, non basato sul file.
+- **Audio drag crash (segfault)**: `TXshSoundColumn` gestisce l'audio con `ColumnLevel`
+  (startFrame, startOffset, endOffset) — le operazioni generiche `clearCells`/`setCell`
+  non sono sicure sulle sound columns. Il drag audio deve usare le API specifiche di
+  `TXshSoundColumn` e `ColumnLevel` per spostare i segmenti.
+- **Audio sparisce su resize con AV link**: `onShotDurationChanged` shifta l'audio PRIMA
+  del resequence, poi `resequenceXsheet()` (versione audio-linked) lo shifta DI NUOVO.
+  **Fix**: rimuovere il doppio shift — fare lo shift solo in uno dei due posti.
+
+---
 ## [2026-03-25] — Stability fixes: re-entrancy guards, razor crash, duplicate crash, webcam UX
 
 ### Fixed

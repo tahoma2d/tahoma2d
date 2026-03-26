@@ -1,5 +1,5 @@
 
-
+#include <execinfo.h>
 #include "mainwindow.h"
 #include "startuppopup.h"
 
@@ -17,6 +17,7 @@
 #include "custompanelmanager.h"
 #include "statusbar.h"
 #include "aboutpopup.h"
+#include "ztorymodel.h"
 
 // TnzTools includes
 #include "tools/toolcommandids.h"
@@ -464,6 +465,15 @@ MainWindow::MainWindow(const QString &argumentLayoutFileName, QWidget *parent,
   m_toolsActionGroup = new QActionGroup(this);
   m_toolsActionGroup->setExclusive(true);
   m_currentRoomsChoice = Preferences::instance()->getCurrentRoomChoice();
+  // Initialize workflow state from saved room choice (boot time)
+  if (m_currentRoomsChoice == "Storyboard")
+    ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::Storyboard);
+  else if (m_currentRoomsChoice == "Cutout")
+    ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::CutoutDigital);
+  else if (m_currentRoomsChoice == "StopMotion")
+    ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::StopMotion);
+  else
+    ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::Tradigital);
   makeTransparencyDialog();
   defineActions();
   // user defined shortcuts will be loaded here
@@ -689,11 +699,14 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   }
 
   int i;
+  { static FILE *_rd = fopen("/tmp/ztory_switch.log","a"); if(_rd) { fprintf(_rd,"[RS] roomPaths.size=%d\n",(int)roomPaths.size()); fflush(_rd); } }
   for (i = 0; i < (int)roomPaths.size(); i++) {
     TFilePath roomPath = roomPaths[i];
+    { static FILE *_rd = fopen("/tmp/ztory_switch.log","a"); if(_rd) { fprintf(_rd,"[RS] room[%d] load start: %s\n",i,roomPath.getName().c_str()); fflush(_rd); } }
     if (TFileStatus(roomPath).doesExist()) {
       Room *room = new Room(this);
       m_panelStates.push_back(room->load(roomPath));
+      { static FILE *_rd = fopen("/tmp/ztory_switch.log","a"); if(_rd) { fprintf(_rd,"[RS] room[%d] load done: %s\n",i,room->getName().toStdString().c_str()); fflush(_rd); } }
       m_stackedWidget->addWidget(room);
       roomTabWidget->addTab(room->getTrName());
 
@@ -703,6 +716,7 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
       rooms.push_back(room);
     }
   }
+  { static FILE *_rd = fopen("/tmp/ztory_switch.log","a"); if(_rd) { fprintf(_rd,"[RS] all rooms loaded\n"); fflush(_rd); } }
 
   // Read the flipbook history
   FlipBookPool::instance()->load(ToonzFolder::getMyModuleDir() +
@@ -1288,6 +1302,7 @@ void MainWindow::clearRooms() {
 }
 
 void MainWindow::switchRoomChoice(const QString &choice) {
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice('%s') start\n", choice.toStdString().c_str()); fflush(_dbg); } }
   if (choice.isEmpty()) return;
   bool already = (Preferences::instance()->getCurrentRoomChoice() == choice);
   bool migrated = ensureStoryboardRoomsTemplate(choice);
@@ -1301,6 +1316,7 @@ void MainWindow::switchRoomChoice(const QString &choice) {
   disconnect(roomTabWidget, SIGNAL(currentChanged(int)),
              m_stackedWidget, SLOT(setCurrentIndex(int)));
 
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: writeSettings\n"); fflush(_dbg); } }
   writeSettings();
   Preferences::instance()->setValue(CurrentRoomChoice, choice);
   m_currentRoomsChoice = choice;
@@ -1308,7 +1324,9 @@ void MainWindow::switchRoomChoice(const QString &choice) {
   bool watchFs = Preferences::instance()->isWatchFileSystemEnabled();
   if (watchFs) Preferences::instance()->setValue(watchFileSystemEnabled, false);
 
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: clearRooms\n"); fflush(_dbg); } }
   clearRooms();
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: readSettings\n"); fflush(_dbg); } }
   readSettings("");
 
   if (watchFs) Preferences::instance()->setValue(watchFileSystemEnabled, true);
@@ -1322,12 +1340,14 @@ void MainWindow::switchRoomChoice(const QString &choice) {
     m_oldRoomIndex = 0;
   }
 
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: update/reconnect\n"); fflush(_dbg); } }
   update();
   connect(m_stackedWidget, SIGNAL(currentChanged(int)),
           SLOT(onCurrentRoomChanged(int)));
   connect(roomTabWidget, SIGNAL(currentChanged(int)), m_stackedWidget,
           SLOT(setCurrentIndex(int)));
   m_isSwitchingRooms = false;
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] switchRoomChoice: done\n"); fflush(_dbg); } }
 }
 
 static bool switchToFirstRoom(MainWindow *mw, const QStringList &names) {
@@ -1342,14 +1362,29 @@ static bool switchToFirstRoom(MainWindow *mw, const QStringList &names) {
 }
 
 void MainWindow::onWorkflowStoryboard() {
-  // Stop live view if active before switching workflows
+  if (m_isHandlingWorkflow) {
+    static FILE *_dbg = fopen("/tmp/ztory_switch.log","a");
+    if (_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: BLOCKED (re-entrant)\n"); fflush(_dbg); }
+    return;
+  }
+  m_isHandlingWorkflow = true;
+  // Defer reset to next event loop pass so any MI_Workflow* QAction posted
+  // during room loading (sendPostedEvents) is blocked after we return.
+  QTimer::singleShot(0, this, [this]() { m_isHandlingWorkflow = false; });
+  // User selected Storyboard workflow from menu / startup
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 1 setWorkflow\n"); fflush(_dbg); } }
+  ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::Storyboard);
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 2 stopLiveView check\n"); fflush(_dbg); } }
   StopMotion *sm = StopMotion::instance();
   if (sm && sm->m_liveViewStatus > StopMotion::LiveViewClosed)
     sm->stopLiveView();
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 3 switchRoomChoice\n"); fflush(_dbg); } }
   switchRoomChoice("Storyboard");
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 4 switchToFirstRoom\n"); fflush(_dbg); } }
   if (switchToFirstRoom(this, {"BOARD", "Storyboard", "ANIMATIC", "SHOTEDITOR"}))
     return;
 
+  { static FILE *_dbg = fopen("/tmp/ztory_switch.log","a"); if(_dbg) { fprintf(_dbg, "[ZTORY] onWorkflowStoryboard: step 5 ensureStoryboard fallback\n"); fflush(_dbg); } }
   // If rooms are still missing, reset storyboard layouts to template once.
   if (ensureStoryboardRoomsTemplate("Storyboard")) {
     switchRoomChoice("Storyboard");
@@ -1360,6 +1395,26 @@ void MainWindow::onWorkflowStoryboard() {
 }
 
 void MainWindow::onWorkflow2D() {
+  if (m_isHandlingWorkflow) {
+    static FILE *_dbg = fopen("/tmp/ztory_switch.log","a");
+    if (_dbg) { fprintf(_dbg, "[ZTORY] onWorkflow2D: BLOCKED (re-entrant)\n"); fflush(_dbg); }
+    return;
+  }
+  m_isHandlingWorkflow = true;
+  QTimer::singleShot(0, this, [this]() { m_isHandlingWorkflow = false; });
+  // User selected 2D Tradigital workflow from menu / startup
+  {
+    static FILE *_dbg2 = fopen("/tmp/ztory_switch.log","a");
+    if (_dbg2) {
+      fprintf(_dbg2, "[ZTORY] onWorkflow2D CALLED — backtrace:\n");
+      void *_bt[32]; int _n = backtrace(_bt, 32);
+      char **_syms = backtrace_symbols(_bt, _n);
+      for (int _i = 0; _i < _n; _i++) fprintf(_dbg2, "  %s\n", _syms[_i]);
+      free(_syms);
+      fflush(_dbg2);
+    }
+  }
+  ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::Tradigital);
   StopMotion *sm = StopMotion::instance();
   if (sm && sm->m_liveViewStatus > StopMotion::LiveViewClosed)
     sm->stopLiveView();
@@ -1369,13 +1424,22 @@ void MainWindow::onWorkflow2D() {
 }
 
 void MainWindow::onWorkflowCutout() {
+  if (m_isHandlingWorkflow) return;
+  m_isHandlingWorkflow = true;
+  QTimer::singleShot(0, this, [this]() { m_isHandlingWorkflow = false; });
+  // User selected Cutout Digital workflow from menu / startup
+  ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::CutoutDigital);
   switchRoomChoice("Cutout");
   if (switchToFirstRoom(this, {"Cutout", "CUTOUT", "2D"})) return;
   DVGui::warning(tr("Cutout room not found."));
 }
 
 void MainWindow::onWorkflowStopMotion() {
-  // Stop live view if active before switching rooms
+  if (m_isHandlingWorkflow) return;
+  m_isHandlingWorkflow = true;
+  QTimer::singleShot(0, this, [this]() { m_isHandlingWorkflow = false; });
+  // User selected Stop-Motion workflow from menu / startup
+  ZtoryModel::instance()->setWorkflow(ZtoryWorkflow::StopMotion);
   StopMotion *sm = StopMotion::instance();
   if (sm && sm->m_liveViewStatus > StopMotion::LiveViewClosed)
     sm->stopLiveView();

@@ -241,7 +241,7 @@ cd toonz/sources && ./beautification.sh
 
 ### Trigger: "nuova sessione"
 
-When the user says **"nuova sessione"**, automatically:
+When the user says **"nuova sessione"** (with or without additional text), automatically:
 1. Read `~/ZtorYc/AGENTS.md` (this file) for rules and architecture
 2. Read `~/ZtorYc/CHANGELOG.md` for context — **ONLY the first 60 lines** (recent sessions)
 3. Read `~/ZtorYc/ANIMATIC_TASKS.md` — **ONLY the Priority Order section** (last ~40 lines,
@@ -250,6 +250,15 @@ When the user says **"nuova sessione"**, automatically:
    the highest-priority pending task in ANIMATIC_TASKS.md)
 
 This keeps startup token cost low. Do NOT read full ANIMATIC_TASKS.md upfront.
+
+> **IMPORTANTE:** il trigger "nuova sessione" funziona SOLO se Claude Code ha già letto
+> questo file all'avvio (cioè se è aperto nella directory del progetto con CLAUDE.md presente).
+> Se il contesto non viene trovato, usare questo messaggio esplicito come primo messaggio:
+>
+> ```
+> nuova sessione — leggi ~/ZtorYc/AGENTS.md, le prime 60 righe di ~/ZtorYc/CHANGELOG.md,
+> e la sezione "Priority Order" di ~/ZtorYc/ANIMATIC_TASKS.md. Poi fammi un recap.
+> ```
 
 ### Context window — avviso token
 

@@ -92,15 +92,10 @@ void ZtoryModel::updateAllPreviews() {
 
 // ─── Operazioni su shot ───────────────────────────────────────────────────────
 
-bool ZtoryModel::isStoryboardWorkflow() const {
-  if (!m_shots.empty()) return true;
-  // Check if a .ztoryc file exists alongside the current scene
-  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-  if (!scene) return false;
-  TFilePath scenePath = scene->getScenePath();
-  if (scenePath.isEmpty()) return false;
-  QString ztoryc = QString::fromStdWString(scenePath.withType("ztoryc").getWideString());
-  return QFileInfo::exists(ztoryc);
+void ZtoryModel::setWorkflow(ZtoryWorkflow w) {
+  if (m_workflow == w) return;
+  m_workflow = w;
+  emit workflowChanged(w);
 }
 
 bool ZtoryModel::assertMainXsheet(bool showWarning) {
