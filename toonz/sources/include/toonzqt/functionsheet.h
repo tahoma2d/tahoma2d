@@ -29,12 +29,14 @@ class FunctionSelection;
 
 class FunctionSheetButtonArea final : public QWidget {
   Q_OBJECT
-  QPushButton *m_syncSizeBtn;
+  QPushButton *m_syncSizeBtn, *m_syncHeaderBtn;
 
 public:
   FunctionSheetButtonArea(QWidget *parent);
+  void setSyncHeaderBtnState(bool);
   void setSyncSizeBtnState(bool);
 signals:
+  void syncHeaderBtnToggled(bool);
   void syncSizeBtnToggled(bool);
 };
 
@@ -162,6 +164,7 @@ public:
     update();
   }
 
+  void setSyncHeader(bool on);
   bool isSyncSize() { return m_syncSize; }
   void setSyncSize(bool on);
   void setXsheetHandle(TXsheetHandle *xshHandle) { m_xshHandle = xshHandle; }
@@ -183,6 +186,9 @@ public slots:
 
   void onSyncSizeBtnToggled(bool);
   void onZoomScaleChanged();
+
+signals:
+  void syncHeaderBtnToggled(bool);
 };
 
 #endif

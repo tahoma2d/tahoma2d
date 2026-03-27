@@ -1541,6 +1541,8 @@ void FunctionPanel::fitGraphToWindow(bool currentCurveOnly) {
   } else {
     double mx       = (width() - m_valueAxisX - 20) / (f1 - f0);
     double my       = -(height() - m_graphViewportY - 20) / (v1 - v0);
+    // Keep value negative so vertical axis is numbered top down
+    if (my > 0) my *= -1;
     double dx       = m_valueAxisX + 10 - f0 * mx;
     double dy       = m_graphViewportY + 10 - v1 * my;
     m_viewTransform = QTransform(mx, 0, 0, my, dx, dy);

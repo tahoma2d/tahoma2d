@@ -2211,7 +2211,8 @@ QWidget* PreferencesPopup::createXsheetPage() {
   {
     insertUI(showQuickToolbar, xshToolbarLay);
     insertUI(showXsheetBreadcrumbs, xshToolbarLay);
-    insertUI(expandFunctionHeader, xshToolbarLay);
+// Obsolete. Setting is local to panel
+//    insertUI(expandFunctionHeader, xshToolbarLay);
   }
   insertUI(showColumnNumbers, lay);
 // Disabled until OT officially releases it

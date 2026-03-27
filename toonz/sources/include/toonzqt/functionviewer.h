@@ -128,6 +128,8 @@ public:
   // refer to the preferences' "Current Column Color"
   QColor getCurrentTextColor() const;
 
+  void showToggleMode(int toggleMode);
+
 signals:
 
   void curveChanged();
@@ -186,6 +188,8 @@ private:
   TDoubleParam *m_curve;
   FunctionSelection *m_selection;
 
+  bool m_syncHeader = false;
+
 private:
   void showEvent(QShowEvent *) override;
   void hideEvent(QHideEvent *) override;
@@ -198,10 +202,14 @@ public:  //  :(
     emit curveIo(type, curve, name);
   }  //!< \deprecated  Should not be public.
 
+  void adjustHeader();
+
 private slots:
 
   void propagateExternalSetFrame();  //!< Forwards m_frameHandle's setFrame()
                                      //! invocations to m_localFrame.
+
+  void onSyncHeaderBtnToggled(bool);
 };
 
 #endif  // FUNCTIONEDITORVIEWER_H

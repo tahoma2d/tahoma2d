@@ -196,11 +196,29 @@ public:
 
 FunctionSheetButtonArea::FunctionSheetButtonArea(QWidget *parent)
     : QWidget(parent) {
+  m_syncHeaderBtn = new QPushButton("", this);
+  m_syncHeaderBtn->setCheckable(true);
+  m_syncHeaderBtn->setFixedSize(17, 17);
+  static QPixmap syncHeaderImg = generateIconPixmap("syncheader");
+  QPixmap offPmHeader(16, 16);
+  offPmHeader.fill(Qt::transparent);
+  {
+    QPainter p(&offPmHeader);
+    p.setOpacity(0.7);
+    p.drawPixmap(0, 0, syncHeaderImg);
+  }
+  QIcon iconHeader;
+  iconHeader.addPixmap(offPmHeader);
+  iconHeader.addPixmap(syncHeaderImg, QIcon::Normal, QIcon::On);
+  m_syncHeaderBtn->setIcon(iconHeader);
+
+  m_syncHeaderBtn->setToolTip(tr("Expand Function Editor Header to Match Xsheet Header Height"));
+  
   m_syncSizeBtn = new QPushButton("", this);
   m_syncSizeBtn->setCheckable(true);
-  m_syncSizeBtn->setFixedSize(20, 20);
+  m_syncSizeBtn->setFixedSize(17, 17);
   static QPixmap syncScaleImg = generateIconPixmap("syncscale");
-  QPixmap offPm(17, 17);
+  QPixmap offPm(16, 16);
   offPm.fill(Qt::transparent);
   {
     QPainter p(&offPm);
@@ -216,19 +234,31 @@ FunctionSheetButtonArea::FunctionSheetButtonArea(QWidget *parent)
 
   QVBoxLayout *layout = new QVBoxLayout();
   layout->setContentsMargins(2, 2, 2, 2);
-  layout->setSpacing(0);
+  layout->setSpacing(1);
   {
     layout->addStretch();
+    layout->addWidget(m_syncHeaderBtn, 0, Qt::AlignCenter);
     layout->addWidget(m_syncSizeBtn, 0, Qt::AlignCenter);
   }
   setLayout(layout);
 
+  connect(m_syncHeaderBtn, SIGNAL(clicked(bool)), this,
+          SIGNAL(syncHeaderBtnToggled(bool)));
   connect(m_syncSizeBtn, SIGNAL(clicked(bool)), this,
           SIGNAL(syncSizeBtnToggled(bool)));
+
+  if (Preferences::instance()->getFunctionEditorToggle() ==
+      Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup) {
+    m_syncHeaderBtn->hide();
+  }
 }
 
 void FunctionSheetButtonArea::setSyncSizeBtnState(bool on) {
   m_syncSizeBtn->setChecked(on);
+}
+
+void FunctionSheetButtonArea::setSyncHeaderBtnState(bool on) {
+  m_syncHeaderBtn->setChecked(on);
 }
 
 //********************************************************************************
@@ -1223,6 +1253,8 @@ FunctionSheet::FunctionSheet(QWidget *parent, bool isFloating)
   setButtonAreaWidget(m_buttonArea = new FunctionSheetButtonArea(this));
   connect(m_buttonArea, SIGNAL(syncSizeBtnToggled(bool)), this,
           SLOT(onSyncSizeBtnToggled(bool)));
+  connect(m_buttonArea, SIGNAL(syncHeaderBtnToggled(bool)), this,
+          SIGNAL(syncHeaderBtnToggled(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -1421,6 +1453,13 @@ TStageObject *FunctionSheet::getStageObject(int column) {
   if (!stageItem) return nullptr;
 
   return stageItem->getStageObject();
+}
+
+//-----------------------------------------------------------------------------
+
+void FunctionSheet::setSyncHeader(bool on) {
+  m_buttonArea->setSyncHeaderBtnState(on);
+  update();
 }
 
 //-----------------------------------------------------------------------------

@@ -574,14 +574,7 @@ SpreadsheetViewer::SpreadsheetViewer(QWidget *parent)
 
   m_rowScrollArea->setFixedWidth(30);
 
-  if (Preferences::instance()->getLoadedXsheetLayout() == QString("Minimum") &&
-      !Preferences::instance()->isShowQuickToolbarEnabled() &&
-      Preferences::instance()->isExpandFunctionHeaderEnabled() &&
-      Preferences::instance()->getFunctionEditorToggle() !=
-          Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup)
-    m_columnScrollArea->setFixedHeight(m_rowHeight * 2 - 4);
-  else
-    m_columnScrollArea->setFixedHeight(m_rowHeight * 3 - 4);
+  updateHeaderHeight();
 
   m_frameScroller.setFrameScrollArea(m_cellScrollArea);
   connect(&m_frameScroller, &Spreadsheet::FrameScroller::prepareToScrollOffset,
@@ -1055,12 +1048,12 @@ void SpreadsheetViewer::ensureVisibleCol(int col) {
 }
 
 bool SpreadsheetViewer::isSmallHeader() {
-  return (
-      Preferences::instance()->getLoadedXsheetLayout() == QString("Minimum") &&
-      !Preferences::instance()->isShowQuickToolbarEnabled() &&
-      Preferences::instance()->isExpandFunctionHeaderEnabled() &&
-      Preferences::instance()->getFunctionEditorToggle() !=
-          Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup);
+  if (Preferences::instance()->getLoadedXsheetLayout() != QString("Minimum") ||
+      Preferences::instance()->getFunctionEditorToggle() ==
+          Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup)
+    return false;
+
+  return true;
 }
 
 void SpreadsheetViewer::updateHeaderHeight() {
