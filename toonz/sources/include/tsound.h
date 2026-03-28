@@ -422,6 +422,15 @@ interaction between sound and mouse
   //! Returns if the device is busy with a playback
   bool isPlaying() const;
 
+  /*! Returns the number of microseconds of audio played since the last
+   *  play() call, as measured by the hardware DAC clock.
+   *  Unlike a software QElapsedTimer this cannot drift relative to the
+   *  actual audio output — use it as the master clock for A/V sync.
+   *  Returns 0 if no playback has started yet or if the platform backend
+   *  does not support processedUSecs() (e.g. the WinMM backend returns 0).
+   */
+  qint64 processedUsecs() const;
+
 #ifdef _WIN32
   //! Return true if the playback of all soundtracks is ended.
   bool isAllQueuedItemsPlayed();

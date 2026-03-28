@@ -39,10 +39,23 @@ public:
   // Safe to call from any scrub handler — returns null if no audio.
   TSoundTrackP requireSoundTrack();
 
+private slots:
+  // Fired by TApp::getCurrentFrame()->isPlayingStatusChanged.
+  // When the native viewer starts playing inside a shot sub-scene, this
+  // starts the main-xsheet audio at the correct time offset so the animator
+  // can hear the soundtrack while working on animation to picture.
+  void onNativePlayingStatusChanged();
+  // Fired by TApp::getCurrentFrame()->frameSwitched.
+  // Provides per-frame scrub audio from the main xsheet while the user
+  // drags the playhead inside a shot sub-scene (not during continuous play).
+  void onNativeFrameSwitched();
+
 private:
   ZtoryAnimaticController();
   TFrameHandle  *m_frameHandle;
   TSoundTrackP   m_soundTrack;
+  // True while we are streaming main-xsheet audio on behalf of the native viewer.
+  bool m_nativeAudioPlaying = false;
 };
 
 class ZtoryAnimaticRuler : public QWidget {
@@ -301,6 +314,10 @@ private:
   // True while the full-track continuous play is active.
   // When true, playAnimaticAudioFrame is a no-op (audio already streaming).
   bool m_continuousPlay = false;
+
+  // 0-based animatic frame at which the current play session started.
+  // Used by onDrawFrame to compute the audio-master target frame.
+  int m_playStartFrame = 0;
 
   // Tracks ctrl-handle connections so they aren't duplicated across show/hide.
   QMetaObject::Connection m_frameRangeConn;

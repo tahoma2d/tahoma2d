@@ -4125,6 +4125,12 @@ void RecentFiles::loadRecentFiles() {
   refreshRecentFilesMenu(Level);
   refreshRecentFilesMenu(Flip);
   refreshRecentFilesMenu(Project);
+
+  // Immediately rewrite the file with the capped lists so that a bloated
+  // RecentFiles.ini from an older version is truncated on disk right away.
+  // Without this, QSettings would re-read the full oversized file on every
+  // subsequent startup and trigger the Cocoa/Qt IniFormat deadlock.
+  saveRecentFiles();
 }
 
 //-----------------------------------------------------------------------------

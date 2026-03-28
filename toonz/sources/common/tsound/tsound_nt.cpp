@@ -784,6 +784,12 @@ bool TSoundOutputDevice::isPlaying() const { return m_imp->m_isPlaying; }
 
 //------------------------------------------------------------------------------
 
+// The WinMM backend does not expose a hardware-clock position comparable to
+// QAudioOutput::processedUSecs(). Return 0 so callers fall back gracefully.
+qint64 TSoundOutputDevice::processedUsecs() const { return 0; }
+
+//------------------------------------------------------------------------------
+
 bool TSoundOutputDevice::isAllQueuedItemsPlayed() {
   return m_imp->m_whdrQueue->isAllQueuedItemsPlayed();
 }

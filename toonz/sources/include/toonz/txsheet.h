@@ -541,6 +541,13 @@ in TXsheetImp.
   void stopScrub();
   void play(TSoundTrackP soundtrack, int s0, int s1, bool loop);
 
+  /*! Returns microseconds of audio played since the last play() call,
+   *  as reported by the hardware DAC clock (TSoundOutputDevice::processedUsecs).
+   *  Returns 0 if no audio device is active.  Use this as the master clock
+   *  for audio-driven A/V synchronisation in playback viewers.
+   */
+  qint64 getAudioPlayedUSecs() const;
+
   /*! Returns a pointer to object \b FxDag contained in \b TXsheetImp, this
      object
           allows the user to manage all fx dag, i.e. all element of fx

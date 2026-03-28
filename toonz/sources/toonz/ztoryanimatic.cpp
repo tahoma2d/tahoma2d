@@ -51,6 +51,15 @@ static constexpr int kLabelW = 80;
 ZtoryAnimaticController::ZtoryAnimaticController() : QObject() {
   m_frameHandle = new TFrameHandle();
   m_frameHandle->setFrame(0);
+  // Monitor native-viewer play state so we can stream main-xsheet audio
+  // when the user is editing a shot (sub-scene open) and presses play.
+  // The signal fires on the main thread, so this is safe to call from here.
+  connect(TApp::instance()->getCurrentFrame(),
+          &TFrameHandle::isPlayingStatusChanged,
+          this, &ZtoryAnimaticController::onNativePlayingStatusChanged);
+  connect(TApp::instance()->getCurrentFrame(),
+          &TFrameHandle::frameSwitched,
+          this, &ZtoryAnimaticController::onNativeFrameSwitched);
 }
 
 ZtoryAnimaticController *ZtoryAnimaticController::instance() {
@@ -85,6 +94,101 @@ TSoundTrackP ZtoryAnimaticController::requireSoundTrack() {
     m_soundTrack = TSoundTrackP();
   }
   return m_soundTrack;
+}
+
+// ---- ZtoryAnimaticController::onNativePlayingStatusChanged ----
+// Called whenever the NATIVE viewer (ComboViewer / FlipConsole) starts or
+// stops playback via TApp::getCurrentFrame()->isPlayingStatusChanged.
+//
+// Goal: when the user is editing a shot (sub-scene open, ancestorCount == 1)
+// and presses play, stream the main-xsheet audio at the correct offset so
+// they can hear the soundtrack while animating to picture.
+//
+// Guard: if the animatic viewer is already playing it handles its own audio
+// (continuous-play mode) — we must not start a second concurrent stream.
+void ZtoryAnimaticController::onNativePlayingStatusChanged() {
+  TFrameHandle *fh     = TApp::instance()->getCurrentFrame();
+  TXsheet      *mainXsh = mainXsheet();
+
+  if (!fh->isPlaying()) {
+    // Playback stopped — stop background audio if we started it.
+    if (m_nativeAudioPlaying && mainXsh) mainXsh->stopScrub();
+    m_nativeAudioPlaying = false;
+    return;
+  }
+
+  // Animatic viewer is already handling audio in continuous-play mode.
+  if (m_frameHandle->isPlaying()) return;
+
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return;
+
+  ChildStack *cs = scene->getChildStack();
+  // Only handle a single level of nesting (main xsheet → shot sub-scene).
+  // If ancestorCount == 0 the user is at the top level; FlipConsole already
+  // handles audio via the normal BaseViewerPanel path.
+  // If ancestorCount > 1 the user is in a nested sub-scene — skip for now.
+  if (!cs || cs->getAncestorCount() != 1) return;
+
+  TSoundTrackP st = requireSoundTrack();
+  if (!st || !mainXsh) return;
+
+  // Map the current sub-scene frame to its position in the main xsheet.
+  int subFrame = fh->getFrame();
+  std::pair<TXsheet *, int> ancestor = cs->getAncestor(subFrame);
+  int mainFrame = ancestor.second;
+
+  double fps = scene->getProperties()->getOutputProperties()->getFrameRate();
+  if (fps <= 0.0) fps = 24.0;
+  double spf = st->getSampleRate() / fps;
+
+  TINT32 startSample = (TINT32)(mainFrame * spf);
+  TINT32 totalSamples = (TINT32)st->getSampleCount();
+  int    animFrames   = mainXsh->getFrameCount();
+  TINT32 endSample    = std::min((TINT32)(animFrames * spf), totalSamples - 1);
+
+  if (startSample > endSample) return;
+
+  mainXsh->play(st.getPointer(), startSample, endSample, false);
+  m_nativeAudioPlaying = true;
+}
+
+// ---- ZtoryAnimaticController::onNativeFrameSwitched ----
+// Provides per-frame scrub audio from the main xsheet when the user drags
+// the playhead inside a shot sub-scene.  Mirrors the per-frame scrub logic
+// in ZtoryAnimaticViewer::playAnimaticAudioFrame but uses the native frame
+// handle and maps the sub-scene frame through ChildStack::getAncestor().
+void ZtoryAnimaticController::onNativeFrameSwitched() {
+  TFrameHandle *fh = TApp::instance()->getCurrentFrame();
+  // During continuous play the streaming audio already handles this.
+  if (fh->isPlaying()) return;
+  // Animatic viewer active — it handles its own scrub audio.
+  if (m_frameHandle->isPlaying()) return;
+
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return;
+  ChildStack *cs = scene->getChildStack();
+  if (!cs || cs->getAncestorCount() != 1) return;
+
+  TSoundTrackP st = requireSoundTrack();
+  TXsheet *mainXsh = mainXsheet();
+  if (!st || !mainXsh) return;
+
+  int subFrame = fh->getFrame();
+  std::pair<TXsheet *, int> ancestor = cs->getAncestor(subFrame);
+  int mainFrame = ancestor.second;
+
+  double fps = scene->getProperties()->getOutputProperties()->getFrameRate();
+  if (fps <= 0.0) fps = 24.0;
+  double spf = st->getSampleRate() / fps;
+
+  TINT32 s0 = (TINT32)(mainFrame * spf);
+  TINT32 s1 = (TINT32)(s0 + spf);
+  TINT32 totalSamples = (TINT32)st->getSampleCount();
+  if (s0 >= totalSamples) return;
+  if (s1 >= totalSamples) s1 = totalSamples - 1;
+
+  mainXsh->play(st.getPointer(), s0, s1, false);
 }
 
 // ---- ZtoryAnimaticRuler ----
@@ -1321,19 +1425,48 @@ void ZtoryAnimaticViewer::onDrawFrame(
   m_sceneViewer->setVisual(settings);
   auto *ctrl = ZtoryAnimaticController::instance();
   if (!settings.m_drawBlankFrame) {
-    // FlipConsole uses 1-based frame numbers; controller uses 0-based.
-    int newFrame = frame - 1;  // 0-based
+    int targetFrame;
+
+    if (m_continuousPlay && m_fps > 0) {
+      // Audio-master clock: use QAudioOutput::processedUSecs() as the
+      // authoritative time source.  This is the hardware DAC clock and cannot
+      // drift relative to the actual audio output.  It eliminates A/V desync
+      // caused by timer jitter in FlipConsole or slow frame rendering.
+      //
+      //   targetFrame = playStartFrame + floor(audioElapsed_s * fps)
+      //
+      // During the first few milliseconds after play() the device may not have
+      // started yet (processedUSecs = 0).  In that case fall back to the
+      // FlipConsole frame (1-based → 0-based) so the first frames are still
+      // displayed while the DAC initialises.
+      TXsheet *mainXsh = ctrl->mainXsheet();
+      qint64 audioUsecs = mainXsh ? mainXsh->getAudioPlayedUSecs() : 0;
+      if (audioUsecs > 0) {
+        targetFrame = m_playStartFrame + (int)(audioUsecs * m_fps / 1000000.0);
+        int totalFrames = mainXsh ? mainXsh->getFrameCount() : 1;
+        if (totalFrames < 1) totalFrames = 1;
+        targetFrame = std::max(0, std::min(targetFrame, totalFrames - 1));
+      } else {
+        // DAC not yet started — use FlipConsole frame as fallback.
+        targetFrame = frame - 1;
+      }
+    } else {
+      // Not playing (scrubbing) — use FlipConsole frame directly.
+      targetFrame = frame - 1;  // 1-based → 0-based
+    }
+
     int oldFrame = ctrl->currentFrame();
-    ctrl->setCurrentFrame(newFrame);
+    ctrl->setCurrentFrame(targetFrame);
+
     // Audio scrub when scrubbing (not during play) — mirrors native onDrawFrame.
-    if (!ctrl->frameHandle()->isPlaying() && oldFrame != newFrame) {
+    if (!ctrl->frameHandle()->isPlaying() && oldFrame != targetFrame) {
       TXsheet *xsh = ctrl->mainXsheet();
       if (xsh) {
         ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
         double fps = scene
             ? scene->getProperties()->getOutputProperties()->getFrameRate()
             : 24.0;
-        ctrl->frameHandle()->scrubXsheet(newFrame, newFrame, xsh, fps);
+        ctrl->frameHandle()->scrubXsheet(targetFrame, targetFrame, xsh, fps);
       }
     }
   } else if (settings.m_blankColor != TPixel::Transparent) {
@@ -1476,6 +1609,12 @@ void ZtoryAnimaticViewer::onAnimaticPlayingStatusChanged(bool playing) {
   m_fps             = fps;
   m_samplesPerFrame = spf;
   m_first           = false;
+
+  // Record the 0-based animatic frame at play-start so that onDrawFrame can
+  // compute the audio-master target frame: targetFrame = m_playStartFrame +
+  // (int)(audioUsecs * fps / 1e6).  Captured BEFORE play() so that
+  // processedUsecs() = 0 at the moment the first onDrawFrame fires.
+  m_playStartFrame = startFrame;
 
   // Start streaming audio from current frame to animatic end in one shot.
   // TSoundOutputDeviceImp uses QAudioOutput with a 100 ms hardware buffer,
@@ -2520,6 +2659,28 @@ void ZtoryAnimaticPanel::onShotDurationChanged(int col, int newF1) {
   // Do NOT shift audio here — doing so and then calling resequenceXsheet()
   // causes a double-shift that pushes audio too far and makes it disappear.
   resequenceXsheet();
+
+  // Sync the sub-xsheet's Out marker to the new duration.
+  // ztorySetShotRange updates s_frameRangeMap so the correct Out is shown
+  // the next time the shot is opened for editing.
+  // Range is [0, newDuration-1] (0-based, inclusive).
+  ztorySetShotRange(col, 0, newDuration - 1);
+
+  // If this shot's sub-xsheet is currently open, also update the live
+  // play range so the FlipConsole markers move immediately.
+  ChildStack *cs = scene->getChildStack();
+  if (cs && cs->getAncestorCount() == 1) {
+    // Find the child xsheet for this column.
+    TXsheet *shotXsh = nullptr;
+    for (int r = r0; r <= r0 + newDuration - 1 && !shotXsh; r++) {
+      TXshCell cell = mainXsh->getCell(r, col);
+      if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel())
+        shotXsh = cell.m_level->getChildLevel()->getXsheet();
+    }
+    if (shotXsh && cs->getXsheet() == shotXsh)
+      XsheetGUI::setPlayRange(0, newDuration - 1, 1, false);
+  }
+
   m_track->refreshFromScene();
 }
 

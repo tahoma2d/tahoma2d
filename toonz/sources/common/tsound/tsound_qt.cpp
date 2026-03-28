@@ -22,13 +22,19 @@ using namespace std;
 
 class TSoundOutputDeviceImp: public std::enable_shared_from_this<TSoundOutputDeviceImp> {
 private:
-  QMutex m_mutex;
+  mutable QMutex m_mutex;
 
   double m_volume;
   bool m_looping;
 
   qint64 m_bytesSent;
   qint64 m_bufferIndex;
+
+  // Hardware-clock reference captured at the start of each play() call.
+  // processedUsecs() returns (device->processedUSecs() - m_playStartUsecs)
+  // so callers always get elapsed time relative to the last play(), regardless
+  // of whether the QAudioOutput was pre-warmed before the actual play start.
+  qint64 m_playStartUsecs = 0;
 
   QByteArray m_buffer;
   QPointer<QAudioOutput> m_audioOutput;
@@ -207,7 +213,26 @@ public:
     }
     */
 
+    // Snapshot the hardware clock immediately before streaming starts.
+    // processedUsecs() returns (device_clock - m_playStartUsecs), giving
+    // elapsed time since THIS play() call rather than since device creation.
+    // This is essential when the device was pre-warmed before actual playback.
+    m_playStartUsecs = m_audioOutput ? m_audioOutput->processedUSecs() : 0;
+
     sendBuffer();
+  }
+
+public:
+  // Returns microseconds of audio elapsed since the last play() call,
+  // measured by the hardware DAC clock (QAudioOutput::processedUSecs).
+  // This is the authoritative audio position for A/V synchronisation:
+  // it is driven by the actual sample rate of the audio device, not by
+  // a software timer, so it cannot drift relative to the audio output.
+  qint64 processedUsecs() const {
+    QMutexLocker lock(&m_mutex);
+    if (!m_audioOutput) return 0;
+    qint64 elapsed = m_audioOutput->processedUSecs() - m_playStartUsecs;
+    return elapsed > 0 ? elapsed : 0;
   }
 };
 
@@ -310,6 +335,12 @@ bool TSoundOutputDevice::supportsVolume() { return true; }
 //------------------------------------------------------------------------------
 
 bool TSoundOutputDevice::isPlaying() const { return m_imp->isPlaying(); }
+
+//------------------------------------------------------------------------------
+
+qint64 TSoundOutputDevice::processedUsecs() const {
+  return m_imp->processedUsecs();
+}
 
 //------------------------------------------------------------------------------
 

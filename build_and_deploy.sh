@@ -18,12 +18,16 @@ ninja -j4 -C "$BUILD" 2>&1 | grep -E "error:|Linking|up-to-date"
 echo "→ Copia binario..."
 cp "$BUILD/toonz/Tahoma2D.app/Contents/MacOS/Tahoma2D" "$APP/Contents/MacOS/Tahoma2D"
 
-echo "→ Copia libtoonzlib (modificata da Ztoryc)..."
+echo "→ Copia dylib modificati da Ztoryc..."
 # NON copiare tutti i dylib: quelli nel bundle sono già patchati con i rpath
 # corretti per le dipendenze di sistema (libtiff, libpng, ecc.).
 # Copiare SOLO i dylib che Ztoryc modifica effettivamente.
-# Al momento solo libtoonzlib (contiene TXshSoundColumn e altri core types).
+# libtoonzlib:  TXshSoundColumn, TXsheet, e altri core types
+# libtnzcore:   TSoundOutputDevice::processedUsecs() (tsound_qt.cpp è in tnzcore)
+# libsound:     plugin audio runtime (potrebbe dipendere da libtnzcore al runtime)
 cp "$BUILD/libtoonzlib.dylib" "$APP/Contents/MacOS/"
+cp "$BUILD/tnzcore/libtnzcore.dylib" "$APP/Contents/MacOS/"
+cp "$BUILD/sound/libsound.dylib" "$APP/Contents/MacOS/"
 
 echo "→ Copia helper LZO (richiesti da TRasterCodecLZO)..."
 cp "$BUILD/lzocompress"   "$APP/Contents/MacOS/lzocompress"

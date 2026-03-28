@@ -1825,6 +1825,12 @@ void TXsheet::stopScrub() {
 
 //-----------------------------------------------------------------------------
 
+qint64 TXsheet::getAudioPlayedUSecs() const {
+  return m_player ? m_player->processedUsecs() : 0;
+}
+
+//-----------------------------------------------------------------------------
+
 void TXsheet::play(TSoundTrackP soundtrack, int s0, int s1, bool loop) {
   if (!TSoundOutputDevice::installed()) return;
 
