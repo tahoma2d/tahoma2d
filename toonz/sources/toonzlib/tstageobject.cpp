@@ -314,28 +314,29 @@ bool touchEaseAndCompare(const TDoubleKeyframe &kf,
 
   if (initialization) type = kf.m_type;
 
-  if (kf.m_type != type || (kf.m_type != TDoubleKeyframe::SpeedInOut &&
-                            kf.m_type != TDoubleKeyframe::EaseInOut &&
-                            (kf.m_prevType != TDoubleKeyframe::None &&
-                             kf.m_prevType != TDoubleKeyframe::SpeedInOut &&
-                             kf.m_prevType != TDoubleKeyframe::EaseInOut))) {
-    stageKf.m_easeIn  = -1.0;
-    stageKf.m_easeOut = -1.0;
-
-    return false;
+  if (kf.m_prevType != TDoubleKeyframe::SpeedInOut &&
+      kf.m_prevType != TDoubleKeyframe::EaseInOut) {
+    stageKf.m_easeIn = -1.0;
+  } else {
+    double easeIn = -kf.m_speedIn.x;
+    if (initialization)
+      stageKf.m_easeIn = easeIn;
+    else if (stageKf.m_easeIn != easeIn)
+      stageKf.m_easeIn = -1.0;
   }
 
-  double easeIn = -kf.m_speedIn.x;
-  if (initialization)
-    stageKf.m_easeIn = easeIn;
-  else if (stageKf.m_easeIn != easeIn)
-    stageKf.m_easeIn = -1.0;
-
-  double easeOut = kf.m_speedOut.x;
-  if (initialization)
-    stageKf.m_easeOut = easeOut;
-  else if (stageKf.m_easeOut != easeOut)
+  if (kf.m_type != TDoubleKeyframe::SpeedInOut &&
+      kf.m_type != TDoubleKeyframe::EaseInOut) {
     stageKf.m_easeOut = -1.0;
+  } else {
+    double easeOut = kf.m_speedOut.x;
+    if (initialization)
+      stageKf.m_easeOut = easeOut;
+    else if (stageKf.m_easeOut != easeOut)
+      stageKf.m_easeOut = -1.0;
+  }
+
+  if (stageKf.m_easeIn == -1.0 && stageKf.m_easeOut == -1.0) return false;
 
   return true;
 }
