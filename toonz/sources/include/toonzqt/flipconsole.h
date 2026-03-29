@@ -386,7 +386,7 @@ private:
 
   std::vector<int> m_gadgetsMask;
   int m_from, m_to, m_step;
-  int m_currentFrame, m_framesCount;
+  int m_currentFrame, m_framesCount, m_playFrame;
   int m_stopAt = -1;
   int m_startAt =
       -1;  // used in the "play selection" mode of the viewer preview
