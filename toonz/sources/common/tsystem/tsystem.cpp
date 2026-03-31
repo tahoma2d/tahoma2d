@@ -1136,8 +1136,9 @@ QString TSystem::findFileLocation(QStringList folderList, QString fileName) {
 }
 
 bool TSystem::isDLLBlackListed(QString dllFile) {
-  QStringList dllBlackList = {"lvcod64.dll", "ff_vfw.dll", "tsccvid64.dll",
-                              "hapcodec.dll"};
+  QStringList dllBlackList = {"lvcod64.dll",  "ff_vfw.dll", "tsccvid64.dll",
+                              "hapcodec.dll", "cfhd.dll",   "mlc.dll",
+                              "lagarith.dll"};
 
   for (int x = 0; x < dllBlackList.count(); x++) {
     if (dllFile.contains(dllBlackList.at(x), Qt::CaseInsensitive)) {
