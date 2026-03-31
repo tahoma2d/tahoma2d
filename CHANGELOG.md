@@ -6,6 +6,30 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-03-31] — AutoFill flood-fill + Razor UX + splitAudioColumn + build/deploy fixes
+
+### Fixed
+- **Build deploy script** (`build_and_deploy.sh`): `libtnztools.dylib` mancante → tutte le modifiche a tooloptions.cpp e brush tool erano invisibili. Aggiunto al deploy. Rimossi `libimage`, `libcolorfx`, `libtnzstdfx` (rpath di sistema incompatibili). Aggiunto `libtnzbase.dylib` per ABI `TSmartObject::m_unknownClassCode`.
+- **Build mode** → passato da Debug a RelWithDebInfo (`-O2 -DNDEBUG`): eliminati SIGABRT da `assert()` in tcomputeregions.cpp (vettoriale) e altri assert attivi solo in debug.
+- **AutoFill crash con onion skin** (`autofilltlv.cpp`): guard `if (tot_pix == 0) return;` prima della divisione `pbx/tot_pix` in `autofill_learn`.
+- **AutoFill save crash** (`toonzrasterbrushtool.cpp`): rimosso `return` errato che saltava `m_workingFrameId = TFrameId()` e `m_strokeRect.empty()` lasciando stato corrotto al salvataggio successivo.
+- **Razor audio gap** (`ztoryanimatic.cpp`): `splitAudioColumn` era no-op per design (separatore solo grafico). Ora **reimplementata** come split reale via `TXshSoundColumn::splitLevelAtFrame` — i due segmenti sono fisicamente separati e possono essere shiftati indipendentemente dal ripple.
+- **Audio drag/ripple** (`txshsoundcolumn.cpp`): aggiunto `splitLevelAtFrame()` come metodo pubblico: taglia un `ColumnLevel` in due parti (`startOffset`/`endOffset` ajustati) senza creare gap audio né colonne extra. Dopo il taglio `shiftLevelFromFrame` shifta solo la parte destra.
+
+### Added
+- **AutoFill flood-fill** (`toonzrasterbrushtool.cpp`): rimosso approccio onion-skin (`autofill_learn/apply`). Nuova implementazione BFS inverso: dal bordo del savebox+1px si esplorano tutti i pixel non-ink raggiungibili dall'esterno; i pixel chiusi (non raggiungibili e non-ink) vengono riempiti con lo stile N+1 della palette (convenzione ink=N, fill=N+1).
+- **Razor hover preview** (`ztoryanimatic.cpp/.h`): linea gialla tratteggiata sincronizzata su tutte le tracce audio e video durante hover con razor attivo.
+- **Separator lines audio track** (`ztoryanimatic.cpp/.h`): `ZtoryAudioTrack::setCutFrames()` disegna linee bianche ai boundary dei blocchi video; `setRazorHoverFrame()` per sync hover cross-track.
+
+### Modified
+- **AutoFill BFS perf** (`toonzrasterbrushtool.cpp`): `std::vector<bool>` → `std::vector<uint8_t>` + indici flat + BFS limitato al savebox → esecuzione sub-millisecondo su canvas normali.
+- **Fill color** (`toonzrasterbrushtool.cpp`): autofill usa stile palette corrente+1 (ink=N → fill=N+1), fallback a N se N+1 non esiste.
+
+### Notes
+- **Crash SIGSEGV salvataggio TLV** (`libimage.dylib`): crash in `TLevelWriterTzl::TLevelWriterTzl` → `QString copy` con puntatore corrotto. Non è nel codice Ztoryc — sospetta incompatibilità ABI tra `libtnzcore` (nostro RelWithDebInfo) e `libimage` originale bundle. Da investigare: deploy `libimage` con rpath fixato, oppure identificare quale struttura viene corrotta.
+- **AutoFill comportamento**: ancora non "istantaneo al chiudersi della forma" — il fill avviene al `leftButtonUp`, non live durante il drag. Questo è by design attuale; fill live richiederebbe BFS ad ogni `mouseDrag` (costoso).
+
+---
 ## [2026-03-28] — Audio-master clock + audio in sotto-scena + auto-marker Out + RecentFiles fix
 
 ### Added
