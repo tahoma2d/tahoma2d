@@ -6,6 +6,17 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-01] — Fix SIGSEGV salvataggio TLV (libimage ABI mismatch)
+
+### Fixed
+- **Crash SIGSEGV salvataggio TLV** (`build_and_deploy.sh`): `libimage.dylib` nel bundle era un residuo di una build Debug precedente. `TLevelWriterTzl` (in `libimage`) leggeva `m_creator` a `this+0x48`, ma il nuovo `libtnzcore` RelWithDebInfo lo scrive a `this+0x50` (8 byte di differenza per layout di `TSmartObject`). Fix: aggiunto deploy di `libimage` con `install_name_tool` che patcha il rpath `libtiff` da `/usr/local/lib/libtiff.5.dylib` → `@executable_path/libtiff.5.dylib` (il path `/usr/local/lib` non esiste su questo Mac).
+
+### Notes
+- Root cause: `libimage` e `libtnzcore` devono essere sempre della stessa build. Qualsiasi cambio di build type (Debug/RelWithDebInfo/Release) richiede di ri-deployare `libimage`.
+- `libpng` e `libjpeg` linkati via `/opt/homebrew` — risolvono correttamente a runtime.
+- `libcolorfx` e `libtnzstdfx` NON deployate: dipendono da `libimage` ma non cambiano → usano quella nel bundle già aggiornata.
+
+---
 ## [2026-03-31] — AutoFill flood-fill + Razor UX + splitAudioColumn + build/deploy fixes
 
 ### Fixed

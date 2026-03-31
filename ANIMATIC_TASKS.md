@@ -369,7 +369,7 @@ alle sequence del progetto (sq01, sq02…).
 ## Priority Order
 
 ### Bug immediati (nessun design necessario)
-0. **BUG Crash salvataggio TLV** — 🔴 SIGSEGV in libimage durante Save (ABI issue)
+0. ~~**BUG Crash salvataggio TLV**~~ ✅ DONE 2026-04-01 (libimage deploy con rpath patch)
 1. **BUG Board desync** — 🔴 Board non si aggiorna + sincronizzazione bidirezionale completa
 2. ~~**BUG Razor audio gap**~~ ✅ DONE 2026-03-31
 3. **BUG Ghost onion skin** — viewer animatic mostra onion skin non richiesto
