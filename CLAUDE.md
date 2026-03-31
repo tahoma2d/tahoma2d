@@ -1,1 +1,1 @@
-AGENTS.md
+/Users/francobianco/ZtorYc/AGENTS.md

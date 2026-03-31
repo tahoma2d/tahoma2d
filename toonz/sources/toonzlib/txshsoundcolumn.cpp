@@ -601,6 +601,20 @@ void TXshSoundColumn::removeCells(int row, int rowCount, bool shift, bool keepCe
     }
   }
 
+  // Repair any overlapping levels that may have been created by external
+  // operations (e.g. shiftLevelFromFrame with a negative delta on a
+  // previously-cut audio track). This ensures checkColumn() does not assert
+  // on pre-existing invalid state in saved scenes.
+  std::sort(m_levels.begin(), m_levels.end(), lessThan);
+  for (int ri = 0; ri + 1 < m_levels.count(); ri++) {
+    ColumnLevel *prev = m_levels.at(ri);
+    ColumnLevel *curr = m_levels.at(ri + 1);
+    if (prev->getVisibleEndFrame() >= curr->getVisibleStartFrame()) {
+      int newEndOffset = prev->getEndFrame() - curr->getVisibleStartFrame() + 1;
+      if (newEndOffset >= 0) prev->setEndOffset(newEndOffset);
+    }
+  }
+
   checkColumn();
 }
 
@@ -648,6 +662,21 @@ void TXshSoundColumn::shiftLevelFromFrame(int fromFrame, int delta) {
     ColumnLevel *l = m_levels.at(i);
     if (l->getVisibleStartFrame() >= fromFrame)
       l->setStartFrame(l->getStartFrame() + delta);
+  }
+  // A leftward shift (delta < 0) can cause a shifted level to overlap the
+  // preceding non-shifted level.  Re-sort and trim any earlier level whose
+  // visibleEndFrame >= the following level's visibleStartFrame so that the
+  // invariant required by checkColumn() (end1 < start2) is maintained.
+  std::sort(m_levels.begin(), m_levels.end(), lessThan);
+  for (int i = 0; i + 1 < m_levels.count(); i++) {
+    ColumnLevel *prev = m_levels.at(i);
+    ColumnLevel *curr = m_levels.at(i + 1);
+    if (prev->getVisibleEndFrame() >= curr->getVisibleStartFrame()) {
+      // Trim prev so it ends strictly before curr starts.
+      int newEndOffset = prev->getEndFrame() - curr->getVisibleStartFrame() + 1;
+      if (newEndOffset >= 0)
+        prev->setEndOffset(newEndOffset);
+    }
   }
 }
 
@@ -895,6 +924,30 @@ void TXshSoundColumn::insertColumnLevel(ColumnLevel *columnLevel, int index) {
   if (index == -1) index = m_levels.size();
   m_levels.insert(index, columnLevel);
   std::sort(m_levels.begin(), m_levels.end(), lessThan);
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshSoundColumn::splitLevelAtFrame(int splitFrame) {
+  ColumnLevel *cl = getColumnLevelByFrame(splitFrame);
+  if (!cl) return;
+
+  int vsf = cl->getVisibleStartFrame();
+  int vef = cl->getVisibleEndFrame();
+  // Cannot split at the very start (left part would be empty).
+  if (splitFrame <= vsf || splitFrame > vef) return;
+
+  // Clone before modifying original (clone copies all fields).
+  ColumnLevel *rightCL = cl->clone();
+
+  // Left part: trim end so visible range ends at splitFrame-1.
+  cl->setEndOffset(cl->getStartFrame() + cl->getFrameCount() - splitFrame);
+
+  // Right part: start visible at splitFrame (same audio data, different offset).
+  rightCL->setStartOffset(splitFrame - rightCL->getStartFrame());
+
+  // Insert right part — insertColumnLevel re-sorts by visibleStartFrame.
+  insertColumnLevel(rightCL, -1);
 }
 
 //-----------------------------------------------------------------------------

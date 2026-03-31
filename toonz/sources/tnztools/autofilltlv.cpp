@@ -328,6 +328,7 @@ void autofill_learn(const TToonzImageP &imgToLearn)
     aby = BIG_TO_DOUBLE(F_reference.array[i].by);
     tot_pix += F_reference.array[i].npix;
   }
+  if (tot_pix == 0) return;  // no painted regions — avoid division by zero
   F_ref_bx = pbx / tot_pix;
   F_ref_by = pby / tot_pix;
 }

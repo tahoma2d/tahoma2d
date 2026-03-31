@@ -762,6 +762,21 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
     p.fillRect(x0, trackH - kScrubBarH, x1 - x0, kScrubBarH, QColor(255, 165, 0));
   }
 
+  // Shot cut markers — bright separator lines at video shot boundaries.
+  // These replace the physical cell gaps that splitAudioColumn used to create.
+  p.setPen(QPen(QColor(180, 180, 180, 180), 1));
+  for (int cf : m_cutFrames) {
+    int cx = labelW + (int)(cf * m_ppf);
+    p.drawLine(cx, 0, cx, trackH);
+  }
+
+  // Razor hover preview line — shown when razor is active and cursor hovers
+  if (m_razorHoverFrame >= 0) {
+    int rx = labelW + (int)(m_razorHoverFrame * m_ppf);
+    p.setPen(QPen(QColor(255, 255, 80, 200), 1, Qt::DashLine));
+    p.drawLine(rx, 0, rx, trackH);
+  }
+
   // Playhead (always on top, not cached) — centered on frame like the ruler
   int phx = labelW + (int)(m_currentFrame * m_ppf) + (int)(m_ppf / 2);
   p.setPen(QColor(255, 100, 0));
@@ -771,6 +786,17 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
 void ZtoryAudioTrack::setRazorActive(bool on) {
   m_razorActive = on;
   setCursor(on ? Qt::CrossCursor : Qt::ArrowCursor);
+}
+
+void ZtoryAudioTrack::setCutFrames(const QVector<int> &frames) {
+  m_cutFrames = frames;
+  update();
+}
+
+void ZtoryAudioTrack::setRazorHoverFrame(int frame) {
+  if (m_razorHoverFrame == frame) return;
+  m_razorHoverFrame = frame;
+  update();
 }
 
 // ---- ZtoryAudioTrack mouse events (12c: preview bar, razor) ----
@@ -830,6 +856,22 @@ void ZtoryAudioTrack::mouseMoveEvent(QMouseEvent *e) {
     m_selSeg.r1 = newR0 + segLen;
     update();
     return;
+  }
+
+  // Razor hover: track cursor position to show the cut preview line
+  if (m_razorActive) {
+    int frame = frameAtX(e->x());
+    if (frame != m_razorHoverFrame) {
+      m_razorHoverFrame = frame;
+      update();
+    }
+  }
+}
+
+void ZtoryAudioTrack::leaveEvent(QEvent *) {
+  if (m_razorHoverFrame >= 0) {
+    m_razorHoverFrame = -1;
+    update();
   }
 }
 
@@ -950,6 +992,12 @@ void ZtoryAnimaticTrack::updateCursor() {
     setCursor(Qt::CrossCursor);
   else
     unsetCursor();
+}
+
+void ZtoryAnimaticTrack::setRazorHoverFrame(int frame) {
+  if (m_razorHoverFrame == frame) return;
+  m_razorHoverFrame = frame;
+  update();
 }
 
 void ZtoryAnimaticTrack::refreshFromScene() {
@@ -1091,6 +1139,13 @@ void ZtoryAnimaticTrack::paintEvent(QPaintEvent *) {
   int px = kLabelW + (int)(m_currentFrame * m_ppf) + (int)(m_ppf / 2);
   p.setPen(QColor(255, 100, 0));
   p.drawLine(px, 0, px, height());
+
+  // Razor hover preview — bright vertical line snapped to the frame boundary
+  if (m_tool == RazorTool && m_razorHoverFrame >= 0) {
+    int rx = kLabelW + (int)(m_razorHoverFrame * m_ppf);
+    p.setPen(QPen(QColor(255, 255, 80, 200), 1, Qt::DashLine));
+    p.drawLine(rx, 0, rx, height());
+  }
 }
 
 void ZtoryAnimaticTrack::mousePressEvent(QMouseEvent *e) {
@@ -1215,6 +1270,39 @@ void ZtoryAnimaticTrack::mouseMoveEvent(QMouseEvent *e) {
       }
     }
     update();
+    return;
+  }
+
+  // Razor hover: snap the indicator to the nearest frame boundary
+  if (m_tool == RazorTool) {
+    int mx = e->x() - kLabelW;
+    int frame = (mx >= 0) ? (int)(mx / m_ppf) : -1;
+    // Only show hover if cursor is over a valid cut position inside a block
+    int hoverFrame = -1;
+    for (auto &b : m_blocks) {
+      int duration = b.f1 - b.f0 + 1;
+      int bx0 = (int)(b.startFrameInMain * m_ppf);
+      int bx1 = (int)((b.startFrameInMain + duration) * m_ppf);
+      if (mx >= bx0 && mx < bx1) {
+        int rel = (int)((mx - bx0) / m_ppf);
+        if (rel > 0 && rel < duration - 1)
+          hoverFrame = b.startFrameInMain + rel;
+        break;
+      }
+    }
+    if (hoverFrame != m_razorHoverFrame) {
+      m_razorHoverFrame = hoverFrame;
+      update();
+      emit razorHoverFrameChanged(hoverFrame);
+    }
+  }
+}
+
+void ZtoryAnimaticTrack::leaveEvent(QEvent *) {
+  if (m_tool == RazorTool && m_razorHoverFrame >= 0) {
+    m_razorHoverFrame = -1;
+    update();
+    emit razorHoverFrameChanged(-1);
   }
 }
 
@@ -2000,6 +2088,21 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     at->setCurrentFrame(m_track->property("currentFrame").toInt());
     // Propagate current razor state (independent mode = razor ON + link OFF)
     at->setRazorActive(m_track->tool() == ZtoryAnimaticTrack::RazorTool && !m_audioLinked);
+
+    // Set shot boundary markers so the audio track can draw cut separator lines
+    {
+      QVector<int> cutFrames;
+      for (auto &b : m_track->blocks()) {
+        if (b.startFrameInMain > 0)
+          cutFrames.append(b.startFrameInMain);
+      }
+      at->setCutFrames(cutFrames);
+    }
+
+    // Sync razor hover across video ↔ audio tracks
+    connect(m_track, &ZtoryAnimaticTrack::razorHoverFrameChanged,
+            at, &ZtoryAudioTrack::setRazorHoverFrame);
+
     connect(at, &ZtoryAudioTrack::razorRequested,
             this, &ZtoryAnimaticPanel::onAudioRazorRequested);
     // segmentMoved: audio segment was dragged. Notify the xsheet via a queued
@@ -2076,20 +2179,13 @@ void ZtoryAnimaticPanel::onShotMoved(int col, int newStartFrame) {
   Q_UNUSED(col); Q_UNUSED(newStartFrame);
 }
 
-// Helper: split a sound column at |splitFrame| in the main xsheet.
-// Cells from splitFrame..ar1 are moved to a new column appended at the end.
-// If splitFrame is outside the column range, nothing happens.
-// Split audio in-place: clear the cell at the split frame so the waveform
-// shows two distinct segments in the same column (no extra track created).
+// Helper: split the ColumnLevel covering |splitFrame| into two parts.
+// Delegates to TXshSoundColumn::splitLevelAtFrame (see txshsoundcolumn.cpp).
 static void splitAudioColumn(TXsheet *xsh, int audioCol, int splitFrame) {
-  TXshColumn *col = xsh->getColumn(audioCol);
-  if (!col) return;
-  int ar0 = 0, ar1 = 0;
-  col->getRange(ar0, ar1);
-  if (splitFrame <= ar0 || splitFrame > ar1) return;
-  // Clear a single cell at the split point to create a visible gap
-  xsh->clearCells(splitFrame, audioCol);
-  xsh->updateFrameCount();
+  TXshColumn *ac = xsh ? xsh->getColumn(audioCol) : nullptr;
+  TXshSoundColumn *sc = ac ? ac->getSoundColumn() : nullptr;
+  if (!sc) return;
+  sc->splitLevelAtFrame(splitFrame);
 }
 
 // Helper: insert a TStageObject keyframe (without undo) on every column

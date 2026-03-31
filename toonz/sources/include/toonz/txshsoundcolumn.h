@@ -217,6 +217,13 @@ when the user play a single level and hence the audio behind..*/
    * shot's range and would therefore be missed by shiftLevelInRange. */
   void shiftLevelFromFrame(int fromFrame, int delta);
 
+  /*! Split the ColumnLevel that covers |splitFrame| into two parts:
+   * [vsf, splitFrame-1] and [splitFrame, vef]. Both parts reference the same
+   * audio data with adjusted offsets. After the split, shiftLevelFromFrame
+   * can shift the right part independently (e.g. for ripple edits).
+   * If |splitFrame| is not strictly inside a ColumnLevel, does nothing. */
+  void splitLevelAtFrame(int splitFrame);
+
 protected:
   bool setCell(int row, const TXshCell &cell, bool updateSequence);
   void removeCells(int row, int rowCount, bool shift, bool keepCellMarks);

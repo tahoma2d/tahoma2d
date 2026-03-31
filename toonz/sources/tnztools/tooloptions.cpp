@@ -2162,6 +2162,9 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
       m_hardnessField->setEnabled(false);
       m_brushTips->setEnabled(false);
     }
+
+    m_autoFillCheckbox =
+        dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Auto Fill"));
   } else if (tool->getTargetType() & TTool::Vectors) {
     // Further vector options
     builder.setEnumWidgetType(ToolOptionControlBuilder::POPUPBUTTON);
@@ -2237,7 +2240,8 @@ void BrushToolOptionsBox::filterControls() {
     bool isCommon =
         (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
                      it.key() == "Preset:" || it.key() == "Grid" ||
-                     it.key() == "Smooth:" || it.key() == "Paint Behind");
+                     it.key() == "Smooth:" || it.key() == "Paint Behind" ||
+                     it.key() == "Auto Fill");
     bool visible = isCommon || (isModifier == showModifiers);
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);

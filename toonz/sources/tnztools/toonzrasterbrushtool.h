@@ -188,6 +188,7 @@ protected:
   TEnumProperty m_preset;
   TEnumProperty m_drawOrder;
   TBoolProperty m_pencil;
+  TBoolProperty m_autoFill;
   TBoolProperty m_mypaintPressure;
   TDoubleProperty m_modifierSize;
   TBoolProperty m_modifierLockAlpha;

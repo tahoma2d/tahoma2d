@@ -6,6 +6,28 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-03-28] — Audio-master clock + audio in sotto-scena + auto-marker Out + RecentFiles fix
+
+### Added
+- **Audio-master clock** (`tsound_qt.cpp`, `tsound.h`, `tsound_nt.cpp`, `txsheet.h/.cpp`, `ztoryanimatic.h/.cpp`): `QAudioOutput::processedUSecs()` esposto come `TSoundOutputDevice::processedUsecs()` → `TXsheet::getAudioPlayedUSecs()`. In `ZtoryAnimaticViewer::onDrawFrame` il frame video è calcolato dal clock DAC hardware invece che dal timer FlipConsole: `targetFrame = m_playStartFrame + floor(audioUsecs * fps / 1e6)`. Fallback a frame FlipConsole durante warmup DAC. Qualità sync pari a software editing professionale.
+- **Audio main xsheet da dentro la sotto-scena** (`ztoryanimatic.h/.cpp`): `ZtoryAnimaticController` monitora `TApp::getCurrentFrame()->isPlayingStatusChanged` e `frameSwitched`. Quando il native viewer è in playback o scrub dentro un sub-xsheet (`ancestorCount == 1`), calcola `mainFrame = childStack->getAncestor(subFrame).second` e fa partire l'audio del main xsheet alla posizione corretta. Guard: nessuna interferenza se l'animatic viewer sta già gestendo l'audio.
+- **Auto-aggiornamento marker Out nel sub-xsheet** (`ztoryanimatic.cpp`): in `onShotDurationChanged`, dopo `resequenceXsheet()`, chiama `ztorySetShotRange(col, 0, newDuration-1)` per aggiornare `s_frameRangeMap`. Se il sub-xsheet è aperto in quel momento aggiorna anche la play range live via `XsheetGUI::setPlayRange`.
+
+### Fixed
+- **SIGABRT al lancio** (`build_and_deploy.sh`): `tsound_qt.cpp` è compilato in `libtnzcore` (non `libsound`), quindi il simbolo `processedUsecs()` era assente a runtime. Fix: aggiunto `cp tnzcore/libtnzcore.dylib` nel deploy script. Corretta anche annotazione `libsound` nel commento.
+- **`QMutexLocker` in metodo const** (`tsound_qt.cpp`): `m_mutex` dichiarato `mutable` per consentire lock in `processedUsecs() const`.
+- **RecentFiles.ini deadlock Cocoa/Qt** (`mainwindow.cpp`): `loadRecentFiles()` ora chiama `saveRecentFiles()` al termine. Il file gonfio viene riscritto compatto al primo avvio, eliminando il deadlock su aperture successive.
+
+### Modified
+- `build_and_deploy.sh`: aggiunto `cp tnzcore/libtnzcore.dylib` e `cp sound/libsound.dylib`; aggiornati commenti.
+
+### Notes
+- Task 16 (audio-master clock) ✅ completato
+- Task B/A (audio in sotto-scena + scrub) ✅ completato
+- Task C (auto-marker Out sub-xsheet) ✅ completato
+- Task 15 (RecentFiles deadlock) ✅ completato
+
+---
 ## [2026-03-26c] — AV-link multi-segmento + audio play sync
 
 ### Fixed

@@ -118,6 +118,11 @@ public:
   void setTool(Tool t) { m_tool = t; updateCursor(); }
   Tool tool() const { return m_tool; }
   void refreshFromScene();
+  // Razor hover: set the absolute frame under the cursor (or -1 to clear).
+  // Also called by the panel to sync the hover position across tracks.
+  void setRazorHoverFrame(int frame);
+  // Returns the blocks vector (for panel to read cut frame positions).
+  const std::vector<ShotBlock> &blocks() const { return m_blocks; }
   const std::set<int> &selectedCols() const { return m_selectedCols; }
 
 protected:
@@ -127,6 +132,7 @@ protected:
   void mouseMoveEvent(QMouseEvent *) override;
   void mouseReleaseEvent(QMouseEvent *) override;
   void mouseDoubleClickEvent(QMouseEvent *) override;
+  void leaveEvent(QEvent *) override;
 
 signals:
   void shotClicked(int col);
@@ -139,6 +145,9 @@ signals:
   void razorRequested(int col, int splitFrame);
   void mergeWithNextRequested(int col);
   void returnToMainRequested();
+  // Emitted on mouse move when razor is active — absolute frame under cursor,
+  // or -1 when the mouse leaves. Panel forwards this to audio tracks.
+  void razorHoverFrameChanged(int frame);
 
 private:
   double m_ppf = 8.0;
@@ -152,6 +161,7 @@ private:
   std::set<int> m_selectedCols;
   int m_lastClickedCol = -1; // for Shift+click range selection
   Tool m_tool = SelectTool;
+  int m_razorHoverFrame = -1;
 
   void updateCursor();
 };
@@ -174,6 +184,12 @@ public:
   void setTrackHeight(int h) { m_trackHeight = h; m_waveformDirty = true; setFixedHeight(h); update(); }
   int columnIndex() const { return m_col; }
   void setRazorActive(bool on);
+  // Cut frame markers — drawn as bright separator lines in the waveform.
+  // Set by the panel after every shot change; frame indices are absolute
+  // (same coordinate space as the audio column).
+  void setCutFrames(const QVector<int> &frames);
+  // Razor hover: absolute frame under the razor cursor, or -1 to clear.
+  void setRazorHoverFrame(int frame);
 
   // Audio segment: a contiguous range of non-empty cells in this column
   struct Segment { int r0; int r1; };  // inclusive frame range
@@ -197,6 +213,7 @@ protected:
   void mousePressEvent(QMouseEvent *) override;
   void mouseMoveEvent(QMouseEvent *) override;
   void mouseReleaseEvent(QMouseEvent *) override;
+  void leaveEvent(QEvent *) override;
   void keyPressEvent(QKeyEvent *) override;
 
 private:
@@ -215,6 +232,8 @@ private:
   bool m_draggingPreview  = false;
   int  m_previewDragStart = -1;
   bool m_razorActive      = false;
+  int  m_razorHoverFrame  = -1;
+  QVector<int> m_cutFrames;  // shot boundary frames (from panel)
   // Segment selection & drag
   Segment m_selSeg{-1, -1};
   bool m_draggingSeg      = false;

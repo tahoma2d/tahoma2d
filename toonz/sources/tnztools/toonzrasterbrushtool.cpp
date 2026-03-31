@@ -967,6 +967,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_preset("Preset:")
     , m_drawOrder("Draw Order:")
     , m_pencil("Pencil", false)
+    , m_autoFill("Auto Fill", false)
     , m_mypaintPressure("ModifierPressure", true)
     , m_modifierSize("ModifierSize", -3, 3, 0, true)
     , m_cmRasterBrush(0)
@@ -1005,6 +1006,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
   m_prop[0].bind(m_drawOrder);
   m_prop[0].bind(m_modifierLockAlpha);
   m_prop[0].bind(m_pencil);
+  m_prop[0].bind(m_autoFill);
   m_prop[0].bind(m_mypaintPressure);
   m_prop[0].bind(m_mypaintTilt);
   m_prop[0].bind(m_snapGrid);
@@ -1217,6 +1219,8 @@ void ToonzRasterBrushTool::updateTranslation() {
   m_preset.setQStringName(tr("Preset:"));
   m_preset.setItemUIName(CUSTOM_WSTR, tr("<custom>"));
   m_pencil.setQStringName(tr("Pencil"));
+  m_autoFill.setQStringName(tr("Auto Fill"));
+  m_autoFill.setId("AutoFill");
   m_modifierLockAlpha.setQStringName(tr("Lock Alpha"));
   m_snapGrid.setQStringName(tr("Grid"));
   m_mypaintPressure.setQStringName(tr("Pressure"));
@@ -2496,6 +2500,76 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
 
   /*-- FIdを指定して、描画中にフレームが動いても、
   　　描画開始時のFidのサムネイルが更新されるようにする。--*/
+  // AutoFill: flood-fill all enclosed unpainted regions after each stroke.
+  // Algorithm: inverse flood-fill from the 4 image corners marks all pixels
+  // reachable from outside (exterior). Any unpainted pixel NOT reachable from
+  // outside is enclosed by ink → fill it with the current paint style.
+  if (m_autoFill.getValue()) {
+    TToonzImageP ti = TImageP(getImage(true));
+    if (ti) {
+      TRasterCM32P ras = ti->getRaster();
+      if (ras) {
+        const int lx = ras->getLx();
+        const int ly = ras->getLy();
+        ras->lock();
+
+        // Restrict BFS to savebox+1 — only scan content area, not blank canvas.
+        // This makes the fill instantaneous even on large canvases.
+        TRect sb = ti->getSavebox();
+        sb = sb.enlarge(1);
+        const int x0 = std::max(sb.x0, 0), y0 = std::max(sb.y0, 0);
+        const int x1 = std::min(sb.x1, lx-1), y1 = std::min(sb.y1, ly-1);
+        const int sw = x1 - x0 + 1, sh = y1 - y0 + 1;
+
+        if (sw > 0 && sh > 0) {
+          // exterior sub-image: 1 if pixel reachable from savebox border without ink.
+          std::vector<uint8_t> exterior(sw * sh, 0);
+
+          std::vector<int> bfsQ;
+          bfsQ.reserve(2 * (sw + sh));
+          auto enqueue = [&](int rx, int ry) {
+            if (rx < 0 || ry < 0 || rx >= sw || ry >= sh) return;
+            int sidx = ry * sw + rx;
+            if (exterior[sidx]) return;
+            if (ras->pixels(y0 + ry)[x0 + rx].getInk() != 0) return;
+            exterior[sidx] = 1;
+            bfsQ.push_back(sidx);
+          };
+          for (int rx = 0; rx < sw; rx++) { enqueue(rx, 0); enqueue(rx, sh-1); }
+          for (int ry = 1; ry < sh-1; ry++) { enqueue(0, ry); enqueue(sw-1, ry); }
+
+          for (int qi = 0; qi < (int)bfsQ.size(); qi++) {
+            int sidx = bfsQ[qi];
+            int rx = sidx % sw, ry = sidx / sw;
+            enqueue(rx-1, ry); enqueue(rx+1, ry);
+            enqueue(rx, ry-1); enqueue(rx, ry+1);
+          }
+
+          // Use next palette style for fill (ink=N → fill=N+1 convention).
+          TTool::Application *app2 = TTool::getApplication();
+          int styleId = app2 ? app2->getCurrentLevelStyleIndex() : 1;
+          if (styleId <= 0) styleId = 1;
+          int fillStyleId = styleId + 1;
+          {
+            TPaletteP pal = ti->getPalette();
+            if (pal && !pal->getStyle(fillStyleId))
+              fillStyleId = styleId;
+          }
+
+          for (int ry = 0; ry < sh; ry++) {
+            TPixelCM32 *row = ras->pixels(y0 + ry) + x0;
+            const uint8_t *ext = exterior.data() + ry * sw;
+            for (int rx = 0; rx < sw; rx++) {
+              if (!ext[rx] && row[rx].getInk() == 0 && row[rx].getPaint() == 0)
+                row[rx].setPaint(fillStyleId);
+            }
+          }
+        }
+        ras->unlock();
+      }
+    }
+  }
+
   notifyImageChanged(frameId);
 
   m_strokeRect.empty();
