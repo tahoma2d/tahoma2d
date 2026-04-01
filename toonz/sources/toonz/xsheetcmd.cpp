@@ -2243,6 +2243,8 @@ public:
 
     pegbar->getKeyframeSpan(row, r0, ease0, r1, ease1);
 
+    if (r0 > r1) return;
+
     KeyFrameHandleCommandUndo *undo =
         new KeyFrameHandleCommandUndo(objectId, r0, r1);
 
@@ -2253,6 +2255,25 @@ public:
       k0.m_channels[i].m_type     = m_type;
       k1.m_channels[i].m_prevType = m_type;
     }
+
+    std::map<QString, SkVD::Keyframe> &vdfs0 =
+        k0.m_skeletonKeyframe.m_vertexKeyframes;
+    std::map<QString, SkVD::Keyframe> &vdfs1 =
+        k1.m_skeletonKeyframe.m_vertexKeyframes;
+
+    std::map<QString, SkVD::Keyframe>::iterator vdft0 = vdfs0.begin(),
+                                                vdfEnd0(vdfs0.end());
+    std::map<QString, SkVD::Keyframe>::iterator vdft1 = vdfs1.begin(),
+                                                vdfEnd1(vdfs1.end());
+    for (; vdft0 != vdfEnd0; ++vdft0, ++vdft1) {
+      for (int p = 0; p < SkVD::PARAMS_COUNT; ++p) {
+        TDoubleKeyframe &vkf0 = vdft0->second.m_keyframes[p];
+        TDoubleKeyframe &vkf1 = vdft1->second.m_keyframes[p];
+        vkf0.m_type = m_type;
+        vkf1.m_prevType = m_type;
+      }
+    }
+
     pegbar->setKeyframeWithoutUndo(r0, k0);
     pegbar->setKeyframeWithoutUndo(r1, k1);
 
