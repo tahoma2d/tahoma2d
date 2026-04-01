@@ -462,6 +462,7 @@ void KeyframeSetter::setType(int kIndex, TDoubleKeyframe::Type type) {
   std::map<int, TDoubleKeyframe> keyframes;
   switch (type) {
   case TDoubleKeyframe::SpeedInOut:
+    m_undo->addKeyframe(kIndex + 1);
     keyframe.m_speedOut    = TPointD(segmentWidth / 3, 0);
     nextKeyframe.m_speedIn = TPointD(-segmentWidth / 3, 0);
     if (nextKeyframe.m_linkedHandles && nextKeyframe.m_speedOut.x > 0.01)
@@ -476,6 +477,7 @@ void KeyframeSetter::setType(int kIndex, TDoubleKeyframe::Type type) {
 
   case TDoubleKeyframe::EaseInOut:
   case TDoubleKeyframe::EaseInOutPercentage:
+    m_undo->addKeyframe(kIndex + 1);
     if (keyframe.m_type == TDoubleKeyframe::EaseInOut) {
       // absolute -> percentage
       ease0 = keyframe.m_speedOut.x * 100.0 / segmentWidth;
