@@ -5031,21 +5031,12 @@ void CellArea::createKeyLineMenu(QMenu &menu, int row, int col) {
     }
   }
 
-  TDoubleKeyframe::Type rType =
-      pegbar->getParam(TStageObject::T_X)->getKeyframeAt(r0).m_type;
-
-  if (rType != TDoubleKeyframe::Constant)
-    menu.addAction(cmdManager->getAction(MI_UseConstantInterpolation));
-  if (rType != TDoubleKeyframe::Linear)
-    menu.addAction(cmdManager->getAction(MI_UseLinearInterpolation));
-  if (rType != TDoubleKeyframe::SpeedInOut)
-    menu.addAction(cmdManager->getAction(MI_UseSpeedInOutInterpolation));
-  if (rType != TDoubleKeyframe::EaseInOut)
-    menu.addAction(cmdManager->getAction(MI_UseEaseInOutInterpolation));
-  if (rType != TDoubleKeyframe::EaseInOutPercentage)
-    menu.addAction(cmdManager->getAction(MI_UseEaseInOutPctInterpolation));
-  if (rType != TDoubleKeyframe::Exponential)
-    menu.addAction(cmdManager->getAction(MI_UseExponentialInterpolation));
+  menu.addAction(cmdManager->getAction(MI_UseConstantInterpolation));
+  menu.addAction(cmdManager->getAction(MI_UseLinearInterpolation));
+  menu.addAction(cmdManager->getAction(MI_UseSpeedInOutInterpolation));
+  menu.addAction(cmdManager->getAction(MI_UseEaseInOutInterpolation));
+  menu.addAction(cmdManager->getAction(MI_UseEaseInOutPctInterpolation));
+  menu.addAction(cmdManager->getAction(MI_UseExponentialInterpolation));
 
   if (col < 0) {
     menu.addSeparator();
