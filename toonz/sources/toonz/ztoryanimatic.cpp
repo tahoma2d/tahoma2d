@@ -599,18 +599,15 @@ std::vector<ZtoryAudioTrack::Segment> ZtoryAudioTrack::findSegments() const {
   if (!column) return segs;
   TXshSoundColumn *sc = column->getSoundColumn();
   if (!sc) return segs;
-  int r0 = 0, r1 = 0;
-  column->getRange(r0, r1);
-  if (r1 < r0) return segs;
-  bool inSeg = false;
-  int segStart = 0;
-  for (int r = r0; r <= r1 + 1; r++) {
-    // Copy cell by value — TXshSoundColumn::getCell returns *new TXshCell
-    // (heap-leaked), so we copy to avoid a dangling reference.
-    TXshCell cell = (r <= r1) ? xsh->getCell(r, m_col) : TXshCell();
-    bool empty = cell.isEmpty();
-    if (!empty && !inSeg) { segStart = r; inSeg = true; }
-    else if (empty && inSeg) { segs.push_back({segStart, r - 1}); inSeg = false; }
+  // Iterate ColumnLevels directly so that razor splits created by
+  // splitLevelAtFrame (which share audio data but have distinct visible
+  // ranges) are each reported as a separate segment — without losing the
+  // frame at the cut boundary the way clearCells() would.
+  int n = sc->getColumnLevelCount();
+  for (int i = 0; i < n; i++) {
+    ColumnLevel *cl = sc->getColumnLevel(i);
+    if (!cl) continue;
+    segs.push_back({cl->getVisibleStartFrame(), cl->getVisibleEndFrame()});
   }
   return segs;
 }
@@ -762,12 +759,21 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
     p.fillRect(x0, trackH - kScrubBarH, x1 - x0, kScrubBarH, QColor(255, 165, 0));
   }
 
-  // Shot cut markers — bright separator lines at video shot boundaries.
-  // These replace the physical cell gaps that splitAudioColumn used to create.
-  p.setPen(QPen(QColor(180, 180, 180, 180), 1));
-  for (int cf : m_cutFrames) {
-    int cx = labelW + (int)(cf * m_ppf);
-    p.drawLine(cx, 0, cx, trackH);
+  // Shot cut markers — draw only where audio is present at that boundary.
+  // Without this check, ghost lines appear over empty regions of the track.
+  {
+    auto segs = findSegments();
+    p.setPen(QPen(QColor(180, 180, 180, 180), 1));
+    for (int cf : m_cutFrames) {
+      // Only draw if cf falls strictly inside a segment (not at its boundary)
+      bool hasAudio = false;
+      for (auto &s : segs) {
+        if (cf > s.r0 && cf <= s.r1) { hasAudio = true; break; }
+      }
+      if (!hasAudio) continue;
+      int cx = labelW + (int)(cf * m_ppf);
+      p.drawLine(cx, 0, cx, trackH);
+    }
   }
 
   // Razor hover preview line — shown when razor is active and cursor hovers
@@ -818,20 +824,33 @@ void ZtoryAudioTrack::mousePressEvent(QMouseEvent *e) {
     update();
     return;
   }
-  // Select / drag segment
+  // Select / drag / trim segment
   if (e->button() == Qt::LeftButton && !m_razorActive) {
     int frame = frameAtX(e->x());
+    int mx = e->x();
     auto segs = findSegments();
     m_selSeg = {-1, -1};
+    m_dragMode = NoDrag;
     for (auto &s : segs) {
-      if (frame >= s.r0 && frame <= s.r1) {
-        m_selSeg = s;
-        m_draggingSeg = true;
-        m_dragStartFrame = frame;
-        m_dragOrigR0 = s.r0;
+      if (frame < s.r0 || frame > s.r1) continue;
+      m_selSeg = s;
+      m_dragOrigR0 = s.r0;
+      m_dragOrigR1 = s.r1;
+      m_dragStartFrame = frame;
+      // Edge detection: 6px zone at each border
+      int xLeft  = kLabelW + (int)(s.r0 * m_ppf);
+      int xRight = kLabelW + (int)((s.r1 + 1) * m_ppf);
+      if (mx - xLeft < 6 && mx - xLeft >= 0) {
+        m_dragMode = TrimLeft;
+        setCursor(Qt::SizeHorCursor);
+      } else if (xRight - mx < 6 && xRight - mx >= 0) {
+        m_dragMode = TrimRight;
+        setCursor(Qt::SizeHorCursor);
+      } else {
+        m_dragMode = SegmentDrag;
         setCursor(Qt::ClosedHandCursor);
-        break;
       }
+      break;
     }
     update();
   }
@@ -845,15 +864,48 @@ void ZtoryAudioTrack::mouseMoveEvent(QMouseEvent *e) {
     update();
     return;
   }
-  if (m_draggingSeg && m_selSeg.r0 >= 0) {
+
+  // Segment drag with overlap clamping
+  if (m_dragMode == SegmentDrag && m_selSeg.r0 >= 0) {
     int frame = frameAtX(e->x());
     int delta = frame - m_dragStartFrame;
+    int segLen = m_dragOrigR1 - m_dragOrigR0;
     int newR0 = m_dragOrigR0 + delta;
     if (newR0 < 0) newR0 = 0;
-    int segLen = m_selSeg.r1 - m_selSeg.r0;
-    // Update visual selection to show where the segment would land
+    // Clamp against neighboring segments to prevent overlap
+    auto segs = findSegments();
+    for (auto &s : segs) {
+      if (s.r0 == m_dragOrigR0 && s.r1 == m_dragOrigR1) continue;
+      // Neighbor on the left: newR0 must be > s.r1
+      if (s.r1 < m_dragOrigR0 && newR0 <= s.r1)
+        newR0 = s.r1 + 1;
+      // Neighbor on the right: newR0 + segLen must be < s.r0
+      if (s.r0 > m_dragOrigR1 && newR0 + segLen >= s.r0)
+        newR0 = s.r0 - segLen - 1;
+    }
+    if (newR0 < 0) newR0 = 0;
     m_selSeg.r0 = newR0;
     m_selSeg.r1 = newR0 + segLen;
+    update();
+    return;
+  }
+
+  // Trim left/right edge: visual feedback
+  if ((m_dragMode == TrimLeft || m_dragMode == TrimRight) && m_selSeg.r0 >= 0) {
+    int frame = frameAtX(e->x());
+    int delta = frame - m_dragStartFrame;
+    if (m_dragMode == TrimLeft) {
+      int newR0 = m_dragOrigR0 + delta;
+      if (newR0 < 0) newR0 = 0;
+      if (newR0 > m_dragOrigR1 - 1) newR0 = m_dragOrigR1 - 1;
+      m_selSeg.r0 = newR0;
+      m_selSeg.r1 = m_dragOrigR1;
+    } else {
+      int newR1 = m_dragOrigR1 + delta;
+      if (newR1 < m_dragOrigR0 + 1) newR1 = m_dragOrigR0 + 1;
+      m_selSeg.r0 = m_dragOrigR0;
+      m_selSeg.r1 = newR1;
+    }
     update();
     return;
   }
@@ -865,6 +917,24 @@ void ZtoryAudioTrack::mouseMoveEvent(QMouseEvent *e) {
       m_razorHoverFrame = frame;
       update();
     }
+    return;
+  }
+
+  // Hover cursor: show SizeHorCursor near segment edges (pixel-based, no frame rounding)
+  {
+    int mx = e->x();
+    auto segs = findSegments();
+    bool nearEdge = false;
+    for (auto &s : segs) {
+      int xLeft  = kLabelW + (int)(s.r0 * m_ppf);
+      int xRight = kLabelW + (int)((s.r1 + 1) * m_ppf);
+      if ((mx >= xLeft - 1 && mx < xLeft + 6) ||
+          (mx > xRight - 7 && mx <= xRight + 1)) {
+        nearEdge = true;
+        break;
+      }
+    }
+    setCursor(nearEdge ? Qt::SizeHorCursor : Qt::ArrowCursor);
   }
 }
 
@@ -876,35 +946,60 @@ void ZtoryAudioTrack::leaveEvent(QEvent *) {
 }
 
 void ZtoryAudioTrack::mouseReleaseEvent(QMouseEvent *e) {
+  DragMode finishedMode = m_dragMode;
+  m_dragMode = NoDrag;
+  setCursor(m_razorActive ? Qt::CrossCursor : Qt::ArrowCursor);
+
   // Finish segment drag — commit via shiftLevelInRange on the ColumnLevel
-  if (m_draggingSeg) {
-    m_draggingSeg = false;
-    setCursor(m_razorActive ? Qt::CrossCursor : Qt::ArrowCursor);
+  if (finishedMode == SegmentDrag) {
+    int segLen = m_dragOrigR1 - m_dragOrigR0;
 
-    // m_selSeg.r0 was updated live during mouseMoveEvent (with clamping to ≥0).
-    // Use that as the final committed position.
-    int segLen    = m_selSeg.r1 - m_selSeg.r0;
+    // Cross-track drop: if mouse is outside this widget vertically
+    QPoint localPos = e->pos();
+    if (localPos.y() < 0 || localPos.y() >= height()) {
+      int dragOffset = m_dragStartFrame - m_dragOrigR0;
+      emit segmentDroppedOutside(m_col, m_dragOrigR0, m_dragOrigR1,
+                                 dragOffset, e->globalPos());
+      update();
+      return;
+    }
+
     int finalDelta = m_selSeg.r0 - m_dragOrigR0;
-
     if (finalDelta != 0 && m_dragOrigR0 >= 0) {
       TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
       TXshColumn *column = xsh ? xsh->getColumn(m_col) : nullptr;
       TXshSoundColumn *sc = column ? column->getSoundColumn() : nullptr;
       if (sc) {
-        // Shift the ColumnLevel whose visible midpoint falls in the original
-        // segment range. shiftLevelInRange is a new public API on TXshSoundColumn
-        // that avoids the broken clearCells/setCell path on sound columns.
-        sc->shiftLevelInRange(m_dragOrigR0, m_dragOrigR0 + segLen, finalDelta);
-        // Invalidate waveform cache and merged sound track — both stale now.
+        sc->shiftLevelInRange(m_dragOrigR0, m_dragOrigR1, finalDelta);
         invalidateWaveform();
         ZtoryAnimaticController::instance()->invalidateSoundTrack();
-        // Defer xsheet notification (QueuedConnection): cannot call
-        // notifyXsheetChanged() here — would delete this widget mid-event.
         emit segmentMoved();
       } else {
-        // No sound column found — reset visual to original
         m_selSeg = {m_dragOrigR0, m_dragOrigR0 + segLen};
       }
+    }
+    update();
+    return;
+  }
+
+  // Finish edge trim — commit via modifyCellRange
+  if (finishedMode == TrimLeft || finishedMode == TrimRight) {
+    TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+    TXshColumn *column = xsh ? xsh->getColumn(m_col) : nullptr;
+    TXshSoundColumn *sc = column ? column->getSoundColumn() : nullptr;
+    if (sc) {
+      if (finishedMode == TrimLeft) {
+        int delta = m_selSeg.r0 - m_dragOrigR0;
+        if (delta != 0)
+          sc->modifyCellRange(m_dragOrigR0, delta, true);
+      } else {
+        int delta = m_selSeg.r1 - m_dragOrigR1;
+        if (delta != 0)
+          sc->modifyCellRange(m_dragOrigR1, delta, false);
+      }
+      invalidateWaveform();
+      ZtoryAnimaticController::instance()->invalidateSoundTrack();
+      emit segmentMoved();
     }
     update();
     return;
@@ -2045,7 +2140,35 @@ void ZtoryAnimaticPanel::refreshFromScene() {
   m_refreshing = true;
   m_track->refreshFromScene();
   refreshAudioTracks();
+  updateTrackWidths();
   m_refreshing = false;
+}
+
+void ZtoryAnimaticPanel::updateTrackWidths() {
+  // Compute global max frame from both video blocks and audio segments
+  int maxFrame = 0;
+  for (auto &b : m_track->blocks())
+    maxFrame = qMax(maxFrame, b.startFrameInMain + (b.f1 - b.f0 + 1));
+  for (auto *at : m_audioTracks) {
+    auto segs = at->findSegments();
+    for (auto &s : segs)
+      maxFrame = qMax(maxFrame, s.r1 + 1);
+  }
+  int totalW = kLabelW + (int)(maxFrame * m_ppf) + 200;
+  m_ruler->setMinimumWidth(totalW);
+  m_track->setMinimumWidth(totalW);
+  for (auto *at : m_audioTracks)
+    at->setMinimumWidth(totalW);
+}
+
+void ZtoryAnimaticPanel::updateCutFrames() {
+  QVector<int> cutFrames;
+  for (auto &b : m_track->blocks()) {
+    if (b.startFrameInMain > 0)
+      cutFrames.append(b.startFrameInMain);
+  }
+  for (auto *at : m_audioTracks)
+    at->setCutFrames(cutFrames);
 }
 
 void ZtoryAnimaticPanel::refreshAudioTracks() {
@@ -2078,7 +2201,7 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     TXshColumn *column = xsh->getColumn(col);
     if (!column) continue;
     TXshSoundColumn *sc = column->getSoundColumn();
-    if (!sc || sc->isEmpty()) continue;
+    if (!sc) continue;
 
     QString name = QString::fromStdString(xsh->getStageObject(xsh->getColumnObjectId(col))->getName());
     if (name.isEmpty()) name = tr("Audio %1").arg(col + 1);
@@ -2089,15 +2212,7 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     // Propagate current razor state (independent mode = razor ON + link OFF)
     at->setRazorActive(m_track->tool() == ZtoryAnimaticTrack::RazorTool && !m_audioLinked);
 
-    // Set shot boundary markers so the audio track can draw cut separator lines
-    {
-      QVector<int> cutFrames;
-      for (auto &b : m_track->blocks()) {
-        if (b.startFrameInMain > 0)
-          cutFrames.append(b.startFrameInMain);
-      }
-      at->setCutFrames(cutFrames);
-    }
+    // Cut frames will be set by updateCutFrames() after all tracks are created
 
     // Sync razor hover across video ↔ audio tracks
     connect(m_track, &ZtoryAnimaticTrack::razorHoverFrameChanged,
@@ -2116,7 +2231,13 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
       if (xsh) xsh->updateFrameCount();
       // Mark the project modified so Save becomes active.
       app->getCurrentScene()->notifyCastChange();
+      updateCutFrames();
+      updateTrackWidths();
     }, Qt::QueuedConnection);
+
+    connect(at, &ZtoryAudioTrack::segmentDroppedOutside,
+            this, &ZtoryAnimaticPanel::onSegmentDroppedOutside,
+            Qt::QueuedConnection);
 
     // Inserisci prima dello stretch finale
     int insertIdx = m_scrollLay->count() - 1;
@@ -2124,6 +2245,7 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     m_scrollLay->insertWidget(insertIdx, at);
     m_audioTracks.append(at);
   }
+  updateCutFrames();
   m_refreshingAudio = false;
 }
 
@@ -2179,8 +2301,10 @@ void ZtoryAnimaticPanel::onShotMoved(int col, int newStartFrame) {
   Q_UNUSED(col); Q_UNUSED(newStartFrame);
 }
 
-// Helper: split the ColumnLevel covering |splitFrame| into two parts.
-// Delegates to TXshSoundColumn::splitLevelAtFrame (see txshsoundcolumn.cpp).
+// Split the ColumnLevel covering |splitFrame| into two parts using offset
+// trimming — no audio frames are lost at the cut boundary.
+// findSegments() iterates ColumnLevels directly, so both halves are
+// independently selectable and draggable after the split.
 static void splitAudioColumn(TXsheet *xsh, int audioCol, int splitFrame) {
   TXshColumn *ac = xsh ? xsh->getColumn(audioCol) : nullptr;
   TXshSoundColumn *sc = ac ? ac->getSoundColumn() : nullptr;
@@ -2706,6 +2830,61 @@ void ZtoryAnimaticPanel::onAudioRazorRequested(int col, int frame) {
   refreshAudioTracks();
 }
 
+void ZtoryAnimaticPanel::onSegmentDroppedOutside(int srcCol, int origR0,
+                                                  int origR1, int dragOffset,
+                                                  QPoint globalPos) {
+  // Find the target audio track under the drop position
+  ZtoryAudioTrack *target = nullptr;
+  for (auto *at : m_audioTracks) {
+    if (at->columnIndex() == srcCol) continue;
+    QRect r = QRect(at->mapToGlobal(QPoint(0, 0)), at->size());
+    if (r.contains(globalPos)) { target = at; break; }
+  }
+  if (!target) return;
+
+  TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+  if (!xsh) return;
+
+  // Detach from source
+  TXshColumn *srcColumn = xsh->getColumn(srcCol);
+  TXshSoundColumn *srcSc = srcColumn ? srcColumn->getSoundColumn() : nullptr;
+  if (!srcSc) return;
+  int midFrame = (origR0 + origR1) / 2;
+  ColumnLevel *cl = srcSc->detachLevelByFrame(midFrame);
+  if (!cl) return;
+
+  // Compute target vsf: frame under cursor minus the grab offset inside the segment
+  QPoint localPos = target->mapFromGlobal(globalPos);
+  int cursorFrame = target->frameAtX(localPos.x());
+  int targetVsf = qMax(0, cursorFrame - dragOffset);
+
+  // Clamp against existing segments on destination track to avoid overlap
+  int segLen = origR1 - origR0;
+  auto dstSegs = target->findSegments();
+  for (auto &s : dstSegs) {
+    if (s.r1 < targetVsf && targetVsf <= s.r1 + 1)
+      targetVsf = s.r1 + 1;
+    if (s.r0 > origR0 && targetVsf + segLen >= s.r0)
+      targetVsf = s.r0 - segLen - 1;
+  }
+  if (targetVsf < 0) targetVsf = 0;
+
+  // Adopt into target track
+  int dstCol = target->columnIndex();
+  TXshColumn *dstColumn = xsh->getColumn(dstCol);
+  TXshSoundColumn *dstSc = dstColumn ? dstColumn->getSoundColumn() : nullptr;
+  if (!dstSc) { delete cl; return; }
+  dstSc->adoptLevel(cl, targetVsf);
+
+  // Refresh
+  for (auto *at : m_audioTracks) at->invalidateWaveform();
+  ZtoryAnimaticController::instance()->invalidateSoundTrack();
+  xsh->updateFrameCount();
+  TApp::instance()->getCurrentScene()->notifyCastChange();
+  refreshAudioTracks();
+  updateTrackWidths();
+}
+
 void ZtoryAnimaticPanel::onShotDurationChanged(int col, int newF1) {
   int newDuration = newF1 + 1;
   TApp *app = TApp::instance();
@@ -2932,6 +3111,7 @@ void ZtoryAnimaticPanel::onZoomChanged(double ppf) {
     m_zoomSlider->setValue((int)(ppf * 10));
     m_zoomSlider->blockSignals(false);
   }
+  updateTrackWidths();
 }
 
 void ZtoryAnimaticPanel::onFrameChanged(int frame) {
@@ -2949,7 +3129,21 @@ void ZtoryAnimaticPanel::onFrameChanged(int frame) {
 void ZtoryAnimaticPanel::contextMenuEvent(QContextMenuEvent *e) {
   QMenu menu(this);
   QAction *loadAudio = menu.addAction(tr("Load Audio..."));
+  QAction *addTrack  = menu.addAction(tr("Add Audio Track"));
   QAction *chosen = menu.exec(e->globalPos());
+  if (chosen == addTrack) {
+    TApp *app = TApp::instance();
+    ToonzScene *scene = app->getCurrentScene()->getScene();
+    if (!scene) return;
+    TXsheet *xsh = scene->getChildStack()->getTopXsheet();
+    if (!xsh) return;
+    int insertCol = xsh->getColumnCount();
+    xsh->insertColumn(insertCol, TXshColumn::eSoundType);
+    refreshAudioTracks();
+    updateTrackWidths();
+    app->getCurrentScene()->notifyCastChange();
+    return;
+  }
   if (chosen == loadAudio) {
     // In storyboard workflow, audio can only be loaded from the main xsheet.
     // Show the warning before opening the file dialog so the user doesn't

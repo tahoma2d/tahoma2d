@@ -224,6 +224,18 @@ when the user play a single level and hence the audio behind..*/
    * If |splitFrame| is not strictly inside a ColumnLevel, does nothing. */
   void splitLevelAtFrame(int splitFrame);
 
+  ColumnLevel *getColumnLevel(int index);
+  int getColumnLevelCount() const;
+
+  /*! Remove the ColumnLevel covering |frame| from m_levels WITHOUT deleting it.
+   * Returns the detached pointer (caller takes ownership).  Returns nullptr if
+   * no level covers |frame|. */
+  ColumnLevel *detachLevelByFrame(int frame);
+
+  /*! Take ownership of |cl| and insert it into m_levels, adjusting its
+   * startFrame so that its visible start lands at |targetFrame|. */
+  void adoptLevel(ColumnLevel *cl, int targetFrame);
+
 protected:
   bool setCell(int row, const TXshCell &cell, bool updateSequence);
   void removeCells(int row, int rowCount, bool shift, bool keepCellMarks);
@@ -236,7 +248,6 @@ protected:
   void removeColumnLevel(ColumnLevel *columnLevel);
 
   ColumnLevel *getColumnLevelByFrame(int frame) const;
-  ColumnLevel *getColumnLevel(int index);
   int getColumnLevelIndex(ColumnLevel *ss) const;
   void clear();
 

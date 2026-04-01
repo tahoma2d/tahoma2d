@@ -984,6 +984,31 @@ ColumnLevel *TXshSoundColumn::getColumnLevel(int index) {
 
 //-----------------------------------------------------------------------------
 
+int TXshSoundColumn::getColumnLevelCount() const { return m_levels.count(); }
+
+//-----------------------------------------------------------------------------
+
+ColumnLevel *TXshSoundColumn::detachLevelByFrame(int frame) {
+  ColumnLevel *cl = getColumnLevelByFrame(frame);
+  if (!cl) return nullptr;
+  int idx = m_levels.indexOf(cl);
+  if (idx < 0) return nullptr;
+  m_levels.removeAt(idx);
+  return cl;
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshSoundColumn::adoptLevel(ColumnLevel *cl, int targetFrame) {
+  if (!cl) return;
+  // Adjust startFrame so that vsf = targetFrame
+  // vsf = startFrame + startOffset  →  startFrame = targetFrame - startOffset
+  cl->setStartFrame(targetFrame - cl->getStartOffset());
+  insertColumnLevel(cl, -1);
+}
+
+//-----------------------------------------------------------------------------
+
 int TXshSoundColumn::getColumnLevelIndex(ColumnLevel *columnLevel) const {
   return m_levels.indexOf(columnLevel);
 }

@@ -179,7 +179,7 @@ public:
   void invalidateWaveform() { m_waveformDirty = true; update(); }
   // Abort any in-progress drag without committing the move.
   // Call before deleting the widget to prevent stale drag state from firing.
-  void cancelDrag() { m_draggingSeg = false; m_draggingPreview = false; }
+  void cancelDrag() { m_dragMode = NoDrag; m_draggingPreview = false; }
   int trackHeight() const { return m_trackHeight; }
   void setTrackHeight(int h) { m_trackHeight = h; m_waveformDirty = true; setFixedHeight(h); update(); }
   int columnIndex() const { return m_col; }
@@ -204,9 +204,13 @@ public:
   static void clipboardCopy(ZtoryAudioTrack *src);
   static void clipboardPaste(ZtoryAudioTrack *dst, int frame);
 
+  int frameAtX(int x) const;
+
 signals:
   void razorRequested(int col, int frame);
   void segmentMoved();  // emitted after a drag-move completes
+  // Emitted when a segment is dropped outside this track (cross-track move)
+  void segmentDroppedOutside(int srcCol, int origR0, int origR1, int dragOffset, QPoint globalPos);
 
 protected:
   void paintEvent(QPaintEvent *) override;
@@ -217,8 +221,6 @@ protected:
   void keyPressEvent(QKeyEvent *) override;
 
 private:
-  int frameAtX(int x) const;
-
   int m_col;
   QString m_name;
   double m_ppf = 8.0;
@@ -236,9 +238,11 @@ private:
   QVector<int> m_cutFrames;  // shot boundary frames (from panel)
   // Segment selection & drag
   Segment m_selSeg{-1, -1};
-  bool m_draggingSeg      = false;
+  enum DragMode { NoDrag, SegmentDrag, TrimLeft, TrimRight };
+  DragMode m_dragMode     = NoDrag;
   int  m_dragStartFrame   = -1;
   int  m_dragOrigR0       = -1;
+  int  m_dragOrigR1       = -1;  // for trim: original vef
 };
 
 // ---- ZtoryStoryStrip ----
@@ -381,9 +385,12 @@ private slots:
   void onMatchSubsceneDuration(int col);
   void onFrameChanged(int frame);
   void onAudioRazorRequested(int col, int frame);
+  void onSegmentDroppedOutside(int srcCol, int origR0, int origR1, int dragOffset, QPoint globalPos);
 
 public:
   void refreshAudioTracks();
+  void updateTrackWidths();
+  void updateCutFrames();
 
 protected:
   void contextMenuEvent(QContextMenuEvent *e) override;
