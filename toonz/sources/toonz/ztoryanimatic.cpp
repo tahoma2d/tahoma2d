@@ -28,6 +28,7 @@
 #include "orientation.h"
 #include <QPainter>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QPushButton>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -383,6 +384,7 @@ void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
     int r0, r1, step;
     if (!XsheetGUI::getPlayRange(r0, r1, step)) { r0 = frame; r1 = frame; step = 1; }
     XsheetGUI::setPlayRange(frame, std::max(frame, r1), step);
+    ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
     update();
     return;
   }
@@ -390,6 +392,7 @@ void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
     int r0, r1, step;
     if (!XsheetGUI::getPlayRange(r0, r1, step)) { r0 = frame; r1 = frame; step = 1; }
     XsheetGUI::setPlayRange(std::min(r0, frame), frame, step);
+    ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
     update();
     return;
   }
@@ -458,6 +461,7 @@ void ZtoryAnimaticRuler::mouseMoveEvent(QMouseEvent *e) {
     int r0, r1, step;
     XsheetGUI::getPlayRange(r0, r1, step);
     XsheetGUI::setPlayRange(std::min(frame, r1), r1, step);
+    ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
     update();
     return;
   }
@@ -465,6 +469,7 @@ void ZtoryAnimaticRuler::mouseMoveEvent(QMouseEvent *e) {
     int r0, r1, step;
     XsheetGUI::getPlayRange(r0, r1, step);
     XsheetGUI::setPlayRange(r0, std::max(frame, r0), step);
+    ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
     update();
     return;
   }
@@ -533,6 +538,7 @@ void ZtoryAnimaticRuler::initPlayRangeIfNeeded() {
   if (!xsh) return;
   int lastFrame = std::max(0, xsh->getFrameCount() - 1);
   XsheetGUI::setPlayRange(0, lastFrame, 1);
+  ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
   update();
 }
 
@@ -566,7 +572,10 @@ void ZtoryAnimaticRuler::contextMenuEvent(QContextMenuEvent *e) {
     TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
     int last = xsh ? std::max(0, xsh->getFrameCount() - 1) : 0;
     XsheetGUI::setPlayRange(0, last, 1);
+  } else {
+    return;  // no action chosen — skip notify
   }
+  ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
   update();
 }
 
@@ -576,11 +585,34 @@ ZtoryAudioTrack::ZtoryAudioTrack(int col, const QString &name, QWidget *parent)
     : QWidget(parent), m_col(col), m_name(name) {
   setFixedHeight(m_trackHeight);
   setMinimumWidth(100);
-  setFocusPolicy(Qt::ClickFocus);  // needed for keyPressEvent
+  setFocusPolicy(Qt::ClickFocus);
+
+  // L/M/S state is driven purely via paintEvent + mousePressEvent hit-test.
+  // No child QToolButton widgets — they don't render reliably inside custom-
+  // painted QWidgets on macOS.
 }
 
 int ZtoryAudioTrack::frameAtX(int x) const {
   return std::max(0, (int)((x - kLabelW) / m_ppf));
+}
+
+void ZtoryAudioTrack::setLocked(bool on) {
+  if (m_locked == on) return;
+  m_locked = on;
+  update();
+  emit lockedChanged(m_col, on);
+}
+
+void ZtoryAudioTrack::setMuted(bool on) {
+  if (m_muted == on) return;
+  m_muted = on;
+  update();
+}
+
+void ZtoryAudioTrack::setSolo(bool on) {
+  if (m_solo == on) return;
+  m_solo = on;
+  update();
 }
 
 // Static clipboard for audio segments
@@ -622,12 +654,38 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
   // Sfondo
   p.fillRect(rect(), QColor(25, 25, 25));
 
-  // Label colonna
-  p.fillRect(0, 0, labelW, trackH, QColor(40, 40, 40));
-  p.setPen(QColor(200, 200, 200));
-  p.setFont(QFont("Arial", 9));
-  p.drawText(4, 0, labelW - 4, trackH, Qt::AlignVCenter | Qt::AlignLeft, m_name);
-  p.setPen(QColor(60, 60, 60));
+  // ---- Label area ----
+  p.fillRect(0, 0, labelW, trackH, QColor(35, 35, 35));
+
+  // L/M/S buttons — horizontal row at top of label area
+  // Layout: 3 buttons each 22px wide, 2px gap, starting at x=2, y=2
+  // Coordinates also used in mousePressEvent hit-test — keep in sync!
+  static const int kBtnY  = 2;
+  static const int kBtnH  = 16;
+  static const int kBtnW  = 22;
+  static const int kBtnGap = 3;
+  struct BtnInfo { const char *txt; QColor offColor; QColor onColor; bool active; };
+  BtnInfo btns[3] = {
+    {"L", QColor(100, 65, 20), QColor(220, 140, 50), m_locked},
+    {"M", QColor(100, 30, 30), QColor(210, 64, 64),  m_muted},
+    {"S", QColor(20, 90, 95),  QColor(50, 190, 200), m_solo},
+  };
+  p.setFont(QFont("Arial", 8, QFont::Bold));
+  for (int i = 0; i < 3; i++) {
+    QRect r(2 + i * (kBtnW + kBtnGap), kBtnY, kBtnW, kBtnH);
+    p.fillRect(r, btns[i].active ? btns[i].onColor : btns[i].offColor);
+    p.setPen(btns[i].active ? QColor(255, 255, 255) : btns[i].onColor);
+    p.drawRect(r.adjusted(0, 0, -1, -1));
+    p.drawText(r, Qt::AlignCenter, btns[i].txt);
+  }
+
+  // Track name — below the buttons
+  p.setPen(QColor(210, 210, 210));
+  p.setFont(QFont("Arial", 8));
+  int nameY = kBtnY + kBtnH + 2;
+  p.drawText(2, nameY, labelW - 4, trackH - nameY, Qt::AlignVCenter | Qt::AlignLeft, m_name);
+
+  p.setPen(QColor(65, 65, 65));
   p.drawLine(labelW, 0, labelW, trackH);
 
   // Rebuild waveform cache when ppf or size changed
@@ -640,68 +698,88 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
     TXshColumn *column = xsh ? xsh->getColumn(m_col) : nullptr;
     TXshSoundColumn *sc = column ? column->getSoundColumn() : nullptr;
 
-    if (sc) {
-      // Get merged sound track for the full xsheet duration.
-      // getOverallSoundTrack() may throw TSoundDeviceException on macOS if
-      // the default audio device is unavailable — catch to prevent crash.
-      int totalFrames = xsh->getFrameCount();
-      TSoundTrackP st;
-      try { st = sc->getOverallSoundTrack(0, totalFrames - 1); }
-      catch (...) { st = TSoundTrackP(); }
+    // Draw per-ColumnLevel waveform. Each CL references the same audio file
+    // but may have different startOffset/endOffset (from splits/trims).
+    // Reading sample positions directly from each CL avoids any merging
+    // artefacts that getOverallSoundTrack() could introduce.
+    QPainter cp(&m_waveformCache);
+    cp.setPen(QColor(60, 60, 60));
+    cp.drawLine(0, center, trackW, center);
 
-      if (st) {
-        double fps = 24.0;
-        ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-        if (scene)
-          fps = scene->getProperties()->getOutputProperties()->getFrameRate();
+    if (sc && sc->getColumnLevelCount() > 0) {
+      double fps = 24.0;
+      ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+      if (scene)
+        fps = scene->getProperties()->getOutputProperties()->getFrameRate();
 
-        TINT32 sampleRate  = st->getSampleRate();
-        TINT32 sampleCount = st->getSampleCount();
-        double samplesPerPixel = sampleRate / fps / m_ppf;
+      // Collect one TSoundTrackP per CL (may be null if file not loaded).
+      int nCL = sc->getColumnLevelCount();
+      struct CLData {
+        ColumnLevel *cl;
+        TSoundTrackP track;
+        TINT32       sampleRate;
+      };
+      std::vector<CLData> cldata;
+      cldata.reserve(nCL);
+      for (int i = 0; i < nCL; i++) {
+        ColumnLevel *cl = sc->getColumnLevel(i);
+        if (!cl) continue;
+        TSoundTrackP t;
+        try { t = cl->getSoundLevel()->getSoundTrack(); } catch (...) {}
+        if (!t) continue;
+        cldata.push_back({cl, t, (TINT32)t->getSampleRate()});
+      }
 
-        // Normalise: find peak amplitude across entire track
-        double globalMin = 0, globalMax = 0;
-        st->getMinMaxPressure(0, sampleCount - 1, TSound::MONO,
-                              globalMin, globalMax);
-        double peak = std::max(std::fabs(globalMin), std::fabs(globalMax));
-        if (peak <= 0) peak = 1.0;
+      if (!cldata.empty()) {
+        // Global peak normalisation across all CLs
+        double peak = 1.0;
+        for (auto &d : cldata) {
+          TINT32 s0 = (TINT32)(d.cl->getStartOffset() * d.sampleRate / fps);
+          TINT32 visFrames = d.cl->getVisibleFrameCount();
+          TINT32 s1 = s0 + (TINT32)(visFrames * d.sampleRate / fps);
+          s0 = qBound((TINT32)0, s0, d.track->getSampleCount() - 1);
+          s1 = qBound((TINT32)0, s1, d.track->getSampleCount() - 1);
+          if (s1 > s0) {
+            double mn = 0, mx = 0;
+            d.track->getMinMaxPressure(s0, s1, TSound::MONO, mn, mx);
+            peak = std::max(peak,
+                            std::max(std::fabs(mn), std::fabs(mx)));
+          }
+        }
 
         const int halfH = (trackH - 4) / 2;
-        QPainter cp(&m_waveformCache);
-
-        // Centre line
-        cp.setPen(QColor(60, 60, 60));
-        cp.drawLine(0, center, trackW, center);
-
         cp.setPen(QColor(80, 200, 120));
-        for (int px = 0; px < trackW; px++) {
-          double frame = (double)px / m_ppf;
-          TINT32 s0 = (TINT32)(frame * sampleRate / fps);
-          TINT32 s1 = s0 + (TINT32)(samplesPerPixel) + 1;
-          s0 = qBound((TINT32)0, s0, sampleCount - 1);
-          s1 = qBound((TINT32)0, s1, sampleCount - 1);
-          if (s0 > s1) continue;
 
-          double minV = 0, maxV = 0;
-          st->getMinMaxPressure(s0, s1, TSound::MONO, minV, maxV);
+        for (auto &d : cldata) {
+          double samplesPerPixel = d.sampleRate / fps / m_ppf;
+          int vsf  = d.cl->getVisibleStartFrame();
+          int pxL  = (int)(vsf * m_ppf);
+          int pxR  = (int)((d.cl->getVisibleEndFrame() + 1) * m_ppf);
+          pxL = qBound(0, pxL, trackW);
+          pxR = qBound(0, pxR, trackW);
 
-          int yMax = center - (int)(maxV / peak * halfH);
-          int yMin = center - (int)(minV / peak * halfH);
-          yMax = qBound(2, yMax, trackH - 2);
-          yMin = qBound(2, yMin, trackH - 2);
-          if (yMax > yMin) std::swap(yMax, yMin);
-          cp.drawLine(px, yMax, px, yMin);
+          for (int px = pxL; px < pxR; px++) {
+            double relFrame = (double)px / m_ppf - vsf;
+            TINT32 s0 = (TINT32)((d.cl->getStartOffset() + relFrame)
+                                  * d.sampleRate / fps);
+            TINT32 s1 = s0 + (TINT32)(samplesPerPixel) + 1;
+            TINT32 sc2 = d.track->getSampleCount();
+            s0 = qBound((TINT32)0, s0, sc2 - 1);
+            s1 = qBound((TINT32)0, s1, sc2 - 1);
+            if (s0 > s1) continue;
+
+            double minV = 0, maxV = 0;
+            d.track->getMinMaxPressure(s0, s1, TSound::MONO, minV, maxV);
+
+            int yMax = center - (int)(maxV / peak * halfH);
+            int yMin = center - (int)(minV / peak * halfH);
+            yMax = qBound(2, yMax, trackH - 2);
+            yMin = qBound(2, yMin, trackH - 2);
+            if (yMax > yMin) std::swap(yMax, yMin);
+            cp.drawLine(px, yMax, px, yMin);
+          }
         }
-      } else {
-        // No sound: draw centre line only
-        QPainter cp(&m_waveformCache);
-        cp.setPen(QColor(60, 60, 60));
-        cp.drawLine(0, center, trackW, center);
       }
-    } else {
-      QPainter cp(&m_waveformCache);
-      cp.setPen(QColor(60, 60, 60));
-      cp.drawLine(0, center, trackW, center);
     }
   }
 
@@ -741,6 +819,11 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
     }
   }
 
+  // Dim overlay whenever the track is silent: either user-muted (M) or
+  // silenced by another track's solo (effectiveMuted).
+  if (m_muted || m_effectiveMuted)
+    p.fillRect(labelW, 0, trackW, trackH, QColor(0, 0, 0, 130));
+
   // Highlight selected segment
   if (m_selSeg.r0 >= 0 && m_selSeg.r1 >= m_selSeg.r0) {
     int x0 = labelW + (int)(m_selSeg.r0 * m_ppf);
@@ -759,22 +842,10 @@ void ZtoryAudioTrack::paintEvent(QPaintEvent *) {
     p.fillRect(x0, trackH - kScrubBarH, x1 - x0, kScrubBarH, QColor(255, 165, 0));
   }
 
-  // Shot cut markers — draw only where audio is present at that boundary.
-  // Without this check, ghost lines appear over empty regions of the track.
-  {
-    auto segs = findSegments();
-    p.setPen(QPen(QColor(180, 180, 180, 180), 1));
-    for (int cf : m_cutFrames) {
-      // Only draw if cf falls strictly inside a segment (not at its boundary)
-      bool hasAudio = false;
-      for (auto &s : segs) {
-        if (cf > s.r0 && cf <= s.r1) { hasAudio = true; break; }
-      }
-      if (!hasAudio) continue;
-      int cx = labelW + (int)(cf * m_ppf);
-      p.drawLine(cx, 0, cx, trackH);
-    }
-  }
+  // NOTE: m_cutFrames (video shot boundaries) are intentionally NOT drawn here.
+  // Audio segment edges are already visible as the 1px borders around each block.
+  // Drawing shot boundaries on the audio track caused ghost lines when segments
+  // were moved away from those positions.
 
   // Razor hover preview line — shown when razor is active and cursor hovers
   if (m_razorHoverFrame >= 0) {
@@ -808,14 +879,45 @@ void ZtoryAudioTrack::setRazorHoverFrame(int frame) {
 // ---- ZtoryAudioTrack mouse events (12c: preview bar, razor) ----
 
 void ZtoryAudioTrack::mousePressEvent(QMouseEvent *e) {
+  // L/M/S button hit-test — must match coordinates in paintEvent exactly
+  // Buttons: horizontal row, each 22px wide, 3px gap, starting at x=2, y=2, h=16
+  if (e->button() == Qt::LeftButton && e->y() >= 2 && e->y() < 18) {
+    static const int kBtnW = 22, kBtnGap = 3;
+    for (int i = 0; i < 3; i++) {
+      int bx = 2 + i * (kBtnW + kBtnGap);
+      if (e->x() >= bx && e->x() < bx + kBtnW) {
+        if (i == 0) {        // Lock
+          m_locked = !m_locked;
+          update();
+          emit lockedChanged(m_col, m_locked);
+        } else if (i == 1) { // Mute
+          m_muted = !m_muted;
+          update();
+          // Delegate volume/cache/restart to the panel via applyMuteSolo(),
+          // so solo state and live-play restart are always considered.
+          emit muteToggleRequested(m_col);
+        } else {             // Solo
+          m_solo = !m_solo;
+          update();
+          emit soloToggleRequested(m_col);
+        }
+        return;
+      }
+    }
+  }
+  // Ignore other label area clicks
+  if (e->x() < kLabelW) return;
+
   static const int kScrubBarH = 6;
   // Razor tool: click anywhere on the waveform area (not in the scrub bar)
-  if (m_razorActive && e->y() < height() - kScrubBarH) {
+  if (m_razorActive && !m_locked && e->y() < height() - kScrubBarH) {
     int frame = frameAtX(e->x());
+    // Clear selection so the highlight doesn't persist after the cut
+    if (m_selSeg.r0 >= 0) { m_selSeg = {-1, -1}; update(); }
     emit razorRequested(m_col, frame);
     return;
   }
-  // Scrub bar drag
+  // Scrub bar drag — allowed even when locked (read-only preview)
   if (e->y() >= height() - kScrubBarH) {
     m_draggingPreview  = true;
     int frame = frameAtX(e->x());
@@ -824,8 +926,8 @@ void ZtoryAudioTrack::mousePressEvent(QMouseEvent *e) {
     update();
     return;
   }
-  // Select / drag / trim segment
-  if (e->button() == Qt::LeftButton && !m_razorActive) {
+  // Select / drag / trim segment — blocked when locked
+  if (e->button() == Qt::LeftButton && !m_razorActive && !m_locked) {
     int frame = frameAtX(e->x());
     int mx = e->x();
     auto segs = findSegments();
@@ -1080,6 +1182,16 @@ void ZtoryAudioTrack::keyPressEvent(QKeyEvent *e) {
 ZtoryAnimaticTrack::ZtoryAnimaticTrack(QWidget *parent) : QWidget(parent) {
   setFixedHeight(80);
   setMouseTracking(true);
+
+  // Lock button is painted in paintEvent and activated via mousePressEvent
+  // hit-test — no child QToolButton needed.
+}
+
+void ZtoryAnimaticTrack::setLocked(bool on) {
+  if (m_locked == on) return;
+  m_locked = on;
+  update();
+  emit lockedChanged(on);
 }
 
 void ZtoryAnimaticTrack::updateCursor() {
@@ -1173,18 +1285,32 @@ void ZtoryAnimaticTrack::refreshFromScene() {
 
 void ZtoryAnimaticTrack::paintEvent(QPaintEvent *) {
   QPainter p(this);
+
   p.fillRect(rect(), QColor(30, 30, 30));
 
   // Label column — aligned with audio track label and ruler
   p.fillRect(0, 0, kLabelW, height(), QColor(40, 40, 40));
-  p.setPen(QColor(200, 200, 200));
-  p.setFont(QFont("Arial", 9));
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   QString sceneName = scene
       ? QString::fromStdWString(scene->getSceneName())
       : tr("Animatic");
-  p.drawText(4, 0, kLabelW - 4, height(),
+  // Track name (left of lock button)
+  p.setPen(QColor(210, 210, 210));
+  p.setFont(QFont("Arial", 9));
+  p.drawText(4, 0, kLabelW - 30, height(),
              Qt::AlignVCenter | Qt::AlignLeft, sceneName);
+
+  // Painted lock button (right of label area)
+  {
+    const int bw = 22, bh = 20;
+    QRect r(kLabelW - bw - 4, (height() - bh) / 2, bw, bh);
+    p.fillRect(r, m_locked ? QColor(220, 140, 50) : QColor(45, 45, 45));
+    p.setPen(m_locked ? QColor(255, 255, 255) : QColor(220, 140, 50));
+    p.drawRect(r.adjusted(0, 0, -1, -1));
+    p.setFont(QFont("Arial", 7, QFont::Bold));
+    p.drawText(r, Qt::AlignCenter, "L");
+  }
+
   p.setPen(QColor(60, 60, 60));
   p.drawLine(kLabelW, 0, kLabelW, height());
 
@@ -1245,7 +1371,17 @@ void ZtoryAnimaticTrack::paintEvent(QPaintEvent *) {
 
 void ZtoryAnimaticTrack::mousePressEvent(QMouseEvent *e) {
   int mx = e->x() - kLabelW;
-  if (mx < 0) return; // click on label area — ignore
+  // Lock button hit-test in label area
+  if (mx < 0) {
+    if (e->button() == Qt::LeftButton) {
+      const int bw = 22, bh = 20;
+      QRect lockRect(kLabelW - bw - 4, (height() - bh) / 2, bw, bh);
+      if (lockRect.contains(e->pos()))
+        setLocked(!m_locked);
+    }
+    return;
+  }
+  if (m_locked) return; // track is locked — block all editing
 
   // Razor tool: split shot at click position
   if (m_tool == RazorTool && e->button() == Qt::LeftButton) {
@@ -1565,6 +1701,7 @@ ZtoryAnimaticViewer::ZtoryAnimaticViewer(QWidget *parent)
 
   // --- Dedicated frame handle from the animatic controller ---
   auto *ctrl = ZtoryAnimaticController::instance();
+  ctrl->setViewer(this);  // allow panel to call restartAudioIfPlaying()
   // Override FlipConsole so playback uses the animatic frame, not the global
   m_flipConsole->setFrameHandle(ctrl->frameHandle());
   // Override SceneViewer so rendering reads the animatic frame
@@ -1611,32 +1748,78 @@ void ZtoryAnimaticViewer::onDrawFrame(
     int targetFrame;
 
     if (m_continuousPlay && m_fps > 0) {
-      // Audio-master clock: use QAudioOutput::processedUSecs() as the
-      // authoritative time source.  This is the hardware DAC clock and cannot
-      // drift relative to the actual audio output.  It eliminates A/V desync
-      // caused by timer jitter in FlipConsole or slow frame rendering.
-      //
-      //   targetFrame = playStartFrame + floor(audioElapsed_s * fps)
-      //
-      // During the first few milliseconds after play() the device may not have
-      // started yet (processedUSecs = 0).  In that case fall back to the
-      // FlipConsole frame (1-based → 0-based) so the first frames are still
-      // displayed while the DAC initialises.
-      TXsheet *mainXsh = ctrl->mainXsheet();
-      qint64 audioUsecs = mainXsh ? mainXsh->getAudioPlayedUSecs() : 0;
-      if (audioUsecs > 0) {
-        targetFrame = m_playStartFrame + (int)(audioUsecs * m_fps / 1000000.0);
-        int totalFrames = mainXsh ? mainXsh->getFrameCount() : 1;
-        if (totalFrames < 1) totalFrames = 1;
-        targetFrame = std::max(0, std::min(targetFrame, totalFrames - 1));
+      // Detect loop-back: FlipConsole wrapped its internal counter from
+      // mark-out back to mark-in.  When frame < m_prevFlipFrame the loop
+      // fired — restart the audio stream from the new start position.
+      if (m_prevFlipFrame > 0 && frame < m_prevFlipFrame) {
+        TXsheet *mainXsh2 = ctrl->mainXsheet();
+        if (mainXsh2) mainXsh2->stopScrub();
+        m_continuousPlay = false;
+        // Restart audio from FlipConsole's new start frame (0-based).
+        int newStart = frame - 1;
+        m_playStartFrame = newStart;
+        if (m_sound && m_hasSoundtrack && mainXsh2) {
+          ToonzScene *sc3 = TApp::instance()->getCurrentScene()->getScene();
+          double fps3 = sc3
+              ? sc3->getProperties()->getOutputProperties()->getFrameRate()
+              : 24.0;
+          double spf3 = m_sound->getSampleRate() / fps3;
+          TINT32 startSmp = (TINT32)(newStart * spf3);
+          TINT32 totalSmp = (TINT32)m_sound->getSampleCount();
+          int stopFr = mainXsh2->getFrameCount();
+          if (sc3 && sc3->getChildStack()->getAncestorCount() == 0) {
+            int mr0, mr1, mstep;
+            if (XsheetGUI::getPlayRange(mr0, mr1, mstep) && mr1 >= 0)
+              stopFr = mr1 + 1;
+          }
+          TINT32 endSmp = std::min((TINT32)(stopFr * spf3), totalSmp - 1);
+          if (startSmp <= endSmp) {
+            mainXsh2->play(m_sound, startSmp, endSmp, false);
+            m_continuousPlay = true;
+          }
+        }
+        targetFrame = newStart;
       } else {
-        // DAC not yet started — use FlipConsole frame as fallback.
-        targetFrame = frame - 1;
+        // Audio-master clock: use QAudioOutput::processedUSecs() as the
+        // authoritative time source.  This is the hardware DAC clock and cannot
+        // drift relative to the actual audio output.  It eliminates A/V desync
+        // caused by timer jitter in FlipConsole or slow frame rendering.
+        //
+        //   targetFrame = playStartFrame + floor(audioElapsed_s * fps)
+        //
+        // During the first few milliseconds after play() the device may not have
+        // started yet (processedUsecs = 0).  In that case fall back to the
+        // FlipConsole frame (1-based → 0-based) so the first frames are still
+        // displayed while the DAC initialises.
+        TXsheet *mainXsh = ctrl->mainXsheet();
+        qint64 audioUsecs = mainXsh ? mainXsh->getAudioPlayedUSecs() : 0;
+        if (audioUsecs > 0) {
+          targetFrame = m_playStartFrame + (int)(audioUsecs * m_fps / 1000000.0);
+          int totalFrames = mainXsh ? mainXsh->getFrameCount() : 1;
+          if (totalFrames < 1) totalFrames = 1;
+          // Also clamp to mark-out so that loop respects it.
+          // Only apply the mark-out when at the top (main xsheet) level;
+          // inside a sub-scene, updateAnimaticFrameMarkers() cleared markers.
+          int markOut = totalFrames - 1;
+          {
+            ToonzScene *sc2 = TApp::instance()->getCurrentScene()->getScene();
+            if (sc2 && sc2->getChildStack()->getAncestorCount() == 0) {
+              int mr0, mr1, mstep;
+              if (XsheetGUI::getPlayRange(mr0, mr1, mstep) && mr1 >= 0)
+                markOut = mr1;
+            }
+          }
+          targetFrame = std::max(0, std::min(targetFrame, markOut));
+        } else {
+          // DAC not yet started — use FlipConsole frame as fallback.
+          targetFrame = frame - 1;
+        }
       }
     } else {
       // Not playing (scrubbing) — use FlipConsole frame directly.
       targetFrame = frame - 1;  // 1-based → 0-based
     }
+    m_prevFlipFrame = frame;
 
     int oldFrame = ctrl->currentFrame();
     ctrl->setCurrentFrame(targetFrame);
@@ -1714,8 +1897,8 @@ void ZtoryAnimaticViewer::refreshAnimaticSound() {
   // requireSoundTrack() builds lazily on first call and caches the result.
   // The cache is invalidated (set to null) whenever audio ColumnLevels change.
   auto *ctrl       = ZtoryAnimaticController::instance();
-  TSoundTrackP st  = ctrl->requireSoundTrack();
-  m_sound          = st.getPointer();   // raw ptr; ctrl keeps the ref alive
+  m_soundTrackRef  = ctrl->requireSoundTrack(); // keep our own ref alive
+  m_sound          = m_soundTrackRef.getPointer(); // safe: ref keeps object alive
   m_hasSoundtrack  = (m_sound != nullptr);
 }
 
@@ -1754,6 +1937,7 @@ void ZtoryAnimaticViewer::onAnimaticPlayingStatusChanged(bool playing) {
   if (!playing) {
     // Stop the continuous audio stream.
     m_continuousPlay = false;
+    m_prevFlipFrame  = 0;   // reset so next play starts fresh
     if (mainXsh) mainXsh->stopScrub();
     return;
   }
@@ -1783,7 +1967,14 @@ void ZtoryAnimaticViewer::onAnimaticPlayingStatusChanged(bool playing) {
   // allocate/copy hundreds of MB — causing 1-3 s startup delay while the
   // PlaybackExecutor has already advanced video frames, causing A/V desync.
   int    animFrames      = mainXsh->getFrameCount();
-  TINT32 animEndSample   = (TINT32)(animFrames * spf);
+  // Respect mark-out: if a play range is set at the top level, cap audio there.
+  int stopFrame = animFrames;
+  if (scene->getChildStack()->getAncestorCount() == 0) {
+    int mr0, mr1, mstep;
+    if (XsheetGUI::getPlayRange(mr0, mr1, mstep) && mr1 >= 0)
+      stopFrame = mr1 + 1;  // exclusive end
+  }
+  TINT32 animEndSample   = (TINT32)(stopFrame * spf);
   TINT32 endSample       = std::min(animEndSample, totalSamples - 1);
   if (startSample > endSample) return;
 
@@ -1805,6 +1996,53 @@ void ZtoryAnimaticViewer::onAnimaticPlayingStatusChanged(bool playing) {
   // per-frame m_buffer replacement that caused glitches in the old approach.
   mainXsh->play(m_sound, startSample, endSample, false);
   m_continuousPlay = true;
+}
+
+// ---- restartAudioIfPlaying ----
+// Called by the panel after mute/solo changes.  If continuous play is active,
+// Rebuilds the merged sound track with updated volumes and calls play()
+// directly — no stopScrub(), so QAudioOutput never goes to underrun state.
+// The hardware buffer (~100ms) will drain the old data before switching;
+// the new mix takes effect within one buffer period.
+void ZtoryAnimaticViewer::restartAudioIfPlaying() {
+  if (!m_continuousPlay) return;
+  auto *ctrl = ZtoryAnimaticController::instance();
+  TXsheet *mainXsh = ctrl->mainXsheet();
+  if (!mainXsh) return;
+
+  int startFrame = ctrl->currentFrame();
+
+  // Rebuild sound with updated volumes (caches already invalidated by caller)
+  refreshAnimaticSound();
+  if (!m_sound) return;
+
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return;
+  double fps = scene->getProperties()->getOutputProperties()->getFrameRate();
+  if (fps <= 0.0) fps = 24.0;
+  double spf = m_sound->getSampleRate() / fps;
+
+  TINT32 startSample  = (TINT32)(startFrame * spf);
+  TINT32 totalSamples = (TINT32)m_sound->getSampleCount();
+  if (startSample >= totalSamples) return;
+
+  int stopFrame = mainXsh->getFrameCount();
+  if (scene->getChildStack()->getAncestorCount() == 0) {
+    int mr0, mr1, mstep;
+    if (XsheetGUI::getPlayRange(mr0, mr1, mstep) && mr1 >= 0)
+      stopFrame = mr1 + 1;
+  }
+  TINT32 endSample = std::min((TINT32)(stopFrame * spf), totalSamples - 1);
+  if (startSample > endSample) return;
+
+  m_fps             = fps;
+  m_samplesPerFrame = spf;
+  m_first           = false;
+  m_playStartFrame  = startFrame;
+
+  // play() overwrites the QAudioOutput buffer in-place — no stop/restart.
+  // QAudioOutput continues streaming; new data replaces the old within ~100ms.
+  mainXsh->play(m_sound, startSample, endSample, false);
 }
 
 void ZtoryAnimaticViewer::showEvent(QShowEvent *e) {
@@ -1840,6 +2078,14 @@ void ZtoryAnimaticViewer::showEvent(QShowEvent *e) {
   if (m_frameRangeConn) disconnect(m_frameRangeConn);
   m_frameRangeConn = connect(ctrl->frameHandle(), &TFrameHandle::frameSwitched,
                              this, &ZtoryAnimaticViewer::updateAnimaticFrameRange);
+
+  // Ruler In/Out marker changes: keep FlipConsole markers in sync.
+  // hideEvent() from base disconnects all sceneHandle→this signals but NOT ctrl→this,
+  // so disconnect first to avoid accumulating connections across show/hide cycles.
+  disconnect(ctrl, &ZtoryAnimaticController::playRangeChanged,
+             this, &ZtoryAnimaticViewer::updateAnimaticFrameMarkers);
+  connect(ctrl, &ZtoryAnimaticController::playRangeChanged,
+          this, &ZtoryAnimaticViewer::updateAnimaticFrameMarkers);
 
   // Audio: when play starts, override m_sound with main-xsheet sound.
   // Disconnect first to avoid accumulation; then reconnect.
@@ -1942,6 +2188,7 @@ void ZtoryStoryStripPanel::showEvent(QShowEvent *e) {
 
 ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   setWindowTitle("Ztory Animatic");
+  setFocusPolicy(Qt::StrongFocus);
 
   QWidget *container = new QWidget(this);
   QVBoxLayout *lay = new QVBoxLayout(container);
@@ -2003,11 +2250,21 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
     "QPushButton:hover{background:#5a4a2a;color:white;}");
   mergeBtn->setToolTip("Merge selected shots into the first selected shot");
 
+  QPushButton *addShotBtn = new QPushButton("+ Shot", toolbar);
+  addShotBtn->setMaximumWidth(60);
+  addShotBtn->setToolTip("Add a new shot at the end of the timeline");
+  addShotBtn->setStyleSheet(
+    "QPushButton{background:#3a3a3a;color:#ccc;border-radius:3px;padding:2px 6px;font-size:11px;}"
+    "QPushButton:hover{background:#2a5a2a;color:white;}");
+
   tbLay->addWidget(selectBtn);
   tbLay->addWidget(razorBtn);
   tbLay->addSpacing(8);
   tbLay->addWidget(linkBtn);
   tbLay->addSpacing(8);
+  connect(addShotBtn, &QPushButton::clicked,
+          this, &ZtoryAnimaticPanel::onAddShot);
+  tbLay->addWidget(addShotBtn);
   tbLay->addWidget(mergeBtn);
   tbLay->addSpacing(12);
 
@@ -2100,6 +2357,9 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
           this, &ZtoryAnimaticPanel::onShotDurationChanged);
   connect(m_track, &ZtoryAnimaticTrack::shotMoved,
           this, &ZtoryAnimaticPanel::onShotMoved);
+  // Video lock state — no persistence map needed (single track)
+  // The lock state lives directly on m_track and survives refreshFromScene()
+  // because m_track itself is not rebuilt (only its blocks are refreshed).
 
   // BUG-02 fix: sceneSwitched fires when entering a sub-scene too.
   // Without this guard, refreshFromScene() would call getTopXsheet() which
@@ -2171,6 +2431,52 @@ void ZtoryAnimaticPanel::updateCutFrames() {
     at->setCutFrames(cutFrames);
 }
 
+void ZtoryAnimaticPanel::applyMuteSolo() {
+  // Visual state is already set on the widgets by the click handler.
+  // Apply effective volume to each xsheet sound column.
+  // Solo logic: if any track is solo'd, only solo tracks are audible.
+  TApp *app = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
+  if (!xsh) return;
+
+  // Check if any track is solo'd
+  bool hasSolo = false;
+  for (auto *at : m_audioTracks)
+    if (at->isSolo()) { hasSolo = true; break; }
+
+  for (auto *at : m_audioTracks) {
+    int col = at->columnIndex();
+    // M wins over S: a muted track is silent even if solo'd.
+    // A non-solo track is silenced when any other track is solo'd.
+    bool effectiveMute = at->isMuted() || (hasSolo && !at->isSolo());
+    // Dim waveform for solo-silenced tracks (M already shown via button color)
+    at->setEffectiveMuted(hasSolo && !at->isSolo());
+    TXshColumn *xshCol = xsh->getColumn(col);
+    TXshSoundColumn *sc = xshCol ? xshCol->getSoundColumn() : nullptr;
+    if (sc) sc->setVolume(effectiveMute ? 0.0 : 1.0);
+  }
+  // Invalidate BOTH caches: TXsheet's internal m_mixedSound AND our controller
+  // cache. Without xsh->invalidateSound(), makeSound() returns stale data.
+  xsh->invalidateSound();
+  auto *ctrl = ZtoryAnimaticController::instance();
+  ctrl->invalidateSoundTrack();
+  // Restart audio synchronously so the new mix is heard immediately.
+  // Safe because m_soundTrackRef keeps the old track alive until
+  // refreshAnimaticSound() replaces it — no dangling m_sound pointer.
+  if (ctrl->viewer()) ctrl->viewer()->restartAudioIfPlaying();
+}
+
+void ZtoryAnimaticPanel::restoreTrackStates() {
+  // Called after refreshAudioTracks() rebuilds widgets — re-apply persisted state.
+  for (auto *at : m_audioTracks) {
+    int col = at->columnIndex();
+    if (m_colLocked.value(col, false)) at->setLocked(true);
+  }
+  // Mute/solo visual + volume (maps already up-to-date)
+  applyMuteSolo();
+}
+
 void ZtoryAnimaticPanel::refreshAudioTracks() {
   if (m_refreshingAudio) return;
 
@@ -2192,7 +2498,8 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
   for (auto *at : m_audioTracks) {
     at->cancelDrag();
     m_scrollLay->removeWidget(at);
-    at->deleteLater();
+    at->hide();       // hide immediately — deleteLater defers destruction but
+    at->deleteLater(); // the widget stays visible until the event loop ticks
   }
   m_audioTracks.clear();
 
@@ -2225,11 +2532,11 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     // notifyXsheetChanged fires — that would trigger refreshAudioTracks() and
     // delete the widget mid-event.
     connect(at, &ZtoryAudioTrack::segmentMoved, this, [this]() {
+      // NOTE: do NOT call xsh->updateFrameCount() here. Audio moves do not
+      // change the animatic length (determined by video shots). Calling it
+      // would include the long trailing ColumnLevel extent after a razor cut,
+      // making getFrameCount() huge and causing the ruler/cursor to jump right.
       TApp *app = TApp::instance();
-      ToonzScene *scene = app->getCurrentScene()->getScene();
-      TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
-      if (xsh) xsh->updateFrameCount();
-      // Mark the project modified so Save becomes active.
       app->getCurrentScene()->notifyCastChange();
       updateCutFrames();
       updateTrackWidths();
@@ -2239,6 +2546,18 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
             this, &ZtoryAnimaticPanel::onSegmentDroppedOutside,
             Qt::QueuedConnection);
 
+    // Lock / mute / solo signals
+    connect(at, &ZtoryAudioTrack::lockedChanged,
+            this, [this](int col, bool on){ m_colLocked[col] = on; });
+    connect(at, &ZtoryAudioTrack::muteToggleRequested, this, [this](int /*col*/){
+      // Visual already toggled by the track widget — just update audio volume
+      applyMuteSolo();
+    });
+    connect(at, &ZtoryAudioTrack::soloToggleRequested, this, [this](int /*col*/){
+      // Visual already toggled by the track widget — just update audio volume
+      applyMuteSolo();
+    });
+
     // Inserisci prima dello stretch finale
     int insertIdx = m_scrollLay->count() - 1;
     if (insertIdx < 0) insertIdx = 0;
@@ -2246,6 +2565,7 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     m_audioTracks.append(at);
   }
   updateCutFrames();
+  restoreTrackStates();
   m_refreshingAudio = false;
 }
 
@@ -2256,6 +2576,73 @@ void ZtoryAnimaticPanel::showEvent(QShowEvent *e) {
   // Restore animatic-local onion skin state to global handle so the viewer
   // shows the correct onion frames (overrides any native-timeline state).
   m_ruler->syncOnionToGlobal();
+}
+
+void ZtoryAnimaticPanel::keyPressEvent(QKeyEvent *e) {
+  const Qt::KeyboardModifiers mod = e->modifiers();
+  const bool cmd  = mod & Qt::ControlModifier;
+  const bool shift = mod & Qt::ShiftModifier;
+  const std::set<int> &sel = m_track->selectedCols();
+
+  // Cmd+D — duplicate (clone) selected shots
+  if (cmd && !shift && e->key() == Qt::Key_D) {
+    if (!ZtoryModel::assertMainXsheet(false)) return;
+    // Clone in reverse column order so earlier indices stay valid
+    std::vector<int> cols(sel.begin(), sel.end());
+    std::sort(cols.rbegin(), cols.rend());
+    for (int col : cols) {
+      // Find shot index in ZtoryModel by matching xsheet column
+      TApp *app = TApp::instance();
+      ToonzScene *scene = app->getCurrentScene()->getScene();
+      TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
+      if (!xsh) continue;
+      // Shot index = how many child columns precede this one
+      int si = 0;
+      for (int c = 0; c < col; c++) {
+        TXshColumn *pc = xsh->getColumn(c);
+        if (!pc || pc->isEmpty()) continue;
+        int r0 = 0, r1 = 0; pc->getRange(r0, r1);
+        for (int r = r0; r <= r1; r++) {
+          TXshCell cell = xsh->getCell(r, c);
+          if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel())
+            { si++; break; }
+        }
+      }
+      ZtoryModel::instance()->cloneShot(si);
+    }
+    refreshFromScene();
+    e->accept();
+    return;
+  }
+
+  // Delete / Backspace — delete selected shots
+  if (!cmd && (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace)) {
+    if (sel.empty()) return;
+    if (!ZtoryModel::assertMainXsheet(false)) return;
+    TApp *app = TApp::instance();
+    ToonzScene *scene = app->getCurrentScene()->getScene();
+    TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
+    if (!xsh) return;
+    // Delete in reverse column order so earlier indices stay valid
+    std::vector<int> cols(sel.begin(), sel.end());
+    std::sort(cols.rbegin(), cols.rend());
+    for (int col : cols)
+      ColumnCmd::deleteColumn(col);
+    xsh->updateFrameCount();
+    ZtoryModel::instance()->resequenceXsheet();
+    refreshFromScene();
+    e->accept();
+    return;
+  }
+
+  // Cmd+N — add new shot after selection
+  if (cmd && e->key() == Qt::Key_N) {
+    onAddShot();
+    e->accept();
+    return;
+  }
+
+  TPanel::keyPressEvent(e);
 }
 
 void ZtoryAnimaticPanel::onShotClicked(int col) {
@@ -2603,6 +2990,32 @@ void ZtoryAnimaticPanel::onMergeShots() {
   m_track->refreshFromScene();
 }
 
+// ---- Add Shot ----
+void ZtoryAnimaticPanel::onAddShot() {
+  if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
+  // Insert after the last selected shot, or at the end if nothing is selected.
+  int insertAt = -1;  // -1 = append at end (ZtoryModel::addShot default)
+  const std::set<int> &sel = m_track->selectedCols();
+  if (!sel.empty()) {
+    TApp *app = TApp::instance();
+    ToonzScene *scene = app->getCurrentScene()->getScene();
+    TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
+    if (xsh) {
+      // Find rightmost selected block and insert after it
+      int maxEnd = -1;
+      for (int c : sel) {
+        TXshColumn *col = xsh->getColumn(c);
+        if (!col) continue;
+        int r0 = 0, r1 = 0;
+        col->getRange(r0, r1);
+        maxEnd = qMax(maxEnd, c);
+      }
+      insertAt = maxEnd + 1;
+    }
+  }
+  ZtoryModel::instance()->addShot(insertAt);
+}
+
 void ZtoryAnimaticPanel::onMergeWithNext(int col) {
   if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
 
@@ -2858,13 +3271,16 @@ void ZtoryAnimaticPanel::onSegmentDroppedOutside(int srcCol, int origR0,
   int cursorFrame = target->frameAtX(localPos.x());
   int targetVsf = qMax(0, cursorFrame - dragOffset);
 
-  // Clamp against existing segments on destination track to avoid overlap
+  // Clamp against existing segments on destination track to avoid overlap.
+  // Use targetVsf (not origR0 from source) to find left/right neighbors.
   int segLen = origR1 - origR0;
   auto dstSegs = target->findSegments();
   for (auto &s : dstSegs) {
+    // Neighbor on the left: push targetVsf past s.r1
     if (s.r1 < targetVsf && targetVsf <= s.r1 + 1)
       targetVsf = s.r1 + 1;
-    if (s.r0 > origR0 && targetVsf + segLen >= s.r0)
+    // Neighbor on the right: push targetVsf so we don't overlap s.r0
+    if (s.r0 >= targetVsf && targetVsf + segLen >= s.r0)
       targetVsf = s.r0 - segLen - 1;
   }
   if (targetVsf < 0) targetVsf = 0;
@@ -2876,13 +3292,22 @@ void ZtoryAnimaticPanel::onSegmentDroppedOutside(int srcCol, int origR0,
   if (!dstSc) { delete cl; return; }
   dstSc->adoptLevel(cl, targetVsf);
 
-  // Refresh
-  for (auto *at : m_audioTracks) at->invalidateWaveform();
+  // Refresh — invalidate waveform via a queued call so it fires AFTER
+  // all pending Qt paint events from refreshAudioTracks() have settled.
   ZtoryAnimaticController::instance()->invalidateSoundTrack();
   xsh->updateFrameCount();
   TApp::instance()->getCurrentScene()->notifyCastChange();
   refreshAudioTracks();
   updateTrackWidths();
+  // Force a second waveform rebuild in the next event-loop iteration:
+  // the first paint of the new widgets may happen before Qt finishes
+  // processing all pending column-data updates.
+  QTimer::singleShot(0, this, [this]() {
+    for (auto *at : m_audioTracks) {
+      at->invalidateWaveform();
+      at->update();
+    }
+  });
 }
 
 void ZtoryAnimaticPanel::onShotDurationChanged(int col, int newF1) {
@@ -3094,8 +3519,10 @@ void ZtoryAnimaticPanel::onMatchSubsceneDuration(int col) {
   if (lastFrame <= 0) return;
   int newDuration = lastFrame + 1;
 
-  // Applica la nuova durata
-  emit m_track->shotDurationChanged(col, newDuration - 1);
+  // Apply new duration. Call directly — the signal connection would cause a
+  // double execution since onShotDurationChanged is also connected to
+  // m_track::shotDurationChanged.  The track visuals are rebuilt by
+  // resequenceXsheet() → refreshFromScene() inside onShotDurationChanged.
   onShotDurationChanged(col, newDuration - 1);
 }
 
@@ -3139,6 +3566,7 @@ void ZtoryAnimaticPanel::contextMenuEvent(QContextMenuEvent *e) {
     if (!xsh) return;
     int insertCol = xsh->getColumnCount();
     xsh->insertColumn(insertCol, TXshColumn::eSoundType);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     refreshAudioTracks();
     updateTrackWidths();
     app->getCurrentScene()->notifyCastChange();

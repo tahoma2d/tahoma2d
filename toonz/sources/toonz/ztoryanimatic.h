@@ -15,11 +15,14 @@
 #include <QHBoxLayout>
 #include <set>
 #include <QKeyEvent>
+#include <QMap>
+#include <QSet>
 
 // ---- ZtoryAnimaticController ----
 // Singleton that owns the dedicated frame state for the animatic timeline
 // and viewer, isolating them from TApp's global TFrameHandle.
 class TFrameHandle;
+class ZtoryAnimaticViewer;
 #include "tsound.h"
 
 class ZtoryAnimaticController : public QObject {
@@ -34,10 +37,20 @@ public:
   // Call invalidateSoundTrack() after any ColumnLevel shift to force rebuild.
   TSoundTrackP soundTrack() const { return m_soundTrack; }
   void setSoundTrack(TSoundTrackP st) { m_soundTrack = st; }
-  void invalidateSoundTrack() { m_soundTrack = TSoundTrackP(); }
+  void invalidateSoundTrack() {
+    m_soundTrack = TSoundTrackP();
+  }
+  // Viewer registers itself so the panel can call restartAudioIfPlaying().
+  void setViewer(ZtoryAnimaticViewer *v) { m_viewer = v; }
+  ZtoryAnimaticViewer *viewer() const { return m_viewer; }
   // Build (or return cached) merged track from the main xsheet.
   // Safe to call from any scrub handler — returns null if no audio.
   TSoundTrackP requireSoundTrack();
+
+public slots:
+  // Called by the ruler whenever the In/Out play range changes, so the
+  // animatic viewer's FlipConsole markers stay in sync.
+  void notifyPlayRangeChanged() { emit playRangeChanged(); }
 
 private slots:
   // Fired by TApp::getCurrentFrame()->isPlayingStatusChanged.
@@ -50,10 +63,14 @@ private slots:
   // drags the playhead inside a shot sub-scene (not during continuous play).
   void onNativeFrameSwitched();
 
+signals:
+  void playRangeChanged();
+
 private:
   ZtoryAnimaticController();
-  TFrameHandle  *m_frameHandle;
-  TSoundTrackP   m_soundTrack;
+  TFrameHandle         *m_frameHandle;
+  TSoundTrackP          m_soundTrack;
+  ZtoryAnimaticViewer  *m_viewer = nullptr;
   // True while we are streaming main-xsheet audio on behalf of the native viewer.
   bool m_nativeAudioPlaying = false;
 };
@@ -124,6 +141,9 @@ public:
   // Returns the blocks vector (for panel to read cut frame positions).
   const std::vector<ShotBlock> &blocks() const { return m_blocks; }
   const std::set<int> &selectedCols() const { return m_selectedCols; }
+  // Lock — blocks drag/resize on the video track
+  bool isLocked() const { return m_locked; }
+  void setLocked(bool on);
 
 protected:
   void paintEvent(QPaintEvent *) override;
@@ -148,6 +168,7 @@ signals:
   // Emitted on mouse move when razor is active — absolute frame under cursor,
   // or -1 when the mouse leaves. Panel forwards this to audio tracks.
   void razorHoverFrameChanged(int frame);
+  void lockedChanged(bool on);
 
 private:
   double m_ppf = 8.0;
@@ -162,6 +183,8 @@ private:
   int m_lastClickedCol = -1; // for Shift+click range selection
   Tool m_tool = SelectTool;
   int m_razorHoverFrame = -1;
+  // Lock button painted in paintEvent, toggled via mousePressEvent hit-test
+  bool m_locked = false;
 
   void updateCursor();
 };
@@ -206,11 +229,24 @@ public:
 
   int frameAtX(int x) const;
 
+  // Lock / Mute / Solo — driven by real QToolButton children
+  bool isLocked() const { return m_locked; }
+  bool isMuted()  const { return m_muted; }
+  bool isSolo()   const { return m_solo; }
+  void setLocked(bool on);
+  void setMuted(bool on);
+  void setSolo(bool on);
+  // Called by the panel after computing effective mute (solo logic).
+  // Dims waveform visually without corrupting the user's m_muted state.
+  void setEffectiveMuted(bool on) { m_effectiveMuted = on; update(); }
+
 signals:
   void razorRequested(int col, int frame);
-  void segmentMoved();  // emitted after a drag-move completes
-  // Emitted when a segment is dropped outside this track (cross-track move)
+  void segmentMoved();
   void segmentDroppedOutside(int srcCol, int origR0, int origR1, int dragOffset, QPoint globalPos);
+  void lockedChanged(int col, bool on);
+  void muteToggleRequested(int col);
+  void soloToggleRequested(int col);
 
 protected:
   void paintEvent(QPaintEvent *) override;
@@ -221,6 +257,8 @@ protected:
   void keyPressEvent(QKeyEvent *) override;
 
 private:
+  // L/M/S buttons are drawn in paintEvent and clicked via hit-test in mousePressEvent
+
   int m_col;
   QString m_name;
   double m_ppf = 8.0;
@@ -228,21 +266,28 @@ private:
   int m_trackHeight = 50;
   QPixmap m_waveformCache;
   bool m_waveformDirty = true;
-  // Preview bar (12c)
+  // Preview bar
   int  m_previewR0        = -1;
   int  m_previewR1        = -1;
   bool m_draggingPreview  = false;
   int  m_previewDragStart = -1;
   bool m_razorActive      = false;
   int  m_razorHoverFrame  = -1;
-  QVector<int> m_cutFrames;  // shot boundary frames (from panel)
+  QVector<int> m_cutFrames;
   // Segment selection & drag
   Segment m_selSeg{-1, -1};
   enum DragMode { NoDrag, SegmentDrag, TrimLeft, TrimRight };
   DragMode m_dragMode     = NoDrag;
   int  m_dragStartFrame   = -1;
   int  m_dragOrigR0       = -1;
-  int  m_dragOrigR1       = -1;  // for trim: original vef
+  int  m_dragOrigR1       = -1;
+  // L/M/S state — toggled via mousePressEvent, rendered in paintEvent
+  bool m_locked = false;
+  bool m_muted  = false;
+  bool m_solo   = false;
+  // Set by applyMuteSolo() to dim the waveform when another track is solo'd.
+  // Separate from m_muted so user state is never corrupted.
+  bool m_effectiveMuted = false;
 };
 
 // ---- ZtoryStoryStrip ----
@@ -305,6 +350,10 @@ public:
   void addShowHideContextMenu(QMenu *) override {}
   void checkOldVersionVisblePartsFlags(QSettings &) override {}
 
+  // Called by the panel after applyMuteSolo() — if playback is in progress,
+  // stops and restarts audio so the new mix takes effect immediately.
+  void restartAudioIfPlaying();
+
   // Override: write frame to controller's handle, NOT TApp::getCurrentFrame().
   // Base implementation always uses the global handle → during play it would
   // advance the sub-scene's frame instead of the animatic frame.
@@ -334,6 +383,13 @@ private:
   // streaming started in onAnimaticPlayingStatusChanged).
   void playAnimaticAudioFrame(int frame);
 
+  // Keeps the merged sound track alive as long as the viewer may use m_sound.
+  // m_sound (base class raw ptr) must not outlive the TSoundTrack object.
+  // By holding our own ref here, we guarantee the object stays alive until
+  // the next refreshAnimaticSound() call replaces it — even if the controller
+  // invalidates its own cache in the meantime.
+  TSoundTrackP m_soundTrackRef;
+
   // True while the full-track continuous play is active.
   // When true, playAnimaticAudioFrame is a no-op (audio already streaming).
   bool m_continuousPlay = false;
@@ -341,6 +397,10 @@ private:
   // 0-based animatic frame at which the current play session started.
   // Used by onDrawFrame to compute the audio-master target frame.
   int m_playStartFrame = 0;
+
+  // Previous FlipConsole frame (1-based) seen by onDrawFrame.
+  // Used to detect loop-back (frame drops below previous value).
+  int m_prevFlipFrame = 0;
 
   // Tracks ctrl-handle connections so they aren't duplicated across show/hide.
   QMetaObject::Connection m_frameRangeConn;
@@ -370,6 +430,7 @@ public:
   void refreshFromScene();
 protected:
   void showEvent(QShowEvent *e) override;
+  void keyPressEvent(QKeyEvent *e) override;
 
 private slots:
   void onShotClicked(int col);
@@ -380,6 +441,7 @@ private slots:
   void onShotMoved(int col, int newStartFrame);
   void onMergeShots();
   void onMergeWithNext(int col);
+  void onAddShot();
   void resequenceXsheet();
   void onZoomChanged(double ppf);
   void onMatchSubsceneDuration(int col);
@@ -406,6 +468,14 @@ private:
   double m_ppf = 8.0;
   bool m_refreshing = false;      // re-entrancy guard for refreshFromScene
   bool m_refreshingAudio = false; // re-entrancy guard for refreshAudioTracks
+  // Per-column mute/solo/lock state — persists across refreshAudioTracks() rebuilds
+  QMap<int, bool> m_colMuted;
+  QSet<int>       m_colSolo;
+  QMap<int, bool> m_colLocked;
+  // Apply effective mute/solo volumes to all audio columns and rebuild soundtrack
+  void applyMuteSolo();
+  // Restore muted/solo/locked state onto freshly-created track widgets
+  void restoreTrackStates();
 };
 
 #endif
