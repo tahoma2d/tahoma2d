@@ -676,7 +676,12 @@ bool TIStream::Imp::matchIdent(string &ident) {
   char c;
   is.get(c);
   ident.append(1, c);
-  while (c = is.peek(), isalnum(c) || c == '_' || c == '.' || c == '-') {
+  // Modified to allow for multi-byte characters on translated strings that
+  // might wind up in tags
+  // 
+  //while (c = is.peek(), isalnum(c) || c == '_' || c == '.' || c == '-') {
+  while (c = is.peek()) {
+    if (c == '>' || c == ' ' || c == '=' || (int)c == EOF) break;
     is.get(c);
     ident.append(1, c);
   }
