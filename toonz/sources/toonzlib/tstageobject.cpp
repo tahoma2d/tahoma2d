@@ -328,9 +328,13 @@ bool touchEaseAndCompare(const TDoubleKeyframe &kf,
     double easeIn = -kf.m_speedIn.x;
     if (stageKf.m_easeIn == -1)
       stageKf.m_easeIn = easeIn;
-    else if (!areAlmostEqual(stageKf.m_easeIn, easeIn, 0.1)) {
-      stageKf.m_easeIn = -1.0;
-      return false;
+    else {
+      double easeInR      = tround(easeIn * 10) / 10.0;
+      double stageEaseInR = tround(stageKf.m_easeIn * 10) / 10.0;
+      if (stageEaseInR != easeInR) {
+        stageKf.m_easeIn = -1.0;
+        return false;
+      }
     }
   }
 
@@ -339,9 +343,13 @@ bool touchEaseAndCompare(const TDoubleKeyframe &kf,
     double easeOut = kf.m_speedOut.x;
     if (stageKf.m_easeOut == -1)
       stageKf.m_easeOut = easeOut;
-    else if (!areAlmostEqual(stageKf.m_easeOut, easeOut, 0.1)) {
-      stageKf.m_easeOut = -1.0;
-      return false;
+    else {
+      double easeOutInR    = tround(easeOut * 10) / 10.0;
+      double stageEaseOutR = tround(stageKf.m_easeOut * 10) / 10.0;
+      if (stageEaseOutR != easeOutInR) {
+        stageKf.m_easeOut = -1.0;
+        return false;
+      }
     }
   }
 
