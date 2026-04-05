@@ -780,5 +780,29 @@
 		<file>Resources/scrub.png</file>
 		<file>Resources/vcroot.svg</file>
 		<file>Resources/pegbar_header.svg</file>
+
+		<!-- Ztoryc Icons -->
+		<file>icons/dark/ztoryc/ztoryc_add_shot.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_delete_shot.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_merge.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_edit_shot.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_numbering.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_export_pdf.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_export_animatic.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_export_shots.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_razor.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_select.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_onion.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_onion_on.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_av_link.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_av_link_on.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_lock.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_lock_on.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_shotedit.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_shotedit_on.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_refresh_preview.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_copy.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_clone.svg</file>
+		<file>icons/dark/ztoryc/ztoryc_paste.svg</file>
 	</qresource>
 </RCC>

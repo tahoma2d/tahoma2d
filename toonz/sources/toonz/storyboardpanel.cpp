@@ -23,6 +23,7 @@
 #include "toonz/tstageobjectid.h"
 #include "toonz/tstageobject.h"
 #include "mainwindow.h"
+#include "toonzqt/gutil.h"
 
 #include <QVBoxLayout>
 #include <QKeyEvent>
@@ -44,6 +45,7 @@
 #include <QLabel>
 #include <QTextEdit>
 #include <QPushButton>
+#include <QToolButton>
 #include <QSpinBox>
 #include <QFrame>
 #include <QMouseEvent>
@@ -135,6 +137,13 @@ PanelWidget::PanelWidget(QWidget *parent)
     "QPushButton{background:#555;color:#ddd;border-radius:3px;font-size:9px;}"
     "QPushButton:hover{background:#777;}");
 
+  m_matchButton = new QPushButton("\u21d4");  // ⇔ match timeline to sub-scene
+  m_matchButton->setFixedSize(22, 18);
+  m_matchButton->setToolTip("Match timeline duration to sub-scene actual duration");
+  m_matchButton->setStyleSheet(
+    "QPushButton{background:#444;color:#ffcc55;border-radius:3px;font-size:10px;}"
+    "QPushButton:hover{background:#666;}");
+
   hl->addWidget(lbl("S:"));
   hl->addWidget(m_shotLabel);
   hl->addWidget(lbl("P:"));
@@ -143,6 +152,7 @@ PanelWidget::PanelWidget(QWidget *parent)
   hl->addWidget(m_durationSpin);
   hl->addWidget(lbl("T:"));
   hl->addWidget(m_totalSpin);
+  hl->addWidget(m_matchButton);
   hl->addStretch();
   hl->addWidget(m_editButton);
   layout->addWidget(header);
@@ -179,6 +189,8 @@ PanelWidget::PanelWidget(QWidget *parent)
   layout->addWidget(m_notesField);
 
   connect(m_editButton, &QPushButton::clicked, this, &PanelWidget::onEditClicked);
+  connect(m_matchButton, &QPushButton::clicked, this,
+          [this](){ emit matchDurationRequested(m_shotIndex); });
   connect(m_shotLabel, &QLineEdit::editingFinished, [this](){
     emit dataChanged(m_shotIndex, m_panelIndex);
   });
@@ -386,10 +398,12 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
 
   QHBoxLayout *tb = new QHBoxLayout();
 
-  m_addShotButton = new QPushButton("+ Add Shot");
-  m_addShotButton->setStyleSheet(
-    "QPushButton{background:#3a6a3a;color:white;border-radius:4px;padding:4px 12px;}"
-    "QPushButton:hover{background:#4a8a4a;}");
+    m_addShotButton = new QToolButton();
+  m_addShotButton->setIcon(createQIcon("ztoryc_add_shot"));
+  m_addShotButton->setIconSize(QSize(20, 20));
+  m_addShotButton->setFixedSize(28, 28);
+  m_addShotButton->setToolTip(tr("Add Shot"));
+  m_addShotButton->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
 
   QLabel *colLabel = new QLabel("Columns:");
   colLabel->setStyleSheet("color:#ccc;font-size:11px;");
@@ -409,54 +423,72 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
     "QComboBox:hover{background:#555;}"
     "QComboBox QAbstractItemView{background:#333;color:#ddd;selection-background-color:#555;}");
 
-  m_deleteButton = new QPushButton("Delete Shot");
-  m_deleteButton->setStyleSheet(
-    "QPushButton{background:#6a2a2a;color:white;border-radius:4px;padding:4px 12px;}"
-    "QPushButton:hover{background:#8a3a3a;}");
+    m_deleteButton = new QToolButton();
+  m_deleteButton->setIcon(createQIcon("ztoryc_delete_shot"));
+  m_deleteButton->setIconSize(QSize(20, 20));
+  m_deleteButton->setFixedSize(28, 28);
+  m_deleteButton->setToolTip(tr("Delete Shot"));
+  m_deleteButton->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
 
-  m_copyButton = new QPushButton("Copy");
-  m_copyButton->setStyleSheet(
-    "QPushButton{background:#3a4a6a;color:white;border-radius:4px;padding:4px 12px;}"
-    "QPushButton:hover{background:#4a5a8a;}");
+    m_mergeButton = new QToolButton();
+  m_mergeButton->setIcon(createQIcon("ztoryc_merge"));
+  m_mergeButton->setIconSize(QSize(20, 20));
+  m_mergeButton->setFixedSize(28, 28);
+  m_mergeButton->setToolTip(tr("Merge Shots"));
+  m_mergeButton->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
+  m_copyButton = new QToolButton();
+  m_copyButton->setIcon(createQIcon("ztoryc_copy"));
+  m_copyButton->setIconSize(QSize(20, 20));
+  m_copyButton->setFixedSize(28, 28);
+  m_copyButton->setToolTip(tr("Copy"));
+  m_copyButton->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
 
-  m_cloneButton = new QPushButton("Clone");
-  m_cloneButton->setStyleSheet(
-    "QPushButton{background:#2a5a4a;color:white;border-radius:4px;padding:4px 12px;}"
-    "QPushButton:hover{background:#3a7a5a;}");
+    m_cloneButton = new QToolButton();
+  m_cloneButton->setIcon(createQIcon("ztoryc_clone"));
+  m_cloneButton->setIconSize(QSize(20, 20));
+  m_cloneButton->setFixedSize(28, 28);
+  m_cloneButton->setToolTip(tr("Clone Shot"));
+  m_cloneButton->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
 
-  m_pasteButton = new QPushButton("Paste");
-  m_pasteButton->setStyleSheet(
-    "QPushButton{background:#4a3a6a;color:white;border-radius:4px;padding:4px 12px;}"
-    "QPushButton:hover{background:#6a4a8a;}");
+    m_pasteButton = new QToolButton();
+  m_pasteButton->setIcon(createQIcon("ztoryc_paste"));
+  m_pasteButton->setIconSize(QSize(20, 20));
+  m_pasteButton->setFixedSize(28, 28);
+  m_pasteButton->setToolTip(tr("Paste"));
+  m_pasteButton->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
 
-  m_numberingBtn = new QPushButton(tr("⚙ Numbering…"));
-  m_numberingBtn->setToolTip(tr("Configure shot numbering style, prefix, step and padding"));
-  m_numberingBtn->setStyleSheet(
-    "QPushButton{background:#3a3a5a;color:white;border-radius:4px;padding:4px 10px;}"
-    "QPushButton:hover{background:#5a5a8a;}");
+  m_numberingBtn = new QToolButton();
+  m_numberingBtn->setIcon(createQIcon("ztoryc_numbering"));
+  m_numberingBtn->setIconSize(QSize(20, 20));
+  m_numberingBtn->setFixedSize(28, 28);
+  m_numberingBtn->setToolTip(tr("Numbering options"));
+  m_numberingBtn->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
 
-  m_refreshButton = new QPushButton("Refresh Preview");
-  m_refreshButton->setStyleSheet(
-    "QPushButton{background:#4a4a2a;color:white;border-radius:4px;padding:4px 12px;}"
-    "QPushButton:hover{background:#6a6a3a;}");
 
-  m_exportPdfButton = new QPushButton("Export PDF");
-  m_exportPdfButton->setStyleSheet(
-    "QPushButton{background:#3a4a6a;color:white;border-radius:4px;padding:4px 12px;}"
-    "QPushButton:hover{background:#4a5a8a;}");
+    m_exportPdfButton = new QToolButton();
+  m_exportPdfButton->setIcon(createQIcon("ztoryc_export_pdf"));
+  m_exportPdfButton->setIconSize(QSize(20, 20));
+  m_exportPdfButton->setFixedSize(28, 28);
+  m_exportPdfButton->setToolTip(tr("Export PDF"));
+  m_exportPdfButton->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
 
-  m_exportShotsButton = new QPushButton("Export Shots");
-  m_exportShotsButton->setStyleSheet(
-    "QPushButton{background:#4a6a3a;color:white;border-radius:4px;padding:4px 12px;}"
-    "QPushButton:hover{background:#5a8a4a;}");
+    m_exportShotsButton = new QToolButton();
+  m_exportShotsButton->setIcon(createQIcon("ztoryc_export_shots"));
+  m_exportShotsButton->setIconSize(QSize(20, 20));
+  m_exportShotsButton->setFixedSize(28, 28);
+  m_exportShotsButton->setToolTip(tr("Export Shots"));
+  m_exportShotsButton->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
 
-  m_exportAnimaticButton = new QPushButton("Export Animatic");
-  m_exportAnimaticButton->setStyleSheet(
-    "QPushButton{background:#6a3a6a;color:white;border-radius:4px;padding:4px 12px;}"
-    "QPushButton:hover{background:#8a4a8a;}");
+    m_exportAnimaticButton = new QToolButton();
+  m_exportAnimaticButton->setIcon(createQIcon("ztoryc_export_animatic"));
+  m_exportAnimaticButton->setIconSize(QSize(20, 20));
+  m_exportAnimaticButton->setFixedSize(28, 28);
+  m_exportAnimaticButton->setToolTip(tr("Export Animatic"));
+  m_exportAnimaticButton->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}""QToolButton:hover{background:#555;}");
 
   tb->addWidget(m_addShotButton);
   tb->addWidget(m_deleteButton);
+  tb->addWidget(m_mergeButton);
   tb->addWidget(m_copyButton);
   tb->addWidget(m_cloneButton);
   tb->addWidget(m_pasteButton);
@@ -467,7 +499,6 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
   tb->addWidget(colLabel);
   tb->addWidget(m_columnsPerRowSpin);
   tb->addStretch();
-  tb->addWidget(m_refreshButton);
   tb->addWidget(m_exportPdfButton);
   tb->addWidget(m_exportShotsButton);
   tb->addWidget(m_exportAnimaticButton);
@@ -497,17 +528,10 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
   editLayout->setSpacing(8);
   editLayout->setContentsMargins(8, 8, 8, 8);
 
-  m_backButton = new QPushButton("< Back to Storyboard");
-  m_backButton->setStyleSheet(
-    "QPushButton{background:#3a3a6a;color:white;border-radius:4px;padding:6px 16px;}"
-    "QPushButton:hover{background:#5a5a8a;}");
-  m_backButton->setFixedWidth(180);
-
   QLabel *editHint = new QLabel("Shot open in viewer - draw, then click Back.");
   editHint->setStyleSheet("color:#888;font-size:11px;");
   editHint->setAlignment(Qt::AlignCenter);
 
-  editLayout->addWidget(m_backButton);
   editLayout->addStretch();
   editLayout->addWidget(editHint);
   editLayout->addStretch();
@@ -519,9 +543,7 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
   mainLayout->addWidget(m_stack);
   setWidget(main);
 
-  connect(m_addShotButton, &QPushButton::clicked, this, &StoryboardPanel::onAddShot);
-  connect(m_backButton, &QPushButton::clicked, this, &StoryboardPanel::onBackToBoard);
-  connect(m_refreshButton, &QPushButton::clicked, this, &StoryboardPanel::onRefreshPreviews);
+  connect(m_addShotButton, &QToolButton::clicked, this, &StoryboardPanel::onAddShot);
   m_panelDetectTimer = new QTimer(this);
   m_panelDetectTimer->setSingleShot(true);
   m_panelDetectTimer->setInterval(1000);
@@ -540,18 +562,20 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
       }
     }
   });
-  connect(m_deleteButton, &QPushButton::clicked, this, &StoryboardPanel::onDeleteShot);
+  connect(m_deleteButton, &QToolButton::clicked, this, &StoryboardPanel::onDeleteShot);
+  // TODO: implementare onMergeShots nel BOARD
+  m_mergeButton->setEnabled(false);
   connect(m_copyButton,   &QPushButton::clicked, this, &StoryboardPanel::onCopyShot);
   connect(m_cloneButton,  &QPushButton::clicked, this, &StoryboardPanel::onCloneShot);
   connect(m_pasteButton,  &QPushButton::clicked, this, &StoryboardPanel::onPasteShot);
-  connect(m_exportPdfButton, &QPushButton::clicked, this, &StoryboardPanel::onExportPdf);
-  connect(m_exportShotsButton, &QPushButton::clicked, this, &StoryboardPanel::onExportShots);
-  connect(m_exportAnimaticButton, &QPushButton::clicked, this, &StoryboardPanel::onExportAnimatic);
+  connect(m_exportPdfButton, &QToolButton::clicked, this, &StoryboardPanel::onExportPdf);
+  connect(m_exportShotsButton, &QToolButton::clicked, this, &StoryboardPanel::onExportShots);
+  connect(m_exportAnimaticButton, &QToolButton::clicked, this, &StoryboardPanel::onExportAnimatic);
   connect(m_columnsPerRowSpin, QOverload<int>::of(&QSpinBox::valueChanged),
           this, &StoryboardPanel::onColumnsChanged);
   connect(m_numberingCombo, QOverload<int>::of(&QComboBox::activated),
           this, &StoryboardPanel::onNumberingChanged);
-  connect(m_numberingBtn, &QPushButton::clicked,
+  connect(m_numberingBtn, &QToolButton::clicked,
           this, &StoryboardPanel::onNumberingConfig);
   connect(TApp::instance()->getCurrentScene(), &TSceneHandle::sceneSwitched,
           this, &StoryboardPanel::refreshFromScene);
@@ -562,6 +586,8 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
           this, &StoryboardPanel::onModelResequenced);
   connect(ZtoryModel::instance(), &ZtoryModel::shotAdded,
           this, &StoryboardPanel::onShotInserted);
+  connect(ZtoryModel::instance(), &ZtoryModel::shotRemovedAt,
+          this, &StoryboardPanel::onShotRemovedAt);
   // Debounce timer per refresh thumbnail
   QTimer *refreshTimer = new QTimer(this);
   refreshTimer->setSingleShot(true);
@@ -630,6 +656,7 @@ void StoryboardPanel::addPanelWidget(int shotIdx, int panelIdx) {
 
 void StoryboardPanel::connectPanelWidget(PanelWidget *pw) {
   connect(pw, &PanelWidget::editRequested, this, &StoryboardPanel::onEditShot);
+  connect(pw, &PanelWidget::matchDurationRequested, this, &StoryboardPanel::onMatchDuration);
   connect(pw, &PanelWidget::durationChanged, this, &StoryboardPanel::onDurationChanged);
   connect(pw, &PanelWidget::totalDurationChanged, this, [this, pw](int frames){
     // Trova lo shot corrispondente e aggiorna la durata sul main xsheet
@@ -901,8 +928,29 @@ void StoryboardPanel::detectAndUpdatePanels(int shotIdx) {
   int numCols = xsh->getColumnCount();
   int numFrames = xsh->getFrameCount();
   if (numFrames <= 0 || numCols <= 0) return;
-  std::vector<int> panelFrames;
-  panelFrames.push_back(0);
+
+  // Get timeline-visible duration from the main xsheet ancestor.
+  // Sub-scene may have more frames than the column range visible on the timeline.
+  int timelineDuration = numFrames;  // fallback: full sub-scene
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  if (scene && scene->getChildStack()->getAncestorCount() > 0) {
+    int depth = scene->getChildStack()->getAncestorCount();
+    // getAncestorInfo(depth-1) is the outermost ancestor (main xsheet level)
+    AncestorNode *anc = scene->getChildStack()->getAncestorInfo(depth - 1);
+    if (anc && anc->m_xsheet) {
+      int mainCol = m_shots[shotIdx].data.xsheetColumn;
+      TXshColumn *mc = anc->m_xsheet->getColumn(mainCol);
+      if (mc) {
+        int r0 = 0, r1 = 0;
+        mc->getRange(r0, r1);
+        if (r1 >= r0) timelineDuration = r1 - r0 + 1;
+      }
+    }
+  }
+
+  // Collect keyframe change rows from sub-scene
+  std::vector<int> allPanelFrames;
+  allPanelFrames.push_back(0);
   for (int r = 1; r < numFrames; r++) {
     bool changed = false;
     for (int c = 0; c < numCols && not changed; c++) {
@@ -919,29 +967,47 @@ void StoryboardPanel::detectAndUpdatePanels(int shotIdx) {
       TStageObject *cam = xsh->getStageObject(TStageObjectId::CameraId(0));
       if (cam && cam->isKeyframe(r)) changed = true;
     }
-    if (changed) panelFrames.push_back(r);
+    if (changed) allPanelFrames.push_back(r);
   }
+
+  // Keep only panels whose start frame falls within the timeline-visible range.
+  // Panels beyond timelineDuration are hidden from the Board.
+  std::vector<int> panelFrames;
+  for (int f : allPanelFrames)
+    if (f < timelineDuration) panelFrames.push_back(f);
+  if (panelFrames.empty()) panelFrames.push_back(0);
+
   Shot &shot = m_shots[shotIdx];
   int newPanelCount = (int)panelFrames.size();
-  if (newPanelCount == (int)shot.data.panels.size()) return;
-  // Add missing panels
+
+  if (newPanelCount == (int)shot.data.panels.size()) {
+    // Count unchanged — update durations only (timeline may have been resized)
+    for (int i = 0; i < newPanelCount; i++) {
+      shot.data.panels[i].startFrame = panelFrames[i];
+      shot.data.panels[i].duration   = (i+1 < newPanelCount)
+                                       ? panelFrames[i+1] - panelFrames[i]
+                                       : timelineDuration - panelFrames[i];
+      if (i < (int)shot.panels.size())
+        shot.panels[i]->setDuration(shot.data.panels[i].duration);
+    }
+    for (PanelWidget *pw : shot.panels)
+      pw->setTotalDuration(timelineDuration);
+    saveZtoryc();
+    return;
+  }
+
+  // Panel count changed — rebuild panel data and widgets
   while ((int)shot.data.panels.size() < newPanelCount) {
     PanelData pd;
-    int pidx = (int)shot.data.panels.size();
-    pd.startFrame = panelFrames[pidx];
-    pd.duration = (pidx + 1 < (int)panelFrames.size())
-                  ? panelFrames[pidx+1] - panelFrames[pidx]
-                  : numFrames - panelFrames[pidx];
     shot.data.panels.push_back(pd);
   }
-  // Remove excess panels if drawings were deleted
   while ((int)shot.data.panels.size() > newPanelCount)
     shot.data.panels.pop_back();
   for (int i = 0; i < newPanelCount; i++) {
     shot.data.panels[i].startFrame = panelFrames[i];
-    shot.data.panels[i].duration = (i+1 < newPanelCount)
-                                   ? panelFrames[i+1] - panelFrames[i]
-                                   : numFrames - panelFrames[i];
+    shot.data.panels[i].duration   = (i+1 < newPanelCount)
+                                     ? panelFrames[i+1] - panelFrames[i]
+                                     : timelineDuration - panelFrames[i];
   }
   for (PanelWidget *pw : shot.panels) { m_grid->removeWidget(pw); delete pw; }
   shot.panels.clear();
@@ -1084,8 +1150,38 @@ void StoryboardPanel::onShotInserted(int col) {
   saveZtoryc();
 }
 
+void StoryboardPanel::onShotRemovedAt(int col) {
+  int si = -1;
+  for (int i = 0; i < (int)m_shots.size(); i++) {
+    if (m_shots[i].data.xsheetColumn == col) { si = i; break; }
+  }
+  if (si < 0) {
+    // Shot not found — Board xsheetColumn tracking is desynced (e.g. after
+    // a previous cut/merge left counts off by one). Rebuild from xsheet.
+    refreshFromScene();
+    return;
+  }
+
+  for (PanelWidget *pw : m_shots[si].panels) {
+    m_grid->removeWidget(pw);
+    delete pw;
+  }
+  m_shots.erase(m_shots.begin() + si);
+
+  // Columns above 'col' shifted down by 1 when the column was deleted
+  for (int i = 0; i < (int)m_shots.size(); i++)
+    if (m_shots[i].data.xsheetColumn > col)
+      m_shots[i].data.xsheetColumn--;
+
+  renumberAll();
+  rebuildGrid();
+  saveZtoryc();
+}
+
 void StoryboardPanel::onXsheetChanged() {
-  // Aggiorna durata shot se siamo al main xsheet
+  // Update T: (timeline duration) for all shots from main xsheet column range.
+  // D: (partial) is only updated for single-panel shots; multi-panel partials
+  // are owned by detectAndUpdatePanels and must not be overwritten here.
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   if (!scene || scene->getChildStack()->getAncestorCount() != 0) return;
   TXsheet *xsh = scene->getChildStack()->getTopXsheet();
@@ -1097,12 +1193,16 @@ void StoryboardPanel::onXsheetChanged() {
     int r0 = 0, r1 = 0;
     column->getRange(r0, r1);
     int duration = r1 - r0 + 1;
-    // Aggiorna durata totale del panel 0 (durata shot)
-    if (!m_shots[si].data.panels.empty()) {
+    // Always update T: display to reflect actual timeline duration
+    for (PanelWidget *pw : m_shots[si].panels)
+      pw->setTotalDuration(duration);
+    // For single-panel shots: D: == T: (partial = total)
+    if (m_shots[si].data.panels.size() == 1) {
       m_shots[si].data.panels[0].duration = duration;
       if (!m_shots[si].panels.empty())
         m_shots[si].panels[0]->setDuration(duration);
     }
+    // For multi-panel shots: D: stays as computed by detectAndUpdatePanels
   }
 }
 
@@ -1354,23 +1454,43 @@ void StoryboardPanel::onDeleteShot() {
   if (toDelete.empty() && m_selectedShotIndex >= 0) toDelete.push_back(m_selectedShotIndex);
   if (toDelete.empty()) return;
 
-  // Blocca segnali xsheet durante delete multiplo
-  disconnect(TApp::instance()->getCurrentXsheet(), &TXsheetHandle::xsheetChanged, this, &StoryboardPanel::onXsheetChanged);
-  // Ordina in ordine inverso per cancellare dal fondo
-  std::sort(toDelete.rbegin(), toDelete.rend());
+  // Usa data.xsheetColumn (non l'indice Board) per identificare le colonne
+  // da cancellare nell'xsheet. Se i due sono disallineati (dopo merge/cut),
+  // usare l'indice Board cancellerebbe la colonna sbagliata.
+  // Ordina per xsheet column decrescente: cancellare dall'alto mantiene
+  // stabili gli indici delle colonne inferiori nelle iterazioni successive.
+  std::vector<int> xshCols;
   for (int idx : toDelete) {
-    if (idx < 0 || idx >= (int)m_shots.size()) continue;
-    for (PanelWidget *pw : m_shots[idx].panels) {
+    if (idx >= 0 && idx < (int)m_shots.size())
+      xshCols.push_back(m_shots[idx].data.xsheetColumn);
+  }
+  std::sort(xshCols.rbegin(), xshCols.rend());
+
+  disconnect(TApp::instance()->getCurrentXsheet(), &TXsheetHandle::xsheetChanged, this, &StoryboardPanel::onXsheetChanged);
+
+  for (int col : xshCols) {
+    // Cerca il board shot corrispondente a questa colonna xsheet.
+    int si = -1;
+    for (int i = 0; i < (int)m_shots.size(); i++)
+      if (m_shots[i].data.xsheetColumn == col) { si = i; break; }
+    if (si < 0) continue;
+    for (PanelWidget *pw : m_shots[si].panels) {
       m_grid->removeWidget(pw);
       delete pw;
     }
-    m_shots.erase(m_shots.begin() + idx);
-    ColumnCmd::deleteColumn(idx);
+    m_shots.erase(m_shots.begin() + si);
+    // Aggiorna xsheetColumn degli shot rimasti che erano dopo col.
+    for (int i = 0; i < (int)m_shots.size(); i++)
+      if (m_shots[i].data.xsheetColumn > col)
+        m_shots[i].data.xsheetColumn--;
+    ColumnCmd::deleteColumn(col);
   }
+
   m_selectedShotIndex = -1;
   m_selectedIndices.clear();
   connect(TApp::instance()->getCurrentXsheet(), &TXsheetHandle::xsheetChanged, this, &StoryboardPanel::onXsheetChanged);
   renumberAll();
+  ZtoryModel::instance()->resequenceXsheet();
   rebuildGrid();
   saveZtoryc();
 }
@@ -1394,6 +1514,30 @@ void StoryboardPanel::onAddShot() {
       for (int r = 0; r < duration; r++)
         xsh->setCell(r, insertAt, TXshCell(cl, TFrameId(r+1)));
       xsh->updateFrameCount();
+
+      // Inizializza camera della sottoscena copiando quella del main
+      TXsheet *childXsh = cl->getXsheet();
+      if (childXsh) {
+        TStageObjectTree *parentTree = xsh->getStageObjectTree();
+        TStageObjectTree *childTree  = childXsh->getStageObjectTree();
+        int tmpCamId = 0;
+        for (int cam = 0; cam < parentTree->getCameraCount();) {
+          TStageObject *parentCamera = parentTree->getStageObject(
+              TStageObjectId::CameraId(tmpCamId), false);
+          if (!parentCamera) { tmpCamId++; continue; }
+          if (parentCamera->getCamera()) {
+            TCamera *childCamera = childTree->getStageObject(
+                TStageObjectId::CameraId(tmpCamId))->getCamera();
+            if (childCamera) {
+              childCamera->setRes(parentCamera->getCamera()->getRes());
+              childCamera->setSize(parentCamera->getCamera()->getSize());
+            }
+          }
+          tmpCamId++; cam++;
+        }
+        childTree->setCurrentCameraId(parentTree->getCurrentCameraId());
+      }
+
       app->getCurrentXsheet()->notifyXsheetChanged();
     }
   }
@@ -1414,6 +1558,13 @@ void StoryboardPanel::onAddShot() {
 }
 
 void StoryboardPanel::onEditShot(int shotIdx) {
+  if (shotIdx < 0 || shotIdx >= (int)m_shots.size()) return;
+
+  // Select this shot in the Board before entering edit mode
+  selectShot(shotIdx);
+  m_selectedIndices.clear();
+  m_selectedIndices.insert(shotIdx);
+
   TApp *app = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (not scene) return;
@@ -1421,16 +1572,66 @@ void StoryboardPanel::onEditShot(int shotIdx) {
     CommandManager::instance()->execute("MI_CloseChild");
   TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
   if (not xsh) return;
+  int col = m_shots[shotIdx].data.xsheetColumn;
   int row = 0;
   for (int r = 0; r < xsh->getFrameCount(); r++) {
-    TXshCell cell = xsh->getCell(r, shotIdx);
+    TXshCell cell = xsh->getCell(r, col);
     if (not cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
       row = r; break;
     }
   }
-  app->getCurrentColumn()->setColumnIndex(shotIdx);
+  app->getCurrentColumn()->setColumnIndex(col);
   app->getCurrentFrame()->setFrame(row);
   CommandManager::instance()->execute("MI_OpenChild");
+}
+
+void StoryboardPanel::onMatchDuration(int shotIdx) {
+  // Resize the main xsheet column to match the sub-scene's actual frame count.
+  if (shotIdx < 0 || shotIdx >= (int)m_shots.size()) return;
+  TApp *app = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  if (!scene) return;
+  TXsheet *mainXsh = scene->getChildStack()->getTopXsheet();
+  if (!mainXsh) return;
+
+  int col = m_shots[shotIdx].data.xsheetColumn;
+  TXshColumn *column = mainXsh->getColumn(col);
+  if (!column) return;
+
+  // Find child level in this column
+  TXshChildLevel *cl = nullptr;
+  int r0 = 0, r1 = 0;
+  column->getRange(r0, r1);
+  for (int r = r0; r <= r1 && !cl; r++) {
+    TXshCell cell = mainXsh->getCell(r, col);
+    if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel())
+      cl = cell.m_level->getChildLevel();
+  }
+  if (!cl) return;
+
+  int actualDuration = cl->getXsheet()->getFrameCount();
+  if (actualDuration <= 0) return;
+  if (actualDuration == (r1 - r0 + 1)) return;  // already matching
+
+  // Resize column: clear and set new cell count (resequenceXsheet repositions)
+  int maxFrames = mainXsh->getFrameCount() + actualDuration + 10;
+  for (int r = 0; r <= maxFrames; r++) mainXsh->clearCells(r, col);
+  for (int r = 0; r < actualDuration; r++)
+    mainXsh->setCell(r, col, TXshCell(cl, TFrameId(r + 1)));
+
+  mainXsh->updateFrameCount();
+  ZtoryModel::instance()->resequenceXsheet();
+  app->getCurrentXsheet()->notifyXsheetChanged();
+
+  // Update Board T: display
+  for (PanelWidget *pw : m_shots[shotIdx].panels)
+    pw->setTotalDuration(actualDuration);
+  if (m_shots[shotIdx].data.panels.size() == 1) {
+    m_shots[shotIdx].data.panels[0].duration = actualDuration;
+    if (!m_shots[shotIdx].panels.empty())
+      m_shots[shotIdx].panels[0]->setDuration(actualDuration);
+  }
+  saveZtoryc();
 }
 
 void StoryboardPanel::onBackToBoard() {

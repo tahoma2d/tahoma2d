@@ -137,6 +137,7 @@ signals:
   void workflowChanged(ZtoryWorkflow workflow);
   void modelReset();                          // tutto cambiato
   void shotAdded(int shotIdx);
+  void shotRemovedAt(int col);  // col = xsheet column deleted (symmetric with shotAdded)
   void shotRemoved(int shotIdx);
   void shotMoved(int fromIdx, int toIdx);
   void shotDataChanged(int shotIdx);

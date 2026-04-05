@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14 2H6a1 1 0 0 0-1 1v18a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/>
+  <polyline points="14 2 14 8 20 8"/>
+  <text x="6" y="18" font-size="5.5" fill="white" stroke="none" font-family="monospace" font-weight="bold">PDF</text>
+</svg>

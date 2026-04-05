@@ -16,6 +16,7 @@
 #include <QLabel>
 #include <QTextEdit>
 #include <QPushButton>
+#include <QToolButton>
 #include <QSpinBox>
 #include <QFrame>
 #include <QDragEnterEvent>
@@ -43,6 +44,7 @@ class PanelWidget final : public QFrame {
   QSpinBox    *m_totalSpin;
   QSpinBox    *m_durationSpin;
   QPushButton *m_editButton;
+  QPushButton *m_matchButton;
   QLabel      *m_previewLabel;
   QPixmap      m_previewPixmap;
   QTextEdit   *m_dialogField;
@@ -76,6 +78,7 @@ public:
 signals:
   void totalDurationChanged(int frames);
   void editRequested(int shotIndex);
+  void matchDurationRequested(int shotIndex);
   void durationChanged(int shotIndex, int panelIndex, int frames);
   void dataChanged(int shotIndex, int panelIndex);
   void clicked(int shotIndex, int panelIndex, Qt::KeyboardModifiers modifiers);
@@ -96,23 +99,22 @@ class StoryboardPanel final : public TPanel {
   QScrollArea *m_scrollArea;
   QWidget     *m_container;
   QGridLayout *m_grid;
-  QPushButton *m_addShotButton;
-  QPushButton *m_deleteButton;
-  QPushButton *m_copyButton;
-  QPushButton *m_cloneButton;
-  QPushButton *m_pasteButton;
-  QPushButton *m_refreshButton;
-  QPushButton *m_numberingBtn;   // ⚙ Numbering config button
+  QToolButton *m_addShotButton;
+  QToolButton *m_deleteButton;
+  QToolButton *m_mergeButton;
+  QToolButton *m_copyButton;
+  QToolButton *m_cloneButton;
+  QToolButton *m_pasteButton;
+QToolButton *m_numberingBtn;   // ⚙ Numbering config button
   QTimer      *m_panelDetectTimer;
-  QPushButton *m_exportPdfButton;
-  QPushButton *m_exportShotsButton;
-  QPushButton *m_exportAnimaticButton;
+  QToolButton *m_exportPdfButton;
+  QToolButton *m_exportShotsButton;
+  QToolButton *m_exportAnimaticButton;
   QSpinBox    *m_columnsPerRowSpin;
   QComboBox   *m_numberingCombo;
   QStackedWidget   *m_stack;
   SceneViewerPanel *m_comboViewer;
-  QPushButton      *m_backButton;
-  struct Shot {
+struct Shot {
     ShotData               data;
     std::vector<PanelWidget*> panels;
     bool selected = false;
@@ -172,7 +174,9 @@ protected:
   void onExportAnimatic();
   void onXsheetChanged();
   void onModelResequenced(); // called when ZtoryModel::resequenceXsheet runs
-  void onShotInserted(int col); // called when razor/external op inserts a shot at col
+  void onShotInserted(int col);   // called when razor/external op inserts a shot at col
+  void onShotRemovedAt(int col);  // called when merge/external op deletes a shot at col
+  void onMatchDuration(int shotIdx);  // resize timeline column to sub-scene actual duration
   void onBackToBoard();
 };
 

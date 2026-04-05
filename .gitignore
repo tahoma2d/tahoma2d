@@ -85,3 +85,4 @@ thirdparty/superlu/SuperLU_4.1/CBLAS/*.o
 thirdparty/superlu/SuperLU_4.1/SRC/*.o
 thirdparty/superlu/SuperLU_4.1/lib/*.a
 toonz/Tahoma2D.app.extras/
+.aider*

@@ -6,6 +6,52 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-03] — Audio track L/M/S buttons, mute/solo fix, crash fix, cursor jump fix
+
+### Fixed
+- **Crash on mute (memory corruption of free block)**: `m_sound` (raw ptr in base
+  `viewerpane.h`) was dangling after controller released `m_soundTrack` ref. Fixed by
+  giving `ZtoryAnimaticViewer` its own `TSoundTrackP m_soundTrackRef` to keep the
+  object alive until `refreshAnimaticSound()` replaces it. Removed the fragile
+  `soundTrackInvalidating` signal approach.
+- **Mute/Solo not updating during playback**: Mute handler was calling `setVolume()`
+  directly without going through `applyMuteSolo()`, so solo state was ignored and
+  `restartAudioIfPlaying()` was never called. Now both M and S delegate entirely to
+  `applyMuteSolo()` via signals. `applyMuteSolo()` invalidates both TXsheet internal
+  cache (`xsh->invalidateSound()`) and controller cache, then calls
+  `restartAudioIfPlaying()` synchronously.
+- **Solo logic**: Fixed `effectiveMute = muted || (hasSolo && !solo)` — M wins over S.
+  Previously used `hasSolo ? !solo : muted` which gave wrong result when M+S both active.
+- **`applyMuteSolo()` corrupting m_muted state**: Was calling `at->setMuted()` to
+  apply solo overrides, which destroyed the user's own mute flag. Now uses separate
+  `m_effectiveMuted` bool (set by `setEffectiveMuted()`) for visual dim only.
+- **Cursor jumps right after audio cut/move**: `segmentMoved` lambda was calling
+  `xsh->updateFrameCount()` which included long audio columns (trailing ColumnLevel
+  with `endOffset=0` after razor cut = raw file length). Removed the call; animatic
+  length is driven by video shots, not audio.
+- **Selection not clearing on razor cut**: `m_selSeg` was never reset when razor was
+  active (selection logic gated on `!m_razorActive`). Now cleared when razor fires.
+
+### Added
+- **L/M/S painted buttons** on audio track headers (horizontal row, 22×16px each).
+  Pure paint approach — no QToolButton children (they don't render in custom-painted
+  QWidgets on macOS).
+- **Lock painted button** on video track header.
+- **Waveform dim overlay** when track is muted (M) or solo-silenced — semi-transparent
+  black rect over waveform area.
+- **`m_effectiveMuted` flag** on `ZtoryAudioTrack`: tracks solo-silenced state
+  separately from user's `m_muted`, so applyMuteSolo never corrupts user state.
+- **`restartAudioIfPlaying()`** on `ZtoryAnimaticViewer`: rebuilds merged track and
+  calls `mainXsh->play()` in-place (no stopScrub) so QAudioOutput hot-swaps data.
+- **`ZtoryAnimaticController::setViewer/viewer()`**: lets the panel call
+  `restartAudioIfPlaying()` on the viewer without a direct reference.
+
+### Notes
+- Audio update during play has ~100ms latency (QAudioOutput hardware buffer drain
+  time) — same as DaVinci Resolve. Acceptable.
+- M + S both active on same track: M wins (track is muted). Both S active: both play.
+
+---
 ## [2026-04-01] — NLE audio track: zoom, edge trim, overlap, add track, cross-track
 
 ### Fixed

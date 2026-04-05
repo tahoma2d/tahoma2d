@@ -30,6 +30,7 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QPushButton>
+#include <QToolButton>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QScrollArea>
@@ -72,6 +73,22 @@ TXsheet *ZtoryAnimaticController::mainXsheet() const {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   if (!scene) return nullptr;
   return scene->getChildStack()->getTopXsheet();
+}
+
+// Helper: frame count from VIDEO columns only (ignores sound columns).
+// mainXsh->getFrameCount() includes audio columns; after a razor cut the
+// trailing ColumnLevel keeps endOffset=0 (= full raw file length), inflating
+// the count far beyond the actual video range.
+static int videoFrameCount(TXsheet *xsh) {
+  if (!xsh) return 1;
+  int maxFrame = 0;
+  for (int c = 0; c < xsh->getColumnCount(); c++) {
+    TXshColumn *col = xsh->getColumn(c);
+    if (!col || col->getSoundColumn()) continue;
+    int r0, r1;
+    if (col->getRange(r0, r1)) maxFrame = std::max(maxFrame, r1 + 1);
+  }
+  return maxFrame > 0 ? maxFrame : 1;
 }
 
 void ZtoryAnimaticController::setCurrentFrame(int frame) {
@@ -145,7 +162,7 @@ void ZtoryAnimaticController::onNativePlayingStatusChanged() {
 
   TINT32 startSample = (TINT32)(mainFrame * spf);
   TINT32 totalSamples = (TINT32)st->getSampleCount();
-  int    animFrames   = mainXsh->getFrameCount();
+  int    animFrames   = videoFrameCount(mainXsh);
   TINT32 endSample    = std::min((TINT32)(animFrames * spf), totalSamples - 1);
 
   if (startSample > endSample) return;
@@ -238,7 +255,7 @@ void ZtoryAnimaticRuler::paintEvent(QPaintEvent *) {
   if (!rangeEnabled) {
     TXsheet *mainXsh = ZtoryAnimaticController::instance()->mainXsheet();
     r0 = 0;
-    r1 = mainXsh ? std::max(0, mainXsh->getFrameCount() - 1) : 0;
+    r1 = mainXsh ? std::max(0, videoFrameCount(mainXsh) - 1) : 0;
   }
   if (r1 >= r0) {
     int x0 = kLabelW + (int)(r0 * m_ppf);
@@ -536,7 +553,7 @@ void ZtoryAnimaticRuler::initPlayRangeIfNeeded() {
   }
   TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
   if (!xsh) return;
-  int lastFrame = std::max(0, xsh->getFrameCount() - 1);
+  int lastFrame = std::max(0, videoFrameCount(xsh) - 1);
   XsheetGUI::setPlayRange(0, lastFrame, 1);
   ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
   update();
@@ -564,13 +581,13 @@ void ZtoryAnimaticRuler::contextMenuEvent(QContextMenuEvent *e) {
     XsheetGUI::setPlayRange(std::min(r0, frame), frame, step);
   } else if (chosen == autoAct) {
     TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
-    int last = xsh ? std::max(0, xsh->getFrameCount() - 1) : 0;
+    int last = std::max(0, videoFrameCount(xsh) - 1);
     int r0, r1, step;
     if (!XsheetGUI::getPlayRange(r0, r1, step)) { r0 = 0; step = 1; }
     XsheetGUI::setPlayRange(r0, last, 1);
   } else if (chosen == resetAct) {
     TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
-    int last = xsh ? std::max(0, xsh->getFrameCount() - 1) : 0;
+    int last = std::max(0, videoFrameCount(xsh) - 1);
     XsheetGUI::setPlayRange(0, last, 1);
   } else {
     return;  // no action chosen — skip notify
@@ -1766,7 +1783,7 @@ void ZtoryAnimaticViewer::onDrawFrame(
           double spf3 = m_sound->getSampleRate() / fps3;
           TINT32 startSmp = (TINT32)(newStart * spf3);
           TINT32 totalSmp = (TINT32)m_sound->getSampleCount();
-          int stopFr = mainXsh2->getFrameCount();
+          int stopFr = videoFrameCount(mainXsh2);
           if (sc3 && sc3->getChildStack()->getAncestorCount() == 0) {
             int mr0, mr1, mstep;
             if (XsheetGUI::getPlayRange(mr0, mr1, mstep) && mr1 >= 0)
@@ -1795,8 +1812,7 @@ void ZtoryAnimaticViewer::onDrawFrame(
         qint64 audioUsecs = mainXsh ? mainXsh->getAudioPlayedUSecs() : 0;
         if (audioUsecs > 0) {
           targetFrame = m_playStartFrame + (int)(audioUsecs * m_fps / 1000000.0);
-          int totalFrames = mainXsh ? mainXsh->getFrameCount() : 1;
-          if (totalFrames < 1) totalFrames = 1;
+          int totalFrames = videoFrameCount(mainXsh);
           // Also clamp to mark-out so that loop respects it.
           // Only apply the mark-out when at the top (main xsheet) level;
           // inside a sub-scene, updateAnimaticFrameMarkers() cleared markers.
@@ -1849,9 +1865,25 @@ void ZtoryAnimaticViewer::updateAnimaticFrameRange() {
   auto *ctrl       = ZtoryAnimaticController::instance();
   TXsheet *mainXsh = ctrl->mainXsheet();
   if (!mainXsh) return;
-  int totalFrames  = mainXsh->getFrameCount();
+
+  // Compute frame count from VIDEO columns only — skip sound columns.
+  // mainXsh->getFrameCount() includes audio columns; after a razor cut the
+  // trailing ColumnLevel keeps endOffset=0 (= full raw file length, potentially
+  // hours), inflating the count and making the ruler/cursor jump to the right.
+  int totalFrames = 0;
+  for (int c = 0; c < mainXsh->getColumnCount(); c++) {
+    TXshColumn *col = mainXsh->getColumn(c);
+    if (!col || col->getSoundColumn()) continue; // skip audio
+    int r0, r1;
+    if (col->getRange(r0, r1)) totalFrames = std::max(totalFrames, r1 + 1);
+  }
+  if (totalFrames <= 0) totalFrames = mainXsh->getFrameCount();
   if (totalFrames <= 0) totalFrames = 1;
+
   int currentFrame = ctrl->currentFrame();  // 0-based
+  // Clamp: currentFrame can exceed totalFrames if audio was longer than video
+  // during the last play session (onDrawFrame advances it via audio clock).
+  currentFrame = qBound(0, currentFrame, totalFrames - 1);
   // FlipConsole expects 1-based from/to/current values.
   m_flipConsole->setFrameRange(1, totalFrames, 1, currentFrame + 1);
 }
@@ -1939,6 +1971,22 @@ void ZtoryAnimaticViewer::onAnimaticPlayingStatusChanged(bool playing) {
     m_continuousPlay = false;
     m_prevFlipFrame  = 0;   // reset so next play starts fresh
     if (mainXsh) mainXsh->stopScrub();
+    // Clamp ctrl frame to valid video range — audio clock can advance it past
+    // the video end if audio is longer than video.
+    if (mainXsh) {
+      auto *ctrl2 = ZtoryAnimaticController::instance();
+      int videoFrames = 0;
+      for (int c = 0; c < mainXsh->getColumnCount(); c++) {
+        TXshColumn *col = mainXsh->getColumn(c);
+        if (!col || col->getSoundColumn()) continue;
+        int r0, r1;
+        if (col->getRange(r0, r1)) videoFrames = std::max(videoFrames, r1 + 1);
+      }
+      if (videoFrames > 0) {
+        int cur = ctrl2->currentFrame();
+        if (cur >= videoFrames) ctrl2->setCurrentFrame(videoFrames - 1);
+      }
+    }
     return;
   }
 
@@ -1966,7 +2014,7 @@ void ZtoryAnimaticViewer::onAnimaticPlayingStatusChanged(bool playing) {
   // play(st, s0, rawEnd) calls m_buffer.resize(rawBytes) + memcpy which can
   // allocate/copy hundreds of MB — causing 1-3 s startup delay while the
   // PlaybackExecutor has already advanced video frames, causing A/V desync.
-  int    animFrames      = mainXsh->getFrameCount();
+  int    animFrames      = videoFrameCount(mainXsh);
   // Respect mark-out: if a play range is set at the top level, cap audio there.
   int stopFrame = animFrames;
   if (scene->getChildStack()->getAncestorCount() == 0) {
@@ -2026,7 +2074,7 @@ void ZtoryAnimaticViewer::restartAudioIfPlaying() {
   TINT32 totalSamples = (TINT32)m_sound->getSampleCount();
   if (startSample >= totalSamples) return;
 
-  int stopFrame = mainXsh->getFrameCount();
+  int stopFrame = videoFrameCount(mainXsh);
   if (scene->getChildStack()->getAncestorCount() == 0) {
     int mr0, mr1, mstep;
     if (XsheetGUI::getPlayRange(mr0, mr1, mstep) && mr1 >= 0)
@@ -2216,53 +2264,55 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   tbLay->addWidget(m_zoomSlider);
   tbLay->addSpacing(12);
 
-  QPushButton *selectBtn = new QPushButton("Select", toolbar);
+  QToolButton *selectBtn = new QToolButton(toolbar);
+  selectBtn->setIcon(createQIcon("ztoryc_select"));
+  selectBtn->setIconSize(QSize(20, 20));
+  selectBtn->setFixedSize(28, 28);
+  selectBtn->setToolTip(tr("Select"));
   selectBtn->setCheckable(true);
+  selectBtn->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}QToolButton:hover{background:#555;}QToolButton:checked{background:#666;}");
   selectBtn->setChecked(true);
-  selectBtn->setMaximumWidth(60);
-  selectBtn->setStyleSheet(
-    "QPushButton{background:#3a3a3a;color:#ccc;border-radius:3px;padding:2px 6px;font-size:11px;}"
-    "QPushButton:checked{background:#555;color:white;}"
-    "QPushButton:hover{background:#4a4a4a;}");
 
-  QPushButton *razorBtn = new QPushButton("Razor", toolbar);
+  QToolButton *razorBtn = new QToolButton(toolbar);
+  razorBtn->setIcon(createQIcon("ztoryc_razor"));
+  razorBtn->setIconSize(QSize(20, 20));
+  razorBtn->setFixedSize(28, 28);
+  razorBtn->setToolTip(tr("Razor"));
   razorBtn->setCheckable(true);
-  razorBtn->setMaximumWidth(60);
-  razorBtn->setStyleSheet(
-    "QPushButton{background:#3a3a3a;color:#ccc;border-radius:3px;padding:2px 6px;font-size:11px;}"
-    "QPushButton:checked{background:#6a3a2a;color:white;}"
-    "QPushButton:hover{background:#4a4a4a;}");
+  razorBtn->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}QToolButton:hover{background:#555;}QToolButton:checked{background:#666;}");
 
-  QPushButton *linkBtn = new QPushButton("A|V Link", toolbar);
+  QToolButton *linkBtn = new QToolButton(toolbar);
+  linkBtn->setIcon(createQIcon("ztoryc_av_link"));
+  linkBtn->setIconSize(QSize(20, 20));
+  linkBtn->setFixedSize(28, 28);
+  linkBtn->setToolTip(tr("A/V Link"));
   linkBtn->setCheckable(true);
   linkBtn->setChecked(true);
-  linkBtn->setMaximumWidth(70);
-  linkBtn->setStyleSheet(
-    "QPushButton{background:#3a3a3a;color:#ccc;border-radius:3px;padding:2px 6px;font-size:11px;}"
-    "QPushButton:checked{background:#2a5a3a;color:white;}"
-    "QPushButton:hover{background:#4a4a4a;}");
+  linkBtn->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}QToolButton:hover{background:#555;}QToolButton:checked{background:#666;}");
+  linkBtn->setToolTip("Link/Unlink audio and video tracks");
   linkBtn->setToolTip("Link/Unlink audio and video tracks");
 
-  QPushButton *mergeBtn = new QPushButton("Merge", toolbar);
-  mergeBtn->setMaximumWidth(60);
-  mergeBtn->setStyleSheet(
-    "QPushButton{background:#3a3a3a;color:#ccc;border-radius:3px;padding:2px 6px;font-size:11px;}"
-    "QPushButton:hover{background:#5a4a2a;color:white;}");
+  QToolButton *mergeBtn = new QToolButton(toolbar);
+  mergeBtn->setIcon(createQIcon("ztoryc_merge"));
+  mergeBtn->setIconSize(QSize(20, 20));
+  mergeBtn->setFixedSize(28, 28);
+  mergeBtn->setToolTip(tr("Merge Shots"));
+  mergeBtn->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}QToolButton:hover{background:#555;}QToolButton:checked{background:#666;}");
   mergeBtn->setToolTip("Merge selected shots into the first selected shot");
 
-  QPushButton *addShotBtn = new QPushButton("+ Shot", toolbar);
-  addShotBtn->setMaximumWidth(60);
-  addShotBtn->setToolTip("Add a new shot at the end of the timeline");
-  addShotBtn->setStyleSheet(
-    "QPushButton{background:#3a3a3a;color:#ccc;border-radius:3px;padding:2px 6px;font-size:11px;}"
-    "QPushButton:hover{background:#2a5a2a;color:white;}");
+  QToolButton *addShotBtn = new QToolButton(toolbar);
+  addShotBtn->setIcon(createQIcon("ztoryc_add_shot"));
+  addShotBtn->setIconSize(QSize(20, 20));
+  addShotBtn->setFixedSize(28, 28);
+  addShotBtn->setToolTip(tr("Add Shot"));
+  addShotBtn->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}QToolButton:hover{background:#555;}QToolButton:checked{background:#666;}");
 
   tbLay->addWidget(selectBtn);
   tbLay->addWidget(razorBtn);
   tbLay->addSpacing(8);
   tbLay->addWidget(linkBtn);
   tbLay->addSpacing(8);
-  connect(addShotBtn, &QPushButton::clicked,
+  connect(addShotBtn, &QToolButton::clicked,
           this, &ZtoryAnimaticPanel::onAddShot);
   tbLay->addWidget(addShotBtn);
   tbLay->addWidget(mergeBtn);
@@ -2270,19 +2320,14 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
 
   // Onion skin toggle — controls the animatic's local onion state,
   // independent from the native timeline.
-  QPushButton *onionBtn = new QPushButton("Onion", toolbar);
+  QToolButton *onionBtn = new QToolButton(toolbar);
+  onionBtn->setIcon(createQIcon("ztoryc_onion"));
+  onionBtn->setIconSize(QSize(20, 20));
+  onionBtn->setFixedSize(28, 28);
   onionBtn->setCheckable(true);
   onionBtn->setChecked(false);
-  onionBtn->setMaximumWidth(60);
-  onionBtn->setToolTip(tr(
-    "Toggle onion skin.\n"
-    "Click the F strip (top ruler) to pin fixed-frame markers.\n"
-    "Click the R strip (bottom ruler) to add relative markers.\n"
-    "Click an existing marker to remove it."));
-  onionBtn->setStyleSheet(
-    "QPushButton{background:#3a3a3a;color:#ccc;border-radius:3px;padding:2px 6px;font-size:11px;}"
-    "QPushButton:checked{background:#5a3a6a;color:white;}"
-    "QPushButton:hover{background:#4a4a4a;}");
+  onionBtn->setToolTip(tr("Toggle Onion Skin"));
+  onionBtn->setStyleSheet("QToolButton{background:transparent;border:none;border-radius:4px;}QToolButton:hover{background:#555;}QToolButton:checked{background:#666;}");
   tbLay->addWidget(onionBtn);
   tbLay->addStretch(1);
 
@@ -2293,27 +2338,27 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
     onionBtn->setChecked(on);
     onionBtn->blockSignals(false);
   });
-  connect(onionBtn, &QPushButton::toggled, m_ruler,
+  connect(onionBtn, &QToolButton::toggled, m_ruler,
           &ZtoryAnimaticRuler::setOnionEnabled);
 
-  connect(selectBtn, &QPushButton::clicked, this, [this, selectBtn, razorBtn](){
+  connect(selectBtn, &QToolButton::clicked, this, [this, selectBtn, razorBtn](){
     m_track->setTool(ZtoryAnimaticTrack::SelectTool);
     selectBtn->setChecked(true);
     razorBtn->setChecked(false);
     for (auto *at : m_audioTracks) at->setRazorActive(false);
   });
-  connect(razorBtn, &QPushButton::clicked, this, [this, selectBtn, razorBtn](){
+  connect(razorBtn, &QToolButton::clicked, this, [this, selectBtn, razorBtn](){
     m_track->setTool(ZtoryAnimaticTrack::RazorTool);
     razorBtn->setChecked(true);
     selectBtn->setChecked(false);
-    // Independent audio razor only when link is OFF; linked razor is handled
-    // automatically in onRazorRequested when a video shot is cut.
-    for (auto *at : m_audioTracks) at->setRazorActive(!m_audioLinked);
+    // Always activate razor on audio tracks so the user can cut them directly.
+    // m_audioLinked only controls whether a video cut also cuts audio.
+    for (auto *at : m_audioTracks) at->setRazorActive(true);
   });
-  connect(linkBtn, &QPushButton::toggled, this, [this](bool checked){
+  connect(linkBtn, &QToolButton::toggled, this, [this](bool checked){
     m_audioLinked = checked;
   });
-  connect(mergeBtn, &QPushButton::clicked, this, &ZtoryAnimaticPanel::onMergeShots);
+  connect(mergeBtn, &QToolButton::clicked, this, &ZtoryAnimaticPanel::onMergeShots);
 
   // Scroll area with ruler + track + audio
   QScrollArea *scroll = new QScrollArea(container);
@@ -2405,15 +2450,13 @@ void ZtoryAnimaticPanel::refreshFromScene() {
 }
 
 void ZtoryAnimaticPanel::updateTrackWidths() {
-  // Compute global max frame from both video blocks and audio segments
+  // Compute max frame from VIDEO blocks only.
+  // Audio segments are excluded: a long raw audio file would inflate the ruler
+  // width to thousands of frames even if only a short slice is actually placed.
   int maxFrame = 0;
   for (auto &b : m_track->blocks())
     maxFrame = qMax(maxFrame, b.startFrameInMain + (b.f1 - b.f0 + 1));
-  for (auto *at : m_audioTracks) {
-    auto segs = at->findSegments();
-    for (auto &s : segs)
-      maxFrame = qMax(maxFrame, s.r1 + 1);
-  }
+  if (maxFrame <= 0) maxFrame = 1;
   int totalW = kLabelW + (int)(maxFrame * m_ppf) + 200;
   m_ruler->setMinimumWidth(totalW);
   m_track->setMinimumWidth(totalW);
@@ -2516,8 +2559,10 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     ZtoryAudioTrack *at = new ZtoryAudioTrack(col, name, m_scrollContent);
     at->setPixelsPerFrame(m_ppf);
     at->setCurrentFrame(m_track->property("currentFrame").toInt());
-    // Propagate current razor state (independent mode = razor ON + link OFF)
-    at->setRazorActive(m_track->tool() == ZtoryAnimaticTrack::RazorTool && !m_audioLinked);
+    // Propagate current razor state to newly created audio track.
+    // m_audioLinked only controls whether a video cut also cuts audio;
+    // audio tracks are always razerable when the razor tool is active.
+    at->setRazorActive(m_track->tool() == ZtoryAnimaticTrack::RazorTool);
 
     // Cut frames will be set by updateCutFrames() after all tracks are created
 
@@ -2730,8 +2775,19 @@ static void materializeCells(TXshChildLevel *cl, int duration) {
   if (!xsh) return;
   int nCols = xsh->getColumnCount();
   for (int c = 0; c < nCols; c++) {
+    // Find the last row that actually has content in this column.
+    // We must NOT fill beyond it: in a merged sub-scene, old columns end at
+    // dstDuration and new columns start at dstDuration.  Filling old columns
+    // past their last content row would create spurious held frames that
+    // overlap with the new columns after a subsequent razor cut.
+    int lastContent = -1;
+    for (int r = std::min(duration, xsh->getFrameCount()) - 1; r >= 0; r--) {
+      if (!xsh->getCell(r, c).isEmpty()) { lastContent = r; break; }
+    }
+    if (lastContent < 0) continue;  // column entirely empty up to duration
+
     TXshCell last;
-    for (int r = 0; r < duration; r++) {
+    for (int r = 0; r <= lastContent; r++) {
       TXshCell cell = xsh->getCell(r, c);
       if (!cell.isEmpty()) {
         last = cell;
@@ -2949,8 +3005,12 @@ void ZtoryAnimaticPanel::onMergeShots() {
   int dstDuration = dstR1 - dstR0 + 1;
   int lastFrameNum = dstDuration; // 1-based frame index for continuation
 
-  // Materialize held cells in the first shot before merging.
+  // Materialize held cells in the first shot before merging, then trim to the
+  // timeline duration. Without the trim, any frames in the sub-scene beyond
+  // dstDuration (hidden from the main xsheet) would overlap with the incoming
+  // src content that is inserted starting at row dstDuration.
   materializeCells(dstCl, dstDuration);
+  trimChildXsheetTo(dstCl, dstDuration);
 
   for (int i = 1; i < (int)sortedCols.size(); i++) {
     int srcCol = sortedCols[i];
@@ -2979,15 +3039,25 @@ void ZtoryAnimaticPanel::onMergeShots() {
     appendAt += duration;
   }
 
-  // Delete source columns in reverse order (skip first = destination)
+  // Delete source columns in reverse order (skip first = destination).
+  // Reverse order keeps lower column indices stable across iterations.
+  // Do NOT emit shotRemovedAt here — the xsheet is in intermediate state
+  // (dst column cells overlap with still-present src columns). Emitting here
+  // would trigger onShotRemovedAt → renumberAll → updateColumnName →
+  // notifyXsheetChanged → Animatic refreshes mid-merge → visual overlap.
   for (int i = (int)sortedCols.size() - 1; i >= 1; i--)
     ColumnCmd::deleteColumn(sortedCols[i]);
 
   xsh->updateFrameCount();
   app->getCurrentXsheet()->notifyXsheetChanged();
   ZtoryModel::instance()->resequenceXsheet();
-  emit ZtoryModel::instance()->modelReset();
   m_track->refreshFromScene();
+
+  // Notify Board AFTER xsheet is fully stable and track refreshed.
+  // Emit in the same reverse-column order so Board's xsheetColumn tracking
+  // stays correct across multiple removals.
+  for (int i = (int)sortedCols.size() - 1; i >= 1; i--)
+    emit ZtoryModel::instance()->shotRemovedAt(sortedCols[i]);
 }
 
 // ---- Add Shot ----
@@ -3077,8 +3147,11 @@ void ZtoryAnimaticPanel::onMergeWithNext(int col) {
   int dstDuration = dstR1 - dstR0 + 1;
   int srcDuration = srcR1 - srcR0 + 1;
 
-  // Materialize held cells in the first shot before merging.
+  // Materialize held cells then trim to timeline duration — same reasoning as
+  // onMergeShots: hidden frames beyond dstDuration must be removed before
+  // appending src content, or they overlap with the incoming material.
   materializeCells(dstCl, dstDuration);
+  trimChildXsheetTo(dstCl, dstDuration);
 
   // Merge srcCl into dstCl: new columns per shot, shared camera,
   // boundary keyframes at junction and end of segment.
@@ -3096,20 +3169,13 @@ void ZtoryAnimaticPanel::onMergeWithNext(int col) {
   xsh->updateFrameCount();
   app->getCurrentXsheet()->notifyXsheetChanged();
   ZtoryModel::instance()->resequenceXsheet();
-  emit ZtoryModel::instance()->modelReset();
   m_track->refreshFromScene();
+
+  // Notify Board AFTER xsheet is fully stable (mirrors razor's shotAdded pattern).
+  emit ZtoryModel::instance()->shotRemovedAt(nextCol);
 }
 
 // Helper: log column range to debug file
-static void razorLog(FILE *f, TXsheet *xsh, int col, const char *label) {
-  TXshColumn *c = xsh->getColumn(col);
-  if (!c) { fprintf(f, "  %s: col %d NULL\n", label, col); return; }
-  int r0 = 0, r1 = -1;
-  c->getRange(r0, r1);
-  bool locked = c->isLocked();
-  fprintf(f, "  %s: col %d range %d..%d (dur %d) locked=%d empty=%d\n",
-          label, col, r0, r1, r1 >= r0 ? r1 - r0 + 1 : 0, locked, c->isEmpty());
-}
 
 void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
   if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
@@ -3119,25 +3185,16 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
   TXsheet *mainXsh = scene->getChildStack()->getTopXsheet();
   if (!mainXsh) return;
 
-  FILE *dbg = fopen("/tmp/razor_debug.log", "a");
-  if (dbg) fprintf(dbg, "\n=== RAZOR col=%d splitFrame=%d ===\n", col, splitFrame);
-
   TXshColumn *srcColumn = mainXsh->getColumn(col);
-  if (!srcColumn) { if (dbg) { fprintf(dbg, "  srcColumn NULL\n"); fclose(dbg); } return; }
+  if (!srcColumn) return;
   int r0 = 0, r1 = 0;
   srcColumn->getRange(r0, r1);
   // splitRel = # frames that stay in the original shot (rows r0..splitFrame-1)
   int splitRel = splitFrame - r0;
-  if (splitRel <= 0 || splitRel >= r1 - r0 + 1) {
-    if (dbg) { fprintf(dbg, "  ABORT: splitRel=%d out of range (r0=%d r1=%d)\n", splitRel, r0, r1); fclose(dbg); }
-    return;
-  }
+  if (splitRel <= 0 || splitRel >= r1 - r0 + 1) return;
 
   int totalDuration = r1 - r0 + 1;
   int secondHalf    = totalDuration - splitRel;  // frames for the new shot
-
-  if (dbg) fprintf(dbg, "  r0=%d r1=%d totalDur=%d splitRel=%d secondHalf=%d\n",
-                   r0, r1, totalDuration, splitRel, secondHalf);
 
   // Grab original child level before cloning.
   TXshChildLevel *origCL = nullptr;
@@ -3148,7 +3205,6 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
       break;
     }
   }
-  if (dbg) fprintf(dbg, "  origCL=%p\n", (void *)origCL);
 
   // ── Step 1: materialize held cells for the full shot duration ──────────────
   // Tahoma2D stores drawing cells only at transition points; intermediate
@@ -3163,10 +3219,8 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
   addRazorKeyframes(origCL, splitRel);
 
   // ── Step 3: Clone ──────────────────────────────────────────────────────────
-  if (dbg) { fprintf(dbg, "  before cloneChild:\n"); razorLog(dbg, mainXsh, col, "orig"); }
   ColumnCmd::cloneChild(col);
   int newCol = col + 1;
-  if (dbg) { fprintf(dbg, "  after cloneChild:\n"); razorLog(dbg, mainXsh, col, "orig"); razorLog(dbg, mainXsh, newCol, "clone"); }
 
   // Grab clone's child level.
   TXshChildLevel *cloneCL = nullptr;
@@ -3177,25 +3231,18 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
       break;
     }
   }
-  if (dbg) fprintf(dbg, "  cloneCL=%p\n", (void *)cloneCL);
 
   // ── Step 4: Trim original child xsheet to splitRel frames ─────────────────
   // Also removes stage-object keyframes beyond the cut point.
   trimChildXsheetTo(origCL, splitRel);
-  if (dbg) fprintf(dbg, "  orig childXsh after trim: frameCount=%d\n",
-                   origCL ? origCL->getXsheet()->getFrameCount() : -1);
 
   // ── Step 5: Shift clone child xsheet left by splitRel ─────────────────────
   // Cells and keyframes at [splitRel..end] become [0..secondHalf-1].
   shiftChildXsheetBy(cloneCL, splitRel);
-  if (dbg) fprintf(dbg, "  clone childXsh after shift: frameCount=%d\n",
-                   cloneCL ? cloneCL->getXsheet()->getFrameCount() : -1);
 
   // ── Step 6: Fix main-xsheet columns ───────────────────────────────────────
   // Trim original column: remove the tail (secondHalf cells).
-  if (dbg) { fprintf(dbg, "  before removeCells(%d, %d, %d):\n", r0 + splitRel, col, secondHalf); razorLog(dbg, mainXsh, col, "orig"); }
   mainXsh->removeCells(r0 + splitRel, col, secondHalf);
-  if (dbg) { fprintf(dbg, "  after removeCells:\n"); razorLog(dbg, mainXsh, col, "orig"); }
 
   // Rebuild clone column: wipe then repopulate with TFrameId(1..secondHalf).
   mainXsh->clearCells(r0, newCol, totalDuration + 2);
@@ -3203,10 +3250,6 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
     for (int r = 0; r < secondHalf; r++)
       mainXsh->setCell(r0 + r, newCol, TXshCell(cloneCL, TFrameId(r + 1)));
   }
-  if (dbg) { fprintf(dbg, "  after repopulate clone:\n"); razorLog(dbg, mainXsh, newCol, "clone"); }
-
-  // Notify the board FIRST (before resequenceXsheet emits modelReset).
-  emit ZtoryModel::instance()->shotAdded(newCol);
 
   mainXsh->updateFrameCount();
   app->getCurrentXsheet()->notifyXsheetChanged();
@@ -3222,16 +3265,14 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
     for (int ac : audioCols) splitAudioColumn(mainXsh, ac, splitFrame);
   }
 
-  // Log final state of ALL columns.
-  if (dbg) {
-    fprintf(dbg, "  === FINAL STATE ===\n");
-    for (int c = 0; c < mainXsh->getColumnCount(); c++)
-      razorLog(dbg, mainXsh, c, "final");
-    fclose(dbg);
-  }
-
   m_track->refreshFromScene();
   refreshAudioTracks();
+
+  // Notify Board AFTER xsheet is stable and track refreshed.
+  // Emitting before resequenceXsheet would fire onShotInserted → renumberAll
+  // → updateColumnName → notifyXsheetChanged → Animatic refreshes while the
+  // clone column still starts at the same frame as the original → overlap.
+  emit ZtoryModel::instance()->shotAdded(newCol);
 }
 
 void ZtoryAnimaticPanel::onAudioRazorRequested(int col, int frame) {
