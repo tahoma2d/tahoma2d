@@ -804,6 +804,7 @@ void TDoubleParam::setKeyframes(const std::map<int, TDoubleKeyframe> &ks) {
 void TDoubleParam::setKeyframe(const TDoubleKeyframe &k) {
   DoubleKeyframeVector &keyframes = m_imp->m_keyframes;
   DoubleKeyframeVector::iterator it;
+  bool atEnd = false;
   it = std::lower_bound(keyframes.begin(), keyframes.end(), k);
   if (it != keyframes.end() && it->m_frame == k.m_frame) {
     // int index = std::distance(keyframes.begin(), it);
@@ -811,6 +812,13 @@ void TDoubleParam::setKeyframe(const TDoubleKeyframe &k) {
     (TDoubleKeyframe &)dst     = k;
     dst.updateUnit(m_imp->m_measure);
   } else {
+    if (keyframes.size()) {
+      if (it == keyframes.end()) {  // Adding after the last one
+        keyframes.rbegin()->m_type = k.m_prevType;
+        atEnd                      = true;
+      } else if (it != keyframes.begin() && it[-1].m_type != k.m_prevType)
+        it[-1].m_type = k.m_prevType;
+    }
     it = keyframes.insert(it, TActualDoubleKeyframe(k));
     // int index = std::distance(keyframes.begin(), it);
     // TDoubleKeyframe oldKeyframe = *it;
@@ -819,6 +827,8 @@ void TDoubleParam::setKeyframe(const TDoubleKeyframe &k) {
     it->updateUnit(m_imp->m_measure);
   }
   it->m_isKeyframe = true;
+
+  if (atEnd) it->m_type = TDoubleKeyframe::Linear;
 
   if (it->m_type == TDoubleKeyframe::Expression)
     it->m_expression.setText(it->m_expressionText);
@@ -921,7 +931,10 @@ void TDoubleParam::deleteKeyframe(double frame) {
 
   TDoubleKeyframe::Type type = it->m_prevType;
   it                         = m_imp->m_keyframes.erase(it);
-  if (it != keyframes.end()) it->m_prevType = type;
+  if (it != keyframes.end())
+    it->m_prevType = type;
+  else if (m_imp->m_keyframes.size())  // end was deleted
+    keyframes.rbegin()->m_type = TDoubleKeyframe::Linear;
 
   m_imp->notify(TParamChange(this, 0, 0, true, false, false));
 }
