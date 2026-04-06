@@ -1195,6 +1195,12 @@ is >> m_imp->m_defaultValue;
     }
   }
 
+  if (!m_imp->m_keyframes.empty()) {
+    // For loader scenes, ensure the last keyframe's type is set to Linear
+    if (m_imp->m_keyframes.rbegin()->m_type != TDoubleKeyframe::Linear)
+      m_imp->m_keyframes.rbegin()->m_type = TDoubleKeyframe::Linear;
+  }
+
   m_imp->notify(TParamChange(this, 0, 0, true, false, false));
 }
 
