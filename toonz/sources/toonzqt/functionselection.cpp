@@ -135,7 +135,7 @@ class KeyframesDeleteUndo final : public TUndo {
 public:
   struct ColumnKeyframes {
     TDoubleParam *m_param;
-    std::vector<TDoubleKeyframe> m_keyframes;
+    std::map<int, TDoubleKeyframe> m_keyframes;
   };
   struct Column {
     TDoubleParam *m_param;
@@ -151,7 +151,7 @@ public:
       const QSet<int> &keyframes = columns[col].m_keyframes;
       for (QSet<int>::const_iterator it = keyframes.begin();
            it != keyframes.end(); ++it)
-        m_columns[col].m_keyframes.push_back(param->getKeyframe(*it));
+        m_columns[col].m_keyframes[*it] = param->getKeyframe(*it);
     }
   }
   ~KeyframesDeleteUndo() {
@@ -164,16 +164,21 @@ public:
   }
 
   void undo() const override {
-    for (int col = 0; col < (int)m_columns.size(); col++)
-      for (int i = 0; i < (int)m_columns[col].m_keyframes.size(); i++)
-        m_columns[col].m_param->setKeyframe(m_columns[col].m_keyframes[i]);
+    for (int col = 0; col < (int)m_columns.size(); col++) {
+      std::map<int, TDoubleKeyframe>::const_iterator it,
+          itEnd(m_columns[col].m_keyframes.cend());
+      for (it = m_columns[col].m_keyframes.cbegin(); it != itEnd; ++it)
+        m_columns[col].m_param->setKeyframe(it->second);
+    }
     if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   void redo() const override {
-    for (int col = 0; col < (int)m_columns.size(); col++)
-      for (int i = 0; i < (int)m_columns[col].m_keyframes.size(); i++)
-        m_columns[col].m_param->deleteKeyframe(
-            m_columns[col].m_keyframes[i].m_frame);
+    for (int col = 0; col < (int)m_columns.size(); col++) {
+      std::map<int, TDoubleKeyframe>::const_iterator it,
+          itEnd(m_columns[col].m_keyframes.cend());
+      for (it = m_columns[col].m_keyframes.cbegin(); it != itEnd; ++it)
+        m_columns[col].m_param->deleteKeyframe(it->second.m_frame);
+    }
     if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   int getSize() const override {
