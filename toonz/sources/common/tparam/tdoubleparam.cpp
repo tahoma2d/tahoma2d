@@ -816,8 +816,7 @@ void TDoubleParam::setKeyframe(const TDoubleKeyframe &k) {
       if (it == keyframes.end()) {  // Adding after the last one
         keyframes.rbegin()->m_type = k.m_prevType;
         atEnd                      = true;
-      } else if (it != keyframes.begin() && it[-1].m_type != k.m_prevType)
-        it[-1].m_type = k.m_prevType;
+      }
     }
     it = keyframes.insert(it, TActualDoubleKeyframe(k));
     // int index = std::distance(keyframes.begin(), it);
