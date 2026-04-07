@@ -1871,6 +1871,7 @@ void LoopColumnsUndo::redo() const {
 
   for (auto c : m_indices) {
     TXshColumn *column = xsh->getColumn(c);
+    if (!column) continue;
 
     int r0, r1;
     column->getRange(r0, r1);
@@ -1892,6 +1893,7 @@ void LoopColumnsUndo::undo() const {
 
   for (auto c : m_indices) {
     TXshColumn *column = xsh->getColumn(c);
+    if (!column) continue;
 
     QList<std::pair<int, int>> loops = column->getLoops();
 
@@ -1971,6 +1973,7 @@ void RemoveColumnLoopsUndo::initialize(const std::set<int> &indices) {
 
   for (auto c : indices) {
     TXshColumn *column = xsh->getColumn(c);
+    if (!column) continue;
 
     QList<std::pair<int, int>> loops = column->getLoops();
 
@@ -1988,6 +1991,7 @@ void RemoveColumnLoopsUndo::redo() const {
 
   for (auto c : m_columnLoops.keys()) {
     TXshColumn *column = xsh->getColumn(c);
+    if (!column) continue;
     for (auto loop : m_columnLoops[c]) {
       column->removeLoop(loop);
     }
@@ -2007,6 +2011,7 @@ void RemoveColumnLoopsUndo::undo() const {
 
   for (auto c : m_columnLoops.keys()) {
     TXshColumn *column = xsh->getColumn(c);
+    if (!column) continue;
     for (auto loop : m_columnLoops[c]) {
       column->addLoop(loop);
     }

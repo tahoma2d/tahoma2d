@@ -747,6 +747,7 @@ ReframeUndo::ReframeUndo(int r0, int r1, std::vector<int> columnIndeces,
   for (auto colIndex : m_columnIndeces) {
     int rTo                = m_r1;
     TXshCellColumn *column = xsh->getColumn(colIndex)->getCellColumn();
+    if (!column) continue;
     int colLen0, colLen1;
     column->getRange(colLen0, colLen1);
     TXshCell tmpCell = column->getCell(m_r1, true, false);

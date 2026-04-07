@@ -2046,7 +2046,7 @@ void CellArea::drawCellMarker(QPainter &p, int markId, QRect rect,
 void CellArea::drawLoopFrameMarker(QPainter &p, int row, int col) {
   TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
 
-  if (!column->hasLoops()) return;
+  if (!column || !column->hasLoops()) return;
 
   QList<std::pair<int, int>> loops = column->getLoops();
 
@@ -2118,9 +2118,12 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   bool isSimpleView = m_viewer->getFrameZoomFactor() <=
                       o->dimension(PredefinedDimension::SCALE_THRESHOLD);
 
-  bool isLoopedCell = cellColumn->isLoopedFrame(row);
-  std::pair<int, int> loopRange = cellColumn->getLoopForRow(row);
-  int loopR0 = loopRange.first, loopR1 = loopRange.second;
+  int loopR1        = -1;
+  bool isLoopedCell = cellColumn && cellColumn->isLoopedFrame(row);
+  if (isLoopedCell) {
+    std::pair<int, int> loopRange = cellColumn->getLoopForRow(row);
+    loopR1                        = loopRange.second;
+  }
 
   TXshCell cell = xsh->getCell(row, col);
 
@@ -2137,7 +2140,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   if (row > 0) {
     prevCell       = xsh->getCell(prevFrame, col);  // cell in previous frame
     prevIsImplicit = xsh->isImplicitCell(prevFrame, col);
-    prevIsLooped   = cellColumn->isLoopedFrame(prevFrame);
+    prevIsLooped   = cellColumn && cellColumn->isLoopedFrame(prevFrame);
   }
 
   bool sameLevel = prevCell.m_level.getPointer() == cell.m_level.getPointer();

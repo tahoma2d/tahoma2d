@@ -1573,6 +1573,7 @@ public:
   void undo() const override {
     TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshColumn *column = xsh->getColumn(m_c);
+    if (!column) return;
 
     column->removeLoop(m_r0, m_r1);
 
@@ -1582,7 +1583,7 @@ public:
   void redo() const override {
     TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshColumn *column = xsh->getColumn(m_c);
-
+    if (!column) return;
     column->addLoop(m_r0, m_r1);
 
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -1611,7 +1612,7 @@ public:
   void undo() const override {
     TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshColumn *column = xsh->getColumn(m_c);
-
+    if (!column) return;
     column->addLoop(m_r0, m_r1);
 
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -1620,6 +1621,7 @@ public:
   void redo() const override {
     TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
     TXshColumn *column = xsh->getColumn(m_c);
+    if (!column) return;
 
     column->removeLoop(m_r0, m_r1);
 
@@ -3541,7 +3543,7 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
   TXshCell prevCell   = xsh->getCell(row - 1, col);
 
   // check if we use the current cell to duplicate or the previous cell
-  if (!column->isLoopedFrame(row) && !targetCell.isEmpty() &&
+  if (column && !column->isLoopedFrame(row) && !targetCell.isEmpty() &&
       targetCell != prevCell) {
     // Current cell has a drawing to duplicate and it's not a hold shift focus
     // to next cell as if they selected that one to duplicate into
@@ -4757,7 +4759,7 @@ void TCellSelection::loopFrameRange(int col, int r0, int r1) {
   TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
   TXshColumn *column = xsh->getColumn(col);
 
-  if (column->isEmpty() || column->getSoundColumn() ||
+  if (!column || column->isEmpty() || column->getSoundColumn() ||
       column->getSoundTextColumn() || column->getFolderColumn())
     return;
 
@@ -4790,7 +4792,7 @@ void TCellSelection::removeFrameLoopRange(int col, int r0, int r1) {
   TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
   TXshColumn *column = xsh->getColumn(col);
 
-  if (!column->hasLoops()) return;
+  if (!column || !column->hasLoops()) return;
 
   if (column->isInLoopRange(r0)) {
     std::pair<int, int> loop = column->getLoopWithRow(r0);
