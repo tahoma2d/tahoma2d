@@ -63,7 +63,7 @@ protected:
   int m_viewerFps;
   double m_samplesPerFrame;
   bool m_first         = true;
-  TSoundTrack *m_sound = NULL;
+  TSoundTrackP m_sound;  // smart pointer — prevents dangling when makeSound() replaces m_mixedSound
 
   bool m_isActive = false;
 

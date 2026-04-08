@@ -2170,7 +2170,7 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Auto Fill"));
     // AutoFill style picker — populated dynamically from palette in updateStatus()
     m_autoFillStyleCombo =
-        dynamic_cast<ToolOptionCombo *>(m_controls.value("AutoFillStyle"));
+        dynamic_cast<ToolOptionCombo *>(m_controls.value("Fill Style:"));
     if (m_autoFillStyleCombo)
       connect(toolHandle, SIGNAL(toolComboBoxListChanged(std::string)),
               m_autoFillStyleCombo, SLOT(reloadComboBoxList(std::string)));
@@ -2251,7 +2251,7 @@ void BrushToolOptionsBox::filterControls() {
         (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
                      it.key() == "Preset:" || it.key() == "Grid" ||
                      it.key() == "Smooth:" || it.key() == "Paint Behind" ||
-                     it.key() == "Auto Fill" || it.key() == "AutoFillStyle");
+                     it.key() == "Auto Fill" || it.key() == "Fill Style:");
     bool visible = isCommon || (isModifier == showModifiers);
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);
@@ -2274,7 +2274,7 @@ void BrushToolOptionsBox::updateStatus() {
       if (brushTool) {
         brushTool->rebuildAutoFillStyleCombo(pal);
         // Notify the combo to reload its entries from the updated property.
-        m_toolHandle->notifyToolComboBoxListChanged("AutoFillStyle");
+        m_toolHandle->notifyToolComboBoxListChanged("Fill Style:");
       }
     }
   }

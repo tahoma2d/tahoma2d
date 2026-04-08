@@ -925,7 +925,7 @@ void BaseViewerPanel::playAudioFrame(int frame) {
 //-----------------------------------------------------------------------------
 
 bool BaseViewerPanel::hasSoundtrack() {
-  if (m_sound != NULL) {
+  if (m_sound) {
     m_sound         = NULL;
     m_hasSoundtrack = false;
     m_first         = true;
@@ -960,7 +960,7 @@ bool BaseViewerPanel::hasSoundtrack() {
   } catch (...) {
     std::cout << "Unhandled exception encountered" << std::endl;
   }
-  if (m_sound == NULL) {
+  if (!m_sound) {
     m_hasSoundtrack = false;
     return false;
   } else {
