@@ -6,6 +6,96 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-06] — Board desync fix (merge/cut/delete), edit shot fix, durate panel, match button
+
+### Fixed
+
+- **3-shot merge lascia uno shot in più nel Board** (`storyboardpanel.cpp`, `onShotRemovedAt`):
+  quando il secondo `shotRemovedAt` non trova lo shot per `data.xsheetColumn` (tracking
+  desynced da operazioni precedenti), ora cade back su `refreshFromScene()` invece di
+  tornare silenziosamente.
+
+- **Edit shot button non selezionava lo shot** (`storyboardpanel.cpp`, `onEditShot`):
+  aggiunto `selectShot(shotIdx)` prima di aprire la sottoscena.
+
+- **Edit shot button usava board index come colonna xsheet** (`storyboardpanel.cpp`, `onEditShot`):
+  ora usa `m_shots[shotIdx].data.xsheetColumn` — fix critico dopo merge/cut che desincronizzano
+  indice Board dall'indice xsheet.
+
+- **T: (durata totale) aggiornava panels[0].duration invece del display** (`onXsheetChanged`):
+  per shot multi-panel questo sovrascriveva la durata parziale del panel 0 con la durata
+  totale. Ora `onXsheetChanged` aggiorna solo il display T: per tutti i panel; D: (parziale)
+  viene aggiornata solo per shot a panel singolo (dove D: == T:).
+
+- **D: (durata parziale) includeva frame nascosti** (`detectAndUpdatePanels`):
+  l'ultimo panel usava `numFrames` (frame count completo della sottoscena, inclusi frame
+  oltre la durata visibile in timeline). Ora legge la durata visibile dalla colonna del
+  main xsheet ancestor e cappa l'ultimo panel al limite timeline.
+
+- **Panel oltre l'area visibile in timeline venivano mostrati nel Board**
+  (`detectAndUpdatePanels`): aggiunto filtro — i panel con `startFrame >= timelineDuration`
+  vengono esclusi dal Board.
+
+### Added
+
+- **Bottone ⇔ (Match Duration)** (`storyboardpanel.h/.cpp`, `PanelWidget`):
+  ogni shot nel Board ha un piccolo bottone ⇔ accanto al campo T:. Quando cliccato,
+  legge il `getFrameCount()` reale della sottoscena e ridimensiona la colonna nel main
+  xsheet di conseguenza, poi chiama `resequenceXsheet()`. Consente di allineare la durata
+  timeline alla durata effettiva della sottoscena.
+
+### Notes
+
+- `detectAndUpdatePanels` è chiamato dal `m_panelDetectTimer` (1000ms debounce) mentre
+  si è dentro una sottoscena. Ora richiede un AncestorNode valido per calcolare
+  `timelineDuration`; se l'ancestor non è disponibile, usa `numFrames` come fallback.
+- Il bottone ⇔ è visibile in tutti i panel dello shot ma opera sempre sulla colonna
+  dell'intero shot nel main xsheet.
+
+---
+## [2026-04-05] — Icone toolbar QToolButton, SVG Ztoryc, camera init sottoscene
+
+### Modified
+
+- **QPushButton → QToolButton in toolbar** (`storyboardpanel.h/.cpp`, `ztoryanimatic.cpp`):
+  tutti i bottoni toolbar convertiti da QPushButton con testo a QToolButton con icone SVG
+  via `createQIcon()`. Stile uniforme: `setFixedSize(28,28)`, `setIconSize(20,20)`,
+  background trasparente, hover `#555`, checked `#666`.
+  Connect aggiornati da `&QPushButton::clicked` a `&QToolButton::clicked`.
+
+### Added
+
+- **21 icone SVG Ztoryc** (`toonz/sources/toonz/icons/dark/ztoryc/`, `toonz.qrc`):
+  `ztoryc_add_shot`, `ztoryc_delete_shot`, `ztoryc_merge`, `ztoryc_edit_shot`,
+  `ztoryc_numbering`, `ztoryc_export_pdf`, `ztoryc_export_animatic`, `ztoryc_export_shots`,
+  `ztoryc_select`, `ztoryc_razor`, `ztoryc_av_link`, `ztoryc_av_link_on`, `ztoryc_onion`,
+  `ztoryc_onion_on`, `ztoryc_lock`, `ztoryc_lock_on`, `ztoryc_copy`, `ztoryc_clone`,
+  `ztoryc_paste`, `ztoryc_shotedit`, `ztoryc_shotedit_on`, `ztoryc_refresh_preview`.
+  Embedded nel binario via qrc. Toggle on/off gestiti automaticamente da `createQIcon`.
+
+- **Camera init sottoscene** (`storyboardpanel.cpp`, `onAddShot()`): copia res e size
+  dalla camera del main xsheet alla nuova sottoscena, stesso comportamento di
+  `subscenecommand.cpp`. Risolve la piccola differenza di inquadratura tra sottoscena
+  e main su scene create con Ztoryc.
+
+### Removed
+
+- `m_refreshButton` — rimosso da header, cpp e layout Board (refresh automatico
+  con debounce già attivo).
+- `m_backButton` — rimosso da header, cpp e layout Board (doppio click per tornare
+  al Board già implementato).
+
+### Notes
+
+- Per aggiornare un'icona: sostituire il file SVG in `icons/dark/ztoryc/` e ricompilare.
+  Se l'icona non cambia dopo la modifica al qrc: `ninja -C toonz/build -t clean` poi rebuild.
+- Il bottone merge nel Board (`m_mergeButton`) è presente ma disabilitato
+  (`setEnabled(false)`) — implementazione pendente come task aperto.
+- Edit In Place deve essere **spento** quando si lavora sulla camera dentro uno shot.
+  Con Edit In Place spento la camera locale funziona correttamente.
+  L'audio del main si sente anche con Edit In Place spento — comportamento corretto.
+
+---
 ## [2026-04-03] — Audio track L/M/S buttons, mute/solo fix, crash fix, cursor jump fix
 
 ### Fixed

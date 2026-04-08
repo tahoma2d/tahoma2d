@@ -66,6 +66,12 @@
 #include <QComboBox>
 #include <QStackedWidget>
 
+// Merge helpers defined in ztoryanimatic.cpp (non-static so they can be shared)
+void materializeCells(TXshChildLevel *cl, int duration);
+void trimChildXsheetTo(TXshChildLevel *cl, int keepFrames);
+void mergeChildXsheetContent(TXshChildLevel *dstCl, TXshChildLevel *srcCl,
+                              int dstOffset, int srcDuration);
+
 PanelWidget::PanelWidget(QWidget *parent)
     : QFrame(parent)
     , m_shotIndex(0)
@@ -563,11 +569,10 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
     }
   });
   connect(m_deleteButton, &QToolButton::clicked, this, &StoryboardPanel::onDeleteShot);
-  // TODO: implementare onMergeShots nel BOARD
-  m_mergeButton->setEnabled(false);
-  connect(m_copyButton,   &QPushButton::clicked, this, &StoryboardPanel::onCopyShot);
-  connect(m_cloneButton,  &QPushButton::clicked, this, &StoryboardPanel::onCloneShot);
-  connect(m_pasteButton,  &QPushButton::clicked, this, &StoryboardPanel::onPasteShot);
+  connect(m_mergeButton, &QToolButton::clicked, this, &StoryboardPanel::onMergeShots);
+  connect(m_copyButton,   &QToolButton::clicked, this, &StoryboardPanel::onCopyShot);
+  connect(m_cloneButton,  &QToolButton::clicked, this, &StoryboardPanel::onCloneShot);
+  connect(m_pasteButton,  &QToolButton::clicked, this, &StoryboardPanel::onPasteShot);
   connect(m_exportPdfButton, &QToolButton::clicked, this, &StoryboardPanel::onExportPdf);
   connect(m_exportShotsButton, &QToolButton::clicked, this, &StoryboardPanel::onExportShots);
   connect(m_exportAnimaticButton, &QToolButton::clicked, this, &StoryboardPanel::onExportAnimatic);
@@ -1107,6 +1112,92 @@ void StoryboardPanel::onModelResequenced() {
         m_shots[si].panels[0]->setDuration(duration);
     }
   }
+}
+
+void StoryboardPanel::onMergeShots() {
+  if (!ZtoryModel::assertMainXsheet(true)) return;
+
+  // Need at least 2 selected shots
+  std::vector<int> toMerge(m_selectedIndices.begin(), m_selectedIndices.end());
+  if (toMerge.size() < 2) return;
+
+  TApp *app = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  if (!scene) return;
+  TXsheet *xsh = scene->getChildStack()->getTopXsheet();
+  if (!xsh) return;
+
+  // Collect xsheet columns and sort by start frame (leftmost = destination)
+  std::vector<int> sortedCols;
+  for (int bi : toMerge)
+    if (bi >= 0 && bi < (int)m_shots.size())
+      sortedCols.push_back(m_shots[bi].data.xsheetColumn);
+  if (sortedCols.size() < 2) return;
+  std::sort(sortedCols.begin(), sortedCols.end(), [&](int a, int b){
+    int r0a = 0, r1a = 0, r0b = 0, r1b = 0;
+    if (xsh->getColumn(a)) xsh->getColumn(a)->getRange(r0a, r1a);
+    if (xsh->getColumn(b)) xsh->getColumn(b)->getRange(r0b, r1b);
+    return r0a < r0b;
+  });
+
+  int dstCol = sortedCols[0];
+  TXshColumn *dstColumn = xsh->getColumn(dstCol);
+  if (!dstColumn) return;
+  int dstR0 = 0, dstR1 = 0;
+  dstColumn->getRange(dstR0, dstR1);
+
+  TXshChildLevel *dstCl = nullptr;
+  for (int r = dstR0; r <= dstR1; r++) {
+    TXshCell cell = xsh->getCell(r, dstCol);
+    if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
+      dstCl = cell.m_level->getChildLevel();
+      break;
+    }
+  }
+  if (!dstCl) return;
+
+  int appendAt    = dstR1 + 1;
+  int dstDuration = dstR1 - dstR0 + 1;
+  int lastFrameNum = dstDuration;
+
+  materializeCells(dstCl, dstDuration);
+  trimChildXsheetTo(dstCl, dstDuration);
+
+  for (int i = 1; i < (int)sortedCols.size(); i++) {
+    int srcCol = sortedCols[i];
+    TXshColumn *srcColumn = xsh->getColumn(srcCol);
+    if (!srcColumn) continue;
+    int r0 = 0, r1 = 0;
+    srcColumn->getRange(r0, r1);
+    int duration = r1 - r0 + 1;
+    TXshChildLevel *srcCl = nullptr;
+    for (int r = r0; r <= r1; r++) {
+      TXshCell cell = xsh->getCell(r, srcCol);
+      if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
+        srcCl = cell.m_level->getChildLevel();
+        break;
+      }
+    }
+    mergeChildXsheetContent(dstCl, srcCl, lastFrameNum, duration);
+    for (int r = 0; r < duration; r++)
+      xsh->setCell(appendAt + r, dstCol, TXshCell(dstCl, TFrameId(++lastFrameNum)));
+    appendAt += duration;
+  }
+
+  // Delete source columns in reverse order to keep lower indices stable
+  for (int i = (int)sortedCols.size() - 1; i >= 1; i--)
+    ColumnCmd::deleteColumn(sortedCols[i]);
+
+  xsh->updateFrameCount();
+  app->getCurrentXsheet()->notifyXsheetChanged();
+  ZtoryModel::instance()->resequenceXsheet();
+
+  m_selectedIndices.clear();
+  m_selectedShotIndex = -1;
+
+  // Notify Animatic (and Board itself via onShotRemovedAt) after xsheet is stable
+  for (int i = (int)sortedCols.size() - 1; i >= 1; i--)
+    emit ZtoryModel::instance()->shotRemovedAt(sortedCols[i]);
 }
 
 void StoryboardPanel::onShotInserted(int col) {

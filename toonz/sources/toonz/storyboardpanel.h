@@ -174,6 +174,7 @@ protected:
   void onExportAnimatic();
   void onXsheetChanged();
   void onModelResequenced(); // called when ZtoryModel::resequenceXsheet runs
+  void onMergeShots();            // merge selected shots (Board → xsheet + sub-scene merge)
   void onShotInserted(int col);   // called when razor/external op inserts a shot at col
   void onShotRemovedAt(int col);  // called when merge/external op deletes a shot at col
   void onMatchDuration(int shotIdx);  // resize timeline column to sub-scene actual duration

@@ -43,10 +43,13 @@
 #include "toonz/tstageobject.h"
 #include "toonz/tstageobjecttree.h"
 #include "toonz/tstageobjectid.h"
+#include "toonz/txshleveltypes.h"
+#include "toonz/tcamera.h"
 
 // Shared label column width — must match ZtoryAudioTrack::labelW (80px).
 // Used by ZtoryAnimaticRuler and ZtoryAnimaticTrack to align with audio tracks.
 static constexpr int kLabelW = 80;
+
 
 // ---- ZtoryAnimaticController ----
 
@@ -107,6 +110,14 @@ TSoundTrackP ZtoryAnimaticController::requireSoundTrack() {
   try {
     TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
     prop->m_isPreview = true;
+    // CRITICAL: set explicit frame range using video columns only.
+    // Default fromFrame/toFrame = -1,-1 cause mixingTogether() to use
+    // xsh->getFrameCount() as toFrame.  After an audio razor cut the trailing
+    // ColumnLevel keeps endOffset=0 (raw file length), inflating getFrameCount()
+    // to millions of frames.  mixingTogether() then allocates a massive buffer
+    // (hundreds of MB) → heap corruption → crash.
+    prop->m_fromFrame = 0;
+    prop->m_toFrame   = videoFrameCount(xsh) - 1;
     m_soundTrack = TSoundTrackP(xsh->makeSound(prop));
   } catch (...) {
     m_soundTrack = TSoundTrackP();
@@ -2048,19 +2059,26 @@ void ZtoryAnimaticViewer::onAnimaticPlayingStatusChanged(bool playing) {
 
 // ---- restartAudioIfPlaying ----
 // Called by the panel after mute/solo changes.  If continuous play is active,
-// Rebuilds the merged sound track with updated volumes and calls play()
-// directly — no stopScrub(), so QAudioOutput never goes to underrun state.
-// The hardware buffer (~100ms) will drain the old data before switching;
-// the new mix takes effect within one buffer period.
+// rebuilds the merged sound track with updated volumes and calls play()
+// directly.  m_soundTrackRef keeps the OLD TSoundTrack alive (refcount > 0)
+// until refreshAnimaticSound() atomically replaces it — so m_sound is always
+// valid and we never hand the audio device a dangling pointer.
 void ZtoryAnimaticViewer::restartAudioIfPlaying() {
   if (!m_continuousPlay) return;
   auto *ctrl = ZtoryAnimaticController::instance();
   TXsheet *mainXsh = ctrl->mainXsheet();
   if (!mainXsh) return;
 
+  // Ensure QAudioOutput is fully idle before rebuilding.
+  // stopScrub() clears m_buffer so that any pending sendBuffer() callbacks
+  // return immediately without writing stale data.
+  mainXsh->stopScrub();
+
   int startFrame = ctrl->currentFrame();
 
-  // Rebuild sound with updated volumes (caches already invalidated by caller)
+  // Rebuild sound with updated volumes (caches already invalidated by caller).
+  // refreshAnimaticSound() swaps m_soundTrackRef atomically: old ref kept alive
+  // until the assignment, so m_sound never points to freed memory.
   refreshAnimaticSound();
   if (!m_sound) return;
 
@@ -2256,7 +2274,7 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   QLabel *zoomLabel = new QLabel("Zoom:", toolbar);
   zoomLabel->setStyleSheet("color:#ccc; font-size:11px;");
   m_zoomSlider = new QSlider(Qt::Horizontal, toolbar);
-  m_zoomSlider->setRange(20, 640);
+  m_zoomSlider->setRange(2, 640);   // min 0.2 ppf — allows seeing very long audio tracks
   m_zoomSlider->setValue((int)(m_ppf * 10));
   m_zoomSlider->setMaximumWidth(160);
   m_zoomSlider->setToolTip("Zoom (pixels per frame)");
@@ -2450,9 +2468,11 @@ void ZtoryAnimaticPanel::refreshFromScene() {
 }
 
 void ZtoryAnimaticPanel::updateTrackWidths() {
-  // Compute max frame from VIDEO blocks only.
-  // Audio segments are excluded: a long raw audio file would inflate the ruler
-  // width to thousands of frames even if only a short slice is actually placed.
+  // Use video block extents only.  Audio ColumnLevel extents are NOT used here:
+  // after a razor cut the right segment's endOffset=0 makes getVisibleEndFrame()
+  // return the raw file duration (potentially minutes/hours), inflating totalW
+  // and making the ruler/cursor appear to jump to that frame.
+  // Animatic length is driven by video shots, not audio placement.
   int maxFrame = 0;
   for (auto &b : m_track->blocks())
     maxFrame = qMax(maxFrame, b.startFrameInMain + (b.f1 - b.f0 + 1));
@@ -2504,20 +2524,41 @@ void ZtoryAnimaticPanel::applyMuteSolo() {
   xsh->invalidateSound();
   auto *ctrl = ZtoryAnimaticController::instance();
   ctrl->invalidateSoundTrack();
-  // Restart audio synchronously so the new mix is heard immediately.
-  // Safe because m_soundTrackRef keeps the old track alive until
-  // refreshAnimaticSound() replaces it — no dangling m_sound pointer.
-  if (ctrl->viewer()) ctrl->viewer()->restartAudioIfPlaying();
+
+  // Stop the current audio stream NOW (main thread, safe).
+  // This ensures the QAudioOutput is not in Active state when play() is called
+  // again: on macOS, QAudioOutput::notify can fire from CoreAudio's internal
+  // thread.  If play() runs concurrently with a notify→sendBuffer() callback,
+  // m_audioBuffer->write() and m_buffer.resize() race → EXC_BAD_ACCESS.
+  // Stopping here drains any in-flight CoreAudio callbacks synchronously.
+  TXsheet *mainXsh2 = ctrl->mainXsheet();
+  if (mainXsh2) mainXsh2->stopScrub();
+
+  // Defer the restart to the next event-loop iteration so that any queued
+  // QAudioOutput signals (notify, stateChanged) already in the queue are
+  // delivered BEFORE we call play() with the new buffer.  This eliminates
+  // the window where CoreAudio callbacks race against buffer replacement.
+  if (ctrl->viewer()) {
+    ZtoryAnimaticViewer *viewer = ctrl->viewer();
+    QTimer::singleShot(0, viewer, [viewer]() {
+      viewer->restartAudioIfPlaying();
+    });
+  }
 }
 
 void ZtoryAnimaticPanel::restoreTrackStates() {
-  // Called after refreshAudioTracks() rebuilds widgets — re-apply persisted state.
+  // Called after refreshAudioTracks() rebuilds widgets — re-apply persisted
+  // UI state (button checked/unchecked) only.  Do NOT call applyMuteSolo()
+  // here: it triggers invalidateSound() + restartAudioIfPlaying() which can
+  // destroy the sound track while the audio device thread is still playing,
+  // causing heap corruption / SIGSEGV.  The column volumes were already set
+  // before the rebuild and remain valid.
   for (auto *at : m_audioTracks) {
     int col = at->columnIndex();
     if (m_colLocked.value(col, false)) at->setLocked(true);
+    if (m_colMuted.value(col, false))  at->setMuted(true);
+    if (m_colSolo.contains(col))       at->setSolo(true);
   }
-  // Mute/solo visual + volume (maps already up-to-date)
-  applyMuteSolo();
 }
 
 void ZtoryAnimaticPanel::refreshAudioTracks() {
@@ -2594,12 +2635,15 @@ void ZtoryAnimaticPanel::refreshAudioTracks() {
     // Lock / mute / solo signals
     connect(at, &ZtoryAudioTrack::lockedChanged,
             this, [this](int col, bool on){ m_colLocked[col] = on; });
-    connect(at, &ZtoryAudioTrack::muteToggleRequested, this, [this](int /*col*/){
-      // Visual already toggled by the track widget — just update audio volume
+    connect(at, &ZtoryAudioTrack::muteToggleRequested, this, [this, at](int col){
+      // Persist so restoreTrackStates() can re-apply after refreshAudioTracks()
+      m_colMuted[col] = at->isMuted();
       applyMuteSolo();
     });
-    connect(at, &ZtoryAudioTrack::soloToggleRequested, this, [this](int /*col*/){
-      // Visual already toggled by the track widget — just update audio volume
+    connect(at, &ZtoryAudioTrack::soloToggleRequested, this, [this, at](int col){
+      // Persist so restoreTrackStates() can re-apply after refreshAudioTracks()
+      if (at->isSolo()) m_colSolo.insert(col);
+      else              m_colSolo.remove(col);
       applyMuteSolo();
     });
 
@@ -2769,7 +2813,7 @@ static void addRazorKeyframes(TXshChildLevel *cl, int frame) {
 // Before trimming/shifting we must make held frames explicit so that neither
 // shot ends up with empty columns at the cut boundary.
 // |duration| = total number of frames that the child xsheet must cover.
-static void materializeCells(TXshChildLevel *cl, int duration) {
+void materializeCells(TXshChildLevel *cl, int duration) {
   if (!cl) return;
   TXsheet *xsh = cl->getXsheet();
   if (!xsh) return;
@@ -2801,7 +2845,7 @@ static void materializeCells(TXshChildLevel *cl, int duration) {
 
 // Helper: trim a child xsheet to |keepFrames| frames.
 // Removes cells >= keepFrames and removes stage-object keyframes >= keepFrames.
-static void trimChildXsheetTo(TXshChildLevel *cl, int keepFrames) {
+void trimChildXsheetTo(TXshChildLevel *cl, int keepFrames) {
   if (!cl) return;
   TXsheet *xsh = cl->getXsheet();
   if (!xsh) return;
@@ -2880,7 +2924,7 @@ static void shiftChildXsheetBy(TXshChildLevel *cl, int offset) {
 //      dstOffset+srcDuration-1 : added AFTER (end of the new segment, needed
 //                                for 3+-shot merges where it becomes a middle).
 //  - srcCl's cells are materialized (held cells → explicit) before copying.
-static void mergeChildXsheetContent(TXshChildLevel *dstCl,
+void mergeChildXsheetContent(TXshChildLevel *dstCl,
                                     TXshChildLevel *srcCl,
                                     int dstOffset, int srcDuration) {
   if (!dstCl || !srcCl) return;
@@ -3063,27 +3107,60 @@ void ZtoryAnimaticPanel::onMergeShots() {
 // ---- Add Shot ----
 void ZtoryAnimaticPanel::onAddShot() {
   if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
-  // Insert after the last selected shot, or at the end if nothing is selected.
-  int insertAt = -1;  // -1 = append at end (ZtoryModel::addShot default)
+
+  TApp *app = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  if (!scene) return;
+  TXsheet *xsh = scene->getChildStack()->getTopXsheet();
+  if (!xsh) return;
+
+  // Insert after the rightmost selected shot, or append at the end
+  int insertAt = xsh->getColumnCount();
   const std::set<int> &sel = m_track->selectedCols();
-  if (!sel.empty()) {
-    TApp *app = TApp::instance();
-    ToonzScene *scene = app->getCurrentScene()->getScene();
-    TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
-    if (xsh) {
-      // Find rightmost selected block and insert after it
-      int maxEnd = -1;
-      for (int c : sel) {
-        TXshColumn *col = xsh->getColumn(c);
-        if (!col) continue;
-        int r0 = 0, r1 = 0;
-        col->getRange(r0, r1);
-        maxEnd = qMax(maxEnd, c);
+  if (!sel.empty())
+    insertAt = *std::max_element(sel.begin(), sel.end()) + 1;
+
+  static const int kDefaultDuration = 24;
+
+  // Create a new sub-scene (child level)
+  TXshLevel *xl = scene->createNewLevel(CHILD_XSHLEVEL);
+  if (!xl || !xl->getChildLevel()) return;
+  TXshChildLevel *cl = xl->getChildLevel();
+
+  xsh->insertColumn(insertAt);
+  for (int r = 0; r < kDefaultDuration; r++)
+    xsh->setCell(r, insertAt, TXshCell(cl, TFrameId(r + 1)));
+  xsh->updateFrameCount();
+
+  // Copy camera resolution/size from parent to sub-scene
+  TXsheet *childXsh = cl->getXsheet();
+  if (childXsh) {
+    TStageObjectTree *parentTree = xsh->getStageObjectTree();
+    TStageObjectTree *childTree  = childXsh->getStageObjectTree();
+    int tmpCamId = 0;
+    for (int cam = 0; cam < parentTree->getCameraCount();) {
+      TStageObject *parentCamera = parentTree->getStageObject(
+          TStageObjectId::CameraId(tmpCamId), false);
+      if (!parentCamera) { tmpCamId++; continue; }
+      if (parentCamera->getCamera()) {
+        TCamera *childCamera = childTree->getStageObject(
+            TStageObjectId::CameraId(tmpCamId))->getCamera();
+        if (childCamera) {
+          childCamera->setRes(parentCamera->getCamera()->getRes());
+          childCamera->setSize(parentCamera->getCamera()->getSize());
+        }
       }
-      insertAt = maxEnd + 1;
+      tmpCamId++; cam++;
     }
+    childTree->setCurrentCameraId(parentTree->getCurrentCameraId());
   }
-  ZtoryModel::instance()->addShot(insertAt);
+
+  app->getCurrentXsheet()->notifyXsheetChanged();
+  ZtoryModel::instance()->resequenceXsheet();
+  m_track->refreshFromScene();
+
+  // Notify Board AFTER xsheet is stable
+  emit ZtoryModel::instance()->shotAdded(insertAt);
 }
 
 void ZtoryAnimaticPanel::onMergeWithNext(int col) {

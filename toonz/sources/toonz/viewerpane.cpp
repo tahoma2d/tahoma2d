@@ -900,6 +900,7 @@ void BaseViewerPanel::onFrameTypeChanged() {
 //-----------------------------------------------------------------------------
 
 void BaseViewerPanel::playAudioFrame(int frame) {
+  if (!m_sound) return;
   if (m_first) {
     m_first = false;
     m_fps   = TApp::instance()
@@ -910,7 +911,6 @@ void BaseViewerPanel::playAudioFrame(int frame) {
                 ->getFrameRate();
     m_samplesPerFrame = m_sound->getSampleRate() / std::abs(m_fps);
   }
-  if (!m_sound) return;
   m_viewerFps = m_flipConsole->getCurrentFps();
   double s0 = frame * m_samplesPerFrame, s1 = s0 + m_samplesPerFrame;
 

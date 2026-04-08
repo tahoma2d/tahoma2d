@@ -42,6 +42,13 @@
 | 13c | Playhead triangle style nativo | 2026-03-21 |
 | 14 | Startup dialog (ZtoryStartupDialog, 4 sezioni) | 2026-03-21 |
 | 15 | RecentFiles.ini cap a 50 entry | 2026-03-26b |
+| TOOLBAR-ICONS | QPushButton → QToolButton con icone SVG in storyboardpanel e ztoryanimatic | 2026-04-05 |
+| SVG-ICONS | 21 icone SVG Ztoryc in icons/dark/ztoryc/ + toonz.qrc | 2026-04-05 |
+| CAMERA-INIT | Camera init (res+size da main) in onAddShot() — fix inquadratura sottoscena | 2026-04-05 |
+| BUG-ONION | Ghost onion skin nel viewer animatic disabilitato | 2026-04-05 |
+| BUG-CAMRESIZE | Camera resize non scala più il disegno (Edit In Place spento) | 2026-04-05 |
+| WEBCAM-SELECT | Webcam: selectCamera() forzata prima di ogni switch — fix deadlock/feed perso | 2026-04-05 |
+| 16 | Audio sync: QAudioOutput::processedUSecs() come master clock in onDrawFrame | 2026-03-28 |
 
 ---
 
@@ -267,7 +274,7 @@ Valore default: "next style" (N+1). Se la palette cambia, il combo si aggiorna.
 
 ---
 
-### Task 16 — 🔴 Audio sync play (PRIORITARIO)
+### ~~Task 16 — Audio sync play~~ ✅ DONE 2026-03-28
 
 **Sintomo:** desync A/V residuo su animatici lunghi — "molto meglio" ma non
 perfetto. Causa: video timer (`PlaybackExecutor`) e `QAudioOutput` usano
@@ -345,6 +352,79 @@ e viewer normale (risparmio schermo).
 
 ---
 
+### NEW — Merge BOARD: collegare m_mergeButton a ZtoryModel
+
+**Stato:** bottone presente nella toolbar Board ma disabilitato (`setEnabled(false)`).
+Il merge esiste e funziona nell'ANIMATIC (`ZtoryAnimaticPanel::onMergeShots`) ma usa
+`m_track->selectedCols()` che dipende dalla selezione della track animatic.
+
+**Da implementare:** `StoryboardPanel::onMergeShots()` che:
+1. Legge le shot selezionate dal Board via `m_selectedIndices`
+2. Esegue la stessa logica di merge di `ZtoryAnimaticPanel::onMergeShots`
+3. Aggiorna ZtoryModel dopo il merge
+4. Propaga a tutti i panel (Board, Animatic) tramite segnali ZtoryModel
+
+**Importante:** merge è la stessa operazione in Board e Animatic — agisce sullo
+xsheet principale, unisce le sottoscene selezionate nella prima. Merge da Animatic
+deve aggiornare la griglia Board e viceversa.
+
+**File:** `storyboardpanel.h/.cpp`, `ztoryanimatic.cpp`, `ztorymodel.h/.cpp`.
+
+---
+
+### NEW — Shortcut tastiera Cmd+C/X/V/Delete nel Board e Animatic
+
+**Cosa:** copy/cut/paste/delete da tastiera quando uno shot o segmento audio è
+selezionato, senza conflitti con le shortcut globali di Tahoma (CommandManager).
+
+- **Board:** intercettare su shot selezionati nella griglia (`m_selectedIndices`)
+- **Animatic:** intercettare su shot selezionati nella track + segmenti audio selezionati
+
+**Note:** usare `QKeyEvent` override nel panel, con guard che verifica che il focus
+sia dentro il panel prima di intercettare — evita conflitti con l'xsheet globale.
+
+**File:** `storyboardpanel.cpp` (`keyPressEvent`), `ztoryanimatic.cpp` (`keyPressEvent`).
+
+---
+
+### NEW — Lock tracce audio: logica di blocco
+
+**Stato:** icone `ztoryc_lock.svg` / `ztoryc_lock_on.svg` pronte. Il bottone `L`
+è già disegnato via QPainter in `ZtoryAudioTrack::paintEvent` insieme a M e S.
+
+**Da implementare:** logica di lock che blocca la traccia audio impedendone la
+modifica accidentale (drag, cut, delete, edge trim disabilitati quando locked).
+
+**Implementazione:**
+- `ZtoryAudioTrack::m_locked` bool + toggle su click area `L`
+- In tutti i handler di modifica (drag, trim, delete): guard `if (m_locked) return;`
+- Feedback visivo: cursore `ForbiddenCursor` su hover quando locked
+
+**File:** `ztoryanimatic.h/.cpp` (`ZtoryAudioTrack`).
+
+---
+
+### NEW — Undo/Redo via TUndoManager
+
+**Priorità:** implementare DOPO che ZtoryModel è consolidato come master unico.
+
+**Scope:** ogni operazione CRUD su shot (add, delete, merge, move, razor) deve
+registrare un comando undo via `TUndoManager`.
+
+**Pattern:**
+```cpp
+class UndoAddShot : public TUndo {
+  void undo() override { ZtoryModel::instance()->removeShot(m_idx); }
+  void redo() override { ZtoryModel::instance()->addShotAt(m_idx, m_data); }
+};
+TUndoManager::manager()->add(new UndoAddShot(...));
+```
+
+**File:** `ztorymodel.cpp` (ogni metodo CRUD), nuovo file `ztoryundo.h/.cpp`.
+**Stima:** 2-3h di lavoro dopo consolidamento ZtoryModel.
+
+---
+
 ### Task 13d — Navigation tags sul ruler
 
 **Cosa:** tag colorati sul ruler (come nella timeline nativa) con label
@@ -372,21 +452,29 @@ alle sequence del progetto (sq01, sq02…).
 0. ~~**BUG Crash salvataggio TLV**~~ ✅ DONE 2026-04-01 (libimage deploy con rpath patch)
 1. **BUG Board desync** — 🔴 Board non si aggiorna + sincronizzazione bidirezionale completa
 2. ~~**BUG Razor audio gap**~~ ✅ DONE 2026-03-31
-3. **BUG Ghost onion skin** — viewer animatic mostra onion skin non richiesto
-4. **BUG Camera resize** — ridimensionare camera scala anche il disegno
+3. ~~**BUG Ghost onion skin**~~ ✅ DONE (data da confermare)
+4. ~~**BUG Camera resize**~~ ✅ DONE (data da confermare)
 5. **PERF Audio pesante** — cache waveform pre-renderizzata
 6. **BUG AutoFill fill color** — picker colore per autofill nella palette del livello
 
-### Feature in roadmap
-5. ~~**Task 16**~~ ✅ DONE (2026-03-28) — Audio-master clock (processedUSecs DAC)
-6. ~~**Task B/A**~~ ✅ DONE (2026-03-28) — Audio main xsheet da sotto-scena (play + scrub)
-7. ~~**Task C**~~ ✅ DONE (2026-03-28) — Auto-aggiornamento marker Out sub-xsheet
-8. ~~**Task 15**~~ ✅ DONE (2026-03-28) — RecentFiles.ini deadlock fix
-9. **NEW Numerazione SQ/SH/P** — sistema completo Sequence→Shot→Panel (3 fasi, partire da struttura dati + save/load)
-10. **Task 9** — Audio export con shot
-11. ~~**Task 10**~~ ✅ DONE — X-Sheet guard audio import
-12. **Task 11** — Viewer toggle
-13. **Task 13d** — Navigation tags (⚠️ design session prima)
+### Feature immediate (prossime sessioni)
+7. **NEW Merge Board** — collegare m_mergeButton a ZtoryModel (identico a merge Animatic)
+8. **NEW Shortcut Cmd+C/X/V/Delete** — Board e Animatic, senza conflitti CommandManager
+9. **NEW Lock tracce audio** — logica blocco modifica (drag/trim/delete disabilitati)
+10. **NEW Numerazione SQ/SH/P** — sistema completo Sequence→Shot→Panel (3 fasi)
+11. **Task 9** — Audio export con shot
+12. **Task 11** — Viewer toggle (QStackedWidget)
+13. **NEW Undo/Redo** — TUndoManager su tutte le operazioni CRUD shot (dopo ZtoryModel consolidato)
+14. **Task 13d** — Navigation tags (⚠️ design session prima)
+
+### Milestone roadmap
+- **M1 Struttura base:** Undo/Redo, StoryStrip Panel, Order Review Panel, Renumber avanzato
+- **M2 Timeline/Animatic:** TFrameHandle dedicato, Zoom ruler adattivo, Export Animatic → render
+- **M3 Shot Editor avanzato:** Quick-shot selector dropdown, Export PDF con preview reali
+- **M4 Room REFERENCE:** canvas PureRef-style (QGraphicsScene), drag&drop immagini/GIF/video,
+  salvataggio path nel `.ztoryc` — Qt nativo, no Electron/WebEngine
+- **M5 Kitsu Integration:** push shot come task, sync stato, note revisione
+  (server kitsu.ztoryc.org già attivo su Mac mini M4)
 
 ---
 
@@ -398,6 +486,8 @@ toonz/sources/toonz/ztorymodel.h/.cpp        — Singleton data model
 toonz/sources/toonz/ztoryanimatic.h/.cpp     — Animatic panel + viewer
 toonz/sources/toonz/ztorystartup.h/.cpp      — Startup dialog (NEW 2026-03-21)
 toonz/sources/toonz/ztorybackpanel.h/.cpp    — Back to storyboard button
+toonz/sources/toonz/icons/dark/ztoryc/      — Icone SVG Ztoryc (21 file)
+toonz/sources/toonz/toonz.qrc               — Registrazione icone SVG
 toonz/sources/stopmotion/webcam.h/.cpp       — Webcam + AVCapture
 toonz/sources/toonzqt/txshsoundcolumn.h/.cpp — Audio column (shiftLevelFromFrame)
 toonz/sources/image/tzl/tiio_tzl.cpp         — TLV save (assert fixes)
