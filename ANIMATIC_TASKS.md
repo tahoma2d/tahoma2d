@@ -450,18 +450,18 @@ alle sequence del progetto (sq01, sq02…).
 
 ### Bug immediati (nessun design necessario)
 0. ~~**BUG Crash salvataggio TLV**~~ ✅ DONE 2026-04-01 (libimage deploy con rpath patch)
-1. **BUG Board desync** — 🔴 Board non si aggiorna + sincronizzazione bidirezionale completa
+1. ~~**BUG Board desync**~~ ✅ DONE 2026-04-06 (da testare) — sincronizzazione bidirezionale; completamento con task #10 (numerazione)
 2. ~~**BUG Razor audio gap**~~ ✅ DONE 2026-03-31
 3. ~~**BUG Ghost onion skin**~~ ✅ DONE (data da confermare)
 4. ~~**BUG Camera resize**~~ ✅ DONE (data da confermare)
-5. **PERF Audio pesante** — cache waveform pre-renderizzata
-6. **BUG AutoFill fill color** — picker colore per autofill nella palette del livello
+5. ~~**PERF Audio pesante**~~ ✅ DONE — cache waveform pre-renderizzata
+6. **BUG AutoFill fill color** — picker colore per autofill nella palette del livello 🔴 DA FARE
 
 ### Feature immediate (prossime sessioni)
-7. **NEW Merge Board** — collegare m_mergeButton a ZtoryModel (identico a merge Animatic)
-8. **NEW Shortcut Cmd+C/X/V/Delete** — Board e Animatic, senza conflitti CommandManager
-9. **NEW Lock tracce audio** — logica blocco modifica (drag/trim/delete disabilitati)
-10. **NEW Numerazione SQ/SH/P** — sistema completo Sequence→Shot→Panel (3 fasi)
+7. ~~**NEW Merge Board**~~ ✅ DONE 2026-04-06 — m_mergeButton collegato a ZtoryModel
+8. **NEW Shortcut Cmd+C/X/V/Delete** — Board e Animatic, senza conflitti CommandManager 🔴 DA FARE
+9. ~~**NEW Lock tracce audio**~~ ✅ DONE — lock già funzionante
+10. **NEW Numerazione SQ/SH/P** — sistema completo Sequence→Shot→Panel (3 fasi) 🔴 DA FARE
 11. **Task 9** — Audio export con shot
 12. **Task 11** — Viewer toggle (QStackedWidget)
 13. **NEW Undo/Redo** — TUndoManager su tutte le operazioni CRUD shot (dopo ZtoryModel consolidato)

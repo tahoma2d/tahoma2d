@@ -931,10 +931,26 @@ bool BaseViewerPanel::hasSoundtrack() {
     m_first         = true;
   }
   TXsheetHandle *xsheetHandle    = TApp::instance()->getCurrentXsheet();
+  TXsheet *xsh                   = xsheetHandle->getXsheet();
   TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
   if (!m_sceneViewer->isPreviewEnabled()) prop->m_isPreview = true;
+  // Bound the frame range to video columns only.
+  // Default fromFrame/toFrame=-1,-1 maps to getFrameCount() inside
+  // mixingTogether().  After an audio razor cut, getFrameCount() includes the
+  // raw audio file length (potentially hours) → multi-GB allocation → crash.
+  prop->m_fromFrame = 0;
+  if (xsh) {
+    int maxFrame = 0;
+    for (int c = 0; c < xsh->getColumnCount(); c++) {
+      TXshColumn *col = xsh->getColumn(c);
+      if (!col || col->getSoundColumn()) continue;
+      int r0, r1;
+      if (col->getRange(r0, r1)) maxFrame = std::max(maxFrame, r1 + 1);
+    }
+    prop->m_toFrame = maxFrame > 0 ? maxFrame - 1 : xsh->getFrameCount();
+  }
   try {
-    m_sound = xsheetHandle->getXsheet()->makeSound(prop);
+    m_sound = xsh ? xsh->makeSound(prop) : nullptr;
   } catch (TSoundDeviceException &e) {
     if (e.getType() == TSoundDeviceException::NoDevice) {
       std::cout << ::to_string(e.getMessage()) << std::endl;

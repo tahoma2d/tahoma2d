@@ -354,6 +354,11 @@ public:
   // stops and restarts audio so the new mix takes effect immediately.
   void restartAudioIfPlaying();
 
+  // Schedule an audio restart on the next onDrawFrame tick.  Safe to call
+  // from any slot (including button-click handlers) because onDrawFrame runs
+  // between CoreAudio XPC callbacks.
+  void requestAudioRestart() { m_pendingAudioRestart = true; }
+
   // Override: write frame to controller's handle, NOT TApp::getCurrentFrame().
   // Base implementation always uses the global handle → during play it would
   // advance the sub-scene's frame instead of the animatic frame.
@@ -401,6 +406,11 @@ private:
   // Previous FlipConsole frame (1-based) seen by onDrawFrame.
   // Used to detect loop-back (frame drops below previous value).
   int m_prevFlipFrame = 0;
+
+  // Set by applyMuteSolo() when audio needs to be restarted (mute/solo changed
+  // during playback).  Checked at the top of onDrawFrame, which runs on the
+  // main thread between CoreAudio XPC callbacks — safe to call stopScrub/play.
+  bool m_pendingAudioRestart = false;
 
   // Tracks ctrl-handle connections so they aren't duplicated across show/hide.
   QMetaObject::Connection m_frameRangeConn;

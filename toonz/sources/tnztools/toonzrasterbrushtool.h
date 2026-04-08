@@ -155,6 +155,9 @@ public:
 
   TPropertyGroup *getProperties(int targetType) override;
   bool onPropertyChanged(std::string propertyName) override;
+  // Rebuild m_autoFillStyle enum from palette styles.  Called by
+  // BrushToolOptionsBox::updateStatus() whenever the palette changes.
+  void rebuildAutoFillStyleCombo(TPaletteP pal);
   void onImageChanged() override;
   void setWorkAndBackupImages();
   void updateWorkAndBackupRasters(const TRect &rect);
@@ -189,6 +192,7 @@ protected:
   TEnumProperty m_drawOrder;
   TBoolProperty m_pencil;
   TBoolProperty m_autoFill;
+  TEnumProperty m_autoFillStyle;  // "Next Style (N+1)" | "Current Style" | "palette_N"
   TBoolProperty m_mypaintPressure;
   TDoubleProperty m_modifierSize;
   TBoolProperty m_modifierLockAlpha;

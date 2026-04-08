@@ -570,6 +570,8 @@ class BrushToolOptionsBox final : public ToolOptionsBox {
   Q_OBJECT
 
   TTool *m_tool;
+  TPaletteHandle *m_pltHandle;
+  ToolHandle *m_toolHandle;
 
   ToolOptionCheckbox *m_pencilMode;
   QLabel *m_hardnessLabel;
@@ -580,9 +582,14 @@ class BrushToolOptionsBox final : public ToolOptionsBox {
   ToolOptionCheckbox *m_snapCheckbox, *m_drawOrderCheckbox,
       *m_autoCloseCheckbox, *m_autoGroupCheckbox, *m_autoFillCheckbox;
   ToolOptionCombo *m_snapSensitivityCombo;
+  ToolOptionCombo *m_autoFillStyleCombo;  // dynamic palette style picker
   QPushButton *m_addPresetButton;
   QPushButton *m_removePresetButton;
   ToolOptionBrushTipButton *m_brushTips;
+
+  // Palette change detection for AutoFill style combo rebuild
+  TPalette *m_lastPalette       = nullptr;
+  int       m_lastPaletteStyles = -1;
 
 private:
   class PresetNamePopup;

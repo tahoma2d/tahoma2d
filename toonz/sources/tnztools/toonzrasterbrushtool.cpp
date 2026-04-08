@@ -968,6 +968,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_drawOrder("Draw Order:")
     , m_pencil("Pencil", false)
     , m_autoFill("Auto Fill", false)
+    , m_autoFillStyle("Fill Style:")
     , m_mypaintPressure("ModifierPressure", true)
     , m_modifierSize("ModifierSize", -3, 3, 0, true)
     , m_cmRasterBrush(0)
@@ -1007,12 +1008,14 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
   m_prop[0].bind(m_modifierLockAlpha);
   m_prop[0].bind(m_pencil);
   m_prop[0].bind(m_autoFill);
+  m_prop[0].bind(m_autoFillStyle);
   m_prop[0].bind(m_mypaintPressure);
   m_prop[0].bind(m_mypaintTilt);
   m_prop[0].bind(m_snapGrid);
   m_prop[0].bind(m_preset);
 
   m_pencil.setId("PencilMode");
+  m_autoFillStyle.setId("AutoFillStyle");
   m_drawOrder.setId("DrawOrder");
   m_snapGrid.setId("SnapGrid");
   m_preset.setId("BrushPreset");
@@ -1021,6 +1024,9 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
   m_mypaintTilt.setId("TiltSensitivity");
   m_sizeStylusProperty.setId("SizeStylusConfig");
   m_brushTip.setId("BrushTip");
+
+  m_autoFillStyle.addValue(L"Next Style (N+1)");
+  m_autoFillStyle.addValue(L"Current Style");
 
   m_drawOrder.addValue(L"Over All");
   m_drawOrder.addValue(L"Under All");
@@ -1221,12 +1227,42 @@ void ToonzRasterBrushTool::updateTranslation() {
   m_pencil.setQStringName(tr("Pencil"));
   m_autoFill.setQStringName(tr("Auto Fill"));
   m_autoFill.setId("AutoFill");
+  m_autoFillStyle.setQStringName(tr("Fill Style:"));
+  m_autoFillStyle.setItemUIName(L"Next Style (N+1)", tr("Next Style (N+1)"));
+  m_autoFillStyle.setItemUIName(L"Current Style",    tr("Current Style"));
   m_modifierLockAlpha.setQStringName(tr("Lock Alpha"));
   m_snapGrid.setQStringName(tr("Grid"));
   m_mypaintPressure.setQStringName(tr("Pressure"));
   m_mypaintTilt.setQStringName(tr("Tilt"));
   m_sizeStylusProperty.setQStringName(tr("Stylus Settings - Size"));
   m_brushTip.setQStringName(tr("Brush Tip"));
+}
+
+//---------------------------------------------------------------------------------------------------
+
+void ToonzRasterBrushTool::rebuildAutoFillStyleCombo(TPaletteP pal) {
+  // Preserve current selection.
+  std::wstring cur = m_autoFillStyle.getValue();
+  m_autoFillStyle.deleteAllValues();
+  m_autoFillStyle.addValue(L"Next Style (N+1)");
+  m_autoFillStyle.setItemUIName(L"Next Style (N+1)", tr("Next Style (N+1)"));
+  m_autoFillStyle.addValue(L"Current Style");
+  m_autoFillStyle.setItemUIName(L"Current Style", tr("Current Style"));
+  if (pal) {
+    int nStyles = pal->getStyleCount();
+    for (int i = 0; i < nStyles; i++) {
+      TColorStyle *style = pal->getStyle(i);
+      if (!style) continue;
+      std::wstring name = style->getName();
+      if (name.empty()) name = L"Style " + std::to_wstring(i);
+      std::wstring key = L"palette_" + std::to_wstring(i);
+      m_autoFillStyle.addValue(key);
+      m_autoFillStyle.setItemUIName(
+          key, QString("[%1] %2").arg(i).arg(QString::fromStdWString(name)));
+    }
+  }
+  if (m_autoFillStyle.isValue(cur))
+    m_autoFillStyle.setValue(cur);
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -2545,12 +2581,25 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
             enqueue(rx, ry-1); enqueue(rx, ry+1);
           }
 
-          // Use next palette style for fill (ink=N → fill=N+1 convention).
+          // Determine fill style from tool option.
+          // "Next Style (N+1)": ink style N → fill with N+1 (classic convention).
+          // "Current Style": fill with whatever is currently selected in palette.
           TTool::Application *app2 = TTool::getApplication();
           int styleId = app2 ? app2->getCurrentLevelStyleIndex() : 1;
           if (styleId <= 0) styleId = 1;
-          int fillStyleId = styleId + 1;
-          {
+          int fillStyleId;
+          std::wstring autoFillVal = m_autoFillStyle.getValue();
+          if (autoFillVal == L"Current Style") {
+            fillStyleId = styleId;
+          } else if (autoFillVal.substr(0, 8) == L"palette_") {
+            // Explicit palette style index chosen from the combo
+            try { fillStyleId = std::stoi(autoFillVal.substr(8)); }
+            catch (...) { fillStyleId = styleId + 1; }
+            TPaletteP pal = ti->getPalette();
+            if (!pal || !pal->getStyle(fillStyleId)) fillStyleId = styleId;
+          } else {
+            // "Next Style (N+1)": classic ink→fill convention (default)
+            fillStyleId = styleId + 1;
             TPaletteP pal = ti->getPalette();
             if (pal && !pal->getStyle(fillStyleId))
               fillStyleId = styleId;
@@ -2560,7 +2609,16 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
             TPixelCM32 *row = ras->pixels(y0 + ry) + x0;
             const uint8_t *ext = exterior.data() + ry * sw;
             for (int rx = 0; rx < sw; rx++) {
-              if (!ext[rx] && row[rx].getInk() == 0 && row[rx].getPaint() == 0)
+              // Fill all interior pixels that have no paint yet — including
+              // antialiased edge pixels (getInk()>0, getTone()>0) which sit on
+              // the inner side of the stroke boundary.  The BFS exterior flood
+              // uses solid ink as the barrier, so those pixels are correctly
+              // classified as "interior".  Setting paint on them is safe: for
+              // purely-inked pixels (tone=0) the ink channel dominates and the
+              // paint value is invisible; for antialiased pixels the paint
+              // shows through the partially-transparent ink, filling the gap
+              // and eliminating the white border between stroke and fill.
+              if (!ext[rx] && row[rx].getPaint() == 0)
                 row[rx].setPaint(fillStyleId);
             }
           }
@@ -2571,6 +2629,10 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
   }
 
   notifyImageChanged(frameId);
+  // Force immediate canvas repaint so the autofill result is visible right
+  // after mouseUp — without this, the fill only appears on the next mouseMove
+  // (hover) because notifyImageChanged only marks the canvas dirty.
+  if (m_autoFill.getValue()) invalidate();
 
   m_strokeRect.empty();
 

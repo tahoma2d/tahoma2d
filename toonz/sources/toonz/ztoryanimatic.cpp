@@ -1772,6 +1772,17 @@ void ZtoryAnimaticViewer::onDrawFrame(
     QElapsedTimer * /*timer*/, qint64 /*targetInstant*/) {
   m_sceneViewer->setVisual(settings);
   auto *ctrl = ZtoryAnimaticController::instance();
+
+  // Handle deferred audio restart (from mute/solo changes during playback).
+  // onDrawFrame is called by a Qt timer — between CoreAudio XPC callbacks —
+  // making it the safe place to call stopScrub()/play().
+  if (m_pendingAudioRestart) {
+    m_pendingAudioRestart = false;
+    restartAudioIfPlaying();
+    // restartAudioIfPlaying() resets m_playStartFrame/m_first so the audio
+    // master clock will re-sync on the next iteration — no extra work needed.
+  }
+
   if (!settings.m_drawBlankFrame) {
     int targetFrame;
 
@@ -2153,8 +2164,7 @@ void ZtoryAnimaticViewer::showEvent(QShowEvent *e) {
   connect(ctrl, &ZtoryAnimaticController::playRangeChanged,
           this, &ZtoryAnimaticViewer::updateAnimaticFrameMarkers);
 
-  // Audio: when play starts, override m_sound with main-xsheet sound.
-  // Disconnect first to avoid accumulation; then reconnect.
+  // Audio: reconnect our handler (disconnect first to avoid accumulation).
   disconnect(m_flipConsole, SIGNAL(playStateChanged(bool)),
              this, SLOT(onAnimaticPlayingStatusChanged(bool)));
   connect(m_flipConsole, SIGNAL(playStateChanged(bool)),
@@ -2525,25 +2535,13 @@ void ZtoryAnimaticPanel::applyMuteSolo() {
   auto *ctrl = ZtoryAnimaticController::instance();
   ctrl->invalidateSoundTrack();
 
-  // Stop the current audio stream NOW (main thread, safe).
-  // This ensures the QAudioOutput is not in Active state when play() is called
-  // again: on macOS, QAudioOutput::notify can fire from CoreAudio's internal
-  // thread.  If play() runs concurrently with a notify→sendBuffer() callback,
-  // m_audioBuffer->write() and m_buffer.resize() race → EXC_BAD_ACCESS.
-  // Stopping here drains any in-flight CoreAudio callbacks synchronously.
-  TXsheet *mainXsh2 = ctrl->mainXsheet();
-  if (mainXsh2) mainXsh2->stopScrub();
-
-  // Defer the restart to the next event-loop iteration so that any queued
-  // QAudioOutput signals (notify, stateChanged) already in the queue are
-  // delivered BEFORE we call play() with the new buffer.  This eliminates
-  // the window where CoreAudio callbacks race against buffer replacement.
-  if (ctrl->viewer()) {
-    ZtoryAnimaticViewer *viewer = ctrl->viewer();
-    QTimer::singleShot(0, viewer, [viewer]() {
-      viewer->restartAudioIfPlaying();
-    });
-  }
+  // Schedule an audio restart on the next onDrawFrame tick.
+  // We CANNOT call stopScrub()/play() here directly: this slot runs during a
+  // button-click event, and a CoreAudio XPC callback may be in-flight
+  // concurrently.  onDrawFrame is called from a Qt timer, which fires between
+  // XPC callbacks on the main thread — it is the safe place to replace the
+  // audio stream.
+  if (ctrl->viewer()) ctrl->viewer()->requestAudioRestart();
 }
 
 void ZtoryAnimaticPanel::restoreTrackStates() {

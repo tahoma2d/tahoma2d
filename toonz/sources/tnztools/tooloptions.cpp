@@ -2113,6 +2113,8 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
                                          ToolHandle *toolHandle)
     : ToolOptionsBox(parent)
     , m_tool(tool)
+    , m_pltHandle(pltHandle)
+    , m_toolHandle(toolHandle)
     , m_presetNamePopup(0)
     , m_pencilMode(0)
     , m_hardnessLabel(0)
@@ -2121,7 +2123,8 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
     , m_snapSensitivityCombo(0)
     , m_drawOrderCheckbox(0)
     , m_miterField(0)
-    , m_brushTips(0) {
+    , m_brushTips(0)
+    , m_autoFillStyleCombo(0) {
   TPropertyGroup *props = tool->getProperties(0);
   assert(props->getPropertyCount() > 0);
 
@@ -2165,6 +2168,12 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
 
     m_autoFillCheckbox =
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Auto Fill"));
+    // AutoFill style picker — populated dynamically from palette in updateStatus()
+    m_autoFillStyleCombo =
+        dynamic_cast<ToolOptionCombo *>(m_controls.value("AutoFillStyle"));
+    if (m_autoFillStyleCombo)
+      connect(toolHandle, SIGNAL(toolComboBoxListChanged(std::string)),
+              m_autoFillStyleCombo, SLOT(reloadComboBoxList(std::string)));
   } else if (tool->getTargetType() & TTool::Vectors) {
     // Further vector options
     builder.setEnumWidgetType(ToolOptionControlBuilder::POPUPBUTTON);
@@ -2229,7 +2238,8 @@ void BrushToolOptionsBox::filterControls() {
     bool isCommon =
         (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
                      it.key() == "Preset:" || it.key() == "Grid" ||
-                     it.key() == "Smooth:" || it.key() == "Paint Behind");
+                     it.key() == "Smooth:" || it.key() == "Paint Behind" ||
+                     it.key() == "Fill Style:");
     bool visible = isCommon || (isModifier == showModifiers);
     it.value()->setVisible(visible);
   }
@@ -2241,7 +2251,7 @@ void BrushToolOptionsBox::filterControls() {
         (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
                      it.key() == "Preset:" || it.key() == "Grid" ||
                      it.key() == "Smooth:" || it.key() == "Paint Behind" ||
-                     it.key() == "Auto Fill");
+                     it.key() == "Auto Fill" || it.key() == "AutoFillStyle");
     bool visible = isCommon || (isModifier == showModifiers);
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);
@@ -2252,6 +2262,22 @@ void BrushToolOptionsBox::filterControls() {
 
 void BrushToolOptionsBox::updateStatus() {
   filterControls();
+
+  // Rebuild AutoFill style combo when palette changes (level switch, style added/renamed).
+  if (m_autoFillStyleCombo && m_pltHandle) {
+    TPalette *pal       = m_pltHandle->getPalette();
+    int       nStyles   = pal ? pal->getStyleCount() : 0;
+    if (pal != m_lastPalette || nStyles != m_lastPaletteStyles) {
+      m_lastPalette       = pal;
+      m_lastPaletteStyles = nStyles;
+      auto *brushTool = dynamic_cast<ToonzRasterBrushTool *>(m_tool);
+      if (brushTool) {
+        brushTool->rebuildAutoFillStyleCombo(pal);
+        // Notify the combo to reload its entries from the updated property.
+        m_toolHandle->notifyToolComboBoxListChanged("AutoFillStyle");
+      }
+    }
+  }
 
   QMap<std::string, ToolOptionControl *>::iterator it;
   for (it = m_controls.begin(); it != m_controls.end(); it++)

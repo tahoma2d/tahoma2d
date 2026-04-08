@@ -1167,6 +1167,11 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
   } catch (...) {
   }
 
+  // Guard: create() can return null (e.g. lsamp==0, getRawData()==null) or
+  // throw (caught above, leaving overallSoundTrack null).  Return empty mix
+  // rather than dereferencing a null pointer.  Upstream candidate fix.
+  if (!overallSoundTrack) return overallSoundTrack;
+
   // Blank the whole track
   overallSoundTrack->blank(0, lsamp);
 
@@ -1175,6 +1180,7 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
   for (int i = 0; i < levelsCount; i++) {
     ColumnLevel *l             = m_levels.at(i);
     TXshSoundLevel *soundLevel = l->getSoundLevel();
+    if (!soundLevel) continue;  // broken reference — skip this level
 
     // Check if the soundtrack is inside the frame Range.
     int levelStartFrame = l->getStartFrame() + l->getStartOffset();
@@ -1228,7 +1234,10 @@ TSoundTrackP TXshSoundColumn::mixingTogether(
     return mix;  // correctly loaded from disk
 
   TXshSoundLevel *soundLevel = l->getSoundLevel();
-  assert(soundLevel);
+  // soundLevel can be null on old scenes with broken audio references (file
+  // moved/renamed since the scene was saved).  Return empty mix instead of
+  // asserting so the application stays alive.  Upstream candidate fix.
+  if (!soundLevel) return mix;
 
   if (fps == -1) fps             = soundLevel->getFrameRate();
   if (fromFrame == -1) fromFrame = 0;
@@ -1244,20 +1253,25 @@ TSoundTrackP TXshSoundColumn::mixingTogether(
     c                     = vect[j];
     if (j == 0) {
       mix = c->getOverallSoundTrack(fromFrame, toFrame, fps, format);
+      // getOverallSoundTrack can return null if TSoundTrack::create() throws
+      // (e.g. 0-sample track or unsupported format).  Guard before dereferencing.
+      if (!mix) return TSoundTrackP();
       TSoundTrackP mixedTrack =
           TSoundTrack::create(mix->getFormat(), mix->getSampleCount());
       mix = TSop::mix(mixedTrack, mix, 1.0, c->getVolume());
       continue;
     }
-    assert(oldC);
+    if (!oldC) continue;
     if (c->getVolume() == 0 || c->isEmpty()) {
       c = oldC;
       continue;
     }
-    mix =
-        TSop::mix(mix, c->getOverallSoundTrack(fromFrame, toFrame, fps, format),
-                  1.0, c->getVolume());
+    TSoundTrackP seg = c->getOverallSoundTrack(fromFrame, toFrame, fps, format);
+    if (seg)
+      mix = TSop::mix(mix, seg, 1.0, c->getVolume());
   }
+
+  if (!mix) return mix;
 
   // Per ora perche mov vuole solo 16 bit
   TSoundTrackFormat fmt                            = mix->getFormat();

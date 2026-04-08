@@ -6,6 +6,22 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-08] — Fix crash audio mute durante play (race condition + buffer overflow)
+
+### Fixed
+- **Crash EXC_BAD_ACCESS su mute durante play**: `QAudioOutput::notify` su macOS può sparare dal thread CoreAudio; chiamare `play()` concorrentemente al callback `sendBuffer()` causava race condition → EXC_BAD_ACCESS. Fix: `stopScrub()` sincrono + `restartAudioIfPlaying()` deferrita via `QTimer::singleShot(0)`.
+- **Crash heap corruption su mute (scena con audio lungo)**: `requireSoundTrack()` passava `fromFrame=-1, toFrame=-1` a `makeSound()` → `mixingTogether()` usava `getFrameCount()` inflato dalla durata del file grezzo (potenzialmente ore) → buffer da centinaia di MB → corruzione heap. Fix: `prop->m_toFrame = videoFrameCount(xsh) - 1`.
+- **Crash heap corruption durante refreshAudioTracks()**: `restoreTrackStates()` chiamava `applyMuteSolo()` → `invalidateSound()` + `restartAudioIfPlaying()` mentre il device audio era ancora in play → corruzione. Fix: `restoreTrackStates()` ripristina solo lo stato UI (widget checked), non tocca il device audio.
+- **Null dereference in viewerpane.cpp**: `m_sound->getSampleRate()` chiamato prima del null check → fix: spostato `if (!m_sound) return` prima del dereference.
+- **connect type mismatch**: `m_copyButton/m_cloneButton/m_pasteButton` dichiarati `QToolButton*` ma connect usava `&QPushButton::clicked` → fix: `&QToolButton::clicked`.
+- **Salto cursore dopo razor audio**: già risolto nella sessione precedente via `videoFrameCount()` — confermato funzionante.
+- **Mute/solo non persistente dopo refreshAudioTracks()**: stato salvato in `m_colMuted`/`m_colSolo`, ripristinato in `restoreTrackStates()`.
+
+### Notes
+- Crash confermato risolto sia su scene nuove che preesistenti.
+- Pattern sicuro per restart audio durante play: stop sincrono → defer restart → `stopScrub()` all'inizio di `restartAudioIfPlaying()`.
+
+---
 ## [2026-04-06] — Board desync fix (merge/cut/delete), edit shot fix, durate panel, match button
 
 ### Fixed
