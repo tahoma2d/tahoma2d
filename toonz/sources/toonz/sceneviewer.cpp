@@ -2624,22 +2624,17 @@ TAffine SceneViewer::getViewMatrix() const {
                      : SCENE_VIEWMODE;
   if (is3DView()) return TAffine();
   if (m_referenceMode == CAMERA_REFERENCE) {
-    // Use the custom frame handle when available (animatic viewer has its own).
-    // getCurrentFrame() returns the sub-scene frame when inside a shot, which
-    // would give a wrong camera placement on the main xsheet.
-    TFrameHandle *fh = m_customFrameHandle
-                           ? m_customFrameHandle
-                           : TApp::instance()->getCurrentFrame();
-    int frame        = fh->getFrame();
-    TXsheet *xsh     = TApp::instance()->getCurrentXsheet()->getXsheet();
-    // When m_alwaysMainXsheet is set (animatic viewer), always use the root
-    // xsheet camera — getCurrentXsheet() returns the sub-scene's xsheet when
-    // inside a shot, which has its own (different) camera placement.
-    if (m_alwaysMainXsheet) {
-      ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-      if (scene) xsh = scene->getChildStack()->getTopXsheet();
-    }
-    TAffine aff = xsh->getCameraAff(frame);
+    // Always use the global frame handle and the current xsheet for camera
+    // lookup.  When inside a sub-scene, getCurrentFrame() returns the local
+    // sub-scene frame and getCurrentXsheet() returns the sub-scene xsheet, so
+    // getCameraAff() gives the correct sub-scene camera at the correct local
+    // time.  The animatic viewer's m_customFrameHandle is used only in
+    // drawScene() to render the root xsheet at the right animatic frame; it
+    // must NOT be used here because it carries the main-xsheet frame, which
+    // would address the wrong keyframe on a sub-scene camera.
+    int frame    = TApp::instance()->getCurrentFrame()->getFrame();
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TAffine aff  = xsh->getCameraAff(frame);
     return m_viewAff[viewMode] * aff.inv();
   } else
     return m_viewAff[viewMode];

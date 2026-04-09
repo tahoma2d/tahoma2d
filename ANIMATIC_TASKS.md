@@ -455,7 +455,7 @@ alle sequence del progetto (sq01, sq02…).
 3. ~~**BUG Ghost onion skin**~~ ✅ DONE (data da confermare)
 4. ~~**BUG Camera resize**~~ ✅ DONE (data da confermare)
 5. ~~**PERF Audio pesante**~~ ✅ DONE — cache waveform pre-renderizzata
-6. **BUG AutoFill fill color** — picker colore per autofill nella palette del livello 🔴 DA FARE
+6. ~~**BUG AutoFill fill color**~~ ✅ DONE 2026-04-08 — TEnumProperty m_autoFillStyle "Next Style (N+1)" | "Current Style" in toolbar brush
 
 ### Feature immediate (prossime sessioni)
 7. ~~**NEW Merge Board**~~ ✅ DONE 2026-04-06 — m_mergeButton collegato a ZtoryModel
