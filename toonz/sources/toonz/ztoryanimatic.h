@@ -51,6 +51,15 @@ public:
   // Safe to call from any scrub handler — returns null if no audio.
   TSoundTrackP requireSoundTrack();
 
+  // Animatic-owned play range — independent from scene->getPreviewProperties()
+  // which is shared with (and overwritten by) the native xsheet viewer when
+  // entering/leaving sub-scenes.  The ruler and animatic marker logic read
+  // this instead of XsheetGUI::getPlayRange().
+  // Sets animatic play range AND mirrors to XsheetGUI (native viewer sync).
+  void setAnimaticPlayRange(int r0, int r1);
+  void getAnimaticPlayRange(int &r0, int &r1) const { r0 = m_animaticR0; r1 = m_animaticR1; }
+  bool isAnimaticPlayRangeEnabled() const { return m_animaticR0 <= m_animaticR1; }
+
 public slots:
   // Called by the ruler whenever the In/Out play range changes, so the
   // animatic viewer's FlipConsole markers stay in sync.
@@ -74,6 +83,8 @@ private:
   ZtoryAnimaticController();
   TFrameHandle         *m_frameHandle;
   TSoundTrackP          m_soundTrack;
+  int m_animaticR0 = 0;
+  int m_animaticR1 = -1;  // -1 = no range set (full range)
   ZtoryAnimaticViewer  *m_viewer = nullptr;
   // True while we are streaming main-xsheet audio on behalf of the native viewer.
   bool m_nativeAudioPlaying = false;

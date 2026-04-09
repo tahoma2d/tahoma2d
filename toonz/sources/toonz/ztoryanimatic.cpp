@@ -90,6 +90,17 @@ bool ZtoryAnimaticController::ownsAudioAtMainLevel() const {
   return scene->getChildStack()->getAncestorCount() == 0;
 }
 
+// ---- ZtoryAnimaticController::setAnimaticPlayRangeAndSync ----
+// Sets the animatic-owned play range AND mirrors it to XsheetGUI (native
+// viewer) so both are in sync while at main level.  Ruler and marker code
+// should call this instead of XsheetGUI::setPlayRange() directly.
+void ZtoryAnimaticController::setAnimaticPlayRange(int r0, int r1) {
+  m_animaticR0 = r0;
+  m_animaticR1 = r1;
+  // Mirror to native storage so the native timeline stays in sync.
+  XsheetGUI::setPlayRange(r0, r1, 1, false);
+}
+
 // Helper: frame count from VIDEO columns only (ignores sound columns).
 // mainXsh->getFrameCount() includes audio columns; after a razor cut the
 // trailing ColumnLevel keeps endOffset=0 (= full raw file length), inflating
@@ -273,10 +284,14 @@ void ZtoryAnimaticRuler::paintEvent(QPaintEvent *) {
   p.drawLine(kLabelW, 0, kLabelW, h);
 
   // ---- In/Out range highlight (middle ruler zone only) ----
-  int r0 = 0, r1 = 0, step = 1;
-  bool rangeEnabled = XsheetGUI::getPlayRange(r0, r1, step);
+  // Read from the animatic-owned range — independent from XsheetGUI which
+  // gets overwritten by the native viewer when entering/leaving sub-scenes.
+  auto *ctrl = ZtoryAnimaticController::instance();
+  int r0, r1;
+  ctrl->getAnimaticPlayRange(r0, r1);
+  bool rangeEnabled = (r0 <= r1 && r1 >= 0);
   if (!rangeEnabled) {
-    TXsheet *mainXsh = ZtoryAnimaticController::instance()->mainXsheet();
+    TXsheet *mainXsh = ctrl->mainXsheet();
     r0 = 0;
     r1 = mainXsh ? std::max(0, videoFrameCount(mainXsh) - 1) : 0;
   }
@@ -420,19 +435,22 @@ void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
 
   // ── Middle ruler zone ────────────────────────────────────────────────────
   // Shift+click = set In, Alt+click = set Out
+  auto *ctrlR = ZtoryAnimaticController::instance();
   if (e->modifiers() & Qt::ShiftModifier) {
-    int r0, r1, step;
-    if (!XsheetGUI::getPlayRange(r0, r1, step)) { r0 = frame; r1 = frame; step = 1; }
-    XsheetGUI::setPlayRange(frame, std::max(frame, r1), step);
-    ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
+    int r0, r1;
+    ctrlR->getAnimaticPlayRange(r0, r1);
+    if (r0 > r1) { r0 = frame; r1 = frame; }
+    ctrlR->setAnimaticPlayRange(frame, std::max(frame, r1));
+    ctrlR->notifyPlayRangeChanged();
     update();
     return;
   }
   if (e->modifiers() & Qt::AltModifier) {
-    int r0, r1, step;
-    if (!XsheetGUI::getPlayRange(r0, r1, step)) { r0 = frame; r1 = frame; step = 1; }
-    XsheetGUI::setPlayRange(std::min(r0, frame), frame, step);
-    ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
+    int r0, r1;
+    ctrlR->getAnimaticPlayRange(r0, r1);
+    if (r0 > r1) { r0 = frame; r1 = frame; }
+    ctrlR->setAnimaticPlayRange(std::min(r0, frame), frame);
+    ctrlR->notifyPlayRangeChanged();
     update();
     return;
   }
@@ -440,11 +458,11 @@ void ZtoryAnimaticRuler::mousePressEvent(QMouseEvent *e) {
   // Hit-test In/Out markers for drag (8px tolerance)
   static const int kM = 8;
   m_dragMode = None;
-  if (XsheetGUI::isPlayRangeEnabled()) {
-    int r0, r1, step;
-    XsheetGUI::getPlayRange(r0, r1, step);
+  if (ctrlR->isAnimaticPlayRangeEnabled()) {
+    int r0, r1;
+    ctrlR->getAnimaticPlayRange(r0, r1);
     int x0 = (int)(r0 * m_ppf);
-    int x1 = (int)((r1 + 1) * m_ppf);  // Out marker is at right edge of frame r1
+    int x1 = (int)((r1 + 1) * m_ppf);
     if (std::abs(mx - x0) <= kM) { m_dragMode = DragIn;  return; }
     if (std::abs(mx - x1) <= kM) { m_dragMode = DragOut; return; }
   }
@@ -498,18 +516,20 @@ void ZtoryAnimaticRuler::mouseMoveEvent(QMouseEvent *e) {
   int frame = (int)(mx / m_ppf);
 
   if (m_dragMode == DragIn) {
-    int r0, r1, step;
-    XsheetGUI::getPlayRange(r0, r1, step);
-    XsheetGUI::setPlayRange(std::min(frame, r1), r1, step);
-    ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
+    auto *ctrlD = ZtoryAnimaticController::instance();
+    int r0, r1;
+    ctrlD->getAnimaticPlayRange(r0, r1);
+    ctrlD->setAnimaticPlayRange(std::min(frame, r1), r1);
+    ctrlD->notifyPlayRangeChanged();
     update();
     return;
   }
   if (m_dragMode == DragOut) {
-    int r0, r1, step;
-    XsheetGUI::getPlayRange(r0, r1, step);
-    XsheetGUI::setPlayRange(r0, std::max(frame, r0), step);
-    ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
+    auto *ctrlD = ZtoryAnimaticController::instance();
+    int r0, r1;
+    ctrlD->getAnimaticPlayRange(r0, r1);
+    ctrlD->setAnimaticPlayRange(r0, std::max(frame, r0));
+    ctrlD->notifyPlayRangeChanged();
     update();
     return;
   }
@@ -569,16 +589,15 @@ void ZtoryAnimaticRuler::syncOnionToGlobal() const {
 
 void ZtoryAnimaticRuler::initPlayRangeIfNeeded() {
   // Initialise In/Out markers to full range on first show, if not yet set.
-  if (XsheetGUI::isPlayRangeEnabled()) {
-    int r0, r1, step;
-    XsheetGUI::getPlayRange(r0, r1, step);
-    if (r0 >= 0) return;  // already set
-  }
-  TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+  auto *ctrl = ZtoryAnimaticController::instance();
+  int r0, r1;
+  ctrl->getAnimaticPlayRange(r0, r1);
+  if (r0 <= r1) return;  // already set
+  TXsheet *xsh = ctrl->mainXsheet();
   if (!xsh) return;
   int lastFrame = std::max(0, videoFrameCount(xsh) - 1);
-  XsheetGUI::setPlayRange(0, lastFrame, 1);
-  ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
+  ctrl->setAnimaticPlayRange(0, lastFrame);
+  ctrl->notifyPlayRangeChanged();
   update();
 }
 
@@ -593,29 +612,33 @@ void ZtoryAnimaticRuler::contextMenuEvent(QContextMenuEvent *e) {
   QAction *autoAct  = menu.addAction(tr("Set OUT to last frame"));
   QAction *resetAct = menu.addAction(tr("Reset IN/OUT to full range"));
 
+  auto *ctrlM = ZtoryAnimaticController::instance();
   QAction *chosen = menu.exec(e->globalPos());
   if (chosen == inAct) {
-    int r0, r1, step;
-    if (!XsheetGUI::getPlayRange(r0, r1, step)) { r0 = 0; r1 = frame; step = 1; }
-    XsheetGUI::setPlayRange(frame, std::max(frame, r1), step);
+    int r0, r1;
+    ctrlM->getAnimaticPlayRange(r0, r1);
+    if (r0 > r1) { r0 = 0; r1 = frame; }
+    ctrlM->setAnimaticPlayRange(frame, std::max(frame, r1));
   } else if (chosen == outAct) {
-    int r0, r1, step;
-    if (!XsheetGUI::getPlayRange(r0, r1, step)) { r0 = 0; r1 = frame; step = 1; }
-    XsheetGUI::setPlayRange(std::min(r0, frame), frame, step);
+    int r0, r1;
+    ctrlM->getAnimaticPlayRange(r0, r1);
+    if (r0 > r1) { r0 = 0; r1 = frame; }
+    ctrlM->setAnimaticPlayRange(std::min(r0, frame), frame);
   } else if (chosen == autoAct) {
-    TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+    TXsheet *xsh = ctrlM->mainXsheet();
     int last = std::max(0, videoFrameCount(xsh) - 1);
-    int r0, r1, step;
-    if (!XsheetGUI::getPlayRange(r0, r1, step)) { r0 = 0; step = 1; }
-    XsheetGUI::setPlayRange(r0, last, 1);
+    int r0, r1;
+    ctrlM->getAnimaticPlayRange(r0, r1);
+    if (r0 > r1) r0 = 0;
+    ctrlM->setAnimaticPlayRange(r0, last);
   } else if (chosen == resetAct) {
-    TXsheet *xsh = ZtoryAnimaticController::instance()->mainXsheet();
+    TXsheet *xsh = ctrlM->mainXsheet();
     int last = std::max(0, videoFrameCount(xsh) - 1);
-    XsheetGUI::setPlayRange(0, last, 1);
+    ctrlM->setAnimaticPlayRange(0, last);
   } else {
-    return;  // no action chosen — skip notify
+    return;
   }
-  ZtoryAnimaticController::instance()->notifyPlayRangeChanged();
+  ctrlM->notifyPlayRangeChanged();
   update();
 }
 
@@ -1938,18 +1961,9 @@ void ZtoryAnimaticViewer::updateFrameMarkers() {
 }
 
 void ZtoryAnimaticViewer::updateAnimaticFrameMarkers() {
-  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-  if (!scene) {
-    m_flipConsole->setMarkers(0, -1);
-    return;
-  }
-  // Always read markers from the main (root) scene properties — never from the
-  // sub-scene.  When inside a shot, ancestorCount > 0 but the animatic timeline
-  // must show the same play range it had at the main level.
-  // XsheetGUI::getPlayRange() reads scene->getProperties() which is always the
-  // root scene regardless of childStack depth.
-  int r0, r1, step;
-  XsheetGUI::getPlayRange(r0, r1, step);
+  auto *ctrl = ZtoryAnimaticController::instance();
+  int r0, r1;
+  ctrl->getAnimaticPlayRange(r0, r1);
   m_flipConsole->setMarkers(r0, r1);
 }
 
