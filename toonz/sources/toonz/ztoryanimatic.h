@@ -43,6 +43,10 @@ public:
   // Viewer registers itself so the panel can call restartAudioIfPlaying().
   void setViewer(ZtoryAnimaticViewer *v) { m_viewer = v; }
   ZtoryAnimaticViewer *viewer() const { return m_viewer; }
+  // Returns true when the animatic viewer is active at the main level,
+  // meaning it owns audio and the native ComboViewer must not compete.
+  bool ownsAudioAtMainLevel() const;
+
   // Build (or return cached) merged track from the main xsheet.
   // Safe to call from any scrub handler — returns null if no audio.
   TSoundTrackP requireSoundTrack();

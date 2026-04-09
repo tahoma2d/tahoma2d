@@ -47,6 +47,7 @@
 // Tnz6 includes
 #include "tapp.h"
 #include "mainwindow.h"
+#include "ztoryanimatic.h"
 #include "sceneviewer.h"
 #include "xsheetdragtool.h"
 #include "ruler.h"
@@ -930,6 +931,12 @@ bool BaseViewerPanel::hasSoundtrack() {
     m_hasSoundtrack = false;
     m_first         = true;
   }
+  // When the animatic viewer is active at the main level it owns the audio
+  // device.  The native ComboViewer must not compete — return false so
+  // playAudioFrame() is never called and TXsheet::play() is not re-entered.
+  if (ZtoryAnimaticController::instance()->ownsAudioAtMainLevel())
+    return false;
+
   TXsheetHandle *xsheetHandle    = TApp::instance()->getCurrentXsheet();
   TXsheet *xsh                   = xsheetHandle->getXsheet();
   TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();

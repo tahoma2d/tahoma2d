@@ -78,6 +78,17 @@ TXsheet *ZtoryAnimaticController::mainXsheet() const {
   return scene->getChildStack()->getTopXsheet();
 }
 
+// Returns true when the animatic viewer is alive AND we are at the main level
+// (not inside a sub-scene).  In that case the animatic owns audio and the
+// native ComboViewer must yield — otherwise they both call TXsheet::play()
+// on the same TSoundOutputDevice and corrupt each other's buffer.
+bool ZtoryAnimaticController::ownsAudioAtMainLevel() const {
+  if (!m_viewer) return false;
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return false;
+  return scene->getChildStack()->getAncestorCount() == 0;
+}
+
 // Helper: frame count from VIDEO columns only (ignores sound columns).
 // mainXsh->getFrameCount() includes audio columns; after a razor cut the
 // trailing ColumnLevel keeps endOffset=0 (= full raw file length), inflating
