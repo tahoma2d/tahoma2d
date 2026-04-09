@@ -83,6 +83,7 @@ TXsheet *ZtoryAnimaticController::mainXsheet() const {
 // native ComboViewer must yield — otherwise they both call TXsheet::play()
 // on the same TSoundOutputDevice and corrupt each other's buffer.
 bool ZtoryAnimaticController::ownsAudioAtMainLevel() const {
+  if (!ZtoryModel::instance()->isStoryboardWorkflow()) return false;
   if (!m_viewer) return false;
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   if (!scene) return false;
