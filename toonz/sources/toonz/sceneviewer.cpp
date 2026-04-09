@@ -2626,7 +2626,14 @@ TAffine SceneViewer::getViewMatrix() const {
   if (m_referenceMode == CAMERA_REFERENCE) {
     int frame    = TApp::instance()->getCurrentFrame()->getFrame();
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-    TAffine aff  = xsh->getCameraAff(frame);
+    // When m_alwaysMainXsheet is set (animatic viewer), always use the root
+    // xsheet camera — getCurrentXsheet() returns the sub-scene's xsheet when
+    // inside a shot, which has its own (different) camera placement.
+    if (m_alwaysMainXsheet) {
+      ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+      if (scene) xsh = scene->getChildStack()->getTopXsheet();
+    }
+    TAffine aff = xsh->getCameraAff(frame);
     return m_viewAff[viewMode] * aff.inv();
   } else
     return m_viewAff[viewMode];

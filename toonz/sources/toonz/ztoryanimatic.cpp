@@ -1738,6 +1738,9 @@ void ZtoryStoryStrip::wheelEvent(QWheelEvent *e) {
 ZtoryAnimaticViewer::ZtoryAnimaticViewer(QWidget *parent)
     : BaseViewerPanel(parent) {
   m_sceneViewer->setAlwaysMainXsheet(true);
+  // Default to camera view — the animatic viewer must always show the framing
+  // as the camera sees it, not the table/stage reference.
+  m_sceneViewer->setReferenceMode(SceneViewer::CAMERA_REFERENCE);
 
   // --- Dedicated frame handle from the animatic controller ---
   auto *ctrl = ZtoryAnimaticController::instance();
@@ -1930,18 +1933,17 @@ void ZtoryAnimaticViewer::updateAnimaticFrameRange() {
 void ZtoryAnimaticViewer::updateAnimaticFrameMarkers() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   if (!scene) {
-    m_flipConsole->setMarkers(0, -1);  // no markers → full range
+    m_flipConsole->setMarkers(0, -1);
     return;
   }
-  if (scene->getChildStack()->getAncestorCount() > 0) {
-    // Inside a sub-scene: ignore sub-scene markers, play full animatic range.
-    m_flipConsole->setMarkers(0, -1);
-  } else {
-    // At main level: use whatever play range is set on the main xsheet.
-    int r0, r1, step;
-    XsheetGUI::getPlayRange(r0, r1, step);
-    m_flipConsole->setMarkers(r0, r1);
-  }
+  // Always read markers from the main (root) scene properties — never from the
+  // sub-scene.  When inside a shot, ancestorCount > 0 but the animatic timeline
+  // must show the same play range it had at the main level.
+  // XsheetGUI::getPlayRange() reads scene->getProperties() which is always the
+  // root scene regardless of childStack depth.
+  int r0, r1, step;
+  XsheetGUI::getPlayRange(r0, r1, step);
+  m_flipConsole->setMarkers(r0, r1);
 }
 
 // ---- refreshAnimaticSound ----
