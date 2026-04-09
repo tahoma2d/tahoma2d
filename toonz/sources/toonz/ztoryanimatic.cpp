@@ -2199,6 +2199,15 @@ void ZtoryAnimaticViewer::showEvent(QShowEvent *e) {
   connect(ctrl, &ZtoryAnimaticController::playRangeChanged,
           this, &ZtoryAnimaticViewer::updateAnimaticFrameMarkers);
 
+  // Camera/drawing changes inside a sub-scene: xsheetChanged fires on the
+  // current (sub) xsheet but the animatic SceneViewer won't repaint unless we
+  // connect it explicitly.  Use xsheetHandle so the connection always targets
+  // the currently-active xsheet (native or sub-scene).
+  disconnect(app->getCurrentXsheet(), &TXsheetHandle::xsheetChanged,
+             m_sceneViewer, static_cast<void(QWidget::*)()>(&QWidget::update));
+  connect(app->getCurrentXsheet(), &TXsheetHandle::xsheetChanged,
+          m_sceneViewer, static_cast<void(QWidget::*)()>(&QWidget::update));
+
   // Audio: reconnect our handler (disconnect first to avoid accumulation).
   disconnect(m_flipConsole, SIGNAL(playStateChanged(bool)),
              this, SLOT(onAnimaticPlayingStatusChanged(bool)));
