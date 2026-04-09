@@ -112,7 +112,7 @@ public slots:
   void updateFrameRange();
   void onSceneChanged();
   void onXshLevelSwitched(TXshLevel *);
-  void updateFrameMarkers();
+  virtual void updateFrameMarkers();
   void onButtonPressed(FlipConsole::EGadget button);
   void setFlipHButtonChecked(bool checked);
   void setFlipVButtonChecked(bool checked);

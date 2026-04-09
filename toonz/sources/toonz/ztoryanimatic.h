@@ -371,6 +371,12 @@ public:
                    QElapsedTimer *timer     = nullptr,
                    qint64 targetInstant     = 0) override;
 
+  // Override: always read markers from the main xsheet play range.
+  // Base implementation reads from scene->getProperties() but the base's
+  // onSceneChanged() calls this after xsheetChanged — which fires when entering
+  // a sub-scene — and would overwrite whatever updateAnimaticFrameMarkers set.
+  void updateFrameMarkers() override;
+
 protected:
   void showEvent(QShowEvent *e) override;
 

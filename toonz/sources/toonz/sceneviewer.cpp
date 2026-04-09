@@ -2624,8 +2624,14 @@ TAffine SceneViewer::getViewMatrix() const {
                      : SCENE_VIEWMODE;
   if (is3DView()) return TAffine();
   if (m_referenceMode == CAMERA_REFERENCE) {
-    int frame    = TApp::instance()->getCurrentFrame()->getFrame();
-    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    // Use the custom frame handle when available (animatic viewer has its own).
+    // getCurrentFrame() returns the sub-scene frame when inside a shot, which
+    // would give a wrong camera placement on the main xsheet.
+    TFrameHandle *fh = m_customFrameHandle
+                           ? m_customFrameHandle
+                           : TApp::instance()->getCurrentFrame();
+    int frame        = fh->getFrame();
+    TXsheet *xsh     = TApp::instance()->getCurrentXsheet()->getXsheet();
     // When m_alwaysMainXsheet is set (animatic viewer), always use the root
     // xsheet camera — getCurrentXsheet() returns the sub-scene's xsheet when
     // inside a shot, which has its own (different) camera placement.

@@ -1930,6 +1930,13 @@ void ZtoryAnimaticViewer::updateAnimaticFrameRange() {
 // When inside a sub-scene, ToonzScene::getPreviewProperties() has been swapped
 // by subscenecommand.cpp to the sub-scene's play range.  The animatic must
 // always use the main xsheet markers (or no markers if none are set on main).
+// Override of BaseViewerPanel::updateFrameMarkers() — called by the base's
+// onSceneChanged() which fires on xsheetChanged (sub-scene open/close).
+// Delegates to updateAnimaticFrameMarkers() so markers always come from main.
+void ZtoryAnimaticViewer::updateFrameMarkers() {
+  updateAnimaticFrameMarkers();
+}
+
 void ZtoryAnimaticViewer::updateAnimaticFrameMarkers() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   if (!scene) {
