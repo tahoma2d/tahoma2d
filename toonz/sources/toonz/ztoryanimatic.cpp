@@ -1761,9 +1761,6 @@ void ZtoryStoryStrip::wheelEvent(QWheelEvent *e) {
 ZtoryAnimaticViewer::ZtoryAnimaticViewer(QWidget *parent)
     : BaseViewerPanel(parent) {
   m_sceneViewer->setAlwaysMainXsheet(true);
-  // Default to camera view — the animatic viewer must always show the framing
-  // as the camera sees it, not the table/stage reference.
-  m_sceneViewer->setReferenceMode(SceneViewer::CAMERA_REFERENCE);
 
   // --- Dedicated frame handle from the animatic controller ---
   auto *ctrl = ZtoryAnimaticController::instance();
