@@ -1761,6 +1761,7 @@ void ZtoryStoryStrip::wheelEvent(QWheelEvent *e) {
 ZtoryAnimaticViewer::ZtoryAnimaticViewer(QWidget *parent)
     : BaseViewerPanel(parent) {
   m_sceneViewer->setAlwaysMainXsheet(true);
+  m_sceneViewer->setReferenceMode(SceneViewer::CAMERA_REFERENCE);
 
   // --- Dedicated frame handle from the animatic controller ---
   auto *ctrl = ZtoryAnimaticController::instance();
@@ -2200,10 +2201,18 @@ void ZtoryAnimaticViewer::showEvent(QShowEvent *e) {
   // current (sub) xsheet but the animatic SceneViewer won't repaint unless we
   // connect it explicitly.  Use xsheetHandle so the connection always targets
   // the currently-active xsheet (native or sub-scene).
+  // xsheetChanged: covers structural changes (add/remove keyframe, etc.)
   disconnect(app->getCurrentXsheet(), &TXsheetHandle::xsheetChanged,
              m_sceneViewer, static_cast<void(QWidget::*)()>(&QWidget::update));
   connect(app->getCurrentXsheet(), &TXsheetHandle::xsheetChanged,
           m_sceneViewer, static_cast<void(QWidget::*)()>(&QWidget::update));
+  // objectChanged: covers camera/peg drag in real-time (SceneViewer connects
+  // this in its own showEvent, but re-adding here ensures it survives any
+  // disconnect cycle that happens when entering/leaving sub-scenes).
+  disconnect(app->getCurrentObject(), SIGNAL(objectChanged(bool)),
+             m_sceneViewer, SLOT(update()));
+  connect(app->getCurrentObject(), SIGNAL(objectChanged(bool)),
+          m_sceneViewer, SLOT(update()));
 
   // Audio: reconnect our handler (disconnect first to avoid accumulation).
   disconnect(m_flipConsole, SIGNAL(playStateChanged(bool)),
