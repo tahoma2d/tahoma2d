@@ -3341,39 +3341,36 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
                                   ease1)) {
         drawKeyframeLine(p, col, NumberRange(segmentRow0, segmentRow1));
 
-        if (segmentRow1 - segmentRow0 >
-            3) {  // only show if distance more than 4 frames
-          int handleRow0, handleRow1;
-          if (getEaseHandles(segmentRow0, segmentRow1, ease0, ease1, handleRow0,
-                             handleRow1)) {
-            QRect easeRect = tmpKeyRect;
-            if (!Preferences::instance()->isShowDragBarsEnabled() &&
-                !o->isVerticalTimeline()) {
-              int adjust = col < 0 ? -1 : -1;
-              easeRect.adjust(0, adjust, 0, adjust);
-            }
-
-            if (o->isVerticalTimeline()) easeRect.adjust(-2, 0, -2, 0);
-            QPoint topLeft =
-                m_viewer->positionToXY(CellPosition(handleRow0, col));
-            PredefinedPath easePath =
-                (m_keyHighlight == QPoint(handleRow0, col))
-                    ? PredefinedPath::BEGIN_EASE_TRIANGLE_LARGE
-                    : PredefinedPath::BEGIN_EASE_TRIANGLE;
-
-            m_viewer->drawPredefinedPath(p, easePath,
-                                         easeRect.translated(topLeft).center(),
-                                         keyFrameColor, outline);
-
-            topLeft  = m_viewer->positionToXY(CellPosition(handleRow1, col));
-            easePath = (m_keyHighlight == QPoint(handleRow1, col))
-                           ? PredefinedPath::END_EASE_TRIANGLE_LARGE
-                           : PredefinedPath::END_EASE_TRIANGLE;
-
-            m_viewer->drawPredefinedPath(p, easePath,
-                                         easeRect.translated(topLeft).center(),
-                                         keyFrameColor, outline);
+        int handleRow0, handleRow1;
+        if (getEaseHandles(segmentRow0, segmentRow1, ease0, ease1, handleRow0,
+                           handleRow1)) {
+          QRect easeRect = tmpKeyRect;
+          if (!Preferences::instance()->isShowDragBarsEnabled() &&
+              !o->isVerticalTimeline()) {
+            int adjust = col < 0 ? -1 : -1;
+            easeRect.adjust(0, adjust, 0, adjust);
           }
+
+          if (o->isVerticalTimeline()) easeRect.adjust(-2, 0, -2, 0);
+          QPoint topLeft =
+              m_viewer->positionToXY(CellPosition(handleRow0, col));
+          PredefinedPath easePath =
+              (m_keyHighlight == QPoint(handleRow0, col))
+                  ? PredefinedPath::BEGIN_EASE_TRIANGLE_LARGE
+                  : PredefinedPath::BEGIN_EASE_TRIANGLE;
+
+          m_viewer->drawPredefinedPath(p, easePath,
+                                       easeRect.translated(topLeft).center(),
+                                       keyFrameColor, outline);
+
+          topLeft  = m_viewer->positionToXY(CellPosition(handleRow1, col));
+          easePath = (m_keyHighlight == QPoint(handleRow1, col))
+                         ? PredefinedPath::END_EASE_TRIANGLE_LARGE
+                         : PredefinedPath::END_EASE_TRIANGLE;
+
+          m_viewer->drawPredefinedPath(p, easePath,
+                                       easeRect.translated(topLeft).center(),
+                                       keyFrameColor, outline);
         }
         // skip to next segment
         row = segmentRow1 - 1;
@@ -3547,7 +3544,7 @@ void CellArea::drawNotes(QPainter &p, const QRect toBeUpdated) {
 
 bool CellArea::getEaseHandles(int r0, int r1, double e0, double e1, int &rh0,
                               int &rh1) {
-  if (r1 <= r0 + 3) {  // ... what?
+  if (r1 - r0 <= 2) {  // Don't show if there is only 1 frame between keys
     rh0 = r0;
     rh1 = r1;
     return false;
@@ -3584,6 +3581,7 @@ bool CellArea::getEaseHandles(int r0, int r1, double e0, double e1, int &rh0,
     assert(a <= b);
     rh1 = tcrop((int)(r1 - e1 + 0.5), a, b);
   }
+  if (rh0 == rh1) rh1++; // Make sure handles dont overlap
   return true;
 }
 
@@ -3707,15 +3705,11 @@ bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell,
   int r0, r1;
   double e0, e1;
   if (pegbar->getKeyframeSpan(row, r0, e0, r1, e1)) {
-    if (r1 - r0 > 2) {
-      int rh0, rh1;
-      if (getEaseHandles(r0, r1, e0, e1, rh0, rh1)) {
-        if (row == rh0 && easeRect.contains(mouseInCell))
-          return true;
+    int rh0, rh1;
+    if (getEaseHandles(r0, r1, e0, e1, rh0, rh1)) {
+      if (row == rh0 && easeRect.contains(mouseInCell)) return true;
 
-        if (row == rh1 && easeRect.contains(mouseInCell))
-          return true;
-      }
+      if (row == rh1 && easeRect.contains(mouseInCell)) return true;
     }
   }
 
