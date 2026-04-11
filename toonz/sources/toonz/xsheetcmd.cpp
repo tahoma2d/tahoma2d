@@ -2251,9 +2251,26 @@ public:
     TStageObject::Keyframe k0 = pegbar->getKeyframe(r0);
     TStageObject::Keyframe k1 = pegbar->getKeyframe(r1);
 
+    double segmentWidth = r1 - r0;
+    switch (m_type) {
+    case TDoubleKeyframe::SpeedInOut:
+    case TDoubleKeyframe::EaseInOut:
+    case TDoubleKeyframe::EaseInOutPercentage:
+      if (ease0 == -1 && ease1 == -1) {
+        ease0 = segmentWidth / 3.0;
+        ease1 = -ease0;
+      }
+      break;
+    default:
+      ease0 = ease1 = 0;
+      break;
+    }
+
     for (int i = 0; i < TStageObject::T_ChannelCount; i++) {
       k0.m_channels[i].m_type     = m_type;
+      k0.m_channels[i].m_speedOut  = TPointD(ease0, 0);
       k1.m_channels[i].m_prevType = m_type;
+      k1.m_channels[i].m_speedIn  = TPointD(ease1, 0);
     }
 
     std::map<QString, SkVD::Keyframe> &vdfs0 =
@@ -2269,13 +2286,16 @@ public:
       for (int p = 0; p < SkVD::PARAMS_COUNT; ++p) {
         TDoubleKeyframe &vkf0 = vdft0->second.m_keyframes[p];
         TDoubleKeyframe &vkf1 = vdft1->second.m_keyframes[p];
-        vkf0.m_type = m_type;
-        vkf1.m_prevType = m_type;
+        vkf0.m_type           = m_type;
+        vkf0.m_speedOut       = TPointD(ease0, 0);
+        vkf1.m_prevType       = m_type;
+        vkf1.m_speedIn        = TPointD(ease1, 0);
       }
     }
 
     pegbar->setKeyframeWithoutUndo(r0, k0);
     pegbar->setKeyframeWithoutUndo(r1, k1);
+    pegbar->updateKeyframes();
 
     TUndoManager::manager()->add(undo);
 
