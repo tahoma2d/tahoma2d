@@ -240,7 +240,6 @@ add_definitions(
     -DQT_NETWORK_LIB
     -DQT_CORE_LIB
     -DQT_SHARED
-    -DQT_DISABLE_DEPRECATED_BEFORE=0x050F02
 )
 
 # Find includes in corresponding build directories
@@ -300,6 +299,7 @@ if(BUILD_ENV_MSVC)
     )
     add_definitions(
         -DGLUT_NO_LIB_PRAGMA
+        -DQT_DISABLE_DEPRECATED_BEFORE=0x050F02
     )
 
     if(WITH_GPHOTO2)
