@@ -4,6 +4,8 @@
 #include "toonz/tcolumnhandle.h"
 #include "subscenecommand.h"
 #include "toonzqt/menubarcommand.h"
+#include "menubarcommandids.h"
+#include "previewer.h"
 #include "columncommand.h"
 #include "tapp.h"
 #include "toonz/toonzscene.h"
@@ -97,8 +99,12 @@ bool ZtoryAnimaticController::ownsAudioAtMainLevel() const {
 void ZtoryAnimaticController::setAnimaticPlayRange(int r0, int r1) {
   m_animaticR0 = r0;
   m_animaticR1 = r1;
-  // Mirror to native storage so the native timeline stays in sync.
-  XsheetGUI::setPlayRange(r0, r1, 1, false);
+  // Do NOT call XsheetGUI::setPlayRange() here — that would propagate the
+  // animatic marker changes to the ComboViewer and the XsheetViewer, which
+  // must keep their own independent play range (sub-scene or main xsheet).
+  // The animatic FlipConsole gets its markers directly via
+  // updateAnimaticFrameMarkers() → m_flipConsole->setMarkers().
+  emit playRangeChanged();
 }
 
 // Helper: frame count from VIDEO columns only (ignores sound columns).
@@ -1797,6 +1803,68 @@ ZtoryAnimaticViewer::ZtoryAnimaticViewer(QWidget *parent)
   m_visiblePartsFlag = VPPARTS_ALL;
 }
 
+// ---- initializeAnimaticTitleBar ----
+// Creates a focused set of title-bar buttons for the animatic viewer:
+//   • Camera Stand View  (NORMAL_REFERENCE)
+//   • Camera View        (CAMERA_REFERENCE) — default
+//   • Preview            (full render preview toggle)
+// We deliberately skip 3D view, symmetry, perspective, safe area, grids,
+// freeze, and sub-camera preview — not meaningful for a timeline viewer.
+// IMPORTANT: m_subcameraPreviewButton must be created even if not shown,
+// because enableFullPreview() and onSceneSwitched() call setPressed() on it.
+void ZtoryAnimaticViewer::initializeAnimaticTitleBar(TPanelTitleBar *titleBar) {
+  // Several base-class slots (onToolSwitched, onSceneSwitched, onFrameTypeChanged)
+  // dereference these pointers without null guards.  Create hidden dummy widgets
+  // so those calls are harmless even though we never add them to the title bar.
+  m_symmetryButton = new TPanelTitleBarButton(this, getIconPath("pane_symmetry"));
+  m_symmetryButton->hide();
+  m_perspectiveButton =
+      new TPanelTitleBarButton(this, getIconPath("pane_perspective"));
+  m_perspectiveButton->hide();
+
+  // View mode button set: Camera Stand View + Camera View (no 3D for animatic)
+  TPanelTitleBarButtonSet *viewModeButtonSet = new TPanelTitleBarButtonSet();
+  m_referenceModeBs                         = viewModeButtonSet;
+
+  int x         = -105;
+  int iconWidth = 20;
+
+  // Camera Stand View
+  TPanelTitleBarButton *button =
+      new TPanelTitleBarButton(titleBar, getIconPath("pane_table"));
+  button->setToolTip(tr("Camera Stand View"));
+  titleBar->add(QPoint(x, 0), button);
+  button->setButtonSet(viewModeButtonSet, SceneViewer::NORMAL_REFERENCE);
+
+  // Camera View (animatic default — always shows camera framing)
+  x += 1 + iconWidth;
+  button = new TPanelTitleBarButton(titleBar, getIconPath("pane_cam"));
+  button->setToolTip(tr("Camera View"));
+  titleBar->add(QPoint(x, 0), button);
+  button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
+  button->setPressed(true);  // reflect the CAMERA_REFERENCE set in the constructor
+
+  connect(viewModeButtonSet, SIGNAL(selected(int)), m_sceneViewer,
+          SLOT(setReferenceMode(int)));
+
+  // Preview button — enables full render preview
+  x += 10 + iconWidth;
+  m_previewButton = new TPanelTitleBarButtonForPreview(
+      titleBar, getIconPath("pane_preview"));
+  titleBar->add(QPoint(x, 0), m_previewButton);
+  m_previewButton->setToolTip(tr("Preview"));
+  // Direct connection: animatic viewer is not part of the active-viewer rotation,
+  // so we bypass the MI_ToggleViewerPreview command and connect directly.
+  connect(m_previewButton, SIGNAL(toggled(bool)), this,
+          SLOT(enableFullPreview(bool)));
+
+  // Sub-camera preview button: created but hidden — required to be non-null
+  // because enableFullPreview() and onSceneSwitched() call setPressed() on it.
+  m_subcameraPreviewButton = new TPanelTitleBarButtonForPreview(
+      this, getIconPath("pane_subpreview"));
+  m_subcameraPreviewButton->hide();
+}
+
 // ---- onDrawFrame override ----
 // Called by FlipConsole's internal play timer once per frame.
 // The base implementation writes the frame to TApp::getCurrentFrame() (global).
@@ -1808,6 +1876,17 @@ void ZtoryAnimaticViewer::onDrawFrame(
     QElapsedTimer * /*timer*/, qint64 /*targetInstant*/) {
   m_sceneViewer->setVisual(settings);
   auto *ctrl = ZtoryAnimaticController::instance();
+
+  // When render preview is active, trigger rendering for this frame —
+  // the base onDrawFrame does this but we override it entirely.
+  // drawPreview() already calls getRaster() from paintGL(), but only
+  // after setVisual(); calling it here as well ensures the frame is
+  // scheduled even on the very first tick (before paintGL runs).
+  if (m_sceneViewer->isPreviewEnabled()) {
+    Previewer *pr = Previewer::instance(
+        m_sceneViewer->getPreviewMode() == SceneViewer::SUBCAMERA_PREVIEW);
+    pr->getRaster(frame - 1, settings.m_recomputeIfNeeded);
+  }
 
   // Handle deferred audio restart (from mute/solo changes during playback).
   // onDrawFrame is called by a Qt timer — between CoreAudio XPC callbacks —
@@ -2164,9 +2243,12 @@ void ZtoryAnimaticViewer::showEvent(QShowEvent *e) {
   TApp *app  = TApp::instance();
   auto *ctrl = ZtoryAnimaticController::instance();
 
-  // Remove every connection from the global frame handle to this viewer.
-  // In particular this removes frameSwitched→updateFrameRange which would
-  // continuously reset our range to the sub-scene frame count during play.
+  // Remove EVERY connection from the global frame handle to this viewer:
+  // - frameSwitched → onFrameSwitched (would advance our FlipConsole in sync
+  //   with ComboViewer play, making both appear to play together)
+  // - frameSwitched → updateFrameRange (would reset range to sub-scene count)
+  // - frameTypeChanged → onFrameTypeChanged (wrong frame type handling)
+  // - frameSwitched → changeWindowTitle (cosmetic but wrong)
   disconnect(app->getCurrentFrame(), nullptr, this, nullptr);
 
   // After base's onSceneChanged() (triggered by sceneSwitched/sceneChanged)
@@ -2265,6 +2347,9 @@ ZtoryAnimaticViewerPanel::ZtoryAnimaticViewerPanel(QWidget *parent)
   m_viewer = new ZtoryAnimaticViewer(this);
   m_viewer->setMinimumHeight(120);
   setWidget(m_viewer);
+  // Add camera stand / camera view / preview buttons to the panel title bar.
+  // Must be called after setWidget() so getTitleBar() is valid.
+  m_viewer->initializeAnimaticTitleBar(getTitleBar());
 }
 
 void ZtoryAnimaticViewerPanel::showEvent(QShowEvent *e) {

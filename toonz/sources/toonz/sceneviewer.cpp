@@ -1404,7 +1404,10 @@ void SceneViewer::resizeGL(int w, int h) {
 void SceneViewer::drawBuildVars() {
   TApp *app = TApp::instance();
 
-  int frame    = app->getCurrentFrame()->getFrame();
+  // Use dedicated frame handle when set (animatic viewer), else global.
+  TFrameHandle *fh = m_customFrameHandle ? m_customFrameHandle
+                                         : app->getCurrentFrame();
+  int frame    = fh->getFrame();
   TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
   // Camera affine
@@ -1691,7 +1694,10 @@ void SceneViewer::drawCameraStand() {
 void SceneViewer::drawPreview() {
   const double inch   = Stage::inch;
   TApp *app           = TApp::instance();
-  int row             = app->getCurrentFrame()->getFrame();
+  // Use dedicated frame handle when set (animatic viewer), else global.
+  TFrameHandle *fh = m_customFrameHandle ? m_customFrameHandle
+                                         : app->getCurrentFrame();
+  int row             = fh->getFrame();
   TCamera *currCamera = app->getCurrentScene()->getScene()->getCurrentCamera();
   TDimensionD cameraSize = currCamera->getSize();
 
@@ -1700,6 +1706,7 @@ void SceneViewer::drawPreview() {
 
   TRasterP ras =
       previewer->getRaster(row, m_visualSettings.m_recomputeIfNeeded);
+
   if (ras) {
     TRectD previewStageRectD, cameraStageRectD = currCamera->getStageRect();
 
@@ -2327,12 +2334,17 @@ void SceneViewer::drawScene() {
 
     ChildStack *cs2D = scene->getChildStack();
     bool insideSubScene = cs2D->getAncestorCount() > 0;
-    if (editInPlace && !(m_alwaysMainXsheet && insideSubScene)) {
-      // Normal editInPlace: apply parent camera transform so the sub-scene
-      // is drawn in context. Skipped when m_alwaysMainXsheet because the
-      // animatic viewer must always show the root-level camera unchanged.
+    if (editInPlace) {
+      // Apply parent camera transform so the sub-scene is drawn in context.
+      // Always use TApp::getCurrentFrame() (sub-scene local frame) — not the
+      // animatic viewer's m_customFrameHandle — because m_rowTable maps
+      // sub-local frames → parent frames, not the other way around.
+      // This ensures that both the regular shot viewer and the animatic viewer
+      // apply the same getAncestorAffine transform and therefore show matching
+      // camera framing when inside a sub-scene.
       TAffine aff;
-      if (cs2D->getAncestorAffine(aff, frame))
+      int ancestorFrame = TApp::instance()->getCurrentFrame()->getFrame();
+      if (cs2D->getAncestorAffine(aff, ancestorFrame))
         viewAff = viewAff * aff.inv();
     }
 

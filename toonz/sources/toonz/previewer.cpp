@@ -38,7 +38,10 @@
 #include "toonz/toonzscene.h"
 #include "toonz/txshlevel.h"
 #include "toonz/txsheet.h"
+#include "toonz/fxdag.h"
+#include "toonz/tcolumnfxset.h"
 #include "toonz/tcamera.h"
+#include "toonz/tstageobjecttree.h"
 #include "toonz/palettecontroller.h"
 
 // Toonz-qt stuff
@@ -275,7 +278,12 @@ TFxPair Previewer::Imp::buildSceneFx(int frame) {
 
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
-  TXsheet *xsh      = scene->getXsheet();
+  // Always render from root xsheet: getXsheet() returns the current (possibly
+  // sub-scene) xsheet when the user has entered one, which produces a white
+  // frame because the sub-scene's FX dag is empty. getTopXsheet() always
+  // returns the root, so the full composition is rendered correctly.
+  TXsheet *xsh      = scene->getTopXsheet();
+
   if (m_renderSettings.m_stereoscopic) {
     scene->shiftCameraX(-m_renderSettings.m_stereoscopicShift / 2.0);
     fxPair.m_frameA = ::buildSceneFx(
@@ -302,9 +310,14 @@ TFxPair Previewer::Imp::buildSceneFx(int frame) {
 //-----------------------------------------------------------------------------
 
 void Previewer::Imp::updateCamera() {
-  // Retrieve current camera
+  // Retrieve current camera — use root xsheet camera to match buildSceneFx()
+  // which always renders from the root. Using getCurrentCamera() (which calls
+  // getXsheet()->getCurrentCamera()) would return the sub-scene camera when
+  // the user has entered a sub-scene, causing a camera size mismatch.
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  TXsheet *rootXsh  = scene->getTopXsheet();
   TCamera *currCamera =
-      TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
+      rootXsh->getStageObjectTree()->getCurrentCamera();
   TRect subCameraRect = currCamera->getInterestRect();
   TPointD cameraPos(-0.5 * currCamera->getRes().lx,
                     -0.5 * currCamera->getRes().ly);

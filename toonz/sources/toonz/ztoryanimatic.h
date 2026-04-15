@@ -365,6 +365,11 @@ public:
   void addShowHideContextMenu(QMenu *) override {}
   void checkOldVersionVisblePartsFlags(QSettings &) override {}
 
+  // Set up minimal title-bar buttons for the animatic viewer:
+  // Camera Stand View, Camera View, and Preview.
+  // Called by ZtoryAnimaticViewerPanel after construction.
+  void initializeAnimaticTitleBar(TPanelTitleBar *titleBar);
+
   // Called by the panel after applyMuteSolo() — if playback is in progress,
   // stops and restarts audio so the new mix takes effect immediately.
   void restartAudioIfPlaying();
