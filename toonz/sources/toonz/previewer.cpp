@@ -1,6 +1,7 @@
 
 
 // System-core includes
+#include <iostream>
 #include "tsystem.h"
 #include "tthreadmessage.h"
 #include "timagecache.h"
@@ -340,6 +341,11 @@ void Previewer::Imp::updateCamera() {
   cameraRes.lx /= m_renderSettings.m_shrinkX;
   cameraRes.ly /= m_renderSettings.m_shrinkY;
 
+  std::cerr << "[Previewer::updateCamera] cameraRes=" << cameraRes.lx << "x"
+            << cameraRes.ly << " renderArea=(" << renderArea.x0 << ","
+            << renderArea.y0 << ")-(" << renderArea.x1 << "," << renderArea.y1
+            << ") subcam=" << m_subcamera << std::endl;
+
   // Invalidate the old camera size
   if (m_cameraRes != cameraRes || m_renderArea != renderArea) {
     m_cameraRes  = cameraRes;
@@ -526,12 +532,25 @@ void Previewer::Imp::updateAliasKeyword(const std::string &keyword) {
 
 //! Starts rendering the passed frame.
 void Previewer::Imp::refreshFrame(int frame) {
-  if (suspendedRendering) return;
+  if (suspendedRendering) {
+    std::cerr << "[Previewer::refreshFrame] frame=" << frame
+              << " SKIPPED: suspendedRendering" << std::endl;
+    return;
+  }
 
   // Build the region to render
   updatePreviewRect();
 
-  if (m_previewRect.getLx() <= 0 || m_previewRect.getLy() <= 0) return;
+  std::cerr << "[Previewer::refreshFrame] frame=" << frame
+            << " previewRect=" << m_previewRect.getLx() << "x"
+            << m_previewRect.getLy() << " renderArea=" << m_renderArea.getLx()
+            << "x" << m_renderArea.getLy() << std::endl;
+
+  if (m_previewRect.getLx() <= 0 || m_previewRect.getLy() <= 0) {
+    std::cerr << "[Previewer::refreshFrame] frame=" << frame
+              << " ABORTED: previewRect empty" << std::endl;
+    return;
+  }
 
   // Retrieve the FrameInfo for passed frame
   std::map<int, FrameInfo>::iterator it = m_frames.find(frame);
@@ -688,6 +707,29 @@ void Previewer::Imp::doOnRenderRasterCompleted(const RenderData &renderData) {
   int renderId = renderData.m_renderId;
   int frame    = renderData.m_frames[0];
 
+  // --- DIAGNOSTIC ---
+  if (renderData.m_rasA) {
+    TRasterP dbgRas = renderData.m_rasA;
+    TRaster32P dbgRas32 = dbgRas;
+    std::cerr << "[Previewer::renderCompleted] frame=" << frame
+              << " rasSize=" << dbgRas->getLx() << "x" << dbgRas->getLy();
+    if (dbgRas32) {
+      dbgRas32->lock();
+      int lx = dbgRas32->getLx(), ly = dbgRas32->getLy();
+      if (lx > 0 && ly > 0) {
+        TPixel32 ct = dbgRas32->pixels(ly / 2)[lx / 2];
+        std::cerr << " centerPix=(" << (int)ct.r << "," << (int)ct.g << ","
+                  << (int)ct.b << "," << (int)ct.m << ")";
+      }
+      dbgRas32->unlock();
+    }
+    std::cerr << std::endl;
+  } else {
+    std::cerr << "[Previewer::renderCompleted] frame=" << frame
+              << " rasA=NULL" << std::endl;
+  }
+  // --- END DIAGNOSTIC ---
+
   if (renderData.m_rasB) {
     assert(m_renderSettings.m_stereoscopic);
     TRop::makeStereoRaster(renderData.m_rasA, renderData.m_rasB);
@@ -776,6 +818,7 @@ void Previewer::Imp::doOnRenderRasterFailed(const RenderData &renderData) {
   m_computingFrameCount--;
 
   int frame = (int)renderData.m_frames[0];
+  std::cerr << "[Previewer::renderFAILED] frame=" << frame << std::endl;
 
   std::map<int, FrameInfo>::iterator it = m_frames.find(frame);
   if (it == m_frames.end()) return;

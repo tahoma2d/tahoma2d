@@ -27,6 +27,7 @@
 #include "toonzqt/icongenerator.h"
 #include <QWindow>
 #include <QScreen>
+#include <iostream>
 #include "toonzqt/gutil.h"
 #include "toonzqt/imageutils.h"
 #include "toonzqt/lutcalibrator.h"
@@ -1698,7 +1699,14 @@ void SceneViewer::drawPreview() {
   TFrameHandle *fh = m_customFrameHandle ? m_customFrameHandle
                                          : app->getCurrentFrame();
   int row             = fh->getFrame();
-  TCamera *currCamera = app->getCurrentScene()->getScene()->getCurrentCamera();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  // Camera used to map the rendered raster back into stage coordinates.
+  // The Previewer always renders from the ROOT xsheet (see Previewer::Imp::
+  // buildSceneFx / updateCamera in previewer.cpp), so we MUST use the root
+  // camera here, otherwise the raster gets projected with the wrong
+  // dimensions when the user has entered a sub-scene.
+  TCamera *currCamera =
+      scene->getTopXsheet()->getStageObjectTree()->getCurrentCamera();
   TDimensionD cameraSize = currCamera->getSize();
 
   Previewer *previewer =
@@ -1706,6 +1714,50 @@ void SceneViewer::drawPreview() {
 
   TRasterP ras =
       previewer->getRaster(row, m_visualSettings.m_recomputeIfNeeded);
+
+  // --- DIAGNOSTIC (render-preview-white bug) ----------------------------
+  // Log on state change (null↔valid) and once every 120 draws to show
+  // current status.  When the raster is valid, sample 3 pixels so we can
+  // tell whether the content is white/transparent/real.
+  {
+    static bool prevRasWasNull = true;
+    static int  dbgCounter     = 0;
+    bool curNull = (ras == nullptr);
+    if (curNull != prevRasWasNull || (dbgCounter % 120) == 0) {
+      TCamera *subCam = scene->getCurrentCamera();
+      std::cerr << "[drawPreview] row=" << row
+                << " alwaysMain=" << (m_alwaysMainXsheet ? 1 : 0)
+                << " rootCam=" << currCamera->getRes().lx << "x"
+                << currCamera->getRes().ly
+                << " subCam=" << subCam->getRes().lx << "x"
+                << subCam->getRes().ly
+                << " ras=" << (ras ? "valid" : "null");
+      if (ras) {
+        std::cerr << " rasSize=" << ras->getLx() << "x" << ras->getLy();
+        TRaster32P ras32 = ras;
+        if (ras32) {
+          ras32->lock();
+          int lx = ras32->getLx(), ly = ras32->getLy();
+          TPixel32 tl = ras32->pixels(0)[0];
+          TPixel32 ct = ras32->pixels(ly / 2)[lx / 2];
+          TPixel32 br = ras32->pixels(ly - 1)[lx - 1];
+          std::cerr << " TL=(" << (int)tl.r << "," << (int)tl.g << ","
+                    << (int)tl.b << "," << (int)tl.m << ")"
+                    << " C=(" << (int)ct.r << "," << (int)ct.g << ","
+                    << (int)ct.b << "," << (int)ct.m << ")"
+                    << " BR=(" << (int)br.r << "," << (int)br.g << ","
+                    << (int)br.b << "," << (int)br.m << ")";
+          ras32->unlock();
+        } else {
+          std::cerr << " (non-32bit raster)";
+        }
+      }
+      std::cerr << std::endl;
+      prevRasWasNull = curNull;
+    }
+    ++dbgCounter;
+  }
+  // -----------------------------------------------------------------------
 
   if (ras) {
     TRectD previewStageRectD, cameraStageRectD = currCamera->getStageRect();

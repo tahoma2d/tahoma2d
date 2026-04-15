@@ -6,6 +6,103 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-15b] — Diagnosi: render preview produce raster TRASPARENTE (bug Ztoryc-specifico)
+
+### Modified
+- `toonz/sources/toonz/sceneviewer.cpp` — `drawPreview()`:
+  - Camera usata per `rasterToStageRef` cambiata da `scene->getCurrentCamera()`
+    → `scene->getTopXsheet()->getStageObjectTree()->getCurrentCamera()` per
+    allineare la camera a quella usata dal Previewer (in test erano già
+    equivalenti 1920x1080, ma fix coerente con `Previewer::updateCamera()`).
+  - Aggiunto logging diagnostico (ogni 60 frame): row, dimensioni camera
+    root/sub, validità raster, pixel sample TL/Center/BR.
+- `toonz/sources/toonz/previewer.cpp` — logging diagnostico in:
+  - `updateCamera()`: cameraRes, renderArea, flag subcamera
+  - `refreshFrame()`: previewRect, renderArea, motivi abort
+  - callback render completed: dimensione raster + pixel centrale
+
+### Notes — Scoperta chiave
+Il raster **NON è bianco, è totalmente TRASPARENTE**:
+```
+[Previewer::renderCompleted] frame=0 rasSize=1920x1080 centerPix=(0,0,0,0)
+[drawPreview] ras=valid rasSize=1920x1080 TL=(0,0,0,0) C=(0,0,0,0) BR=(0,0,0,0)
+```
+
+Tutti i pixel sono `RGBA=(0,0,0,0)` — alpha zero. Il viewer compone
+il trasparente sopra `m_visualSettings.m_blankColor` (bianco di default),
+**facendoci vedere bianco**.
+
+Quindi il bug NON è:
+- ❌ camera mismatch (root e sub entrambe 1920x1080)
+- ❌ scheduling/trasporto (`refreshFrame` parte, `renderCompleted` firma,
+  raster arriva valido al viewer con dim corretta)
+- ❌ legato alle sub-scene (confermato dall'utente: succede anche
+  renderizzando un disegno direttamente nel main xsheet)
+
+**Il bug è Ztoryc-specifico**: la stessa scena aperta in Tahoma2D vanilla
+renderizza correttamente. Una modifica di fork introdotta da Ztoryc rompe
+il render preview → da bisettare rispetto a upstream `tahoma2d/tahoma2d`.
+
+### Prossima sessione — piano concreto
+1. **Diff con upstream Tahoma2D** — `git diff upstream/master -- toonz/sources/toonz/previewer.cpp toonz/sources/toonz/sceneviewer.cpp toonz/sources/common/tfx/` per vedere cosa Ztoryc ha toccato nel path render preview.
+2. **Ricerca aree sospette**: `scenefx.cpp`, `trop.cpp`, `trasterfx.cpp`,
+   qualsiasi modifica alla composizione `makeOver(bgCard, fx)`.
+3. **Bisect**: se il diff è grande, `git bisect` partendo da un commit
+   pre-animatic che funzionava. Candidati iniziali:
+   - commit `ac5e46ca8` "Add storyboard/ztory sources" (potrebbe essere OK)
+   - commit `35577720e` "ZtoryAnimaticController + dedicated TFrameHandle"
+     (tocca TFrameHandle, area a rischio)
+4. **Opus per analisi** — dato che il codice di rendering è denso, usare
+   Claude Opus per leggere il diff upstream vs Ztoryc e identificare
+   subito l'area rotta.
+
+---
+## [2026-04-15] — Indagine render preview bianco (bug ancora aperto)
+
+### Modified
+- `toonz/sources/toonz/previewer.cpp`:
+  - `Previewer::Imp::buildSceneFx()`: cambiato `scene->getXsheet()` →
+    `scene->getTopXsheet()` — il Previewer ora renderizza sempre dalla root
+    xsheet anziché dalla sub-scene aperta. Fix corretto ma non sufficiente.
+  - `Previewer::Imp::updateCamera()`: cambiato `scene->getCurrentCamera()`
+    (che usava `getXsheet()`, tornando la camera della sub-scene aperta) →
+    `scene->getTopXsheet()->getStageObjectTree()->getCurrentCamera()`.
+    Camera del Previewer ora sempre allineata alla root xsheet.
+  - Aggiunti include: `toonz/fxdag.h`, `toonz/tcolumnfxset.h`,
+    `toonz/tstageobjecttree.h` (necessari per i fix).
+
+### Notes — Bug render preview ancora aperto
+Il render preview mostra bianco sia nel viewer animatico che in quello nativo.
+
+**Investigazione effettuata:**
+- Debug confermato: il FX tree è valido end-to-end:
+  - Root xsheet: `cols=6, frameCount=214, termFxs=4` → `fxA=non-null`
+  - Sub-scene: `subCols=1, subTermFxs=1, outputConnected=1` → `buildFx=non-null`
+- Il render completa e `ras=VALID` (raster non-null restituito al viewer).
+- `buildSceneFx()` in `scenefx.cpp` fa sempre `makeOver(bgCard, fx)` — quindi
+  `fxA=non-null` non garantisce contenuto visivo (potrebbe essere solo bgCard).
+- GL error 1286 (`GL_INVALID_FRAMEBUFFER_OPERATION`) pre-esistente, non causa
+  del bianco (LUT non attiva, `lutValid=0`).
+
+**Ipotesi ancora da verificare:**
+1. La `drawPreview()` in `sceneviewer.cpp` usa ancora
+   `scene->getCurrentCamera()` per calcolare `rasterToStageRef` — se la camera
+   della sub-scene ha dimensioni diverse dalla root, l'immagine potrebbe essere
+   mappata fuori dal viewport.
+2. Il raster renderizzato potrebbe contenere effettivamente solo il colore
+   sfondo (bianco) perché le sub-scene, pur avendo `termFxs=1`, non producono
+   pixel visibili per qualche ragione ancora ignota (palette? DPI? blend mode?).
+3. Il Previewer singleton potrebbe condividere cache tra viewer diversi in modo
+   conflittuale.
+
+**Prossima sessione — cosa fare:**
+- Fixare `drawPreview()` in `sceneviewer.cpp` per usare la root xsheet camera
+  nel calcolo di `rasterToStageRef`.
+- Aggiungere debug mirato al valore dei pixel del raster renderizzato (es.
+  `ras->pixels(0)[0]`) per capire se il contenuto è bianco o trasparente.
+- Considerare di usare Opus per analisi più profonda.
+
+---
 ## [2026-04-09] — Camera mismatch parziale fix + design room unificata
 
 ### Fixed
