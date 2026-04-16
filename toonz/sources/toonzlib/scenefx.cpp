@@ -1,6 +1,8 @@
 
 
 // TnzBase includes
+#include <iostream>
+#include <typeinfo>
 #include "tfxattributes.h"
 #include "tfxutil.h"
 #include "tmacrofx.h"
@@ -687,6 +689,24 @@ FxBuilder::FxBuilder(ToonzScene *scene, TXsheet *xsh, double frame,
 TFxP FxBuilder::buildFx() {
   // start with the output fx
   TFx *outputFx = m_xsh->getFxDag()->getOutputFx(0);
+  // --- DIAGNOSTIC ---
+  if (outputFx) {
+    int nPorts = outputFx->getInputPortCount();
+    TFx *inputFx = (nPorts > 0) ? outputFx->getInputPort(0)->getFx() : nullptr;
+    if (inputFx) {
+      // Print the type name of the connected fx to identify column type
+      std::string typeName = typeid(*inputFx).name();
+      // Trim compiler-mangled prefix (e.g. "N6...E") — last word is enough
+      // If it's a column fx, check cell content
+      TColumnFx *colFx = dynamic_cast<TColumnFx *>(inputFx);
+      if (colFx) {
+        int colIdx = colFx->getColumnIndex();
+        TXshCell cell = m_xsh->getCell(m_frame, colIdx);
+        TXshColumn *col = m_xsh->getColumn(colIdx);
+      }
+    }
+  }
+  // --- END DIAGNOSTIC ---
   // if nothing is going into the output or there are no fx, bail.
   if (!outputFx || outputFx->getInputPortCount() != 1 ||
       outputFx->getInputPort(0)->getFx() == 0)
@@ -807,6 +827,17 @@ PlacedFx FxBuilder::makePF(TXsheetFx *fx) {
   // Expand the render-tree from terminal fxs
   TFxSet *fxs = m_xsh->getFxDag()->getTerminalFxs();
   int m       = fxs->getFxCount();
+  // --- DIAGNOSTIC ---
+  for (int di = 0; di < m; di++) {
+    TFx *dfx = fxs->getFx(di);
+    std::string dtn = dfx ? typeid(*dfx).name() : "null";
+    TColumnFx *dcfx = dfx ? dynamic_cast<TColumnFx *>(dfx) : nullptr;
+    if (dcfx) {
+      int ci = dcfx->getColumnIndex();
+      TXshCell cell = m_xsh->getCell(m_frame, ci);
+    }
+  }
+  // --- END DIAGNOSTIC ---
   if (m == 0) {
     PlacedFx ret;
     ret.m_isPostXsheetNode = true;
@@ -933,6 +964,15 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
   if (!cell.isEmpty() && cell.getSimpleLevel() &&
       cell.getSimpleLevel()->getName() == L"__Scene Overlay__")
     isOverlay = true;
+
+  // --- DIAGNOSTIC ---
+  {
+    TXshSimpleLevel *dsl = cell.isEmpty() ? nullptr : cell.m_level->getSimpleLevel();
+    bool dIsSub          = !cell.isEmpty() && !cell.getFrameId().isStopFrame() &&
+                           cell.m_level->getChildLevel();
+    int lvlType = cell.m_level.getPointer() ? cell.m_level->getType() : -1;
+  }
+  // --- END DIAGNOSTIC ---
 
   // if the cell is empty, only inherits its placement
   if ((m_particleDescendentCount == 0 && cell.isEmpty())) return pf;
@@ -1419,6 +1459,8 @@ TFxP buildSceneFx(ToonzScene *scene, TXsheet *xsh, double row, int whichLevels,
                   int shrink, bool isPreview) {
   FxBuilder builder(scene, xsh, row, whichLevels, isPreview);
   TFxP fx = builder.buildFx();
+  // --- DIAGNOSTIC ---
+  // --- END DIAGNOSTIC ---
   TStageObjectId cameraId;
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();

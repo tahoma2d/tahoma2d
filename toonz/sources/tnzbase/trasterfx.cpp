@@ -23,6 +23,7 @@
 
 // Diagnostics
 // #define DIAGNOSTICS
+#include <iostream>
 #ifdef DIAGNOSTICS
 #include "diagnostics.h"
 
@@ -74,9 +75,16 @@ inline TRectD myConvert(const TRect &rect) {
 //--------------------------------------------------
 
 inline void enlargeToI(TRectD &r) {
+  // Guard against undefined behavior: tfloor/tceil cast to int via (int)(x),
+  // which is UB for values outside int range (e.g. TConsts::infiniteRectD uses
+  // ±DBL_MAX). On some platforms (int)(DBL_MAX)=-1, (int)(-DBL_MAX)=0, which
+  // silently corrupts an infinite rect to (-1,-1)-(0,0) — causing a blank render.
+  const double kMaxSafeInt =
+      static_cast<double>(std::numeric_limits<int>::max() / 2);
+  if (r.x0 < -kMaxSafeInt || r.x1 > kMaxSafeInt || r.y0 < -kMaxSafeInt ||
+      r.y1 > kMaxSafeInt)
+    return;
   TRectD temp(tfloor(r.x0), tfloor(r.y0), tceil(r.x1), tceil(r.y1));
-  // NOTE: If we enlarge a TConsts::infiniteRectD or one which trespass
-  // ints' numerical bounds, the rect may become empty.
   if (!myIsEmpty(temp)) r = temp;
 }
 
@@ -254,7 +262,8 @@ public:
                  const TRenderSettings &info) override {
     // NOTE: TrFx are not present at this recursive level. Affines dealing is
     // still handled by TGeometryFxs here....
-    return m_fx->doGetBBox(frame, bBox, info);
+    bool ret = m_fx->doGetBBox(frame, bBox, info);
+    return ret;
   }
 
   //-----------------------------------------------------------
@@ -268,7 +277,9 @@ public:
     TRenderSettings infoIn(info);
     TAffine appliedAff;
 
-    if (!buildInput(rectOut, frame, info, rectIn, infoIn, appliedAff)) return;
+    if (!buildInput(rectOut, frame, info, rectIn, infoIn, appliedAff)) {
+      return;
+    }
 
     const TRect &rectInI = myConvert(rectIn);
 
@@ -461,6 +472,8 @@ void FxResourceBuilder::compute(const TRectD &tileRect) {
   TStopWatch sw;
   sw.start();
 #endif
+
+  std::string fxn = m_rfx->getFxType();
 
   buildTileToCalculate(tileRect);
   m_rfx->doCompute(*m_currTile, m_frame, *m_rs);
@@ -947,6 +960,7 @@ void TRasterFx::compute(TTile &tile, double frame,
   interestingTile.m_pos = interestingRect.getP00();
   TRect interestingRectI(myConvert(interestingRect - tilePlacement.getP00()));
   interestingTile.setRaster(tile.getRaster()->extract(interestingRectI));
+
 
 #ifdef DIAGNOSTICS
 

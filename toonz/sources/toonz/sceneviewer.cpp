@@ -1725,15 +1725,7 @@ void SceneViewer::drawPreview() {
     bool curNull = (ras == nullptr);
     if (curNull != prevRasWasNull || (dbgCounter % 120) == 0) {
       TCamera *subCam = scene->getCurrentCamera();
-      std::cerr << "[drawPreview] row=" << row
-                << " alwaysMain=" << (m_alwaysMainXsheet ? 1 : 0)
-                << " rootCam=" << currCamera->getRes().lx << "x"
-                << currCamera->getRes().ly
-                << " subCam=" << subCam->getRes().lx << "x"
-                << subCam->getRes().ly
-                << " ras=" << (ras ? "valid" : "null");
       if (ras) {
-        std::cerr << " rasSize=" << ras->getLx() << "x" << ras->getLy();
         TRaster32P ras32 = ras;
         if (ras32) {
           ras32->lock();
@@ -1741,18 +1733,10 @@ void SceneViewer::drawPreview() {
           TPixel32 tl = ras32->pixels(0)[0];
           TPixel32 ct = ras32->pixels(ly / 2)[lx / 2];
           TPixel32 br = ras32->pixels(ly - 1)[lx - 1];
-          std::cerr << " TL=(" << (int)tl.r << "," << (int)tl.g << ","
-                    << (int)tl.b << "," << (int)tl.m << ")"
-                    << " C=(" << (int)ct.r << "," << (int)ct.g << ","
-                    << (int)ct.b << "," << (int)ct.m << ")"
-                    << " BR=(" << (int)br.r << "," << (int)br.g << ","
-                    << (int)br.b << "," << (int)br.m << ")";
           ras32->unlock();
         } else {
-          std::cerr << " (non-32bit raster)";
         }
       }
-      std::cerr << std::endl;
       prevRasWasNull = curNull;
     }
     ++dbgCounter;

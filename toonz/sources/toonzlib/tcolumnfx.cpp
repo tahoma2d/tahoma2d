@@ -1,5 +1,5 @@
 
-
+#include <iostream>
 // TnzCore includes
 #include "tsystem.h"
 #include "tstream.h"
@@ -1272,8 +1272,9 @@ void TLevelColumnFx::doCompute(TTile &tile, double frame,
       inTileRectD *= tileRectD;
 
       // Should the intersection be void, return
-      if (inTileRectD.x0 >= inTileRectD.x1 || inTileRectD.y0 >= inTileRectD.y1)
+      if (inTileRectD.x0 >= inTileRectD.x1 || inTileRectD.y0 >= inTileRectD.y1) {
         return;
+      }
 
       // Output that intersection in the requested tile
       TRect inTileRect(tround(inTileRectD.x0), tround(inTileRectD.y0),
@@ -1477,6 +1478,9 @@ bool TLevelColumnFx::doGetBBox(double frame, TRectD &bBox,
   if (type != PLI_XSHLEVEL) {
     TImageInfo imageInfo;
     getImageInfo(imageInfo, sl, cell.m_frameId);
+
+    // --- DIAGNOSTIC ---
+    // --- END DIAGNOSTIC ---
 
     double cx = 0.5 * imageInfo.m_lx;
     double cy = 0.5 * imageInfo.m_ly;

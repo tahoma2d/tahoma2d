@@ -279,11 +279,13 @@ TFxPair Previewer::Imp::buildSceneFx(int frame) {
 
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
-  // Always render from root xsheet: getXsheet() returns the current (possibly
-  // sub-scene) xsheet when the user has entered one, which produces a white
-  // frame because the sub-scene's FX dag is empty. getTopXsheet() always
-  // returns the root, so the full composition is rendered correctly.
-  TXsheet *xsh      = scene->getTopXsheet();
+  // TEMP (diag/preview-transparent-raster test): reverted to getXsheet() to
+  // test Opus hypothesis that passing a sub-local frame into the root xsheet
+  // produces a transparent raster. If this restores rendering, the previous
+  // getTopXsheet() change is the culprit — fix must then be frame-handle
+  // aware for the animatic viewer.
+  TXsheet *xsh      = scene->getXsheet();
+
 
   if (m_renderSettings.m_stereoscopic) {
     scene->shiftCameraX(-m_renderSettings.m_stereoscopicShift / 2.0);
@@ -341,10 +343,6 @@ void Previewer::Imp::updateCamera() {
   cameraRes.lx /= m_renderSettings.m_shrinkX;
   cameraRes.ly /= m_renderSettings.m_shrinkY;
 
-  std::cerr << "[Previewer::updateCamera] cameraRes=" << cameraRes.lx << "x"
-            << cameraRes.ly << " renderArea=(" << renderArea.x0 << ","
-            << renderArea.y0 << ")-(" << renderArea.x1 << "," << renderArea.y1
-            << ") subcam=" << m_subcamera << std::endl;
 
   // Invalidate the old camera size
   if (m_cameraRes != cameraRes || m_renderArea != renderArea) {
@@ -368,6 +366,12 @@ void Previewer::Imp::updateRenderSettings() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   TRenderSettings renderSettings =
       scene->getProperties()->getPreviewProperties()->getRenderSettings();
+
+  // --- DIAGNOSTIC ---
+  {
+    TPixel32 bgC = scene->getProperties()->getBgColor();
+  }
+  // --- END DIAGNOSTIC ---
 
   if (renderSettings.m_applyShrinkToViewer)
     renderSettings.m_shrinkY = renderSettings.m_shrinkX;
@@ -533,22 +537,14 @@ void Previewer::Imp::updateAliasKeyword(const std::string &keyword) {
 //! Starts rendering the passed frame.
 void Previewer::Imp::refreshFrame(int frame) {
   if (suspendedRendering) {
-    std::cerr << "[Previewer::refreshFrame] frame=" << frame
-              << " SKIPPED: suspendedRendering" << std::endl;
     return;
   }
 
   // Build the region to render
   updatePreviewRect();
 
-  std::cerr << "[Previewer::refreshFrame] frame=" << frame
-            << " previewRect=" << m_previewRect.getLx() << "x"
-            << m_previewRect.getLy() << " renderArea=" << m_renderArea.getLx()
-            << "x" << m_renderArea.getLy() << std::endl;
 
   if (m_previewRect.getLx() <= 0 || m_previewRect.getLy() <= 0) {
-    std::cerr << "[Previewer::refreshFrame] frame=" << frame
-              << " ABORTED: previewRect empty" << std::endl;
     return;
   }
 
@@ -711,22 +707,15 @@ void Previewer::Imp::doOnRenderRasterCompleted(const RenderData &renderData) {
   if (renderData.m_rasA) {
     TRasterP dbgRas = renderData.m_rasA;
     TRaster32P dbgRas32 = dbgRas;
-    std::cerr << "[Previewer::renderCompleted] frame=" << frame
-              << " rasSize=" << dbgRas->getLx() << "x" << dbgRas->getLy();
     if (dbgRas32) {
       dbgRas32->lock();
       int lx = dbgRas32->getLx(), ly = dbgRas32->getLy();
       if (lx > 0 && ly > 0) {
         TPixel32 ct = dbgRas32->pixels(ly / 2)[lx / 2];
-        std::cerr << " centerPix=(" << (int)ct.r << "," << (int)ct.g << ","
-                  << (int)ct.b << "," << (int)ct.m << ")";
       }
       dbgRas32->unlock();
     }
-    std::cerr << std::endl;
   } else {
-    std::cerr << "[Previewer::renderCompleted] frame=" << frame
-              << " rasA=NULL" << std::endl;
   }
   // --- END DIAGNOSTIC ---
 
@@ -818,7 +807,6 @@ void Previewer::Imp::doOnRenderRasterFailed(const RenderData &renderData) {
   m_computingFrameCount--;
 
   int frame = (int)renderData.m_frames[0];
-  std::cerr << "[Previewer::renderFAILED] frame=" << frame << std::endl;
 
   std::map<int, FrameInfo>::iterator it = m_frames.find(frame);
   if (it == m_frames.end()) return;
