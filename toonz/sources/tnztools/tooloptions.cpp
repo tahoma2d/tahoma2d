@@ -62,6 +62,7 @@
 #include <QPropertyAnimation>
 #include <QEasingCurve>
 #include <QStackedWidget>
+#include <QTimer>
 
 using namespace ToolOptionsControls;
 
@@ -2263,19 +2264,29 @@ void BrushToolOptionsBox::filterControls() {
 void BrushToolOptionsBox::updateStatus() {
   filterControls();
 
-  // Rebuild AutoFill style combo when palette changes (level switch, style added/renamed).
+  // Rebuild AutoFill style combo when palette changes (level/xsheet switch).
+  // Both rebuildAutoFillStyleCombo AND notifyToolComboBoxListChanged are deferred
+  // via QTimer: updateStatus() is called from inside Qt signal chains triggered by
+  // xsheet switches (shot entry, save, app close).  At that moment the palette
+  // pointer can be temporarily invalid.  Deferring ensures execution after the
+  // signal chain unwinds and the palette is in a stable state.
+  // QTimer::singleShot with 'this' as context is safe: Qt cancels the callback
+  // automatically if 'this' (BrushToolOptionsBox) is destroyed first.
   if (m_autoFillStyleCombo && m_pltHandle) {
-    TPalette *pal       = m_pltHandle->getPalette();
-    int       nStyles   = pal ? pal->getStyleCount() : 0;
+    TPalette *pal     = m_pltHandle->getPalette();
+    int       nStyles = pal ? pal->getStyleCount() : 0;
     if (pal != m_lastPalette || nStyles != m_lastPaletteStyles) {
       m_lastPalette       = pal;
       m_lastPaletteStyles = nStyles;
-      auto *brushTool = dynamic_cast<ToonzRasterBrushTool *>(m_tool);
-      if (brushTool) {
-        brushTool->rebuildAutoFillStyleCombo(pal);
-        // Notify the combo to reload its entries from the updated property.
-        m_toolHandle->notifyToolComboBoxListChanged("Fill Style:");
-      }
+      QTimer::singleShot(0, this, [this]() {
+        if (!m_pltHandle || !m_toolHandle) return;
+        auto *brushTool = dynamic_cast<ToonzRasterBrushTool *>(m_tool);
+        if (!brushTool) return;
+        try {
+          brushTool->rebuildAutoFillStyleCombo(m_pltHandle->getPalette());
+          m_toolHandle->notifyToolComboBoxListChanged("Fill Style:");
+        } catch (...) {}
+      });
     }
   }
 
@@ -3891,9 +3902,9 @@ un po' di codice... */
 //-----------------------------------------------------------------------------
 
 void ToolOptions::onToolChanged() {
-  assert(m_panel);
+  if (!m_panel) return;  // guard: can be null if tool switched while signal was queued
   ToolOptionsBox *optionBox = dynamic_cast<ToolOptionsBox *>(m_panel);
-  assert(optionBox);
+  if (!optionBox) return;
   optionBox->updateStatus();
 }
 

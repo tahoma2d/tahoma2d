@@ -124,10 +124,12 @@ struct Shot {
   int              m_selectedShotIndex;
   std::set<int>     m_selectedIndices;
 
+  bool m_updating = false;   // re-entrancy guard for signal reactions
   struct ClipboardEntry {
     ShotData data;
     bool     isClone;
     int      srcColumn;
+    bool     isCut = false;   // true = cut (delete original on paste)
   };
   std::vector<ClipboardEntry> m_clipboard;
   int  m_fps;
@@ -155,6 +157,7 @@ protected:
 private slots:
   void onAddShot();
   void onDeleteShot();
+  void onCutShot();
   void onCloneShot();
   void onCopyShot();
   void onPasteShot();

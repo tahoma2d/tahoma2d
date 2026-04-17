@@ -31,6 +31,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QShortcut>
 #include <QPushButton>
 #include <QToolButton>
 #include <QTimer>
@@ -2401,6 +2402,22 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   setWindowTitle("Ztory Animatic");
   setFocusPolicy(Qt::StrongFocus);
 
+  // QShortcuts with WidgetWithChildrenShortcut fire when any child widget
+  // (track, ruler) has focus — unlike keyPressEvent which needs the panel itself.
+  // We route through dedicated private slots to avoid duplicating logic.
+  {
+    auto *sc = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_C), this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+    connect(sc, &QShortcut::activated, this, &ZtoryAnimaticPanel::onCopyShots);
+  }
+  {
+    auto *sc = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_X), this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+    connect(sc, &QShortcut::activated, this, &ZtoryAnimaticPanel::onCutShots);
+  }
+  {
+    auto *sc = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_V), this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+    connect(sc, &QShortcut::activated, this, &ZtoryAnimaticPanel::onPasteShots);
+  }
+
   QWidget *container = new QWidget(this);
   QVBoxLayout *lay = new QVBoxLayout(container);
   lay->setContentsMargins(0, 0, 0, 0);
@@ -2800,11 +2817,90 @@ void ZtoryAnimaticPanel::showEvent(QShowEvent *e) {
   m_ruler->syncOnionToGlobal();
 }
 
+// Helper: returns shot index in ZtoryModel for a given xsheet column, or -1.
+static int shotIdxForCol(int col) {
+  const auto &shots = ZtoryModel::instance()->shots();
+  for (int i = 0; i < (int)shots.size(); i++)
+    if (shots[i].xsheetColumn == col) return i;
+  return -1;
+}
+
+// ── Cmd+C/X/V slot implementations ───────────────────────────────────────────
+
+void ZtoryAnimaticPanel::onCopyShots() {
+  if (!ZtoryModel::assertMainXsheet(false)) return;
+  const std::set<int> &sel = m_track->selectedCols();
+  if (sel.empty()) return;
+  m_animClip.clear();
+  std::vector<int> cols(sel.begin(), sel.end());
+  std::sort(cols.begin(), cols.end());
+  for (int col : cols) {
+    int si = shotIdxForCol(col);
+    if (si < 0) continue;
+    AnimClipEntry ce;
+    ce.srcCol = col;
+    ce.data   = ZtoryModel::instance()->shot(si);
+    ce.isCut  = false;
+    m_animClip.push_back(ce);
+  }
+}
+
+void ZtoryAnimaticPanel::onCutShots() {
+  if (!ZtoryModel::assertMainXsheet(false)) return;
+  onCopyShots();
+  for (auto &ce : m_animClip) ce.isCut = true;
+}
+
+void ZtoryAnimaticPanel::onPasteShots() {
+  if (m_animClip.empty()) return;
+  if (!ZtoryModel::assertMainXsheet(false)) return;
+
+  // Clone each entry using ZtoryModel::cloneShot (inserts into model + emits shotAdded)
+  // Reverse order so index shifts don't affect earlier shots
+  std::vector<AnimClipEntry> clip = m_animClip;
+  std::sort(clip.rbegin(), clip.rend(), [](const AnimClipEntry &a, const AnimClipEntry &b){
+    return a.srcCol < b.srcCol;
+  });
+  for (const auto &ce : clip) {
+    int si = shotIdxForCol(ce.srcCol);
+    if (si < 0) continue;
+    ZtoryModel::instance()->cloneShot(si);  // emits shotAdded → Board syncs
+  }
+
+  // If cut: delete originals (srcCols still valid since we only cloned above)
+  bool anyCut = false;
+  for (const auto &ce : clip) if (ce.isCut) { anyCut = true; break; }
+  if (anyCut) {
+    TApp *app = TApp::instance();
+    ToonzScene *scene = app->getCurrentScene()->getScene();
+    TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
+    if (xsh) {
+      std::vector<int> cutCols;
+      for (const auto &ce : clip) if (ce.isCut) cutCols.push_back(ce.srcCol);
+      std::sort(cutCols.rbegin(), cutCols.rend());
+      for (int col : cutCols) {
+        ColumnCmd::deleteColumn(col);
+        emit ZtoryModel::instance()->shotRemovedAt(col);
+      }
+      xsh->updateFrameCount();
+    }
+    m_animClip.clear();
+  }
+
+  ZtoryModel::instance()->resequenceXsheet();
+  refreshFromScene();
+}
+
 void ZtoryAnimaticPanel::keyPressEvent(QKeyEvent *e) {
   const Qt::KeyboardModifiers mod = e->modifiers();
   const bool cmd  = mod & Qt::ControlModifier;
   const bool shift = mod & Qt::ShiftModifier;
   const std::set<int> &sel = m_track->selectedCols();
+
+  // ── Cmd+C / Cmd+X / Cmd+V — delegated to named slots ────────────────────
+  if (cmd && !shift && e->key() == Qt::Key_C) { onCopyShots(); e->accept(); return; }
+  if (cmd && !shift && e->key() == Qt::Key_X) { onCutShots();  e->accept(); return; }
+  if (cmd && !shift && e->key() == Qt::Key_V) { onPasteShots(); e->accept(); return; }
 
   // Cmd+D — duplicate (clone) selected shots
   if (cmd && !shift && e->key() == Qt::Key_D) {

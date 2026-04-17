@@ -6,6 +6,53 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-16] — Fix: render preview frame bianco/trasparente
+
+### Fixed
+- **`toonz/sources/tnzbase/trasterfx.cpp` — `enlargeToI()` UB con `TConsts::infiniteRectD`**
+  - Root cause definitivo identificato e corretto.
+  - `enlargeToI(TRectD &r)` applica `tfloor`/`tceil` (che fanno `(int)(x)`) a `TConsts::infiniteRectD = TRectD(-DBL_MAX,-DBL_MAX,DBL_MAX,DBL_MAX)`. Cast `(int)(±DBL_MAX)` è undefined behavior; su questo Mac produce `(int)(DBL_MAX)=-1` e `(int)(-DBL_MAX)=0`, corrompendo il rect a `(-1,-1)-(0,0)`.
+  - `ColorCardFx::doGetBBox` ritorna `infiniteRectD` → dopo `enlargeToI` il bbox di `overFx` diventa `(-1,-1)-(0,0)` → `interestingRect` = 1×1 pixel → tutto il render è 1 pixel trasparente.
+  - **Fix**: guard in `enlargeToI` che skippa la conversione se qualsiasi coordinata supera `INT_MAX/2`:
+    ```cpp
+    const double kMaxSafeInt = static_cast<double>(std::numeric_limits<int>::max() / 2);
+    if (r.x0 < -kMaxSafeInt || r.x1 > kMaxSafeInt || r.y0 < -kMaxSafeInt || r.y1 > kMaxSafeInt)
+        return;
+    ```
+
+### Modified
+- Rimossi tutti i log diagnostici `std::cerr` aggiunti nelle sessioni precedenti da:
+  - `trasterfx.cpp` (logger rimosso dall'agent)
+  - `tcolumnfx.cpp`, `scenefx.cpp`, `previewer.cpp`, `sceneviewer.cpp` (rimossi con Python script)
+
+### Notes — Diagnosi completa (path del bug)
+```
+ColorCardFx::doGetBBox → restituisce TConsts::infiniteRectD
+  → TRasterFx::getBBox chiama enlargeToI(infiniteRectD)
+    → (int)(DBL_MAX) = -1 [UB sul Mac]
+    → temp = TRectD(-1,-1,0,0)
+    → myIsEmpty(-1,-1,0,0) = false (getLx()=1 ≥ 1)
+    → r corrotto a (-1,-1)-(0,0)
+  → overFx.compute: interestingRect = tileRect * (-1,-1,0,0) = 1×1 pixel
+  → tutta la chain renderizza 1 pixel trasparente → frame bianco in output
+```
+Confirmato con log14: `[compute_extract] fx=overFx tile=1920x1080 bbox=(-1,-1)-(0,0) interesting_tile=1x1`
+
+### Nuovo bug da investigare (sessione successiva)
+- Con 2+ livelli il render a volte produce frame **nero** (intermittente)
+- Con 3+ livelli il terzo livello quasi mai viene renderizzato
+- In visualizzazione normale il 3° livello appare **sotto** il 2° (z-order invertito)
+- Probabile causa: `TImageCombinationFx::doCompute` gestisce il livello più alto come
+  "background" (render diretto sulla tile) e quelli sotto con `allocateAndCompute`.
+  Se l'ordering dei port è invertito rispetto all'atteso, l'ordine di compositing
+  è sbagliato. Da verificare in `binaryFx.cpp` e `scenefx.cpp` (`makePF`).
+
+### Upstream candidate
+- Il fix di `enlargeToI` è pulito e applicabile a Tahoma2D upstream: il commento
+  originale diceva "the rect may become empty" ma non lo proteggeva. Fix corretto
+  e backward-compatible.
+
+---
 ## [2026-04-15b] — Diagnosi: render preview produce raster TRASPARENTE (bug Ztoryc-specifico)
 
 ### Modified

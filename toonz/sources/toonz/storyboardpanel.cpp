@@ -386,15 +386,19 @@ StoryboardPanel::StoryboardPanel(QWidget *parent)
   setObjectName("StoryboardPanel");
   setFocusPolicy(Qt::StrongFocus);
 
-  // Shortcut tastiera
-  QShortcut *scCopy  = new QShortcut(QKeySequence::Copy, this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
-  QShortcut *scClone = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_D), this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
-  QShortcut *scPaste = new QShortcut(QKeySequence::Paste, this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
-  QShortcut *scDelete = new QShortcut(QKeySequence(Qt::Key_Backspace), this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
-  connect(scCopy,  &QShortcut::activated, this, &StoryboardPanel::onCopyShot);
-  connect(scClone, &QShortcut::activated, this, &StoryboardPanel::onCloneShot);
-  connect(scPaste, &QShortcut::activated, this, &StoryboardPanel::onPasteShot);
-  connect(scDelete,&QShortcut::activated, this, &StoryboardPanel::onDeleteShot);
+  // Keyboard shortcuts via QShortcut with WidgetWithChildrenShortcut scope.
+  // This fires when ANY child widget (card, button) has focus — keyPressEvent on
+  // the panel itself would NOT fire in that case. Only QShortcuts are used here;
+  // keyPressEvent does NOT duplicate these keys to avoid double-fire.
+  auto makeShortcut = [this](QKeySequence ks) {
+    return new QShortcut(ks, this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
+  };
+  connect(makeShortcut(QKeySequence::Copy),                      &QShortcut::activated, this, &StoryboardPanel::onCopyShot);
+  connect(makeShortcut(QKeySequence::Cut),                       &QShortcut::activated, this, &StoryboardPanel::onCutShot);
+  connect(makeShortcut(QKeySequence(Qt::CTRL | Qt::Key_D)),      &QShortcut::activated, this, &StoryboardPanel::onCloneShot);
+  connect(makeShortcut(QKeySequence::Paste),                     &QShortcut::activated, this, &StoryboardPanel::onPasteShot);
+  connect(makeShortcut(QKeySequence(Qt::Key_Backspace)),         &QShortcut::activated, this, &StoryboardPanel::onDeleteShot);
+  connect(makeShortcut(QKeySequence(Qt::Key_Delete)),            &QShortcut::activated, this, &StoryboardPanel::onDeleteShot);
   setWindowTitle(tr("Storyboard"));
 
   QWidget *main = new QWidget(this);
@@ -1201,6 +1205,7 @@ void StoryboardPanel::onMergeShots() {
 }
 
 void StoryboardPanel::onShotInserted(int col) {
+  if (m_updating) return;  // skip if THIS Board emitted the signal (already updated)
   // Called when the animatic razor (or any external op) inserts a new shot
   // column at position 'col'.  We insert a corresponding Shot entry at that
   // position, then renumber and save — bypassing loadZtoryc() which would
@@ -1242,6 +1247,7 @@ void StoryboardPanel::onShotInserted(int col) {
 }
 
 void StoryboardPanel::onShotRemovedAt(int col) {
+  if (m_updating) return;  // skip if THIS Board emitted the signal (already updated)
   int si = -1;
   for (int i = 0; i < (int)m_shots.size(); i++) {
     if (m_shots[i].data.xsheetColumn == col) { si = i; break; }
@@ -1354,16 +1360,8 @@ void StoryboardPanel::refreshFromScene() {
 }
 
 void StoryboardPanel::keyPressEvent(QKeyEvent *e) {
-  if (e->modifiers() & Qt::ControlModifier || e->modifiers() & Qt::MetaModifier) {
-    switch (e->key()) {
-      case Qt::Key_C: onCopyShot(); return;
-      case Qt::Key_V: onPasteShot(); return;
-      case Qt::Key_D: onCloneShot(); return;
-    }
-  }
-  if (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace) {
-    onDeleteShot(); return;
-  }
+  // Shortcut keys are handled by QShortcut (WidgetWithChildrenShortcut) in the
+  // constructor — not here, to avoid double-fire when child widgets have focus.
   TPanel::keyPressEvent(e);
 }
 
@@ -1398,6 +1396,14 @@ void StoryboardPanel::onCopyShot() {
     m_clipboard.push_back(e);
   }
   m_pasteButton->setEnabled(!m_clipboard.empty());
+}
+
+void StoryboardPanel::onCutShot() {
+  // Deferred cut: copies to clipboard (isCut=true) but does NOT delete originals
+  // yet. Originals are deleted when the user pastes (Cmd+V). This preserves the
+  // sub-xsheet content (drawings) until paste clones and moves them.
+  onCopyShot();
+  for (auto &ce : m_clipboard) ce.isCut = true;
 }
 
 void StoryboardPanel::onCloneShot() {
@@ -1485,6 +1491,9 @@ void StoryboardPanel::onPasteShot() {
   if (scene)
     while (scene->getChildStack()->getAncestorCount() > 0)
       CommandManager::instance()->execute("MI_CloseChild");
+  // m_updating=true: prevents our own onShotInserted/onShotRemovedAt from
+  // reacting to the ZtoryModel signals we emit below (for other Board instances).
+  m_updating = true;
   // Blocca segnali xsheet durante il paste per evitare rebuild intermedi
   disconnect(TApp::instance()->getCurrentXsheet(), &TXsheetHandle::xsheetChanged, this, &StoryboardPanel::onXsheetChanged);
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
@@ -1492,13 +1501,14 @@ void StoryboardPanel::onPasteShot() {
   for (int ci = 0; ci < (int)m_clipboard.size(); ci++) {
     int pos     = insertAt + ci;
     int origSrc = m_clipboard[ci].srcColumn;
-    // Calcola srcCol: per ogni clone inserito prima, se era <= origSrc, origSrc e slittato di +1
+    // Calcola srcCol: per ogni inserimento precedente che precede origSrc, origSrc si e slittato di +1
     int srcCol  = origSrc;
     for (int cj = 0; cj < ci; cj++) {
       if ((insertAt + cj) <= srcCol) srcCol++;
     }
-    if (m_clipboard[ci].isClone) {
-      // Clone: crea sub-scene indipendente
+    // Cut and Clone both need cloneChildToPosition (srcCol still alive for cut,
+    // independent copy needed for clone). Only plain copy shares the sub-xsheet.
+    if (m_clipboard[ci].isCut || m_clipboard[ci].isClone) {
       cloneChildToPosition(srcCol, pos);
     } else {
       // Copy: riusa lo stesso TXshChildLevel (shared instance)
@@ -1513,7 +1523,7 @@ void StoryboardPanel::onPasteShot() {
         }
       }
     }
-    // Inserisci shot nel modello Ztoryc
+    // Inserisci shot nel modello locale
     Shot newShot;
     newShot.data = m_clipboard[ci].data;
     newShot.data.shotNumber = "";
@@ -1526,12 +1536,50 @@ void StoryboardPanel::onPasteShot() {
       m_shots[pos].panels[pi]->setNotes(newShot.data.panels[pi].notes);
       m_shots[pos].panels[pi]->setDuration(newShot.data.panels[pi].duration);
     }
+    // Notify other Board instances (and Animatic)
+    emit ZtoryModel::instance()->shotAdded(pos);
   }
   if (not m_autoRenumber) {
     for (int ci = 0; ci < (int)m_clipboard.size(); ci++)
       assignKeepNumbers(insertAt + ci);
   }
   renumberAll();
+
+  // If this was a cut (Cmd+X), delete the original shots now that clones exist.
+  // srcColumns are still valid (originals not yet deleted).
+  bool anyCut = false;
+  for (auto &ce : m_clipboard) if (ce.isCut) { anyCut = true; break; }
+  if (anyCut) {
+    TXsheet *xsh2 = TApp::instance()->getCurrentXsheet()->getXsheet();
+    std::vector<int> cutCols;
+    for (int ci = 0; ci < (int)m_clipboard.size(); ci++) {
+      if (!m_clipboard[ci].isCut) continue;
+      int col = m_clipboard[ci].srcColumn;
+      // Adjust for each insertion that shifted this column right
+      for (int cj = 0; cj < (int)m_clipboard.size(); cj++)
+        if ((insertAt + cj) <= col) col++;
+      cutCols.push_back(col);
+    }
+    std::sort(cutCols.rbegin(), cutCols.rend());
+    for (int col : cutCols) {
+      for (int i = 0; i < (int)m_shots.size(); i++) {
+        if (m_shots[i].data.xsheetColumn == col) {
+          for (PanelWidget *pw : m_shots[i].panels) { m_grid->removeWidget(pw); delete pw; }
+          m_shots.erase(m_shots.begin() + i);
+          for (int j = 0; j < (int)m_shots.size(); j++)
+            if (m_shots[j].data.xsheetColumn > col) m_shots[j].data.xsheetColumn--;
+          break;
+        }
+      }
+      ColumnCmd::deleteColumn(col);
+      emit ZtoryModel::instance()->shotRemovedAt(col);  // notify other Board instances
+    }
+    xsh2->updateFrameCount();
+    m_clipboard.clear();
+    m_pasteButton->setEnabled(false);
+  }
+
+  m_updating = false;
   // Riconnetti segnale xsheet
   connect(TApp::instance()->getCurrentXsheet(), &TXsheetHandle::xsheetChanged, this, &StoryboardPanel::onXsheetChanged);
   resequenceXsheet();

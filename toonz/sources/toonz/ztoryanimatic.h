@@ -5,6 +5,7 @@
 #include "viewerpane.h"
 #include "tapp.h"
 #include "pane.h"
+#include "ztorymodel.h"
 #include "toonz/onionskinmask.h"
 #include <QWidget>
 #include <QScrollArea>
@@ -469,6 +470,9 @@ protected:
   void keyPressEvent(QKeyEvent *e) override;
 
 private slots:
+  void onCopyShots();   // Cmd+C: store selected shots to animatic clipboard
+  void onCutShots();    // Cmd+X: store + mark for deletion on paste
+  void onPasteShots();  // Cmd+V: clone clipboard shots, delete cut originals
   void onShotClicked(int col);
   void onShotDoubleClicked(int col);
   void onReturnToMain();
@@ -494,6 +498,14 @@ protected:
   void contextMenuEvent(QContextMenuEvent *e) override;
 
 private:
+  // ── Clipboard per Cmd+C/X/V ──────────────────────────────────────────────
+  struct AnimClipEntry {
+    int      srcCol;   // xsheet column at time of copy/cut
+    ShotData data;     // snapshot of ZtoryModel shot metadata
+    bool     isCut;    // true = delete original on paste
+  };
+  std::vector<AnimClipEntry> m_animClip;
+
   ZtoryAnimaticRuler *m_ruler;
   ZtoryAnimaticTrack *m_track;
   QWidget *m_scrollContent = nullptr;

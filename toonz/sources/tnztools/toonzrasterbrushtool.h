@@ -155,8 +155,8 @@ public:
 
   TPropertyGroup *getProperties(int targetType) override;
   bool onPropertyChanged(std::string propertyName) override;
-  // Rebuild m_autoFillStyle enum from palette styles.  Called by
-  // BrushToolOptionsBox::updateStatus() whenever the palette changes.
+  // Rebuild m_autoFillStyle enum from palette styles. Safe to call any time
+  // (does not emit Qt signals).
   void rebuildAutoFillStyleCombo(TPaletteP pal);
   void onImageChanged() override;
   void setWorkAndBackupImages();
@@ -245,6 +245,7 @@ protected:
   ToonzRasterBrushToolNotifier *m_notifier;
   bool m_isMyPaintStyleSelected    = false;
   MyPaintToonzBrush *m_toonz_brush = 0;
+
   QElapsedTimer m_brushTimer;
   double m_highFreqBrushTimer;
   int m_minCursorThick, m_maxCursorThick;

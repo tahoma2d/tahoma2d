@@ -582,12 +582,11 @@ class BrushToolOptionsBox final : public ToolOptionsBox {
   ToolOptionCheckbox *m_snapCheckbox, *m_drawOrderCheckbox,
       *m_autoCloseCheckbox, *m_autoGroupCheckbox, *m_autoFillCheckbox;
   ToolOptionCombo *m_snapSensitivityCombo;
-  ToolOptionCombo *m_autoFillStyleCombo;  // dynamic palette style picker
+  ToolOptionCombo *m_autoFillStyleCombo;
   QPushButton *m_addPresetButton;
   QPushButton *m_removePresetButton;
   ToolOptionBrushTipButton *m_brushTips;
 
-  // Palette change detection for AutoFill style combo rebuild
   TPalette *m_lastPalette       = nullptr;
   int       m_lastPaletteStyles = -1;
 

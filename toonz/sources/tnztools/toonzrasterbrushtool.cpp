@@ -1241,7 +1241,9 @@ void ToonzRasterBrushTool::updateTranslation() {
 //---------------------------------------------------------------------------------------------------
 
 void ToonzRasterBrushTool::rebuildAutoFillStyleCombo(TPaletteP pal) {
-  // Preserve current selection.
+  // Preserve current selection across rebuild.
+  // NOTE: TEnumProperty::deleteAllValues/addValue/setItemUIName do NOT emit Qt
+  // signals, so this function is safe to call from inside a Qt signal chain.
   std::wstring cur = m_autoFillStyle.getValue();
   m_autoFillStyle.deleteAllValues();
   m_autoFillStyle.addValue(L"Next Style (N+1)");
@@ -2549,9 +2551,14 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
         const int ly = ras->getLy();
         ras->lock();
 
-        // Restrict BFS to savebox+1 — only scan content area, not blank canvas.
-        // This makes the fill instantaneous even on large canvases.
+        // Scan area = union of saved savebox and current stroke rect.
+        // ti->getSavebox() is STALE here (updateSaveBox runs after notifyImageChanged,
+        // which is called after the fill code).  m_strokeRect is always current.
         TRect sb = ti->getSavebox();
+        if (sb.isEmpty())
+          sb = m_strokeRect;
+        else if (!m_strokeRect.isEmpty())
+          sb = sb + m_strokeRect;
         sb = sb.enlarge(1);
         const int x0 = std::max(sb.x0, 0), y0 = std::max(sb.y0, 0);
         const int x1 = std::min(sb.x1, lx-1), y1 = std::min(sb.y1, ly-1);
@@ -2592,7 +2599,6 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           if (autoFillVal == L"Current Style") {
             fillStyleId = styleId;
           } else if (autoFillVal.substr(0, 8) == L"palette_") {
-            // Explicit palette style index chosen from the combo
             try { fillStyleId = std::stoi(autoFillVal.substr(8)); }
             catch (...) { fillStyleId = styleId + 1; }
             TPaletteP pal = ti->getPalette();
@@ -2605,20 +2611,12 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
               fillStyleId = styleId;
           }
 
+          // Fill all enclosed interior pixels: any pixel not reachable from
+          // the scan area border (exterior=0) with no existing paint.
           for (int ry = 0; ry < sh; ry++) {
             TPixelCM32 *row = ras->pixels(y0 + ry) + x0;
-            const uint8_t *ext = exterior.data() + ry * sw;
             for (int rx = 0; rx < sw; rx++) {
-              // Fill all interior pixels that have no paint yet — including
-              // antialiased edge pixels (getInk()>0, getTone()>0) which sit on
-              // the inner side of the stroke boundary.  The BFS exterior flood
-              // uses solid ink as the barrier, so those pixels are correctly
-              // classified as "interior".  Setting paint on them is safe: for
-              // purely-inked pixels (tone=0) the ink channel dominates and the
-              // paint value is invisible; for antialiased pixels the paint
-              // shows through the partially-transparent ink, filling the gap
-              // and eliminating the white border between stroke and fill.
-              if (!ext[rx] && row[rx].getPaint() == 0)
+              if (!exterior[ry * sw + rx] && row[rx].getPaint() == 0)
                 row[rx].setPaint(fillStyleId);
             }
           }
