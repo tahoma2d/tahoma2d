@@ -1047,12 +1047,26 @@ public:
 //-------------------------------------------------------------------
 
 class ResetCenterAndOffsetUndo final : public SetAttributeUndo<TPointD> {
+  TPointD m_center, m_offset;
+  TXsheetHandle *m_xshHandle;
+
 public:
   ResetCenterAndOffsetUndo(const TStageObjectId &id, TXsheetHandle *xshHandle,
-                           const TPointD &oldOffset)
-      : SetAttributeUndo<TPointD>(id, xshHandle, oldOffset, TPointD()) {}
-  void setAttribute(TStageObject *pegbar, TPointD offset) const override {
-    pegbar->setCenterAndOffset(offset, offset);
+                           const TPointD &oldCenter, const TPointD &oldOffset)
+      : SetAttributeUndo<TPointD>(id, xshHandle, oldOffset, TPointD())
+      , m_xshHandle(xshHandle)
+      , m_center(oldCenter)
+      , m_offset(oldOffset) {}
+  void setAttribute(TStageObject *pegbar, TPointD offset) const override {}
+  void redo() const override {
+    TStageObject *pegbar = getStageObject();
+    if (pegbar) pegbar->setCenterAndOffset(TPointD(), TPointD());
+    m_xshHandle->notifyXsheetChanged();
+  }
+  void undo() const override {
+    TStageObject *pegbar = getStageObject();
+    if (pegbar) pegbar->setCenterAndOffset(m_center, m_offset);
+    m_xshHandle->notifyXsheetChanged();
   }
   QString getActionName() override { return QString("Reset Center"); }
   QString getStringFromValue(TPointD value) override {
@@ -1247,10 +1261,11 @@ void TStageObjectCmd::resetCenterAndOffset(const TStageObjectId &id,
                                            TXsheetHandle *xshHandle) {
   TStageObject *peg = xshHandle->getXsheet()->getStageObject(id);
   if (!peg) return;
-  TPointD oldOffset = peg->getOffset();
-  peg->setCenterAndOffset(TPointD(), TPointD());
+  TPointD oldCenter, oldOffset;
+  peg->getCenterAndOffset(oldCenter, oldOffset);
   TUndoManager::manager()->add(
-      new ResetCenterAndOffsetUndo(id, xshHandle, oldOffset));
+      new ResetCenterAndOffsetUndo(id, xshHandle, oldCenter, oldOffset));
+  peg->setCenterAndOffset(TPointD(), TPointD());
   xshHandle->notifyXsheetChanged();
 }
 
