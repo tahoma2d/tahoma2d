@@ -2129,6 +2129,14 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
   TPropertyGroup *props = tool->getProperties(0);
   assert(props->getPropertyCount() > 0);
 
+  // Pre-populate m_autoFillStyle with palette styles BEFORE the builder
+  // creates ToolOptionCombo for "Fill Style:". That widget calls loadEntries()
+  // in its constructor, so the range must already be correct.
+  if (tool->getTargetType() & TTool::ToonzImage) {
+    auto *brushTool = dynamic_cast<ToonzRasterBrushTool *>(tool);
+    if (brushTool) brushTool->rebuildAutoFillStyleCombo(pltHandle->getPalette());
+  }
+
   ToolOptionControlBuilder builder(this, tool, pltHandle, toolHandle);
   if (tool && tool->getProperties(0)) tool->getProperties(0)->accept(builder);
 
@@ -2169,12 +2177,24 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
 
     m_autoFillCheckbox =
         dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Auto Fill"));
-    // AutoFill style picker — populated dynamically from palette in updateStatus()
+    // AutoFill style picker — populated dynamically from palette.
+    // The initial population was done above (before the builder) so the combo
+    // is already correct at construction time. On palette/level switches we
+    // only MARK a rebuild as pending; the actual widget rebuild is deferred
+    // to updateStatus()/onStageObjectChange(), which are safe contexts.
     m_autoFillStyleCombo =
         dynamic_cast<ToolOptionCombo *>(m_controls.value("Fill Style:"));
-    if (m_autoFillStyleCombo)
+    if (m_autoFillStyleCombo) {
       connect(toolHandle, SIGNAL(toolComboBoxListChanged(std::string)),
               m_autoFillStyleCombo, SLOT(reloadComboBoxList(std::string)));
+      // paletteSwitched: deferred rebuild via QueuedConnection.
+      connect(pltHandle, SIGNAL(paletteSwitched()),
+              this, SLOT(onPaletteSwitched()));
+      // Event filter: rebuild the combo with the current palette the instant
+      // the user clicks on it (MouseButtonPress), so the dropdown always
+      // shows up-to-date colors regardless of signal timing.
+      m_autoFillStyleCombo->installEventFilter(this);
+    }
   } else if (tool->getTargetType() & TTool::Vectors) {
     // Further vector options
     builder.setEnumWidgetType(ToolOptionControlBuilder::POPUPBUTTON);
@@ -2264,31 +2284,9 @@ void BrushToolOptionsBox::filterControls() {
 void BrushToolOptionsBox::updateStatus() {
   filterControls();
 
-  // Rebuild AutoFill style combo when palette changes (level/xsheet switch).
-  // Both rebuildAutoFillStyleCombo AND notifyToolComboBoxListChanged are deferred
-  // via QTimer: updateStatus() is called from inside Qt signal chains triggered by
-  // xsheet switches (shot entry, save, app close).  At that moment the palette
-  // pointer can be temporarily invalid.  Deferring ensures execution after the
-  // signal chain unwinds and the palette is in a stable state.
-  // QTimer::singleShot with 'this' as context is safe: Qt cancels the callback
-  // automatically if 'this' (BrushToolOptionsBox) is destroyed first.
-  if (m_autoFillStyleCombo && m_pltHandle) {
-    TPalette *pal     = m_pltHandle->getPalette();
-    int       nStyles = pal ? pal->getStyleCount() : 0;
-    if (pal != m_lastPalette || nStyles != m_lastPaletteStyles) {
-      m_lastPalette       = pal;
-      m_lastPaletteStyles = nStyles;
-      QTimer::singleShot(0, this, [this]() {
-        if (!m_pltHandle || !m_toolHandle) return;
-        auto *brushTool = dynamic_cast<ToonzRasterBrushTool *>(m_tool);
-        if (!brushTool) return;
-        try {
-          brushTool->rebuildAutoFillStyleCombo(m_pltHandle->getPalette());
-          m_toolHandle->notifyToolComboBoxListChanged("Fill Style:");
-        } catch (...) {}
-      });
-    }
-  }
+  // Rebuild AutoFill combo with the current palette (safe here: called from
+  // the event loop via toolChanged()/toolSwitched(), not from a signal chain).
+  doRebuildAutoFillCombo();
 
   QMap<std::string, ToolOptionControl *>::iterator it;
   for (it = m_controls.begin(); it != m_controls.end(); it++)
@@ -2376,6 +2374,46 @@ void BrushToolOptionsBox::onRemovePreset() {
   }
 
   m_presetCombo->loadEntries();
+}
+
+//-----------------------------------------------------------------------------
+
+void BrushToolOptionsBox::onPaletteSwitched() {
+  // Cannot do widget ops here — we're inside the paletteSwitched() signal
+  // chain (synchronous call from TPaletteHandle::setPalette()).
+  // Queue a rebuild for the next event-loop iteration.
+  QMetaObject::invokeMethod(this, "doRebuildAutoFillCombo",
+                            Qt::QueuedConnection);
+}
+
+//-----------------------------------------------------------------------------
+
+void BrushToolOptionsBox::onStageObjectChange() {
+  // Called from ToolOptions::onStageObjectChange() on xshLevelSwitched.
+  // ArrowToolOptionsBox already does widget ops from this same entry point
+  // without crashing, so it is safe here too.
+  doRebuildAutoFillCombo();
+}
+
+//-----------------------------------------------------------------------------
+
+void BrushToolOptionsBox::doRebuildAutoFillCombo() {
+  if (!m_autoFillStyleCombo || !m_pltHandle) return;
+  auto *brushTool = dynamic_cast<ToonzRasterBrushTool *>(m_tool);
+  if (!brushTool) return;
+  brushTool->rebuildAutoFillStyleCombo(m_pltHandle->getPalette());
+  m_autoFillStyleCombo->loadEntries();
+}
+
+//-----------------------------------------------------------------------------
+
+bool BrushToolOptionsBox::eventFilter(QObject *obj, QEvent *e) {
+  // Rebuild the AutoFill combo with the freshest palette just before the
+  // user opens the dropdown — catches any timing gaps left by signal-based
+  // rebuild (palette handle may not be updated yet when signals fire).
+  if (obj == m_autoFillStyleCombo && e->type() == QEvent::MouseButtonPress)
+    doRebuildAutoFillCombo();
+  return false;  // let the event propagate normally
 }
 
 //=============================================================================

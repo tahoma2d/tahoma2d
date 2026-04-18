@@ -587,19 +587,26 @@ class BrushToolOptionsBox final : public ToolOptionsBox {
   QPushButton *m_removePresetButton;
   ToolOptionBrushTipButton *m_brushTips;
 
-  TPalette *m_lastPalette       = nullptr;
-  int       m_lastPaletteStyles = -1;
-
 private:
   class PresetNamePopup;
   PresetNamePopup *m_presetNamePopup;
   void filterControls();
 
+protected:
+  bool eventFilter(QObject *obj, QEvent *e) override;
+
+protected slots:
+  // Rebuilds the AutoFill palette combo with the current level palette.
+  // Safe to call from the event loop; also invoked via QueuedConnection
+  // from onPaletteSwitched() and on MouseButtonPress on the combo itself.
+  void doRebuildAutoFillCombo();
+
 public:
   BrushToolOptionsBox(QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
                       ToolHandle *toolHandle);
 
-  void updateStatus();
+  void updateStatus() override;
+  void onStageObjectChange() override;
 
 protected slots:
 
@@ -607,6 +614,10 @@ protected slots:
   void onBrushTipChanged();
   void onAddPreset();
   void onRemovePreset();
+  // Just marks rebuild as pending. The actual widget rebuild happens
+  // later from updateStatus() or onStageObjectChange(), which are called
+  // from the event loop, not from inside a signal chain.
+  void onPaletteSwitched();
 };
 
 //=============================================================================

@@ -1240,7 +1240,7 @@ void ToonzRasterBrushTool::updateTranslation() {
 
 //---------------------------------------------------------------------------------------------------
 
-void ToonzRasterBrushTool::rebuildAutoFillStyleCombo(TPaletteP pal) {
+void ToonzRasterBrushTool::rebuildAutoFillStyleCombo(TPalette *pal) {
   // Preserve current selection across rebuild.
   // NOTE: TEnumProperty::deleteAllValues/addValue/setItemUIName do NOT emit Qt
   // signals, so this function is safe to call from inside a Qt signal chain.

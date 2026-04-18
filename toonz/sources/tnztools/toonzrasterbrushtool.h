@@ -157,7 +157,7 @@ public:
   bool onPropertyChanged(std::string propertyName) override;
   // Rebuild m_autoFillStyle enum from palette styles. Safe to call any time
   // (does not emit Qt signals).
-  void rebuildAutoFillStyleCombo(TPaletteP pal);
+  void rebuildAutoFillStyleCombo(TPalette *pal);
   void onImageChanged() override;
   void setWorkAndBackupImages();
   void updateWorkAndBackupRasters(const TRect &rect);
