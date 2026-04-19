@@ -968,7 +968,7 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
     TDimension size   = m_workRaster->getSize();
     TPointD rasCenter = TPointD(size.lx * 0.5, size.ly * 0.5);
     TThickPoint thickPoint(
-        pos + rasCenter, thickness,
+        point, thickness,
         (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate() ? m_tiltAngle
                                                                : 0));
     std::vector<TThickPoint> pts;
