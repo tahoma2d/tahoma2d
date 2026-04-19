@@ -31,7 +31,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QKeyEvent>
-#include <QShortcut>
+#include <QApplication>
 #include <QPushButton>
 #include <QToolButton>
 #include <QTimer>
@@ -48,6 +48,9 @@
 #include "toonz/tstageobjectid.h"
 #include "toonz/txshleveltypes.h"
 #include "toonz/tcamera.h"
+#include "toonzqt/stageobjectsdata.h"
+#include "toonz/txshlevelcolumn.h"
+#include "toonz/fxdag.h"
 
 // Shared label column width — must match ZtoryAudioTrack::labelW (80px).
 // Used by ZtoryAnimaticRuler and ZtoryAnimaticTrack to align with audio tracks.
@@ -1252,6 +1255,9 @@ void ZtoryAudioTrack::keyPressEvent(QKeyEvent *e) {
 ZtoryAnimaticTrack::ZtoryAnimaticTrack(QWidget *parent) : QWidget(parent) {
   setFixedHeight(80);
   setMouseTracking(true);
+  // ClickFocus: clicking a shot block focuses the track, so the eventFilter on
+  // ZtoryAnimaticPanel can verify focus is inside its subtree and fire shortcuts.
+  setFocusPolicy(Qt::ClickFocus);
 
   // Lock button is painted in paintEvent and activated via mousePressEvent
   // hit-test — no child QToolButton needed.
@@ -1440,6 +1446,7 @@ void ZtoryAnimaticTrack::paintEvent(QPaintEvent *) {
 }
 
 void ZtoryAnimaticTrack::mousePressEvent(QMouseEvent *e) {
+  setFocus(Qt::MouseFocusReason);  // guarantee focus for keyboard shortcuts
   int mx = e->x() - kLabelW;
   // Lock button hit-test in label area
   if (mx < 0) {
@@ -2402,21 +2409,12 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   setWindowTitle("Ztory Animatic");
   setFocusPolicy(Qt::StrongFocus);
 
-  // QShortcuts with WidgetWithChildrenShortcut fire when any child widget
-  // (track, ruler) has focus — unlike keyPressEvent which needs the panel itself.
-  // We route through dedicated private slots to avoid duplicating logic.
-  {
-    auto *sc = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_C), this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
-    connect(sc, &QShortcut::activated, this, &ZtoryAnimaticPanel::onCopyShots);
-  }
-  {
-    auto *sc = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_X), this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
-    connect(sc, &QShortcut::activated, this, &ZtoryAnimaticPanel::onCutShots);
-  }
-  {
-    auto *sc = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_V), this, nullptr, nullptr, Qt::WidgetWithChildrenShortcut);
-    connect(sc, &QShortcut::activated, this, &ZtoryAnimaticPanel::onPasteShots);
-  }
+  // Keyboard shortcuts via qApp event filter (same approach as StoryboardPanel).
+  // QShortcut + WidgetWithChildrenShortcut was unreliable because CommandManager's
+  // ApplicationShortcut QActions consume Cmd+C/X/V/D before KeyPress arrives.
+  // The event filter intercepts both ShortcutOverride (to claim the key) and
+  // KeyPress (to dispatch the action).
+  qApp->installEventFilter(this);
 
   QWidget *container = new QWidget(this);
   QVBoxLayout *lay = new QVBoxLayout(container);
@@ -2565,6 +2563,11 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
           this, &ZtoryAnimaticPanel::onShotClicked);
   connect(m_track, &ZtoryAnimaticTrack::shotDoubleClicked,
           this, &ZtoryAnimaticPanel::onShotDoubleClicked);
+  // Sync selection to ZtoryModel so Board's merge button can use it.
+  connect(m_track, &ZtoryAnimaticTrack::selectionChanged,
+          [](std::set<int> sel){
+              ZtoryModel::instance()->setSharedSelection(std::move(sel));
+          });
   connect(m_track, &ZtoryAnimaticTrack::zoomChanged,
           this, &ZtoryAnimaticPanel::onZoomChanged);
   connect(m_zoomSlider, &QSlider::valueChanged, this, [this](int v){
@@ -2818,84 +2821,266 @@ void ZtoryAnimaticPanel::showEvent(QShowEvent *e) {
 }
 
 // Helper: returns shot index in ZtoryModel for a given xsheet column, or -1.
-static int shotIdxForCol(int col) {
-  const auto &shots = ZtoryModel::instance()->shots();
-  for (int i = 0; i < (int)shots.size(); i++)
-    if (shots[i].xsheetColumn == col) return i;
-  return -1;
+
+
+// ── Clone a sub-scene column into a new adjacent column ──────────────────────
+// Mirrors StoryboardPanel::cloneChildToPosition (static there; static here too).
+static void animCloneChildToPosition(int srcCol, int dstCol) {
+  TApp       *app   = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  TXsheet    *xsh   = app->getCurrentXsheet()->getXsheet();
+  TXshColumn *column = xsh->getColumn(srcCol);
+  if (!column) return;
+  TXshLevelColumn *lcolumn = column->getLevelColumn();
+  if (!lcolumn) return;
+  int r0 = 0, r1 = -1;
+  lcolumn->getRange(r0, r1);
+  if (r0 > r1) return;
+  TXshCell cell = lcolumn->getCell(r0);
+  if (cell.isEmpty()) return;
+  TXshChildLevel *childLevel = cell.m_level->getChildLevel();
+  if (!childLevel) return;
+  TXsheet *childXsh = childLevel->getXsheet();
+
+  xsh->insertColumn(dstCol);
+
+  ChildStack      *childStack   = scene->getChildStack();
+  TXshChildLevel  *newChildLevel = childStack->createChild(0, dstCol);
+  TXsheet         *newChildXsh  = newChildLevel->getXsheet();
+
+  std::set<int> indices;
+  for (int i = 0; i < childXsh->getColumnCount(); i++) indices.insert(i);
+  StageObjectsData *data = new StageObjectsData();
+  data->storeColumns(indices, childXsh, 0);
+  data->storeColumnFxs(indices, childXsh, 0);
+  std::list<int>                      restoredSplineIds;
+  QMap<TStageObjectId, TStageObjectId> idTable;
+  QMap<TFx *, TFx *>                  fxTable;
+  data->restoreObjects(indices, restoredSplineIds, newChildXsh,
+                       StageObjectsData::eDoClone, idTable, fxTable);
+  delete data;
+
+  newChildXsh->updateFrameCount();
+
+  xsh->removeCells(0, dstCol);
+  for (int r = r0; r <= r1; r++) {
+    TXshCell c = lcolumn->getCell(r);
+    if (c.isEmpty()) continue;
+    c.m_level = newChildLevel;
+    xsh->setCell(r, dstCol, c);
+  }
+
+  xsh->updateFrameCount();
+  app->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
 }
 
+
 // ── Cmd+C/X/V slot implementations ───────────────────────────────────────────
+// All operations work directly on xsheet columns — no ZtoryModel::shot() lookup
+// needed, which avoids stale xsheetColumn values.
+
+static int colDuration(TXsheet *xsh, int col) {
+  TXshColumn *c = xsh ? xsh->getColumn(col) : nullptr;
+  if (!c) return 24;
+  int r0=0, r1=0; c->getRange(r0, r1);
+  return (r1 >= r0) ? r1 - r0 + 1 : 24;
+}
 
 void ZtoryAnimaticPanel::onCopyShots() {
   if (!ZtoryModel::assertMainXsheet(false)) return;
   const std::set<int> &sel = m_track->selectedCols();
   if (sel.empty()) return;
-  m_animClip.clear();
-  std::vector<int> cols(sel.begin(), sel.end());
-  std::sort(cols.begin(), cols.end());
-  for (int col : cols) {
-    int si = shotIdxForCol(col);
-    if (si < 0) continue;
-    AnimClipEntry ce;
-    ce.srcCol = col;
-    ce.data   = ZtoryModel::instance()->shot(si);
-    ce.isCut  = false;
-    m_animClip.push_back(ce);
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  std::vector<ZtoryClipEntry> clip;
+  for (int col : sel) {
+    ZtoryClipEntry ce;
+    ce.srcCol = col; ce.duration = colDuration(xsh, col);
+    ce.isCut = false; ce.isClone = false;
+    clip.push_back(ce);
   }
+  std::sort(clip.begin(), clip.end(),
+            [](const ZtoryClipEntry &a, const ZtoryClipEntry &b){ return a.srcCol < b.srcCol; });
+  ZtoryModel::instance()->setSharedClip(std::move(clip));
 }
 
+// Cut = immediate: shot disappears right away; TXshLevel kept alive in cutLevel
+// so paste can restore sub-scene content without loss.
 void ZtoryAnimaticPanel::onCutShots() {
   if (!ZtoryModel::assertMainXsheet(false)) return;
-  onCopyShots();
-  for (auto &ce : m_animClip) ce.isCut = true;
+  const std::set<int> &sel = m_track->selectedCols();
+  if (sel.empty()) return;
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (scene)
+    while (scene->getChildStack()->getAncestorCount() > 0)
+      CommandManager::instance()->execute("MI_CloseChild");
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  std::vector<int> cols(sel.begin(), sel.end());
+  std::sort(cols.begin(), cols.end());
+  std::vector<ZtoryClipEntry> clip;
+  for (int col : cols) {
+    ZtoryClipEntry ce;
+    ce.srcCol = -1; ce.duration = colDuration(xsh, col);
+    ce.isCut = true; ce.isClone = false;
+    TXshColumn      *xshCol = xsh->getColumn(col);
+    TXshLevelColumn *lc     = xshCol ? xshCol->getLevelColumn() : nullptr;
+    if (lc) {
+      int r0=0, r1=0; lc->getRange(r0, r1);
+      TXshCell cell = lc->getCell(r0);
+      if (!cell.isEmpty()) ce.cutLevel = cell.m_level;
+    }
+    clip.push_back(ce);
+  }
+  ZtoryModel::instance()->setSharedClip(std::move(clip));
+  for (int i = (int)cols.size()-1; i >= 0; i--)
+    ColumnCmd::deleteColumn(cols[i]);
+  xsh->updateFrameCount();
+  ZtoryModel::instance()->resequenceXsheet();
+  refreshFromScene();
+  m_track->setFocus(Qt::OtherFocusReason);
+}
+
+// Helper used by both Animatic and Board paste (shared clipboard format).
+static void pasteFromClip(const std::vector<ZtoryClipEntry> &clip,
+                          int insertCol, TXsheet *xsh, ToonzScene *scene) {
+  for (int ci = 0; ci < (int)clip.size(); ci++) {
+    int pos = insertCol + ci;
+    const ZtoryClipEntry &ce = clip[ci];
+    if (ce.isCut) {
+      xsh->insertColumn(pos);
+      if (ce.cutLevel) {
+        for (int r = 0; r < ce.duration; r++)
+          xsh->setCell(r, pos, TXshCell(ce.cutLevel, TFrameId(r+1)));
+      } else if (scene) {
+        TXshLevel *xl = scene->createNewLevel(CHILD_XSHLEVEL);
+        if (xl && xl->getChildLevel())
+          for (int r = 0; r < ce.duration; r++)
+            xsh->setCell(r, pos, TXshCell(xl->getChildLevel(), TFrameId(r+1)));
+      }
+    } else if (ce.isClone) {
+      int srcCol = ce.srcCol;
+      for (int cj = 0; cj < ci; cj++) if (insertCol+cj <= srcCol) srcCol++;
+      animCloneChildToPosition(srcCol, pos);
+    } else {
+      int srcCol = ce.srcCol;
+      for (int cj = 0; cj < ci; cj++) if (insertCol+cj <= srcCol) srcCol++;
+      TXshColumn *srcColumn = xsh->getColumn(srcCol);
+      if (srcColumn) {
+        int r0=0, r1=0; srcColumn->getRange(r0, r1);
+        xsh->insertColumn(pos);
+        for (int r = r0; r <= r1; r++) {
+          TXshCell cell = xsh->getCell(r, srcCol >= pos ? srcCol+1 : srcCol);
+          if (!cell.isEmpty()) xsh->setCell(r, pos, cell);
+        }
+      }
+    }
+  }
 }
 
 void ZtoryAnimaticPanel::onPasteShots() {
-  if (m_animClip.empty()) return;
+  const auto &clip = ZtoryModel::instance()->sharedClip();
+  if (clip.empty()) return;
   if (!ZtoryModel::assertMainXsheet(false)) return;
-
-  // Clone each entry using ZtoryModel::cloneShot (inserts into model + emits shotAdded)
-  // Reverse order so index shifts don't affect earlier shots
-  std::vector<AnimClipEntry> clip = m_animClip;
-  std::sort(clip.rbegin(), clip.rend(), [](const AnimClipEntry &a, const AnimClipEntry &b){
-    return a.srcCol < b.srcCol;
-  });
-  for (const auto &ce : clip) {
-    int si = shotIdxForCol(ce.srcCol);
-    if (si < 0) continue;
-    ZtoryModel::instance()->cloneShot(si);  // emits shotAdded → Board syncs
-  }
-
-  // If cut: delete originals (srcCols still valid since we only cloned above)
-  bool anyCut = false;
-  for (const auto &ce : clip) if (ce.isCut) { anyCut = true; break; }
-  if (anyCut) {
-    TApp *app = TApp::instance();
-    ToonzScene *scene = app->getCurrentScene()->getScene();
-    TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
-    if (xsh) {
-      std::vector<int> cutCols;
-      for (const auto &ce : clip) if (ce.isCut) cutCols.push_back(ce.srcCol);
-      std::sort(cutCols.rbegin(), cutCols.rend());
-      for (int col : cutCols) {
-        ColumnCmd::deleteColumn(col);
-        emit ZtoryModel::instance()->shotRemovedAt(col);
-      }
-      xsh->updateFrameCount();
-    }
-    m_animClip.clear();
-  }
-
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (scene)
+    while (scene->getChildStack()->getAncestorCount() > 0)
+      CommandManager::instance()->execute("MI_CloseChild");
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  const std::set<int> &sel = m_track->selectedCols();
+  int insertCol = sel.empty() ? xsh->getColumnCount() : *sel.rbegin() + 1;
+  pasteFromClip(clip, insertCol, xsh, scene);
+  xsh->updateFrameCount();
   ZtoryModel::instance()->resequenceXsheet();
   refreshFromScene();
+  // Cut/clone are one-shot; copy stays for repeated paste
+  auto newClip = clip;
+  newClip.erase(std::remove_if(newClip.begin(), newClip.end(),
+                [](const ZtoryClipEntry &e){ return e.isCut || e.isClone; }),
+                newClip.end());
+  ZtoryModel::instance()->setSharedClip(std::move(newClip));
+  m_track->setFocus(Qt::OtherFocusReason);
+}
+
+void ZtoryAnimaticPanel::onDeleteShots() {
+  const std::set<int> &sel = m_track->selectedCols();
+  if (sel.empty()) return;
+  if (!ZtoryModel::assertMainXsheet(false)) return;
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  std::vector<int> cols(sel.begin(), sel.end());
+  std::sort(cols.rbegin(), cols.rend());
+  for (int col : cols) ColumnCmd::deleteColumn(col);
+  xsh->updateFrameCount();
+  ZtoryModel::instance()->resequenceXsheet();
+  refreshFromScene();
+  m_track->setFocus(Qt::OtherFocusReason);
+}
+
+// Cmd+D: puts selected shots in clipboard as clones; Cmd+V inserts them.
+void ZtoryAnimaticPanel::onCloneShots() {
+  if (!ZtoryModel::assertMainXsheet(false)) return;
+  const std::set<int> &sel = m_track->selectedCols();
+  if (sel.empty()) return;
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  std::vector<ZtoryClipEntry> clip;
+  for (int col : sel) {
+    ZtoryClipEntry ce;
+    ce.srcCol = col; ce.duration = colDuration(xsh, col);
+    ce.isCut = false; ce.isClone = true;
+    clip.push_back(ce);
+  }
+  std::sort(clip.begin(), clip.end(),
+            [](const ZtoryClipEntry &a, const ZtoryClipEntry &b){ return a.srcCol < b.srcCol; });
+  ZtoryModel::instance()->setSharedClip(std::move(clip));
+}
+
+bool ZtoryAnimaticPanel::eventFilter(QObject *obj, QEvent *e) {
+  const QEvent::Type t = e->type();
+  if (t != QEvent::ShortcutOverride && t != QEvent::KeyPress) return false;
+
+  // Check focus is inside this panel's subtree
+  QWidget *fw = QApplication::focusWidget();
+  bool inPanel = false;
+  for (QWidget *w = fw; w; w = w->parentWidget())
+    if (w == this) { inPanel = true; break; }
+
+  if (!inPanel) return false;
+
+  QKeyEvent *ke  = static_cast<QKeyEvent *>(e);
+  const bool cmd   = ke->modifiers() & Qt::ControlModifier;
+  const bool shift = ke->modifiers() & Qt::ShiftModifier;
+  const bool noMod = ke->modifiers() == Qt::NoModifier;
+
+  const bool isDelete = noMod && (ke->key() == Qt::Key_Delete ||
+                                  ke->key() == Qt::Key_Backspace);
+  const bool isCopy   = cmd && !shift && ke->key() == Qt::Key_C;
+  const bool isCut    = cmd && !shift && ke->key() == Qt::Key_X;
+  const bool isPaste  = cmd && !shift && ke->key() == Qt::Key_V;
+  const bool isClone  = cmd && !shift && ke->key() == Qt::Key_D;
+
+  if (!isDelete && !isCopy && !isCut && !isPaste && !isClone) return false;
+
+  // Paste works even with empty selection (inserts at end).
+  // All other operations require at least one shot selected.
+  if (!isPaste && m_track->selectedCols().empty()) return false;
+
+  // Phase 1: claim the key to prevent CommandManager from stealing it
+  if (t == QEvent::ShortcutOverride) { ke->accept(); return true; }
+
+  // Phase 2: dispatch the shot operation
+  if (isCopy)        onCopyShots();
+  else if (isCut)    onCutShots();
+  else if (isPaste)  onPasteShots();
+  else if (isClone)  onCloneShots();
+  else if (isDelete) onDeleteShots();
+
+  ke->accept();
+  return true;
 }
 
 void ZtoryAnimaticPanel::keyPressEvent(QKeyEvent *e) {
   const Qt::KeyboardModifiers mod = e->modifiers();
   const bool cmd  = mod & Qt::ControlModifier;
   const bool shift = mod & Qt::ShiftModifier;
-  const std::set<int> &sel = m_track->selectedCols();
 
   // ── Cmd+C / Cmd+X / Cmd+V — delegated to named slots ────────────────────
   if (cmd && !shift && e->key() == Qt::Key_C) { onCopyShots(); e->accept(); return; }
@@ -2903,54 +3088,11 @@ void ZtoryAnimaticPanel::keyPressEvent(QKeyEvent *e) {
   if (cmd && !shift && e->key() == Qt::Key_V) { onPasteShots(); e->accept(); return; }
 
   // Cmd+D — duplicate (clone) selected shots
-  if (cmd && !shift && e->key() == Qt::Key_D) {
-    if (!ZtoryModel::assertMainXsheet(false)) return;
-    // Clone in reverse column order so earlier indices stay valid
-    std::vector<int> cols(sel.begin(), sel.end());
-    std::sort(cols.rbegin(), cols.rend());
-    for (int col : cols) {
-      // Find shot index in ZtoryModel by matching xsheet column
-      TApp *app = TApp::instance();
-      ToonzScene *scene = app->getCurrentScene()->getScene();
-      TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
-      if (!xsh) continue;
-      // Shot index = how many child columns precede this one
-      int si = 0;
-      for (int c = 0; c < col; c++) {
-        TXshColumn *pc = xsh->getColumn(c);
-        if (!pc || pc->isEmpty()) continue;
-        int r0 = 0, r1 = 0; pc->getRange(r0, r1);
-        for (int r = r0; r <= r1; r++) {
-          TXshCell cell = xsh->getCell(r, c);
-          if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel())
-            { si++; break; }
-        }
-      }
-      ZtoryModel::instance()->cloneShot(si);
-    }
-    refreshFromScene();
-    e->accept();
-    return;
-  }
+  if (cmd && !shift && e->key() == Qt::Key_D) { onCloneShots(); e->accept(); return; }
 
   // Delete / Backspace — delete selected shots
   if (!cmd && (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace)) {
-    if (sel.empty()) return;
-    if (!ZtoryModel::assertMainXsheet(false)) return;
-    TApp *app = TApp::instance();
-    ToonzScene *scene = app->getCurrentScene()->getScene();
-    TXsheet *xsh = scene ? scene->getChildStack()->getTopXsheet() : nullptr;
-    if (!xsh) return;
-    // Delete in reverse column order so earlier indices stay valid
-    std::vector<int> cols(sel.begin(), sel.end());
-    std::sort(cols.rbegin(), cols.rend());
-    for (int col : cols)
-      ColumnCmd::deleteColumn(col);
-    xsh->updateFrameCount();
-    ZtoryModel::instance()->resequenceXsheet();
-    refreshFromScene();
-    e->accept();
-    return;
+    onDeleteShots(); e->accept(); return;
   }
 
   // Cmd+N — add new shot after selection
@@ -3239,7 +3381,12 @@ void mergeChildXsheetContent(TXshChildLevel *dstCl,
 
 void ZtoryAnimaticPanel::onMergeShots() {
   if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;
-  const std::set<int> &sel = m_track->selectedCols();
+  // Use own selection if >= 2; otherwise fall back to shared selection
+  // (set by Board when the user selected shots there).
+  const std::set<int> *selPtr = &m_track->selectedCols();
+  const std::set<int> &shared = ZtoryModel::instance()->sharedSelection();
+  if (selPtr->size() < 2 && shared.size() >= 2) selPtr = &shared;
+  const std::set<int> &sel = *selPtr;
   if (sel.size() < 2) return;
 
   TApp *app = TApp::instance();
@@ -3326,11 +3473,11 @@ void ZtoryAnimaticPanel::onMergeShots() {
   ZtoryModel::instance()->resequenceXsheet();
   m_track->refreshFromScene();
 
-  // Notify Board AFTER xsheet is fully stable and track refreshed.
-  // Emit in the same reverse-column order so Board's xsheetColumn tracking
-  // stays correct across multiple removals.
-  for (int i = (int)sortedCols.size() - 1; i >= 1; i--)
-    emit ZtoryModel::instance()->shotRemovedAt(sortedCols[i]);
+  // Board sync: resequenceXsheet() above already emitted modelReset() →
+  // StoryboardPanel::onModelResequenced() detects the shot-count change
+  // (via xsheet ground-truth count) and calls refreshFromScene() itself.
+  // Do NOT emit shotRemovedAt() here: it would cause a double-removal on the
+  // Board when onModelResequenced() already triggered refreshFromScene().
 }
 
 // ---- Add Shot ----

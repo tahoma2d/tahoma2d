@@ -3,6 +3,8 @@
 #include <QPixmap>
 #include <QString>
 #include <vector>
+#include <set>
+#include "toonz/txshchildlevel.h"  // for TXshLevelP
 
 // ─── NumberingConfig ─────────────────────────────────────────────────────────
 // Persistent numbering scheme used both at startup and during Board editing.
@@ -19,6 +21,18 @@ struct NumberingConfig {
 
   // Returns the shot name for a 0-based index, e.g. shotName(0)="sh010"
   QString shotName(int idx) const;
+};
+
+// ─── Shared clipboard ─────────────────────────────────────────────────────────
+// Used by both StoryboardPanel and ZtoryAnimaticPanel so that copy/cut in one
+// panel is immediately available for paste in the other.
+
+struct ZtoryClipEntry {
+  int        srcCol   = 0;    // xsheet column at copy/clone time; -1 for cut
+  int        duration = 24;   // cell count of original column
+  bool       isCut    = false;
+  bool       isClone  = false;
+  TXshLevelP cutLevel;        // keeps sub-scene alive after immediate cut
 };
 
 // ─── Strutture dati ───────────────────────────────────────────────────────────
@@ -65,6 +79,8 @@ class ZtoryModel : public QObject {
   int                           m_fps;
   QString                       m_ztoryPath;
   ZtoryWorkflow                 m_workflow = ZtoryWorkflow::Tradigital;
+  std::vector<ZtoryClipEntry>   m_sharedClip;      // shared across Board & Animatic
+  std::set<int>                 m_sharedSelection; // xsheet columns, last-panel-wins
 
   ZtoryModel();
   NumberingConfig m_numberingConfig;
@@ -112,6 +128,16 @@ public:
   void save();
   void load();
   void setZtoryPath(const QString &path) { m_ztoryPath = path; }
+
+  // ── Shared clipboard (Board ↔ Animatic) ──────────────────────────────────
+  const std::vector<ZtoryClipEntry>& sharedClip() const { return m_sharedClip; }
+  void setSharedClip(std::vector<ZtoryClipEntry> v)     { m_sharedClip = std::move(v); }
+
+  // ── Shared selection (Board ↔ Animatic) — xsheet column indices ─────────
+  // Written by whichever panel last had user interaction.
+  // Used by merge buttons as fallback when own selection is < 2 shots.
+  const std::set<int>& sharedSelection() const { return m_sharedSelection; }
+  void setSharedSelection(std::set<int> s)      { m_sharedSelection = std::move(s); }
 
   // ── Resequencing ──────────────────────────────────────────────────────────
   void resequenceXsheet();

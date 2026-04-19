@@ -126,10 +126,11 @@ struct Shot {
 
   bool m_updating = false;   // re-entrancy guard for signal reactions
   struct ClipboardEntry {
-    ShotData data;
-    bool     isClone;
-    int      srcColumn;
-    bool     isCut = false;   // true = cut (delete original on paste)
+    ShotData   data;
+    bool       isClone;
+    int        srcColumn;
+    bool       isCut = false;    // true = cut (delete original on paste)
+    TXshLevelP cutLevel;         // non-null for immediate cut: level kept alive here
   };
   std::vector<ClipboardEntry> m_clipboard;
   int  m_fps;
@@ -154,6 +155,7 @@ public:
   void refreshFromScene();
 protected:
   void showEvent(QShowEvent *e) override;
+  bool eventFilter(QObject *obj, QEvent *e) override;
 private slots:
   void onAddShot();
   void onDeleteShot();

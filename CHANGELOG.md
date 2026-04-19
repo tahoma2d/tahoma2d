@@ -6,6 +6,34 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-17] — Fix: crash BrushToolOptionsBox + AutoFill restore
+
+### Fixed
+- **`tooloptions.cpp` — crash on sub-xsheet entry and app close (`BrushToolOptionsBox::updateStatus`)**
+  - Root cause: `updateStatus()` era chiamata sincronamente durante la signal chain
+    dell'xsheet switch (`openSubXsheet` / `saveSceneIfNeeded`); in quel momento
+    `m_pltHandle->getPalette()` può restituire un puntatore temporaneamente invalido
+    → SIGSEGV in `rebuildAutoFillStyleCombo`.
+  - Fix: entrambe le chiamate critiche (`rebuildAutoFillStyleCombo` +
+    `notifyToolComboBoxListChanged`) deferite con `QTimer::singleShot(0, this, lambda)`,
+    così vengono eseguite solo dopo che la signal chain si è completamente disfatta.
+  - Aggiunto change-detection (`m_lastPalette`, `m_lastPaletteStyles`) per evitare
+    rebuild superflui.
+  - `try-catch(...)` non era sufficiente: SIGSEGV è un segnale Unix, non un'eccezione C++.
+
+### Modified
+- **`tooloptions.cpp`** — `BrushToolOptionsBox::updateStatus()` con QTimer deferred rebuild
+- **`tooloptions.h`** — aggiunti `m_lastPalette` / `m_lastPaletteStyles` a `BrushToolOptionsBox`
+- **`toonzrasterbrushtool.cpp`** — `rebuildAutoFillStyleCombo` ripristinato con lista completa
+  palette; fill code ripristinato al comportamento originale (`getPaint() == 0`)
+- **`toonzrasterbrushtool.h`** — `rebuildAutoFillStyleCombo(TPaletteP pal)` dichiarazione ripristinata
+
+### Notes
+- AutoFill "Fill Style" combo ora mostra di nuovo tutti i colori della palette (non solo "+1")
+- Fill con antialias ripristinato al comportamento originale (era stato rimosso per errore)
+- Savebox fix mantenuto: `sb = sb + m_strokeRect` per evitare scan area 1×1 al primo stroke
+
+---
 ## [2026-04-16] — Fix: render preview frame bianco/trasparente
 
 ### Fixed
