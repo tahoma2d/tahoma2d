@@ -274,6 +274,10 @@ public:
                                                // instead of emitting drawFrame
                                                // signal
               bool enableBlanks = false);
+  // Remove this console from the static m_visibleConsoles list on destruction.
+  // Without this, clearRooms() deletes panels but leaves dangling pointers in
+  // m_visibleConsoles, causing pressButton() to crash on the next room load.
+  ~FlipConsole();
   void enableBlanks(bool state);
 
   void setFrameRange(

@@ -195,6 +195,20 @@ TTool *TTool::getTool(std::string toolName, ToolTargetType targetType) {
 
 //-----------------------------------------------------------------------------
 
+void TTool::onViewerDestroyed(Viewer *viewer) {
+  // Null out m_viewer for every tool that still points to the destroyed viewer.
+  // Called from SceneViewer::~SceneViewer so that signals fired between viewer
+  // deletion and the new viewer's setViewer() call (e.g. xsheetChanged from
+  // StopMotion::onSceneSwitched during loadScene) do not crash in invalidate().
+  if (!toolTable) return;
+  for (auto &kv : *toolTable) {
+    TTool *tool = kv.second;
+    if (tool && tool->m_viewer == viewer) tool->m_viewer = nullptr;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void TTool::bind(int targetType) {
   m_targetType = targetType;
 

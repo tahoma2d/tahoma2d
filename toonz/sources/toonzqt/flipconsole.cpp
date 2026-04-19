@@ -566,6 +566,20 @@ void FlipConsole::showHideFrameSlider(bool isShow) {
 void showEvent(QShowEvent *);
 void hideEvent(QHideEvent *);
 
+FlipConsole::~FlipConsole() {
+  // Ensure this console is removed from the shared visible-consoles list even
+  // if hideEvent / setActive(false) was not called before deletion (e.g. when
+  // clearRooms() calls delete directly on a room widget that was never hidden).
+  // Without this, pressButton() in the next room-load cycle would dereference
+  // the now-dangling pointer and crash.
+  int i = m_visibleConsoles.indexOf(this);
+  if (i >= 0) m_visibleConsoles.takeAt(i);
+  if (m_currentConsole == this)
+    m_currentConsole = m_visibleConsoles.isEmpty() ? nullptr : m_visibleConsoles.last();
+}
+
+//-----------------------------------------------------------------------------
+
 void FlipConsole::makeCurrent() {
   if (m_currentConsole == this) return;
   int i = m_visibleConsoles.indexOf(this);
@@ -580,7 +594,22 @@ void FlipConsole::setActive(bool active) {
   if (active)
     makeCurrent();
   else {
-    pressButton(ePause);
+    // During room teardown (clearRooms), widgets are hidden before deletion.
+    // Going through pressButton→click()→signal→doButtonPressed iterates
+    // m_visibleConsoles and can reach partially-destroyed console state,
+    // causing a crash in QThread::isRunning() on a dangling d_ptr.
+    // Instead, directly abort the executor and reset playback state inline.
+    if (m_playbackExecutor.isRunning()) {
+      m_playbackExecutor.abort();
+      // Do NOT call wait() here — we are on the main thread and the executor
+      // emits nextFrame signals back to the main thread; waiting would deadlock.
+    }
+    m_isLinkedPlaying = false;
+    m_isPlay          = false;
+    m_stopAt          = -1;
+    m_startAt         = -1;
+    m_blanksToDraw    = 0;
+
     int i = m_visibleConsoles.indexOf(this);
     if (i >= 0) m_visibleConsoles.takeAt(i);
     if (m_currentConsole == this) {

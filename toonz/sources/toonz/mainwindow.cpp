@@ -1302,6 +1302,12 @@ void MainWindow::clearRooms() {
 
 void MainWindow::switchRoomChoice(const QString &choice) {
   if (choice.isEmpty()) return;
+  // Room::load() calls qApp->processEvents(), which can dispatch a pending
+  // workflow QAction while we are still inside switchRoomChoice. That nested
+  // call would reset m_isSwitchingRooms=false and leave readSettings() with
+  // dangling Room pointers → SIGSEGV in makePrivate/Room::save.
+  // Block re-entrant calls here; the outer switch will handle the final state.
+  if (m_isSwitchingRooms) return;
   bool already = (Preferences::instance()->getCurrentRoomChoice() == choice);
   bool migrated = ensureStoryboardRoomsTemplate(choice);
   if (already && !migrated) return;

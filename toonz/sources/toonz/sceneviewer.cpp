@@ -19,6 +19,7 @@
 // TnzTools includes
 #include "tools/cursors.h"
 #include "tools/cursormanager.h"
+#include "tools/tool.h"
 #include "tools/toolhandle.h"
 #include "tools/toolcommandids.h"
 #include "tools/toolutils.h"
@@ -915,6 +916,12 @@ void SceneViewer::setVisual(const ImagePainter::VisualSettings &settings) {
 //-----------------------------------------------------------------------------
 
 SceneViewer::~SceneViewer() {
+  // Null out m_viewer in every TTool that still points to us, so that any
+  // signal fired between our deletion and the new viewer's setViewer() call
+  // (e.g. xsheetChanged from StopMotion::onSceneSwitched during loadScene)
+  // does not reach TTool::invalidate() with a dangling pointer and crash.
+  if (!m_isLocator) TTool::onViewerDestroyed(this);
+
   if (m_fbo) delete m_fbo;
 
   int ret = l_contexts.erase(m_currentContext);

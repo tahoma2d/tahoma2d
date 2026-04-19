@@ -374,6 +374,13 @@ public:
   }
   Viewer *getViewer() const { return m_viewer; }
 
+  // Called by SceneViewer::~SceneViewer() to null out m_viewer in every tool
+  // that still points to the destroyed viewer.  Without this, any signal fired
+  // between viewer deletion and the new viewer's setViewer() call (e.g.
+  // xsheetChanged from StopMotion::onSceneSwitched during loadScene) will reach
+  // TTool::invalidate() with a dangling m_viewer and crash.
+  static void onViewerDestroyed(Viewer *viewer);
+
   double getPixelSize() const;
 
   //! Causes the refreshing of the \b rect portion of the viewer.

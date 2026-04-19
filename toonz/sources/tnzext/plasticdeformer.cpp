@@ -8,6 +8,7 @@
 
 // STD includes
 #include <assert.h>
+#include <cmath>
 #include <memory>
 
 #include "ext/plasticdeformer.h"
@@ -616,6 +617,16 @@ void PlasticDeformer::Imp::initializeStep2() {
     TPointD c(tcg::point_ops::ortCoords(*p2, *p0, *p1));
     m_relativeCoords[f] = c;
 
+    // ortCoords returns NaN/Inf when the triangle is degenerate (zero-area or
+    // coincident vertices → denominator = 0).  Passing NaN to buildF produces
+    // a singular matrix that makes dgstrf (SuperLU) crash with SIGSEGV instead
+    // of returning an error code.  Skip the factorization for such triangles;
+    // deformStep2() checks for null m_invF[f] and falls back to identity.
+    if (!std::isfinite(c.x) || !std::isfinite(c.y)) {
+      m_invF[f].reset(nullptr);
+      continue;
+    }
+
     F.clear();
     buildF(c.x, c.y, F);
 
@@ -668,7 +679,14 @@ void PlasticDeformer::Imp::deformStep2(const TPointD *dstHandles,
     build_c(*v0x, *v0y, *v1x, *v1y, *v2x, *v2y, relCoord->x, relCoord->y, m_c);
 
     double *vPtr = (double *)m_v;
-    tlin::solve(m_invF[f].get(), (double *)m_c, vPtr);
+    if (!m_invF[f]) {
+      // Degenerate triangle — no valid factorization.  Output an identity-like
+      // fit: keep vertices at their original (undeformed) positions.
+      m_v[0] = *v0x; m_v[1] = *v0y;
+      m_v[2] = *v1x; m_v[3] = *v1y;
+    } else {
+      tlin::solve(m_invF[f].get(), (double *)m_c, vPtr);
+    }
 
     fitTri[0].x = m_v[0], fitTri[0].y = m_v[1];
     fitTri[1].x = m_v[2], fitTri[1].y = m_v[3];

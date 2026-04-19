@@ -2263,6 +2263,81 @@ void StoryboardPanel::onRefreshPreviews() {
       updatePreview(si, pi);
 }
 
+// ── Audio export helper ───────────────────────────────────────────────────────
+// Injects a temporary sound column into childXsh containing only the audio
+// that falls within [shotR0, shotR1] of the main xsheet.
+// Returns the list of column indices inserted (to be removed after save).
+// One column per audio column in the main xsheet that overlaps the shot range.
+static QList<int> injectAudioForShot(TXsheet *mainXsh, TXsheet *childXsh,
+                                     int shotR0, int shotR1, double fps) {
+  QList<int> injected;
+  int mainCols = mainXsh->getColumnCount();
+  for (int mc = 0; mc < mainCols; mc++) {
+    TXshColumn *col = mainXsh->getColumn(mc);
+    if (!col) continue;
+    TXshSoundColumn *srcSc = col->getSoundColumn();
+    if (!srcSc) continue;
+
+    // Collect ColumnLevels that overlap [shotR0, shotR1]
+    QList<ColumnLevel *> toInsert;
+    for (int li = 0; li < srcSc->getColumnLevelCount(); li++) {
+      ColumnLevel *cl = srcSc->getColumnLevel(li);
+      if (!cl) continue;
+      int vsf = cl->getVisibleStartFrame();
+      int vef = cl->getVisibleEndFrame();
+      if (vsf > shotR1 || vef < shotR0) continue;  // no overlap
+
+      // Clip to shot boundary
+      int clipStart     = std::max(vsf, shotR0);
+      int clipEnd       = std::min(vef, shotR1);
+      int addStartOff   = clipStart - vsf;
+      int addEndOff     = vef - clipEnd;
+
+      // Clone and adjust: startFrame relative to shot start (frame 0).
+      // IMPORTANT: use cl->getStartFrame() (raw, before offset), NOT vsf
+      // (= startFrame + startOffset). Using vsf would shift the audible
+      // region by startOffset frames, making the clip play too late AND
+      // extending its visible end past the shot boundary.
+      ColumnLevel *newCl = new ColumnLevel(
+          cl->getSoundLevel(),
+          cl->getStartFrame() - shotR0,            // startFrame relative to shot
+          cl->getStartOffset() + addStartOff,      // trimmed start
+          cl->getEndOffset()   + addEndOff,        // trimmed end
+          fps);
+      toInsert.append(newCl);
+    }
+    if (toInsert.isEmpty()) continue;
+
+    // Insert a new sound column at the end of the child xsheet
+    int newCol = childXsh->getColumnCount();
+    childXsh->insertColumn(newCol, TXshColumn::eSoundType);
+    TXshSoundColumn *dstSc = childXsh->getColumn(newCol)->getSoundColumn();
+    if (!dstSc) { for (auto *c : toInsert) delete c; continue; }
+
+    dstSc->setFrameRate(fps);
+    for (ColumnLevel *cl : toInsert)
+      // adoptLevel() is the public counterpart of the protected insertColumnLevel():
+      // it takes ownership of cl and places its visible start at targetFrame.
+      // Passing cl->getVisibleStartFrame() keeps the position we set in the constructor.
+      dstSc->adoptLevel(cl, cl->getVisibleStartFrame());
+
+    // Mark column as reserved audio (visible in xsheet but not a drawing col)
+    TStageObject *obj = childXsh->getStageObjectTree()
+                          ->getStageObject(TStageObjectId::ColumnId(newCol), false);
+    if (obj) obj->setName("_audio_main_");
+
+    injected.append(newCol);
+  }
+  return injected;
+}
+
+// Remove injected audio columns in reverse order (to keep indices stable)
+static void removeInjectedAudio(TXsheet *childXsh, QList<int> cols) {
+  std::sort(cols.begin(), cols.end(), std::greater<int>());
+  for (int c : cols)
+    childXsh->removeColumn(c);
+}
+
 void StoryboardPanel::onExportShots() {
   if (m_shots.empty()) {
     QMessageBox::information(this, "Export Shots", "No shots to export.");
@@ -2307,6 +2382,10 @@ void StoryboardPanel::onExportShots() {
   // Export
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   TFilePath scenesDir = scene->decodeFilePath(TFilePath("+scenes"));
+  TXsheet *mainXsh = scene->getChildStack()->getTopXsheet();
+  // Use ZtoryModel fps (already synced from scene at load/new) to avoid pulling
+  // in the TSceneProperties include just for this one call.
+  double fps = (double)ZtoryModel::instance()->fps();
 
   int ok = 0, fail = 0;
   for (int i = from; i <= to; i++) {
@@ -2314,24 +2393,36 @@ void StoryboardPanel::onExportShots() {
     TFilePath outPath = scenesDir + TFilePath("sc" + shotNumStr + ".tnz");
 
     // Crea cartella scenes se non esiste
-    TFilePath sceneDir = outPath.getParentDir();
-    if (!TFileStatus(sceneDir).doesExist())
-      TSystem::mkDir(sceneDir);
+    if (!TFileStatus(outPath.getParentDir()).doesExist())
+      TSystem::mkDir(outPath.getParentDir());
 
-    // Simula apertura sottoscena come farebbe l'utente
-    // Imposta column selection e apri sottoscena
-    int col = m_shots[i].data.xsheetColumn;
-    TApp::instance()->getCurrentColumn()->setColumnIndex(col);
+    // Determina range del main xsheet per questo shot
+    int shotCol = m_shots[i].data.xsheetColumn;
+    int shotR0 = 0, shotR1 = 0;
+    if (mainXsh && mainXsh->getColumn(shotCol))
+      mainXsh->getColumn(shotCol)->getRange(shotR0, shotR1);
+
+    // Apri sottoscena
+    TApp::instance()->getCurrentColumn()->setColumnIndex(shotCol);
     TColumnSelection *colSel = new TColumnSelection();
-    colSel->selectColumn(col, true);
+    colSel->selectColumn(shotCol, true);
     TSelection::setCurrent(colSel);
     ztoryOpenSubXsheet();
 
-    // Verifica che siamo entrati
     if (scene->getChildStack()->getAncestorCount() == 0) { fail++; continue; }
+
+    // Inietta audio principale nel child xsheet prima del salvataggio
+    TXsheet *childXsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    QList<int> injectedCols;
+    if (mainXsh && childXsh && shotR1 >= shotR0)
+      injectedCols = injectAudioForShot(mainXsh, childXsh, shotR0, shotR1, fps);
 
     bool saved = IoCmd::saveScene(outPath, IoCmd::SAVE_SUBXSHEET);
     if (saved) ok++; else fail++;
+
+    // Rimuovi colonne audio temporanee (non devono restare nella sottoscena)
+    if (!injectedCols.isEmpty() && childXsh)
+      removeInjectedAudio(childXsh, injectedCols);
 
     ztoryCloseSubXsheet(1);
   }

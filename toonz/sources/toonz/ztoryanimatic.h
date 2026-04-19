@@ -39,7 +39,8 @@ public:
   TSoundTrackP soundTrack() const { return m_soundTrack; }
   void setSoundTrack(TSoundTrackP st) { m_soundTrack = st; }
   void invalidateSoundTrack() {
-    m_soundTrack = TSoundTrackP();
+    m_soundTrack        = TSoundTrackP();
+    m_soundBuildPending = false;  // Allow a fresh async build
   }
   // Viewer registers itself so the panel can call restartAudioIfPlaying().
   void setViewer(ZtoryAnimaticViewer *v) { m_viewer = v; }
@@ -51,6 +52,11 @@ public:
   // Build (or return cached) merged track from the main xsheet.
   // Safe to call from any scrub handler — returns null if no audio.
   TSoundTrackP requireSoundTrack();
+
+  // Start an async background build of the merged sound track.
+  // Result is delivered to m_soundTrack via QueuedConnection (main thread).
+  // No-op if a build is already in progress or the track is already cached.
+  void preBuildSoundTrackAsync();
 
   // Animatic-owned play range — independent from scene->getPreviewProperties()
   // which is shared with (and overwritten by) the native xsheet viewer when
@@ -88,7 +94,9 @@ private:
   int m_animaticR1 = -1;  // -1 = no range set (full range)
   ZtoryAnimaticViewer  *m_viewer = nullptr;
   // True while we are streaming main-xsheet audio on behalf of the native viewer.
-  bool m_nativeAudioPlaying = false;
+  bool m_nativeAudioPlaying  = false;
+  // Guards against launching a second async build while one is already running.
+  bool m_soundBuildPending   = false;
 };
 
 class ZtoryAnimaticRuler : public QWidget {

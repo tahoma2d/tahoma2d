@@ -51,6 +51,7 @@
 #include "toonzqt/stageobjectsdata.h"
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/fxdag.h"
+#include <thread>
 
 // Shared label column width — must match ZtoryAudioTrack::labelW (80px).
 // Used by ZtoryAnimaticRuler and ZtoryAnimaticTrack to align with audio tracks.
@@ -156,6 +157,41 @@ TSoundTrackP ZtoryAnimaticController::requireSoundTrack() {
     m_soundTrack = TSoundTrackP();
   }
   return m_soundTrack;
+}
+
+// ---- ZtoryAnimaticController::preBuildSoundTrackAsync ----
+// Starts a detached std::thread that calls makeSound() in the background.
+// The result is delivered to the main thread via QMetaObject::invokeMethod
+// with Qt::QueuedConnection — no main-thread blocking, no mutex needed.
+// Thread safety note: makeSound() is read-only on the xsheet's ColumnLevel list.
+// We accept the small race window; a stale or null result is harmless because
+// requireSoundTrack() will rebuild synchronously on first play if needed.
+void ZtoryAnimaticController::preBuildSoundTrackAsync() {
+  if (m_soundTrack || m_soundBuildPending) return;
+  TXsheet *xsh = mainXsheet();
+  if (!xsh) return;
+  int toFrame = videoFrameCount(xsh) - 1;
+  if (toFrame < 0) return;
+  m_soundBuildPending = true;
+
+  // Capture ctrl as a raw pointer — it is a singleton that outlives the thread.
+  ZtoryAnimaticController *ctrl = this;
+  std::thread([ctrl, xsh, toFrame]() {
+    TSoundTrackP st;
+    try {
+      TXsheet::SoundProperties *prop = new TXsheet::SoundProperties();
+      prop->m_isPreview = true;
+      prop->m_fromFrame = 0;
+      prop->m_toFrame   = toFrame;
+      st = TSoundTrackP(xsh->makeSound(prop));
+    } catch (...) {}
+    // Post result to main thread via QueuedConnection (thread-safe).
+    QMetaObject::invokeMethod(ctrl, [ctrl, st]() {
+      ctrl->m_soundBuildPending = false;
+      if (!ctrl->m_soundTrack)   // Don't overwrite if already built/invalidated
+        ctrl->m_soundTrack = st;
+    }, Qt::QueuedConnection);
+  }).detach();
 }
 
 // ---- ZtoryAnimaticController::onNativePlayingStatusChanged ----
@@ -2323,26 +2359,13 @@ void ZtoryAnimaticViewer::showEvent(QShowEvent *e) {
   updateAnimaticFrameRange();
   updateAnimaticFrameMarkers();
 
-  // Pre-build the merged sound track while the panel is showing — before the
-  // user presses play.  requireSoundTrack() is a no-op if the track is already
-  // cached.  Building it here means refreshAnimaticSound() (called at
-  // play-start) is instant: it just reads the cached raw pointer.
-  // This eliminates the 1-3 s makeSound() call that was happening on the
-  // main thread while the PlaybackExecutor had already started running,
-  // causing the executor to skip frames and creating audio-video desync.
-  QTimer::singleShot(0, this, [this]() {
-    // Deferred to after the panel fully shows (avoids blocking the show event).
-    auto *ctrl = ZtoryAnimaticController::instance();
-    TSoundTrackP st = ctrl->requireSoundTrack();
-    // Pre-warm the QAudioOutput device so it is already initialised when play
-    // starts.  Playing 1 sample initialises the device without audible output;
-    // stopScrub() clears the buffer but leaves the device alive (idle state).
-    // A subsequent full-track play() call reuses the device with zero startup
-    // latency because the format is unchanged.
-    TXsheet *mainXsh = ctrl->mainXsheet();
-    if (st && mainXsh && st->getSampleCount() > 0)
-      mainXsh->play(st, 0, 0, false);  // 1 silent sample → device initialised
-  });
+  // Pre-build the merged sound track in a background thread so the main
+  // thread is never blocked by makeSound() (1–3 s for long audio files).
+  // preBuildSoundTrackAsync() detaches a std::thread; the result arrives via
+  // QueuedConnection after makeSound() completes — zero UI blocking.
+  // If the user presses play before the async build finishes, requireSoundTrack()
+  // in refreshAnimaticSound() will build synchronously as a fallback.
+  ZtoryAnimaticController::instance()->preBuildSoundTrackAsync();
 
   if (m_sceneViewer) m_sceneViewer->update();
 }
@@ -2593,10 +2616,16 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   // Without this guard, refreshFromScene() would call getTopXsheet() which
   // returns the sub-scene, causing the timeline to show its columns instead
   // of the main shot-list.  Same guard already used for xsheetChanged below.
+  //
+  // Also invalidate the controller's sound track cache here: requireSoundTrack()
+  // caches the mixed TSoundTrackP lazily and never resets it on scene switch,
+  // causing the play-on-selection bar to play audio from the previous scene.
   connect(TApp::instance()->getCurrentScene(), &TSceneHandle::sceneSwitched,
           this, [this]() {
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
     if (!scene) return;
+    // Invalidate regardless of level — a new scene always needs fresh audio.
+    ZtoryAnimaticController::instance()->invalidateSoundTrack();
     if (scene->getChildStack()->getAncestorCount() != 0) return;
     refreshFromScene();
   });
@@ -4085,8 +4114,10 @@ void ZtoryAnimaticPanel::contextMenuEvent(QContextMenuEvent *e) {
       }
     }
     // Formati nativi: wav, aiff. mp3/ogg richiedono FFmpeg configurato.
+    // NOTE: pass nullptr as parent (not 'this') — on macOS a docked panel widget
+    // can cause the native sheet to open behind the main window or not appear.
     QString path = QFileDialog::getOpenFileName(
-        this, tr("Load Audio"),
+        nullptr, tr("Load Audio"),
         QString(),
         tr("Audio Files (*.wav *.aiff *.aif *.mp3 *.ogg);;WAV (*.wav);;AIFF (*.aiff *.aif);;All Files (*)"));
     if (path.isEmpty()) return;
