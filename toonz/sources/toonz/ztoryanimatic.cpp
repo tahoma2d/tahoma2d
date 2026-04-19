@@ -3534,9 +3534,8 @@ void ZtoryAnimaticPanel::onAddShot() {
   app->getCurrentXsheet()->notifyXsheetChanged();
   ZtoryModel::instance()->resequenceXsheet();
   m_track->refreshFromScene();
-
-  // Notify Board AFTER xsheet is stable
-  emit ZtoryModel::instance()->shotAdded(insertAt);
+  // Board syncs via resequenceXsheet() → modelReset() → onModelResequenced()
+  // (xsheet count check). No shotAdded() needed — it would cause double-insert.
 }
 
 void ZtoryAnimaticPanel::onMergeWithNext(int col) {
@@ -3623,9 +3622,8 @@ void ZtoryAnimaticPanel::onMergeWithNext(int col) {
   app->getCurrentXsheet()->notifyXsheetChanged();
   ZtoryModel::instance()->resequenceXsheet();
   m_track->refreshFromScene();
-
-  // Notify Board AFTER xsheet is fully stable (mirrors razor's shotAdded pattern).
-  emit ZtoryModel::instance()->shotRemovedAt(nextCol);
+  // Board syncs via resequenceXsheet() → modelReset() → onModelResequenced()
+  // (xsheet count check). No shotRemovedAt() needed — would cause double-removal.
 }
 
 // Helper: log column range to debug file
@@ -3720,12 +3718,9 @@ void ZtoryAnimaticPanel::onRazorRequested(int col, int splitFrame) {
 
   m_track->refreshFromScene();
   refreshAudioTracks();
-
-  // Notify Board AFTER xsheet is stable and track refreshed.
-  // Emitting before resequenceXsheet would fire onShotInserted → renumberAll
-  // → updateColumnName → notifyXsheetChanged → Animatic refreshes while the
-  // clone column still starts at the same frame as the original → overlap.
-  emit ZtoryModel::instance()->shotAdded(newCol);
+  // Board syncs via resequenceXsheet() → modelReset() → onModelResequenced()
+  // (xsheet count check). No shotAdded() needed — it would cause double-insert
+  // because onModelResequenced already called refreshFromScene() on the Board.
 }
 
 void ZtoryAnimaticPanel::onAudioRazorRequested(int col, int frame) {

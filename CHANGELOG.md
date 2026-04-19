@@ -6,6 +6,49 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-19] — Shared clipboard e shared selection Board ↔ Animatic + fix merge double-removal
+
+### Added
+- **Shared clipboard Board ↔ Animatic** (`ztorymodel.h`, `ztoryanimatic.cpp`, `storyboardpanel.cpp`)
+  - `ZtoryClipEntry` struct e `m_sharedClip` in `ZtoryModel` — unica source of truth per clipboard
+  - Board (`onCopyShot`, `onCutShot`, `onCloneShot`): scrive sempre su `ZtoryModel::setSharedClip()`
+  - Animatic (`onCopyShots`, `onCutShots`, `onCloneShots`): usa già `ZtoryModel::sharedClip()`
+  - `pasteSharedClipToBoard()` — helper statico in `storyboardpanel.cpp` che replica
+    la logica di `pasteFromClip()` usando il `cloneChildToPosition()` locale
+  - Board `onPasteShot()`: shared clip ha sempre priorità su `m_clipboard` locale
+    (fix bug: `m_clipboard` stale con 3 shot causava incolla 3 invece di 1 dopo copy da Animatic)
+
+- **Shared selection Board ↔ Animatic** (`ztorymodel.h`, `ztoryanimatic.cpp`, `storyboardpanel.cpp`)
+  - `m_sharedSelection` (set di xsheet columns) in `ZtoryModel` con getter/setter
+  - Animatic: `selectionChanged` signal → `ZtoryModel::setSharedSelection()`
+  - Board `onPanelClicked()`: converte `m_selectedIndices` → xsheet columns → `setSharedSelection()`
+  - Merge cross-panel: seleziona in Animatic → merge button Board funziona (e viceversa)
+  - Fallback "last panel wins": vince sempre l'ultima interazione utente
+
+### Fixed
+- **Bug merge cross-panel: double-removal nel Board** (`storyboardpanel.cpp`, `ztoryanimatic.cpp`)
+  - Root cause: `onModelResequenced()` usava `ZtoryModel::m_shots.size()` come riferimento
+    ma quella dimensione è stale dopo operazioni copy/paste/clone che bypassano
+    `ZtoryModel::addShot()/removeShot()`. Se stale ≠ Board count → `refreshFromScene()` (Board → 5 shot)
+    poi arrivava anche `emit shotRemovedAt(4)` → `onShotRemovedAt()` → rimozione extra (Board → 4 shot)
+  - Fix 1: `onModelResequenced()` conta le colonne child-level direttamente dall'xsheet (ground truth),
+    non da `ZtoryModel::m_shots.size()`
+  - Fix 2: Animatic `onMergeShots()`: rimosso `emit shotRemovedAt()` — il Board si sincronizza già
+    via `resequenceXsheet()` → `modelReset()` → `onModelResequenced()`
+  - Fix 3: Board `onMergeShots()`: `m_updating=true` attorno all'emit di `shotRemovedAt()` per
+    prevenire self-processing (double-removal anche per merge nativo del Board)
+
+- **Bug clipboard priorità**: Board usava `m_clipboard` locale (stale) invece dello shared clip
+  - Fix: in `onPasteShot()` lo shared clip ha sempre la precedenza; `m_clipboard` è solo fallback
+
+### Modified
+- `ztorymodel.h` — aggiunti `ZtoryClipEntry`, `m_sharedClip`, `m_sharedSelection` + `#include <set>`
+- `ztoryanimatic.h` — rimossi `AnimClipEntry`/`m_animClip`; commento shared clipboard
+- `ztoryanimatic.cpp` — riscritta gestione clipboard; merge fix; connect selectionChanged
+- `storyboardpanel.cpp` — shared clipboard write in copy/cut/clone; paste fallback; merge fix;
+  shared selection write in onPanelClicked; pasteSharedClipToBoard() helper
+
+---
 ## [2026-04-17] — Fix: crash BrushToolOptionsBox + AutoFill restore
 
 ### Fixed
