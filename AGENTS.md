@@ -101,6 +101,44 @@ toonz/sources/toonz/ztorybackpanel.h/.cpp    — Back to storyboard button
 - Thumbnail refresh = on `frameSwitched` with 1000ms debounce, NOT on `xsheetChanged`
 - Copy = shared instance | Clone = fully independent sub-scene
 
+### Board ↔ Animatic sync — REGOLA CRITICA
+
+**Non emettere mai `shotAdded` o `shotRemovedAt` dopo `resequenceXsheet()` nelle
+funzioni dell'Animatic.** Causa sempre un double-update nel Board:
+
+```
+resequenceXsheet()
+  → emit modelReset()
+    → StoryboardPanel::onModelResequenced()   ← Board già sincronizzato qui
+      → refreshFromScene()  (quando xsheet count ≠ m_shots.size())
+
+[poi]
+emit shotAdded(col)
+  → onShotInserted()  ← INSERISCE UN ALTRO SHOT → Board ha 1 di troppo ✗
+
+emit shotRemovedAt(col)
+  → onShotRemovedAt()  ← RIMUOVE UN ALTRO SHOT → Board ha 1 di meno ✗
+```
+
+**Il Board si sincronizza esclusivamente via `onModelResequenced()`** che usa il
+conteggio reale delle colonne child-level nell'xsheet come ground truth
+(NON `ZtoryModel::m_shots.size()` che può essere stale).
+
+Funzioni Animatic già corrette (non toccare):
+- `onRazorRequested()` — nessun emit post-resequence
+- `onAddShot()` — nessun emit post-resequence
+- `onMergeWithNext()` — nessun emit post-resequence
+- `onMergeShots()` — nessun emit post-resequence
+
+### Shared clipboard / selection — REGOLA
+
+- `ZtoryModel::m_sharedClip` — sorgente unica per clipboard Board↔Animatic
+- `ZtoryModel::m_sharedSelection` — xsheet columns selezionate, last-panel-wins
+- Lo shared clip ha **sempre priorità** su `m_clipboard` locale del Board
+- Board scrive shared clip in `onCopyShot/onCutShot/onCloneShot`
+- Board scrive shared selection in `onPanelClicked`
+- Animatic scrive shared selection su `selectionChanged` signal del track
+
 -----
 
 ## Coding Conventions

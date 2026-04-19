@@ -3480,6 +3480,16 @@ void ZtoryAnimaticPanel::onMergeShots() {
   // Board when onModelResequenced() already triggered refreshFromScene().
 }
 
+// ── Board sync contract ───────────────────────────────────────────────────────
+// REGOLA: NON emettere shotAdded/shotRemovedAt dopo resequenceXsheet() in
+// nessuna delle funzioni qui sotto. Il Board si sincronizza esclusivamente via:
+//   resequenceXsheet() → emit modelReset()
+//   → StoryboardPanel::onModelResequenced() → refreshFromScene() (se count ≠)
+// Emettere shotAdded/shotRemovedAt DOPO causa double-update:
+// onModelResequenced() ha già ricostruito il Board da xsheet ground-truth,
+// poi il segnale ridondante inserisce/rimuove un shot in più → Board errato.
+// ─────────────────────────────────────────────────────────────────────────────
+
 // ---- Add Shot ----
 void ZtoryAnimaticPanel::onAddShot() {
   if (!ZtoryModel::assertMainXsheet(/*showWarning=*/true)) return;

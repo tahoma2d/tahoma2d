@@ -6,6 +6,22 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-19b] — Fix: double-update Board dopo operazioni Animatic
+
+### Fixed
+- **Razor, AddShot, MergeWithNext dall'Animatic aggiungevano uno shot vuoto extra nel Board**
+  - Root cause: stessa classe di bug del merge double-removal. Dopo `resequenceXsheet()`
+    → `modelReset()` → `onModelResequenced()` → `refreshFromScene()` il Board era già
+    corretto (4 shot dopo razor), poi arrivava `emit shotAdded(newCol)` →
+    `onShotInserted()` inseriva un altro shot vuoto (senza sub-scene) → Board a 5 shot.
+  - Fix: rimossi `emit shotAdded()`/`emit shotRemovedAt()` da `onRazorRequested()`,
+    `onAddShot()`, `onMergeWithNext()`. Il Board si sincronizza esclusivamente via
+    `resequenceXsheet()` → `modelReset()` → `onModelResequenced()` (xsheet count check).
+
+### Modified
+- `ztoryanimatic.cpp` — rimossi 3 emit ridondanti post-resequenceXsheet
+
+---
 ## [2026-04-19] — Shared clipboard e shared selection Board ↔ Animatic + fix merge double-removal
 
 ### Added
