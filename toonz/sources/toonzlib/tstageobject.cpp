@@ -753,7 +753,8 @@ void TStageObject::enableUppk(bool enabled) {
 //-----------------------------------------------------------------------------
 
 void TStageObject::setCenter(double frame, const TPointD &centerPoint,
-                             const TPointD &frameCenter) {
+                             const TPointD &frameCenter, bool resetOrigin) {
+  if (resetOrigin) m_center = m_offset = TPointD();
   TPointD c = centerPoint - getHandlePos(m_handle, (int)frame);
 
   TAffine aff   = computeLocalPlacement(frame);

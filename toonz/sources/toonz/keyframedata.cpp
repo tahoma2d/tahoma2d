@@ -73,7 +73,10 @@ void TKeyframeData::setKeyframes(std::set<Position> positions, TXsheet *xsh,
     if (pegbar->isKeyframe(row)) {
       Position p(row - r0, col - c0);
       TStageObject::Keyframe k = pegbar->getKeyframe(row);
-      m_keyData[p]             = k;
+      TPointD center, offset;
+      pegbar->getCenterAndOffset(center, offset);
+      m_keyData[p]    = k;
+      m_centerData[p] = CenterInfo(center, offset);
     }
   }
 }
@@ -108,8 +111,9 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
   TStageObjectId cameraId =
       TStageObjectId::CameraId(xsh->getCameraColumnIndex());
   Iterator it;
+  Iterator2 it3 = m_centerData.begin();
   bool keyFrameChanged = false;
-  for (it = m_keyData.begin(); it != m_keyData.end(); ++it) {
+  for (it = m_keyData.begin(); it != m_keyData.end(); ++it, ++it3) {
     Position pos = it->first;
     int row      = r0 + pos.first;
     int col      = c0 + pos.second;
@@ -127,6 +131,8 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
     double e0, e1;
     pegbar->getKeyframeRange(kF, kL);
     pegbar->setKeyframeWithoutUndo(row, it->second);
+    CenterInfo centerInfo = it3->second ;
+    pegbar->setCenterAndOffset(centerInfo.first, centerInfo.second);
 
     std::map<int, int>::iterator itF = firstRowCol.find(col);
     std::map<int, int>::iterator itL = lastRowCol.find(col);

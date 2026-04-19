@@ -246,8 +246,14 @@ void ViewerKeyframeNavigator::toggle() {
   if (pegbar->isFullKeyframe(frame)) {
     TStageObject::Keyframe key = pegbar->getKeyframe(frame);
     pegbar->removeKeyframeWithoutUndo(frame);
-    UndoRemoveKeyFrame *undo =
-        new UndoRemoveKeyFrame(pegbar->getId(), frame, key, m_xsheetHandle);
+
+    // Move frame center back to origin
+    TPointD center, offset;
+    pegbar->getCenterAndOffset(center, offset);
+    if (center != TPointD()) pegbar->setCenter(frame, center, true);
+
+    UndoRemoveKeyFrame *undo = new UndoRemoveKeyFrame(
+        pegbar->getId(), frame, key, center, offset, m_xsheetHandle);
     undo->setObjectHandle(m_objectHandle);
     TUndoManager::manager()->add(undo);
   } else {

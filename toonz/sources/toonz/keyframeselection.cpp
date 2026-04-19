@@ -113,6 +113,9 @@ bool deleteKeyframesWithoutUndo(
     areAllColumnLocked = false;
     assert(pegbar);
     pegbar->removeKeyframeWithoutUndo(row);
+    // Move frame center back to origin
+    TPointD center = pegbar->getCenter(row);
+    if (center != TPointD()) pegbar->setCenter(row, center, true);
   }
   if (areAllColumnLocked) return false;
 
@@ -346,9 +349,16 @@ void TKeyframeSelection::setKeyframes() {
   if (!pegbar) return;
   if (pegbar->isKeyframe(row)) {
     TStageObject::Keyframe key = pegbar->getKeyframe(row);
+
     pegbar->removeKeyframeWithoutUndo(row);
+
+    // Move frame center back to origin
+    TPointD center, offset;
+    pegbar->getCenterAndOffset(center, offset);
+    if (center != TPointD()) pegbar->setCenter(row, center, true);
+
     UndoRemoveKeyFrame *undo =
-        new UndoRemoveKeyFrame(id, row, key, xsheetHandle);
+        new UndoRemoveKeyFrame(id, row, key, center, offset, xsheetHandle);
     undo->setObjectHandle(app->getCurrentObject());
     TUndoManager::manager()->add(undo);
   } else {

@@ -340,9 +340,11 @@ public:
           \sa getCenter()
   */
   void setCenter(const TStageObjectId &id, int frame,
-                 const TPointD &centerPoint, const TPointD &frameCenter);
-  void setCenter(const TStageObjectId &id, int frame, const TPointD &center) {
-    setCenter(id, frame, center, center);
+                 const TPointD &centerPoint, const TPointD &frameCenter,
+                 bool resetOrigin = false);
+  void setCenter(const TStageObjectId &id, int frame, const TPointD &center,
+                 bool resetOrigin = false) {
+    setCenter(id, frame, center, center, resetOrigin);
   }
   /*! Returns parent related to pegbar \b TStageObject with \b \e id
      TStageObjectId specialization;

@@ -542,6 +542,9 @@ void GlobalKeyframeUndo::doRemoveGlobalKeyframes(
 
     TStageObject *obj = xsh->getStageObject(objectId);
     obj->removeKeyframeWithoutUndo(frame);
+    // Move frame center back to origin
+    TPointD center = obj->getCenter(frame);
+    if (center != TPointD()) obj->setCenter(frame, center, true);
   }
 }
 
@@ -609,6 +612,7 @@ public:
 
 class RemoveGlobalKeyframeUndo final : public GlobalKeyframeUndo {
   std::vector<TStageObject::Keyframe> m_keyframes;
+  std::vector<std::pair<TPointD, TPointD>> m_centerData;
 
 public:
   RemoveGlobalKeyframeUndo(int frame, const std::vector<int> &columns)
@@ -626,6 +630,19 @@ public:
 
         return object->getKeyframe(r);
       }
+      static std::pair<TPointD, TPointD> getCenterData(int r, int c) {
+        TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+        TStageObjectId objectId =
+            (c == -1) ? TStageObjectId::CameraId(xsh->getCameraColumnIndex())
+                      : xsh->getColumnObjectId(c);
+
+        TStageObject *object = xsh->getStageObject(objectId);
+        assert(object);
+        TPointD center, offset;
+        object->getCenterAndOffset(center, offset);
+        return std::pair<TPointD, TPointD>(center, offset);
+      }
     };  // locals
 
     tcg::substitute(m_columns,
@@ -633,6 +650,10 @@ public:
 
     tcg::substitute(m_keyframes,
                     m_columns | ba::transformed([frame](int c){ return locals::getKeyframe(frame, c); }));
+
+    tcg::substitute(m_centerData, m_columns | ba::transformed([frame](int c) {
+                                    return locals::getCenterData(frame, c);
+                                 }));
   }
 
   void redo() const override {
@@ -655,6 +676,7 @@ public:
 
       TStageObject *object = xsh->getStageObject(objectId);
       object->setKeyframeWithoutUndo(m_frame, m_keyframes[c]);
+      object->setCenterAndOffset(m_centerData[c].first,m_centerData[c].second);
     }
 
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);

@@ -20,8 +20,12 @@ public:
   typedef TKeyframeSelection::Position Position;
   typedef std::map<Position, TStageObject::Keyframe> KeyData;
   typedef std::map<Position, TStageObject::Keyframe>::const_iterator Iterator;
+  typedef std::pair<TPointD, TPointD> CenterInfo;
+  typedef std::map<Position, CenterInfo> CenterData;
+  typedef std::map<Position, CenterInfo>::const_iterator Iterator2;
 
   KeyData m_keyData;
+  CenterData m_centerData;
   int m_columnSpanCount;
   int m_rowSpanCount;
 

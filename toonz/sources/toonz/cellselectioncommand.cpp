@@ -1660,10 +1660,11 @@ void TCellSelection::setKeyframes() {
   // Command body
   if (obj->isFullKeyframe(row)) {
     const TStageObject::Keyframe &key = obj->getKeyframe(row);
-
-    UndoRemoveKeyFrame *undo = new UndoRemoveKeyFrame(id, row, key, xshHandle);
+    TPointD center, offset;
+    obj->getCenterAndOffset(center, offset);
+    UndoRemoveKeyFrame *undo =
+        new UndoRemoveKeyFrame(id, row, key, center, offset, xshHandle);
     undo->setObjectHandle(app->getCurrentObject());
-
     TUndoManager::manager()->add(undo);
     undo->redo();
   } else {

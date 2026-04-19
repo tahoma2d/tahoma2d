@@ -156,10 +156,12 @@ class DVAPI UndoRemoveKeyFrame final : public TUndo {
       *m_objectHandle;  // OK: viene usato per notificare i cambiamenti!
 
   TStageObject::Keyframe m_key;
+  TPointD m_center, m_offset;
 
 public:
   UndoRemoveKeyFrame(TStageObjectId objectId, int frame,
-                     TStageObject::Keyframe key, TXsheetHandle *xsheetHandle);
+                     TStageObject::Keyframe key, TPointD center, TPointD offset,
+                     TXsheetHandle *xsheetHandle);
 
   void setXsheetHandle(TXsheetHandle *xsheetHandle) {
     m_xsheetHandle = xsheetHandle;

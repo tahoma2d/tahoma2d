@@ -295,9 +295,10 @@ object.
 
   //! Sets the center of the \e frame to \e center.
   void setCenter(double frame, const TPointD &centerPoint,
-                 const TPointD &frameCenter);
-  void setCenter(double frame, const TPointD &center) {
-    setCenter(frame, center, center);
+                 const TPointD &frameCenter, bool resetOrigin = false);
+  void setCenter(double frame, const TPointD &center,
+                 bool resetOrigin = false) {
+    setCenter(frame, center, center, resetOrigin);
   }
 
   //! Returns the center of the \e frame.
