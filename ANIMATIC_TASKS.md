@@ -459,10 +459,10 @@ alle sequence del progetto (sq01, sq02…).
 
 ### Feature immediate (prossime sessioni)
 7. ~~**NEW Merge Board**~~ ✅ DONE 2026-04-06 — m_mergeButton collegato a ZtoryModel
-8. **NEW Shortcut Cmd+C/X/V/Delete** — Board e Animatic, senza conflitti CommandManager 🔴 DA FARE
+8. ~~**NEW Shortcut Cmd+C/X/V/Delete**~~ ✅ DONE 2026-04-19 — Board e Animatic: two-phase eventFilter, shared clipboard, shared selection
 9. ~~**NEW Lock tracce audio**~~ ✅ DONE — lock già funzionante
 10. **NEW Numerazione SQ/SH/P** — sistema completo Sequence→Shot→Panel (3 fasi) 🔴 DA FARE
-11. **Task 9** — Audio export con shot
+11. ~~**Task 9**~~ ✅ DONE 2026-04-20 — Audio export con shot (fix compilazione + frame offset)
 12. **Task 11** — Viewer toggle (QStackedWidget)
 13. **NEW Undo/Redo** — TUndoManager su tutte le operazioni CRUD shot (dopo ZtoryModel consolidato)
 14. **Task 13d** — Navigation tags (⚠️ design session prima)
