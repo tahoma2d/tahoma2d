@@ -234,6 +234,20 @@ void FunctionToolbar::setXsheetHandle(TXsheetHandle *xsheetHandle) {
 
 //-------------------------------------------------------------------
 
+void FunctionToolbar::setColumnHandle(TColumnHandle *columnHandle) {
+  m_columnHandle = columnHandle;
+  if (m_keyframeNavigator) m_keyframeNavigator->setColumnHandle(columnHandle);
+}
+
+//-------------------------------------------------------------------
+
+void FunctionToolbar::setObjectHandle(TObjectHandle* objectHandle) {
+  m_objectHandle = objectHandle;
+  if (m_keyframeNavigator) m_keyframeNavigator->setObjectHandle(objectHandle);
+}
+
+//-------------------------------------------------------------------
+
 void FunctionToolbar::setSelection(FunctionSelection *selection) {
   if (m_selection != selection) {
     if (m_selection)

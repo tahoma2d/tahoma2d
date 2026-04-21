@@ -3,11 +3,14 @@
 #include "toonzqt/functionselection.h"
 
 #include "toonzqt/dvdialog.h"
+#include "toonzqt/functionsheet.h"
 
 // TnzLib includes
 #include "toonz/doubleparamcmd.h"
 #include "toonz/tframehandle.h"
 #include "toonz/txsheetexpr.h"
+#include "toonz/txsheet.h"
+#include "toonz/tstageobject.h"
 
 // TnzBase includes
 #include "tdoubleparam.h"
@@ -136,12 +139,14 @@ public:
   struct ColumnKeyframes {
     TDoubleParam *m_param;
     std::map<int, TDoubleKeyframe> m_keyframes;
+    TPointD m_center, m_offset;
   };
   struct Column {
     TDoubleParam *m_param;
     QSet<int> m_keyframes;
   };
-  KeyframesDeleteUndo(const std::vector<Column> &columns) {
+  KeyframesDeleteUndo(const std::vector<Column> &columns, FunctionSheet *sheet)
+      : m_sheet(sheet) {
     m_columns.resize(columns.size());
     for (int col = 0; col < (int)m_columns.size(); col++) {
       TDoubleParam *param    = columns[col].m_param;
@@ -150,8 +155,12 @@ public:
       param->addRef();
       const QSet<int> &keyframes = columns[col].m_keyframes;
       for (QSet<int>::const_iterator it = keyframes.begin();
-           it != keyframes.end(); ++it)
+           it != keyframes.end(); ++it) {
         m_columns[col].m_keyframes[*it] = param->getKeyframe(*it);
+        TStageObject *stgObj            = m_sheet->getStageObject(col);
+        stgObj->getCenterAndOffset(m_columns[col].m_center,
+                                   m_columns[col].m_offset);
+      }
     }
   }
   ~KeyframesDeleteUndo() {
@@ -167,8 +176,14 @@ public:
     for (int col = 0; col < (int)m_columns.size(); col++) {
       std::map<int, TDoubleKeyframe>::const_iterator it,
           itEnd(m_columns[col].m_keyframes.cend());
-      for (it = m_columns[col].m_keyframes.cbegin(); it != itEnd; ++it)
+      for (it = m_columns[col].m_keyframes.cbegin(); it != itEnd; ++it) {
         m_columns[col].m_param->setKeyframe(it->second);
+        double frame = it->second.m_frame;
+        TStageObject *stgObj = m_sheet->getStageObject(col);
+        if (m_columns[col].m_center != TPointD())
+          stgObj->setCenterAndOffset(m_columns[col].m_center,
+                                     m_columns[col].m_offset);
+      }
     }
     if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
@@ -176,8 +191,13 @@ public:
     for (int col = 0; col < (int)m_columns.size(); col++) {
       std::map<int, TDoubleKeyframe>::const_iterator it,
           itEnd(m_columns[col].m_keyframes.cend());
-      for (it = m_columns[col].m_keyframes.cbegin(); it != itEnd; ++it)
-        m_columns[col].m_param->deleteKeyframe(it->second.m_frame);
+      for (it = m_columns[col].m_keyframes.cbegin(); it != itEnd; ++it) {
+        double frame = it->second.m_frame;
+        m_columns[col].m_param->deleteKeyframe(frame);
+        TStageObject *stgObj = m_sheet->getStageObject(col);
+        if (m_columns[col].m_center != TPointD() && !stgObj->isKeyframe(frame))
+          stgObj->setCenter(frame, m_columns[col].m_center, true);
+      }
     }
     if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
@@ -190,6 +210,7 @@ public:
 private:
   std::vector<ColumnKeyframes> m_columns;
   TXsheetHandle *m_xsheetHandle;
+  FunctionSheet *m_sheet;
 };
 
 //-----------------------------------------------------------------------------
@@ -595,7 +616,7 @@ void FunctionSelection::doDelete() {
     columns.push_back(column);
   }
   if (columns.empty()) return;
-  KeyframesDeleteUndo *undo = new KeyframesDeleteUndo(columns);
+  KeyframesDeleteUndo *undo = new KeyframesDeleteUndo(columns, m_sheet);
   undo->setXsheetHandle(m_xsheetHandle);
   undo->redo();
   TUndoManager::manager()->add(undo);

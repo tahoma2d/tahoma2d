@@ -26,6 +26,7 @@
 class TDoubleParam;
 class TDoubleKeyframe;
 class TFrameHandle;
+class TObjectHandle;
 class FunctionSelection;
 
 //-----------------------------------------------------------------------------
@@ -95,6 +96,7 @@ private:
   FunctionSelection *m_selection;
   TFrameHandle *m_frameHandle;
   TXsheetHandle *m_xsheetHandle;
+  TObjectHandle *m_objectHandle;
   FunctionTreeModel *m_functionTreeModel;
 
   int m_currentFrameStatus;
@@ -138,6 +140,10 @@ public:
     m_xsheetHandle = xsheetHandle;
   }
   TXsheetHandle *getXsheetHandle() const { return m_xsheetHandle; }
+  void setObjectHandle(TObjectHandle* objectHandle) {
+    m_objectHandle = objectHandle;
+  }
+  TObjectHandle *getObjectHandle() const { return m_objectHandle; }
 
   QTransform getViewTransform() const { return m_viewTransform; }
   void setViewTransform(const QTransform &viewTransform) {

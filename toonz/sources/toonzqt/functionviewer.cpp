@@ -109,6 +109,8 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WindowFlags flags)
 
   m_numericalColumns->setViewer(this);
 
+  m_selection->setFunctionSheet(m_numericalColumns);
+
   m_toolbar->setSelection(m_selection);
   m_toolbar->setFocusPolicy(Qt::NoFocus);
 
@@ -442,7 +444,11 @@ void FunctionViewer::setObjectHandle(TObjectHandle *objectHandle) {
   FunctionTreeModel *ftModel =
       static_cast<FunctionTreeModel *>(m_treeView->model());
   if (ftModel) ftModel->setObjectHandle(objectHandle);
+
+  m_toolbar->setObjectHandle(objectHandle);
+  m_functionGraph->setObjectHandle(objectHandle);
 }
+
 //-----------------------------------------------------------------------------
 
 void FunctionViewer::setFxHandle(TFxHandle *fxHandle) {

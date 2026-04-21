@@ -635,7 +635,7 @@ public:
 
         TStageObjectId objectId =
             (c == -1) ? TStageObjectId::CameraId(xsh->getCameraColumnIndex())
-                      : xsh->getColumnObjectId(c);
+                      : TStageObjectId::ColumnId(c);
 
         TStageObject *object = xsh->getStageObject(objectId);
         assert(object);

@@ -4,6 +4,9 @@
 #include "toonz/preferences.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/txsheethandle.h"
+#include "toonz/tobjecthandle.h"
+#include "toonz/txsheet.h"
+#include "toonz/tstageobject.h"
 #include "tdoubleparam.h"
 #include "tdoublekeyframe.h"
 #include "tundo.h"
@@ -824,21 +827,29 @@ class RemoveKeyframeUndo final : public TUndo {
   TDoubleParam *m_param;
   TDoubleKeyframe m_keyframe;
   TXsheetHandle *m_xsheetHandle;
+  TStageObject *m_stageObj;
+  TPointD m_center, m_offset;
 
 public:
-  RemoveKeyframeUndo(TDoubleParam *param, int kIndex,
+  RemoveKeyframeUndo(TDoubleParam *param, int kIndex, TStageObject *stageObj,
                      TXsheetHandle *xsheetHandle)
-      : m_param(param), m_xsheetHandle(xsheetHandle) {
+      : m_param(param), m_stageObj(stageObj), m_xsheetHandle(xsheetHandle) {
     m_param->addRef();
     m_keyframe = m_param->getKeyframe(kIndex);
+    if (stageObj) stageObj->getCenterAndOffset(m_center, m_offset);
   }
   ~RemoveKeyframeUndo() { m_param->release(); }
   void undo() const override {
     m_param->setKeyframe(m_keyframe);
+    if (m_stageObj && m_center != TPointD())
+      m_stageObj->setCenterAndOffset(m_center, m_offset);
     if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   void redo() const override {
     m_param->deleteKeyframe(m_keyframe.m_frame);
+    if (m_stageObj && m_center != TPointD() &&
+        !m_stageObj->isKeyframe(m_keyframe.m_frame))
+      m_stageObj->setCenter(m_keyframe.m_frame, m_center, true);
     if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   int getSize() const override { return sizeof(*this); }
@@ -849,14 +860,33 @@ public:
 //=============================================================================
 
 void KeyframeSetter::removeKeyframeAt(TDoubleParam *curve, double frame,
+                                      TObjectHandle *objectHandle,
+                                      TXsheetHandle *xsheetHandle) {
+  TStageObject *stageObj = nullptr;
+  if (objectHandle) {
+    TStageObjectId objId = objectHandle->getObjectId();
+    stageObj             = xsheetHandle->getXsheet()->getStageObject(objId);
+  }
+  removeKeyframeAt(curve, frame, stageObj, xsheetHandle);
+}
+
+void KeyframeSetter::removeKeyframeAt(TDoubleParam *curve, double frame,
+                                      TStageObject *stageObj,
                                       TXsheetHandle *xsheetHandle) {
   int kIndex = curve->getClosestKeyframe(frame);
   if (kIndex < 0 || kIndex >= curve->getKeyframeCount() ||
       curve->keyframeIndexToFrame(kIndex) != frame)
     return;
   TUndoManager::manager()->add(
-      new RemoveKeyframeUndo(curve, kIndex, xsheetHandle));
+      new RemoveKeyframeUndo(curve, kIndex, stageObj, xsheetHandle));
   curve->deleteKeyframe(frame);
+  if (stageObj) {
+    TPointD center, offset;
+    stageObj->getCenterAndOffset(center, offset);
+    if (center != TPointD() && !stageObj->isKeyframe(frame))
+      stageObj->setCenter(frame, center, true);
+  }
+
   if (xsheetHandle) xsheetHandle->notifyXsheetChanged();
 }
 

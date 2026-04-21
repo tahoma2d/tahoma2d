@@ -20,6 +20,8 @@
 class KeyframesUndo;
 class TSceneHandle;
 class TXsheetHandle;
+class TObjectHandle;
+class TStageObject;
 
 class DVAPI KeyframeSetter {
   TDoubleParamP m_param;
@@ -104,7 +106,11 @@ public:
     setter.setValue(value);
   }
   static void removeKeyframeAt(TDoubleParam *curve, double frame,
-                              TXsheetHandle *xsheetHandle = nullptr);
+                               TObjectHandle *objectHandle,
+                               TXsheetHandle *xsheetHandle = nullptr);
+  static void removeKeyframeAt(TDoubleParam *curve, double frame,
+                               TStageObject *stageObj,
+                               TXsheetHandle *xsheetHandle = nullptr);
 
   static void enableCycle(TDoubleParam *curve, bool enabled,
                           TSceneHandle *sceneHandle = nullptr);

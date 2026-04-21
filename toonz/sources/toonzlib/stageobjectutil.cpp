@@ -397,6 +397,52 @@ void UndoStageObjectPinned::redo() const {
 }
 
 //=============================================================================
+// UndoChannelDelete
+//-----------------------------------------------------------------------------
+
+UndoChannelDelete::UndoChannelDelete(TStageObject::Channel actionId,
+                                     const TStageObjectValues &before,
+                                     TPointD center, TPointD offset)
+    : m_actionId(actionId)
+    , m_before(before)
+    , m_center(center)
+    , m_offset(offset) {}
+
+//-----------------------------------------------------------------------------
+
+void UndoChannelDelete::undo() const {
+  m_before.applyValues(false);
+
+  if (m_center != TPointD()) {
+    TStageObjectId objId   = m_objectHandle->getObjectId();
+    TStageObject *stageObj = m_xsheetHandle->getXsheet()->getStageObject(objId);
+    int frame              = m_frameHandle->getFrameIndex();
+    stageObj->setCenterAndOffset(m_center, m_offset);
+  }
+
+  m_objectHandle->notifyObjectIdChanged(false);
+
+  // Delay recalculating last scene frame, which might be due to a key, since
+  // the actual removal of the key happens immediately after this.
+  QTimer::singleShot(50, [=]() { m_xsheetHandle->notifyXsheetChanged(); });
+}
+
+//-----------------------------------------------------------------------------
+
+void UndoChannelDelete::redo() const {
+  TStageObjectId objId   = m_objectHandle->getObjectId();
+  TStageObject *stageObj = m_xsheetHandle->getXsheet()->getStageObject(objId);
+  int frame              = m_frameHandle->getFrameIndex();
+
+  stageObj->getParam(m_actionId)->deleteKeyframe(frame);
+  if (m_center != TPointD() && !stageObj->isKeyframe(frame))
+    stageObj->setCenter(frame, m_center, true);
+
+  m_xsheetHandle->notifyXsheetChanged();
+  m_objectHandle->notifyObjectIdChanged(false);
+}
+
+//=============================================================================
 // insertFrame
 //-----------------------------------------------------------------------------
 //

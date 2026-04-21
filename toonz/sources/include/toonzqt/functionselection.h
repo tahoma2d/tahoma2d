@@ -29,6 +29,7 @@
 // forward declaration
 class TDoubleParam;
 class TFrameHandle;
+class FunctionSheet;
 
 //-----------------------------------------------------------------------------
 
@@ -54,6 +55,7 @@ class FunctionSelection final : public QObject, public TSelection {
   TFrameHandle *m_frameHandle;
   TXsheetHandle *m_xsheetHandle;
   ColumnToCurveMapper *m_columnToCurveMapper;
+  FunctionSheet *m_sheet;
 
   int getCurveIndex(TDoubleParam *curve) const;
   // finds i : m_selectedKeyframes[i].first == curve
@@ -71,6 +73,7 @@ public:
   void setXsheetHandle(TXsheetHandle *xsheetHandle) {
     m_xsheetHandle = xsheetHandle;
   }
+  void setFunctionSheet(FunctionSheet *sheet) { m_sheet = sheet; }
 
   // function graph
   void selectCurve(TDoubleParam *curve);

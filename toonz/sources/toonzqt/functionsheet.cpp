@@ -1028,7 +1028,8 @@ void FunctionSheetCellViewer::mousePressEvent(QMouseEvent *e) {
     int col                   = cellPosition.layer();
     TDoubleParam *curve       = m_sheet->getCurve(col);
     if (curve) {
-      KeyframeSetter::removeKeyframeAt(curve, row);
+      KeyframeSetter::removeKeyframeAt(curve, row,
+                                       m_sheet->getStageObject(col));
     }
   } else if (e->button() == Qt::LeftButton || e->button() == Qt::MiddleButton)
     Spreadsheet::CellPanel::mousePressEvent(e);
@@ -1185,7 +1186,7 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
   // execute menu
   QAction *action = menu.exec(e->globalPos());  // QCursor::pos());
   if (action == &deleteKeyframeAction) {
-    KeyframeSetter::removeKeyframeAt(curve, row);
+    KeyframeSetter::removeKeyframeAt(curve, row, m_sheet->getStageObject(col));
     m_sheet->getViewer()->getXsheetHandle()->notifyXsheetChanged();
   } else if (action == &insertKeyframeAction) {
     KeyframeSetter(curve).createKeyframe(row);
