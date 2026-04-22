@@ -1394,6 +1394,10 @@ void MainWindow::onUpdateCheckerDone(bool error) {
   int const software_version =
       get_version_code_from(TEnv::getApplicationVersion());
   QString latestVersionStr = m_updateChecker->getLatestVersion();
+  // Check result for valid version format. If we get garbage back, likely not
+  // connected to internet or other issue so skip check
+  if (!QRegularExpression("^[0-9.]*$").match(latestVersionStr).hasMatch())
+    return;
   int const latest_version =
       get_version_code_from(latestVersionStr.toStdString());
   int skip_version = get_version_code_from(SkipVersion.getValue());
