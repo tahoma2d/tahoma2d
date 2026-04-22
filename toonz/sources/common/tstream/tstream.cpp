@@ -681,7 +681,7 @@ bool TIStream::Imp::matchIdent(string &ident) {
   // 
   //while (c = is.peek(), isalnum(c) || c == '_' || c == '.' || c == '-') {
   while (c = is.peek()) {
-    if (c == '>' || c == ' ' || c == '=' || (int)c == EOF) break;
+    if (c == '/' || c == '>' || c == ' ' || c == '=' || (int)c == EOF) break;
     is.get(c);
     ident.append(1, c);
   }
