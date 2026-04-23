@@ -70,6 +70,7 @@ class StartupPopup final : public DVGui::Dialog {
   QSpinBox *m_numPaddingSB;
   QSpinBox *m_startNumberSB;
   QSpinBox *m_initialShotCountSB;
+  QCheckBox *m_resetOnSeqChangeCB;
   QLabel *m_seqPrefixLabel;
   // Numbering widgets to show/hide based on workflow
   QWidget *m_numberingBox;

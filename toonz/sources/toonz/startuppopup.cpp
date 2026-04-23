@@ -54,6 +54,7 @@
 #include <QMouseEvent>
 #include <QDesktopServices>
 #include <QCloseEvent>
+#include <QCheckBox>
 
 using namespace std;
 using namespace DVGui;
@@ -105,7 +106,7 @@ QString removeZeros(QString srcStr) {
 StartupPopup::StartupPopup()
     : Dialog(TApp::instance()->getMainWindow(), true, true, "StartupPopup") {
   setObjectName("StartupPopup");
-  setWindowTitle(tr("Tahoma2D Startup"));
+  setWindowTitle(tr("Ztoryc Startup"));
   // Disable the OS-level close button so the user can't dismiss untitled state.
   setWindowFlag(Qt::WindowCloseButtonHint, false);
 
@@ -355,6 +356,12 @@ StartupPopup::StartupPopup()
       m_initialShotCountSB->setValue(1);
       numLay->addWidget(m_initialShotCountSB, 2, 3);
 
+      m_resetOnSeqChangeCB = new QCheckBox(
+          tr("Restart shot # at each new sequence"), m_numberingBox);
+      m_resetOnSeqChangeCB->setChecked(false);
+      m_resetOnSeqChangeCB->hide();   // shown only in Sequence mode
+      numLay->addWidget(m_resetOnSeqChangeCB, 3, 0, 1, 6);
+
       newSceneLay->addWidget(m_numberingBox, 8, 0, 1, 6);
 
       // Row 9: elastic empty area — absorbs space when numbering box is hidden,
@@ -369,11 +376,12 @@ StartupPopup::StartupPopup()
       // Show numbering only for Storyboard Mode (index 0)
       connect(m_workflowCB, QOverload<int>::of(&QComboBox::currentIndexChanged),
               this, [this](int idx) { m_numberingBox->setVisible(idx == 0); });
-      // Show sequence prefix only for Sequence numbering style (index 1)
+      // Show sequence prefix + resetOnSeq only for Sequence numbering style (index 1)
       connect(m_numberingStyleCB, QOverload<int>::of(&QComboBox::currentIndexChanged),
               this, [this](int idx) {
                 m_seqPrefixLabel->setVisible(idx == 1);
                 m_seqPrefixFld->setVisible(idx == 1);
+                m_resetOnSeqChangeCB->setVisible(idx == 1);
               });
     }
     newSceneWidget->setLayout(newSceneLay);
@@ -881,11 +889,26 @@ void StartupPopup::onCreateButton() {
     numCfg.padding     = padding;
     numCfg.seqPadding  = 2;
     numCfg.startNumber = startNum;
-    numCfg.seqNumber   = 1;
+    numCfg.seqNumber        = 1;
+    numCfg.resetOnSeqChange = m_resetOnSeqChangeCB->isChecked();
     ZtoryModel::instance()->setNumberingConfig(numCfg);
 
-    for (int i = 0; i < shotCount; i++)
-      ZtoryModel::instance()->addShotNamed(cfg.shotName(1, i));
+    // In Sequence mode, create a default "sq01" sequence and assign all
+    // initial shots to it so they show the SQ field pre-populated.
+    if (isSeq) {
+      QString defaultSeqLabel = seqPx + QString("%1").arg(1, 2, 10, QChar('0'));
+      SequenceData *defSeq =
+          ZtoryModel::instance()->findOrCreateSequence(defaultSeqLabel);
+      for (int i = 0; i < shotCount; i++) {
+        ZtoryModel::instance()->addShotNamed(cfg.shotName(1, i));
+        if (defSeq && i < ZtoryModel::instance()->shotCount())
+          ZtoryModel::instance()->shot(
+              ZtoryModel::instance()->shotCount() - 1).sequenceId = defSeq->uuid;
+      }
+    } else {
+      for (int i = 0; i < shotCount; i++)
+        ZtoryModel::instance()->addShotNamed(cfg.shotName(1, i));
+    }
   }
 
   // Save directly to the configured path (no Save As dialog)

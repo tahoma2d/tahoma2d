@@ -19,6 +19,10 @@ struct NumberingConfig {
   int     seqPadding  = 3;
   int     startNumber = 10;
   int     seqNumber   = 1;   // active sequence number (for Sequence style)
+  // When true (Sequence style only): shot counter resets to startNumber each
+  // time the sequence changes (SQ01→SH010, SQ02→SH010…).
+  // When false: shot counter is global and continuous across all sequences.
+  bool    resetOnSeqChange = false;
 
   // Returns the shot name for a 0-based index (legacy; new code uses shotLabel)
   QString shotName(int idx) const;

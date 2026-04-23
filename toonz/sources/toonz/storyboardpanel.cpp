@@ -38,6 +38,7 @@
 #include <QSpinBox>
 #include <QDialogButtonBox>
 #include <QDialog>
+#include <QCheckBox>
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QScrollArea>
@@ -793,6 +794,11 @@ void StoryboardPanel::connectPanelWidget(PanelWidget *pw) {
       if (i < model->shotCount())
         model->shot(i).sequenceId = seq->uuid;
     }
+    // If resetOnSeqChange is active, renumber all shots so SH numbers
+    // are recalculated relative to their (new) sequence.
+    const NumberingConfig &cfg = model->numberingConfig();
+    if (m_autoRenumber && cfg.resetOnSeqChange)
+      renumberAll();
     model->save();
     saveZtoryc();
   });
@@ -822,21 +828,26 @@ void StoryboardPanel::renumberAll() {
       // Auto mode: reassign ALL labels with clean sequential numbering.
       // This correctly handles inserts: the new shot takes the "next" position
       // and existing shots above it get renumbered (e.g. SH020→SH030).
-      QString raw = cfg.shotName(i);   // may be "SQ001_SH010" in Sequence style
-      int sep = raw.indexOf('_');
-      if (sep >= 0) {
-        // Sequence style: split SQ part and SH part
-        QString sqPart = raw.left(sep);       // e.g. "SQ001"
-        QString shPart = raw.mid(sep + 1);    // e.g. "SH010"
-        SequenceData *seq = model->findOrCreateSequence(sqPart);
-        shot.data.shotLabel  = shPart;
-        shot.data.shotNumber = shPart;
-        shot.data.sequenceId = seq ? seq->uuid : QString();
-      } else {
-        shot.data.shotLabel  = raw;
-        shot.data.shotNumber = raw;
-        shot.data.sequenceId = QString();
+      // Sequence assignments survive auto-renumber — only the SH number changes.
+      // If this is a brand-new shot (no sequence yet), inherit from the
+      // previous shot so it lands in the same sequence automatically.
+      if (shot.data.sequenceId.isEmpty() && i > 0)
+        shot.data.sequenceId = m_shots[i - 1].data.sequenceId;
+
+      // Compute the shot index within its sequence (for resetOnSeqChange)
+      int shotIdx = i;  // global index by default (continuous numbering)
+      if (cfg.resetOnSeqChange && cfg.style == NumberingConfig::Sequence) {
+        // Count how many shots before i share the same sequenceId
+        shotIdx = 0;
+        for (int j = 0; j < i; j++)
+          if (m_shots[j].data.sequenceId == shot.data.sequenceId)
+            shotIdx++;
       }
+      int shotNum = cfg.startNumber + shotIdx * cfg.step;
+      QString shPart = cfg.shotPrefix +
+          QString("%1").arg(shotNum, cfg.padding, 10, QChar('0'));
+      shot.data.shotLabel  = shPart;
+      shot.data.shotNumber = shPart;
       shot.data.orderIndex = (cfg.startNumber + i * cfg.step) * scale;
     } else if (shot.data.shotLabel.isEmpty()) {
       // Keep-# mode: only assign label to slots that have none yet.
@@ -2386,6 +2397,12 @@ void StoryboardPanel::onNumberingConfig() {
   lay->addWidget(seqNumLabel, 3, 2);
   lay->addWidget(seqNumSB,    3, 3);
 
+  // Reset shot counter on sequence change
+  auto *resetOnSeqCB = new QCheckBox(tr("Restart shot # at each new sequence"), &dlg);
+  resetOnSeqCB->setChecked(cfg.resetOnSeqChange);
+  auto *resetOnSeqLabel = new QLabel("", &dlg); // spacer label for alignment
+  lay->addWidget(resetOnSeqCB, 4, 0, 1, 4);
+
   // Show/hide seq controls based on style
   auto syncSeqVisibility = [&](int idx) {
     bool isSeq = (idx == 1);
@@ -2393,6 +2410,7 @@ void StoryboardPanel::onNumberingConfig() {
     seqPxFld->setVisible(isSeq);
     seqNumLabel->setVisible(isSeq);
     seqNumSB->setVisible(isSeq);
+    resetOnSeqCB->setVisible(isSeq);
   };
   syncSeqVisibility(styleCB->currentIndex());
   connect(styleCB, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -2401,7 +2419,7 @@ void StoryboardPanel::onNumberingConfig() {
   // Buttons
   auto *btns = new QDialogButtonBox(
       QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dlg);
-  lay->addWidget(btns, 4, 0, 1, 4);
+  lay->addWidget(btns, 5, 0, 1, 4);
   connect(btns, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
   connect(btns, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
 
@@ -2411,10 +2429,11 @@ void StoryboardPanel::onNumberingConfig() {
   cfg.style       = (NumberingConfig::Style)styleCB->currentIndex();
   cfg.shotPrefix  = shotPxFld->text().trimmed().isEmpty() ? "sh" : shotPxFld->text().trimmed();
   cfg.seqPrefix   = seqPxFld->text().trimmed().isEmpty()  ? "sq" : seqPxFld->text().trimmed();
-  cfg.step        = stepSB->value();
-  cfg.padding     = padSB->value();
-  cfg.startNumber = startSB->value();
-  cfg.seqNumber   = seqNumSB->value();
+  cfg.step             = stepSB->value();
+  cfg.padding          = padSB->value();
+  cfg.startNumber      = startSB->value();
+  cfg.seqNumber        = seqNumSB->value();
+  cfg.resetOnSeqChange = resetOnSeqCB->isChecked();
 
   // If in auto-renumber mode, renumber all shots immediately
   if (m_autoRenumber) {
