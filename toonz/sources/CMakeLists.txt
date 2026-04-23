@@ -719,7 +719,7 @@ if(BUILD_ENV_APPLE)
     #     $<TARGET_FILE:executable>
     # )
     # add capability for retina displays
-    set_target_properties(Tahoma2D PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/../cmake/BundleInfo.plist.in)
+    set_target_properties(Ztoryc PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/../cmake/BundleInfo.plist.in)
 endif()
 
 if(BUILD_ENV_UNIXLIKE AND NOT BUILD_TARGET_WIN)

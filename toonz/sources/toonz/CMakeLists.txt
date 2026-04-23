@@ -431,11 +431,17 @@ endif()
 qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 
 if(BUILD_ENV_MSVC)
-    add_executable(Tahoma2D WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES} ${RC_FILE})
+    add_executable(Ztoryc WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES} ${RC_FILE})
 else()
-    set(MACOSX_BUNDLE_ICON_FILE "Tahoma2D.icns")
-    set_source_files_properties(Tahoma2D.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-    add_executable(Tahoma2D MACOSX_BUNDLE Tahoma2D.icns ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
+    set(MACOSX_BUNDLE_ICON_FILE "Ztoryc.icns")
+    set_source_files_properties(Ztoryc.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    add_executable(Ztoryc MACOSX_BUNDLE Ztoryc.icns ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
+    set_target_properties(Ztoryc PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME "Ztoryc"
+        MACOSX_BUNDLE_BUNDLE_IDENTIFIER "io.github.ztoryc.Ztoryc"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0.0"
+        MACOSX_BUNDLE_LONG_VERSION_STRING "1.0.0"
+    )
     #add_definitions(
     #    -DTNZBASE_EXPORTS
     #    -DTPARAM_EXPORTS
@@ -503,7 +509,7 @@ if(BUILD_ENV_MSVC)
         set(EXTRA_LIBS ${EXTRA_LIBS} ${GPHOTO2_LIB} ${GPHOTO2_PORT_LIB} ${GPHOTO2_COMPAT_LIB})
     endif()
 
-    target_link_libraries(Tahoma2D
+    target_link_libraries(Ztoryc
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS} ${EXTRA_LIBS} strmiids
@@ -521,9 +527,9 @@ elseif(BUILD_ENV_APPLE AND WITH_CANON)
         set(EXTRA_LIBS ${EXTRA_LIBS} ${GPHOTO2_LIB} ${GPHOTO2_PORT_LIB})
     endif()
 
-    add_dependencies(Tahoma2D tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
+    add_dependencies(Ztoryc tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
-    target_link_libraries(Tahoma2D
+    target_link_libraries(Ztoryc
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
@@ -543,9 +549,9 @@ elseif(BUILD_ENV_APPLE)
         set(EXTRA_LIBS ${EXTRA_LIBS} ${GPHOTO2_LIB} ${GPHOTO2_PORT_LIB})
     endif()
 
-    add_dependencies(Tahoma2D tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
+    add_dependencies(Ztoryc tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
-    target_link_libraries(Tahoma2D
+    target_link_libraries(Ztoryc
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
@@ -572,7 +578,7 @@ elseif(BUILD_ENV_UNIXLIKE AND WITH_CANON)
     endif()
 
     target_link_libraries(
-        Tahoma2D Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
+        Ztoryc Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${EXTRA_LIBS} dl
@@ -595,7 +601,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     endif()
 
     target_link_libraries(
-        Tahoma2D Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
+        Ztoryc Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${EXTRA_LIBS} dl
@@ -610,35 +616,35 @@ endif()
 
 # copy utility executables onto the directory after build
 if(LZODRIVER_FOUND)
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzocompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzocompress)
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzodecompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzodecompress)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzocompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzocompress)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzodecompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzodecompress)
 endif()
 
 if(BUILD_ENV_APPLE)
-    get_target_property(loc Tahoma2D MACOSX_BUNDLE_NAME)
+    get_target_property(loc Ztoryc MACOSX_BUNDLE_NAME)
     message(" ==> App Bundle: " ${loc})
     message(" ==> Mach-o: " ${bin})
     foreach(lib ${EXTRA_LIBS})
         message(" copy:" ${lib} "==>" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-        add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND cp ${lib} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        add_custom_command(TARGET Ztoryc POST_BUILD COMMAND cp ${lib} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endforeach()
 
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcomposer> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcomposer)
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcleanup> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcleanup)
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tconverter> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tconverter)
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmcontroller> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmcontroller)
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmserver> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmserver)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcomposer> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcomposer)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tcleanup> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tcleanup)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tconverter> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tconverter)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmcontroller> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmcontroller)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:tfarmserver> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS tfarmserver)
 
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/../install/SystemVar.ini ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/../install/SystemVar.ini ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Resources)
 
-    add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../../../qss)
+    add_custom_command(TARGET Ztoryc POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../../../qss)
 
-    add_custom_command(TARGET Tahoma2D
+    add_custom_command(TARGET Ztoryc
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath @executable_path/. ${bin} || true
     )
-    add_custom_command(TARGET Tahoma2D
+    add_custom_command(TARGET Ztoryc
         POST_BUILD COMMAND
         ${CMAKE_INSTALL_NAME_TOOL} -add_rpath ${CMAKE_INSTALL_RPATH} ${bin} || true
     )
@@ -647,7 +653,7 @@ elseif(BUILD_ENV_UNIXLIKE AND BUILD_TARGET_WIN)
     # Setup files on Windows platform while cross compilation.
     install(
         TARGETS
-            Tahoma2D
+            Ztoryc
         DESTINATION bin
     )
 
@@ -701,7 +707,7 @@ elseif(BUILD_ENV_UNIXLIKE AND NOT BUILD_TARGET_WIN)
     # - /usr
     install(
         TARGETS
-            Tahoma2D
+            Ztoryc
         DESTINATION bin
     )
 

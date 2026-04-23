@@ -22,6 +22,59 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QFileInfo>
+#include <QUuid>
+#include <climits>
+
+// ─── ZtoryNumbering ───────────────────────────────────────────────────────────
+// Internal helpers for the SH/SQ/P labelling system.
+// orderIndex uses 100× scale: "SH010" ↔ orderIndex 1000, "SH020" ↔ 2000.
+
+namespace ZtoryNumbering {
+
+// Format integer n with given padding, e.g. formatN(10, 3) → "010"
+static QString formatN(int n, int pad) {
+  return QString("%1").arg(n, pad, 10, QChar('0'));
+}
+
+// Extract the numeric value from a label, stripping prefix and optional
+// trailing alpha suffix.  Returns -1 on failure.
+// E.g. labelNum("SH010A", "SH") → 10,  labelNum("SH020", "SH") → 20
+static int labelNum(const QString &label, const QString &prefix) {
+  if (!label.startsWith(prefix, Qt::CaseInsensitive)) return -1;
+  QString rest = label.mid(prefix.length());
+  while (!rest.isEmpty() && rest.back().isLetter()) rest.chop(1);
+  bool ok;
+  int n = rest.toInt(&ok);
+  return ok ? n : -1;
+}
+
+// Strip trailing alpha suffix from a label.
+// E.g. "SH010A" → "SH010",  "SH010" → "SH010"
+static QString stripSuffix(const QString &label, const QString &prefix) {
+  if (!label.startsWith(prefix, Qt::CaseInsensitive)) return label;
+  QString rest = label.mid(prefix.length());
+  while (!rest.isEmpty() && rest.back().isLetter()) rest.chop(1);
+  return prefix + rest;
+}
+
+// Collect all current shotLabels from a shots vector.
+static QStringList allLabels(const std::vector<ShotData> &shots) {
+  QStringList res;
+  for (const auto &s : shots)
+    if (!s.shotLabel.isEmpty()) res << s.shotLabel;
+  return res;
+}
+
+// Find the next available alpha suffix for a base label.
+// E.g. existing = {"SH010", "SH010A", "SH010B"}, base = "SH010" → 'C'
+static QChar nextSuffix(const QStringList &existing, const QString &base) {
+  for (char c = 'A'; c <= 'Z'; c++) {
+    if (!existing.contains(base + QChar(c))) return QChar(c);
+  }
+  return 'A';  // fallback (exhausted A-Z, shouldn't happen)
+}
+
+}  // namespace ZtoryNumbering
 
 // ─── NumberingConfig ──────────────────────────────────────────────────────────
 
@@ -40,6 +93,179 @@ QString NumberingConfig::shotName(int idx) const {
 // ─── Singleton ────────────────────────────────────────────────────────────────
 
 ZtoryModel::ZtoryModel() : m_fps(24) {}
+
+// ─── Sequences ────────────────────────────────────────────────────────────────
+
+SequenceData* ZtoryModel::findSequence(const QString &uuid) {
+  for (auto &seq : m_sequences)
+    if (seq.uuid == uuid) return &seq;
+  return nullptr;
+}
+
+SequenceData* ZtoryModel::findOrCreateSequence(const QString &label) {
+  if (label.isEmpty()) return nullptr;
+  // Case-insensitive lookup by label
+  for (auto &seq : m_sequences)
+    if (seq.label.compare(label, Qt::CaseInsensitive) == 0) return &seq;
+  // Not found — create a new sequence
+  SequenceData seq;
+  seq.uuid  = QUuid::createUuid().toString(QUuid::WithoutBraces);
+  seq.label = label;
+  // Derive orderIndex from the numeric part of the label
+  QString numPart = label;
+  while (!numPart.isEmpty() && numPart[0].isLetter()) numPart.remove(0, 1);
+  bool ok;
+  int n = numPart.toInt(&ok);
+  seq.orderIndex = ok ? n : (int)m_sequences.size() + 1;
+  m_sequences.push_back(seq);
+  return &m_sequences.back();
+}
+
+void ZtoryModel::ensureDefaultSequence() {
+  if (!m_sequences.empty()) return;
+  SequenceData seq;
+  seq.uuid  = QUuid::createUuid().toString(QUuid::WithoutBraces);
+  seq.label = m_numberingConfig.seqPrefix +
+              ZtoryNumbering::formatN(m_numberingConfig.startNumber,
+                                     m_numberingConfig.seqPadding);
+  seq.orderIndex = m_numberingConfig.startNumber;
+  m_sequences.push_back(seq);
+}
+
+// ─── Labelling ────────────────────────────────────────────────────────────────
+
+// Static implementation — works on any vector<ShotData>.
+// Called by generateShotLabel() and by StoryboardPanel via projected vector.
+void ZtoryModel::assignShotLabel(std::vector<ShotData> &shots, int si,
+                                  const NumberingConfig &cfg) {
+  if (si < 0 || si >= (int)shots.size()) return;
+  ShotData &s    = shots[si];
+  const QString pfx   = cfg.shotPrefix;
+  const int     pad   = cfg.padding;
+  const int     step  = cfg.step;
+  const int     scale = 100;  // orderIndex = labelNumber * scale
+
+  // Collect existing labels, excluding this shot's own current label
+  QStringList existing = ZtoryNumbering::allLabels(shots);
+  existing.removeAll(s.shotLabel);
+
+  // Resolve effective orderIndex for a neighbour (fallback: position-based)
+  auto effectiveOrder = [&](int idx) -> int {
+    int o = shots[idx].orderIndex;
+    return (o > 0) ? o : (idx + 1) * step * scale;
+  };
+
+  const bool hasPrev = (si > 0);
+  const bool hasNext = (si + 1 < (int)shots.size());
+  int prevOrder = hasPrev ? effectiveOrder(si - 1) : 0;
+  int nextOrder = hasNext ? effectiveOrder(si + 1) : 0;
+
+  if (!hasPrev && !hasNext) {
+    // Only shot in the project
+    int num = cfg.startNumber;
+    s.orderIndex = num * scale;
+    s.shotLabel  = pfx + ZtoryNumbering::formatN(num, pad);
+
+  } else if (!hasPrev) {
+    // Inserting at the very beginning
+    int nextNum = ZtoryNumbering::labelNum(shots[si + 1].label(), pfx);
+    if (nextNum <= 0) nextNum = nextOrder / scale;
+    int num = qMax(1, nextNum - step);
+    QString cand = pfx + ZtoryNumbering::formatN(num, pad);
+    if (existing.contains(cand)) {
+      QString base = ZtoryNumbering::stripSuffix(cand, pfx);
+      s.shotLabel = base + ZtoryNumbering::nextSuffix(existing, base);
+    } else {
+      s.shotLabel = cand;
+    }
+    s.orderIndex = nextOrder / 2;
+
+  } else if (!hasNext) {
+    // Appending at the end
+    int prevNum = ZtoryNumbering::labelNum(shots[si - 1].label(), pfx);
+    if (prevNum <= 0) prevNum = prevOrder / scale;
+    int num = prevNum + step;
+    QString cand = pfx + ZtoryNumbering::formatN(num, pad);
+    while (existing.contains(cand)) {
+      num += step;
+      cand = pfx + ZtoryNumbering::formatN(num, pad);
+    }
+    s.shotLabel  = cand;
+    s.orderIndex = prevOrder + step * scale;
+
+  } else {
+    // Inserting between two existing shots
+    int prevNum = ZtoryNumbering::labelNum(shots[si - 1].label(), pfx);
+    int nextNum = ZtoryNumbering::labelNum(shots[si + 1].label(), pfx);
+    if (prevNum <= 0) prevNum = prevOrder / scale;
+    if (nextNum <= 0) nextNum = nextOrder / scale;
+    int midOrder = (prevOrder + nextOrder) / 2;
+
+    // Prefer midpoint; scan for any free integer in (prevNum, nextNum)
+    int midNum = (prevNum + nextNum) / 2;
+    int found  = -1;
+    if (midNum > prevNum && midNum < nextNum) {
+      if (!existing.contains(pfx + ZtoryNumbering::formatN(midNum, pad)))
+        found = midNum;
+    }
+    if (found < 0) {
+      for (int n = prevNum + 1; n < nextNum && found < 0; n++) {
+        if (!existing.contains(pfx + ZtoryNumbering::formatN(n, pad))) found = n;
+      }
+    }
+    if (found >= 0) {
+      s.shotLabel  = pfx + ZtoryNumbering::formatN(found, pad);
+      s.orderIndex = midOrder;
+    } else {
+      // No integer space: alphabetical suffix on the previous label
+      QString base = ZtoryNumbering::stripSuffix(shots[si - 1].label(), pfx);
+      s.shotLabel  = base + ZtoryNumbering::nextSuffix(existing, base);
+      s.orderIndex = midOrder;
+    }
+  }
+
+  // Keep legacy shotNumber in sync for backward compat
+  s.shotNumber = s.shotLabel;
+}
+
+void ZtoryModel::generateShotLabel(int si) {
+  assignShotLabel(m_shots, si, m_numberingConfig);
+}
+
+void ZtoryModel::cleanRenumber() {
+  const NumberingConfig &cfg   = m_numberingConfig;
+  const QString          pfx   = cfg.shotPrefix;
+  const int              pad   = cfg.padding;
+  const int              step  = cfg.step;
+  const int              scale = 100;
+
+  for (int i = 0; i < (int)m_shots.size(); i++) {
+    int num = cfg.startNumber + i * step;
+    m_shots[i].shotLabel  = pfx + ZtoryNumbering::formatN(num, pad);
+    m_shots[i].shotNumber = m_shots[i].shotLabel;
+    m_shots[i].orderIndex = num * scale;
+    updateColumnName(i);
+  }
+}
+
+void ZtoryModel::generatePanelLabels(int si) {
+  if (si < 0 || si >= (int)m_shots.size()) return;
+  const QString &pfx = m_numberingConfig.panelPrefix;
+  auto &panels = m_shots[si].panels;
+  for (int pi = 0; pi < (int)panels.size(); pi++) {
+    panels[pi].panelLabel = pfx + ZtoryNumbering::formatN(pi + 1, 3);
+    panels[pi].orderIndex = pi;
+  }
+}
+
+QString ZtoryModel::fullLabel(int si) const {
+  if (si < 0 || si >= (int)m_shots.size()) return QString();
+  const ShotData &s = m_shots[si];
+  if (s.sequenceId.isEmpty()) return s.label();
+  for (const auto &seq : m_sequences)
+    if (seq.uuid == s.sequenceId) return seq.label + "_" + s.label();
+  return s.label();
+}
 
 ZtoryModel *ZtoryModel::instance() {
   static ZtoryModel inst;
@@ -117,12 +343,12 @@ void ZtoryModel::addShot(int insertAt) {
   if (insertAt < 0 || insertAt >= (int)m_shots.size()) {
     m_shots.push_back(s);
     m_previews.push_back({QPixmap()});
-    assignKeepNumbers((int)m_shots.size() - 1);
+    generateShotLabel((int)m_shots.size() - 1);
     emit shotAdded((int)m_shots.size() - 1);
   } else {
     m_shots.insert(m_shots.begin() + insertAt, s);
     m_previews.insert(m_previews.begin() + insertAt, {QPixmap()});
-    assignKeepNumbers(insertAt);
+    generateShotLabel(insertAt);
     emit shotAdded(insertAt);
   }
   save();
@@ -154,6 +380,7 @@ void ZtoryModel::addShotNamed(const QString &name) {
   ShotData s;
   s.xsheetColumn = col;
   s.shotNumber   = name;
+  s.shotLabel    = name;  // keep shotLabel in sync (primary display field)
   PanelData pd;
   pd.duration = kDefaultDuration;
   s.panels.push_back(pd);
@@ -196,11 +423,13 @@ void ZtoryModel::cloneShot(int si) {
   if (!assertMainXsheet(true)) return;
   if (si < 0 || si >= (int)m_shots.size()) return;
   ShotData s = m_shots[si];
-  s.shotNumber = "";
+  s.shotNumber = "";   // reset — will be assigned by generateShotLabel
+  s.shotLabel  = "";
+  s.orderIndex = 0;
   m_shots.insert(m_shots.begin() + si + 1, s);
   std::vector<QPixmap> px = (si < (int)m_previews.size()) ? m_previews[si] : std::vector<QPixmap>();
   m_previews.insert(m_previews.begin() + si + 1, px);
-  assignKeepNumbers(si + 1);
+  generateShotLabel(si + 1);
   emit shotAdded(si + 1);
   save();
 }
@@ -228,7 +457,7 @@ QString ZtoryModel::nextShotName() const {
   }
   int maxNum = cfg.startNumber - cfg.step;
   for (const auto &s : m_shots) {
-    auto m = re.match(s.shotNumber);
+    auto m = re.match(s.label());
     if (m.hasMatch()) {
       int n = m.captured(1).toInt();
       if (n > maxNum) maxNum = n;
@@ -246,8 +475,12 @@ QString ZtoryModel::nextShotName() const {
 }
 
 void ZtoryModel::renumberAll() {
+  const int scale = 100;
   for (int i = 0; i < (int)m_shots.size(); i++) {
     m_shots[i].shotNumber = m_numberingConfig.shotName(i);
+    m_shots[i].shotLabel  = m_shots[i].shotNumber;  // keep shotLabel in sync
+    m_shots[i].orderIndex =
+        (m_numberingConfig.startNumber + i * m_numberingConfig.step) * scale;
     updateColumnName(i);
   }
 }
@@ -363,23 +596,40 @@ void ZtoryModel::save() {
   xml.setAutoFormatting(true);
   xml.writeStartDocument();
   xml.writeStartElement("ztoryc");
-  xml.writeAttribute("version", "3");
+  xml.writeAttribute("version", "4");
   // ── Numbering config ──
   xml.writeStartElement("numberingConfig");
   xml.writeAttribute("style",       QString::number((int)m_numberingConfig.style));
   xml.writeAttribute("shotPrefix",  m_numberingConfig.shotPrefix);
   xml.writeAttribute("seqPrefix",   m_numberingConfig.seqPrefix);
+  xml.writeAttribute("panelPrefix", m_numberingConfig.panelPrefix);
   xml.writeAttribute("step",        QString::number(m_numberingConfig.step));
   xml.writeAttribute("padding",     QString::number(m_numberingConfig.padding));
   xml.writeAttribute("seqPadding",  QString::number(m_numberingConfig.seqPadding));
   xml.writeAttribute("startNumber", QString::number(m_numberingConfig.startNumber));
   xml.writeAttribute("seqNumber",   QString::number(m_numberingConfig.seqNumber));
   xml.writeEndElement();
+  // ── Sequences ──
+  if (!m_sequences.empty()) {
+    xml.writeStartElement("sequences");
+    for (const auto &seq : m_sequences) {
+      xml.writeStartElement("sequence");
+      xml.writeAttribute("uuid",  seq.uuid);
+      xml.writeAttribute("label", seq.label);
+      xml.writeAttribute("order", QString::number(seq.orderIndex));
+      xml.writeEndElement();
+    }
+    xml.writeEndElement();
+  }
+  // ── Shots ──
   for (int si = 0; si < (int)m_shots.size(); si++) {
     const ShotData &s = m_shots[si];
     xml.writeStartElement("shot");
     xml.writeAttribute("index",  QString::number(si));
-    xml.writeAttribute("number", s.shotNumber);
+    xml.writeAttribute("number", s.shotNumber);       // legacy
+    xml.writeAttribute("label",  s.shotLabel);        // v4
+    xml.writeAttribute("order",  QString::number(s.orderIndex)); // v4
+    xml.writeAttribute("seqId",  s.sequenceId);       // v4
     xml.writeAttribute("column", QString::number(s.xsheetColumn));
     for (int pi = 0; pi < (int)s.panels.size(); pi++) {
       const PanelData &pd = s.panels[pi];
@@ -387,6 +637,9 @@ void ZtoryModel::save() {
       xml.writeAttribute("index",      QString::number(pi));
       xml.writeAttribute("startFrame", QString::number(pd.startFrame));
       xml.writeAttribute("duration",   QString::number(pd.duration));
+      if (!pd.panelLabel.isEmpty())
+        xml.writeAttribute("panelLabel", pd.panelLabel);
+      xml.writeAttribute("panelOrder",  QString::number(pd.orderIndex));
       xml.writeTextElement("dialog", pd.dialog);
       xml.writeTextElement("action", pd.action);
       xml.writeTextElement("notes",  pd.notes);
@@ -404,46 +657,71 @@ void ZtoryModel::load() {
   if (!file.open(QIODevice::ReadOnly)) return;
   m_shots.clear();
   m_previews.clear();
+  m_sequences.clear();
+
   QXmlStreamReader xml(&file);
   int si = -1, pi = -1;
+
   while (!xml.atEnd()) {
     xml.readNext();
-    if (xml.isStartElement()) {
-      if (xml.name() == QLatin1String("numberingConfig")) {
-        m_numberingConfig.style =
-            (NumberingConfig::Style)xml.attributes().value("style").toInt();
-        m_numberingConfig.shotPrefix  = xml.attributes().value("shotPrefix").toString();
-        m_numberingConfig.seqPrefix   = xml.attributes().value("seqPrefix").toString();
-        m_numberingConfig.step        = xml.attributes().value("step").toInt();
-        m_numberingConfig.padding     = xml.attributes().value("padding").toInt();
-        m_numberingConfig.seqPadding  = xml.attributes().value("seqPadding").toInt();
-        m_numberingConfig.startNumber = xml.attributes().value("startNumber").toInt();
-        m_numberingConfig.seqNumber   = xml.attributes().value("seqNumber").toInt();
-        // Safety: ensure sensible defaults if loading old files without this element
-        if (m_numberingConfig.step <= 0) m_numberingConfig.step = 10;
-        if (m_numberingConfig.padding <= 0) m_numberingConfig.padding = 3;
-        if (m_numberingConfig.shotPrefix.isEmpty()) m_numberingConfig.shotPrefix = "sh";
-      } else if (xml.name() == QLatin1String("shot")) {
-        si = xml.attributes().value("index").toInt();
-        while ((int)m_shots.size() <= si) m_shots.push_back(ShotData());
-        m_shots[si].shotNumber   = xml.attributes().value("number").toString();
-        m_shots[si].xsheetColumn = xml.attributes().value("column").toInt();
-        m_previews.resize(m_shots.size());
-      } else if (xml.name() == QLatin1String("panel") && si >= 0) {
-        pi = xml.attributes().value("index").toInt();
-        PanelData pd;
-        pd.startFrame = xml.attributes().value("startFrame").toInt();
-        pd.duration   = xml.attributes().value("duration").toInt();
-        while ((int)m_shots[si].panels.size() <= pi) m_shots[si].panels.push_back(PanelData());
-        m_shots[si].panels[pi] = pd;
-        m_previews[si].resize(m_shots[si].panels.size());
-      } else if (xml.name() == QLatin1String("dialog") && si >= 0 && pi >= 0)
-        m_shots[si].panels[pi].dialog = xml.readElementText();
-      else if (xml.name() == QLatin1String("action") && si >= 0 && pi >= 0)
-        m_shots[si].panels[pi].action = xml.readElementText();
-      else if (xml.name() == QLatin1String("notes") && si >= 0 && pi >= 0)
-        m_shots[si].panels[pi].notes  = xml.readElementText();
-    }
+    if (!xml.isStartElement()) continue;
+    const auto name = xml.name();
+
+    if (name == QLatin1String("numberingConfig")) {
+      m_numberingConfig.style =
+          (NumberingConfig::Style)xml.attributes().value("style").toInt();
+      m_numberingConfig.shotPrefix  = xml.attributes().value("shotPrefix").toString();
+      m_numberingConfig.seqPrefix   = xml.attributes().value("seqPrefix").toString();
+      QString ppfx = xml.attributes().value("panelPrefix").toString();
+      if (!ppfx.isEmpty()) m_numberingConfig.panelPrefix = ppfx;
+      m_numberingConfig.step        = xml.attributes().value("step").toInt();
+      m_numberingConfig.padding     = xml.attributes().value("padding").toInt();
+      m_numberingConfig.seqPadding  = xml.attributes().value("seqPadding").toInt();
+      m_numberingConfig.startNumber = xml.attributes().value("startNumber").toInt();
+      m_numberingConfig.seqNumber   = xml.attributes().value("seqNumber").toInt();
+      // Safety defaults for old files
+      if (m_numberingConfig.step <= 0)    m_numberingConfig.step = 10;
+      if (m_numberingConfig.padding <= 0) m_numberingConfig.padding = 3;
+      if (m_numberingConfig.shotPrefix.isEmpty())  m_numberingConfig.shotPrefix  = "SH";
+      if (m_numberingConfig.panelPrefix.isEmpty()) m_numberingConfig.panelPrefix = "P";
+
+    } else if (name == QLatin1String("sequence")) {
+      SequenceData seq;
+      seq.uuid       = xml.attributes().value("uuid").toString();
+      seq.label      = xml.attributes().value("label").toString();
+      seq.orderIndex = xml.attributes().value("order").toInt();
+      if (!seq.uuid.isEmpty()) m_sequences.push_back(seq);
+
+    } else if (name == QLatin1String("shot")) {
+      si = xml.attributes().value("index").toInt();
+      while ((int)m_shots.size() <= si) m_shots.push_back(ShotData());
+      m_shots[si].shotNumber   = xml.attributes().value("number").toString();
+      m_shots[si].shotLabel    = xml.attributes().value("label").toString();
+      m_shots[si].orderIndex   = xml.attributes().value("order").toInt();
+      m_shots[si].sequenceId   = xml.attributes().value("seqId").toString();
+      m_shots[si].xsheetColumn = xml.attributes().value("column").toInt();
+      // Backward compat (v1–v3): if shotLabel absent, copy from shotNumber
+      if (m_shots[si].shotLabel.isEmpty())
+        m_shots[si].shotLabel = m_shots[si].shotNumber;
+      m_previews.resize(m_shots.size());
+
+    } else if (name == QLatin1String("panel") && si >= 0) {
+      pi = xml.attributes().value("index").toInt();
+      PanelData pd;
+      pd.startFrame = xml.attributes().value("startFrame").toInt();
+      pd.duration   = xml.attributes().value("duration").toInt();
+      pd.panelLabel = xml.attributes().value("panelLabel").toString();
+      pd.orderIndex = xml.attributes().value("panelOrder").toInt();
+      while ((int)m_shots[si].panels.size() <= pi) m_shots[si].panels.push_back(PanelData());
+      m_shots[si].panels[pi] = pd;
+      m_previews[si].resize(m_shots[si].panels.size());
+
+    } else if (name == QLatin1String("dialog") && si >= 0 && pi >= 0)
+      m_shots[si].panels[pi].dialog = xml.readElementText();
+    else if (name == QLatin1String("action") && si >= 0 && pi >= 0)
+      m_shots[si].panels[pi].action = xml.readElementText();
+    else if (name == QLatin1String("notes") && si >= 0 && pi >= 0)
+      m_shots[si].panels[pi].notes  = xml.readElementText();
   }
   emit modelReset();
 }
@@ -491,7 +769,7 @@ void ZtoryModel::updateColumnName(int si) {
   if (!xsh) return;
   int col = m_shots[si].xsheetColumn;
   TStageObject *obj = xsh->getStageObjectTree()->getStageObject(TStageObjectId::ColumnId(col), false);
-  if (obj) obj->setName(m_shots[si].shotNumber.toStdString());
+  if (obj) obj->setName(m_shots[si].label().toStdString());
 }
 
 void ZtoryModel::onXsheetChanged() { updateAllPreviews(); }

@@ -6,6 +6,75 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-20] — Fix: 7 crash + audio export + workflow switch lento
+
+### Fixed
+- **Crash FlipConsole::doButtonPressed (QThread::isRunning SIGSEGV)** — durante
+  `clearRooms()` i widget venivano nascosti e `hideEvent` → `setActive(false)` →
+  `pressButton(ePause)` → `doButtonPressed` iterava `m_visibleConsoles` con pointer
+  potenzialmente stale. Fix: `setActive(false)` ora abortisce direttamente il
+  `PlaybackExecutor` inline invece di passare per click→signal→slot chain.
+  (`flipconsole.cpp`)
+
+- **Crash ~FlipConsole dangling pointer** — `m_visibleConsoles` non veniva pulita
+  nel distruttore. Aggiunto `~FlipConsole()` che rimuove `this` dalla lista.
+  (`flipconsole.cpp`, `flipconsole.h`)
+
+- **Crash SceneViewer/FxGadgetController (TTool::m_viewer dangling)** — al load di
+  una scena il `SceneViewer` veniva distrutto ma `TTool::m_viewer` non veniva
+  azzerato → crash in `onFxSwitched`. Fix: `SceneViewer::~SceneViewer()` chiama
+  `TTool::onViewerDestroyed(this)` che azzera tutti i tool che puntano a quel viewer.
+  (`sceneviewer.cpp`, `tool.cpp`, `tool.h`)
+
+- **Crash PlasticDeformer SuperLU (dgstrf NaN)** — triangoli degeneri in una mesh
+  producevano NaN/Inf da `ortCoords()` che venivano passati a SuperLU → crash.
+  Fix: guard `isfinite()` in `initializeStep2()` salta la fattorizzazione per facce
+  degeneri; `deformStep2()` usa posizione invariata quando `m_invF[f]` è null.
+  (`plasticdeformer.cpp`)
+
+- **Crash Room::save() da switchRoomChoice re-entrante** — `Room::load()` chiama
+  `qApp->processEvents()` che fa scattare il `QTimer::singleShot(0)` che resettava
+  `m_isHandlingWorkflow=false`, permettendo un secondo `switchRoomChoice` annidato
+  che settava poi `m_isSwitchingRooms=false`. L'outer `readSettings` entrava in
+  `makePrivate(rooms)` con pointer dangling → SIGSEGV. Fix: guard
+  `if (m_isSwitchingRooms) return;` all'inizio di `switchRoomChoice`.
+  (`mainwindow.cpp`)
+
+- **Audio export oltre lunghezza shot** — `vsf - shotR0` usava `getVisibleStartFrame()`
+  invece di `getStartFrame()` per calcolare la posizione nella colonna destinazione.
+  Fix: usa `cl->getStartFrame() - shotR0`.
+  (`storyboardpanel.cpp`)
+
+- **"Load Audio" non apriva il dialog su macOS** — parent `this` invece di `nullptr`
+  rendeva il dialog invisibile dietro la finestra principale. (`ztoryanimatic.cpp`)
+
+- **Audio stale tra scene diverse** — `requireSoundTrack()` usava la cache della
+  scena precedente al cambio scena. Fix: `invalidateSoundTrack()` chiamato nel
+  handler `sceneSwitched`. (`ztoryanimatic.cpp`)
+
+### Performance
+- **Workflow switch verso Storyboard lento (1–3 s)** — `makeSound()` bloccava il
+  main thread perché veniva chiamato da `singleShot(0)` che scattava dentro
+  `qApp->processEvents()` di `Room::load()`. Fix: `preBuildSoundTrackAsync()` esegue
+  `makeSound()` in un `std::thread` detached; il risultato è consegnato al main
+  thread via `QMetaObject::invokeMethod(QueuedConnection)`. Zero blocking.
+  (`ztoryanimatic.cpp`, `ztoryanimatic.h`)
+
+### Modified
+- `flipconsole.cpp` — `~FlipConsole()`, `setActive(false)` riscritta
+- `flipconsole.h` — aggiunto `~FlipConsole()`
+- `sceneviewer.cpp` — `~SceneViewer()` chiama `TTool::onViewerDestroyed`
+- `tool.cpp` / `tool.h` — aggiunto `TTool::onViewerDestroyed(Viewer*)`
+- `plasticdeformer.cpp` — guard triangoli degeneri in step2
+- `mainwindow.cpp` — re-entrancy guard in `switchRoomChoice`
+- `storyboardpanel.cpp` — fix audio export frame offset
+- `ztoryanimatic.cpp` / `.h` — Load Audio fix, sceneSwitched invalidate, async sound build
+
+### Notes
+- Il ritardo al primo switch verso Storyboard è fisiologico: il Board carica le
+  anteprime (500ms timer) e l'audio viene costruito in background. Non è un bug.
+
+---
 ## [2026-04-19b] — Fix: double-update Board dopo operazioni Animatic
 
 ### Fixed

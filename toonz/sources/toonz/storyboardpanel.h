@@ -37,13 +37,15 @@ class PanelWidget final : public QFrame {
   int  m_panelCount;
   int  m_fps;
   bool m_selected;
-  QLineEdit   *m_shotLabel;
+  QLineEdit   *m_seqField;       // editable sequence label (shows number part only)
+  QLineEdit   *m_shotLabel;      // editable shot label (shows number part only)
+  QString      m_storedShotPrefix;  // e.g. "SH" — restored when shotNumber() is read
+  QString      m_storedSeqPrefix;   // e.g. "SQ" — restored on seqLabelEdited
   QLabel      *m_panelLabel;
   QLabel      *m_durationLabel;
   QLabel      *m_totalLabel;
   QSpinBox    *m_totalSpin;
   QSpinBox    *m_durationSpin;
-  QPushButton *m_editButton;
   QPushButton *m_matchButton;
   QLabel      *m_previewLabel;
   QPixmap      m_previewPixmap;
@@ -66,6 +68,7 @@ public:
   void setAction(const QString &t);
   void setNotes(const QString &t);
   void setShotNumber(const QString &n);
+  void setSeqLabel(const QString &seq);
   void rescalePreview();
   int     shotIndex()  const { return m_shotIndex; }
   int     panelIndex() const { return m_panelIndex; }
@@ -74,23 +77,28 @@ public:
   QString action()     const;
   QString notes()      const;
   bool    isSelected() const { return m_selected; }
-  QString shotNumber() const { return m_shotLabel->text(); }
+  // Returns the full shot label (prefix + number), e.g. "SH020".
+  // For Sequence-style combined labels, returns the SH part only.
+  QString shotNumber() const;
 signals:
   void totalDurationChanged(int frames);
   void editRequested(int shotIndex);
   void matchDurationRequested(int shotIndex);
   void durationChanged(int shotIndex, int panelIndex, int frames);
   void dataChanged(int shotIndex, int panelIndex);
+  // Emitted when the user edits the SQ field; fullLabel is the reconstructed
+  // sequence label including prefix, e.g. "SQ020".
+  void seqLabelEdited(int shotIndex, QString fullLabel);
   void clicked(int shotIndex, int panelIndex, Qt::KeyboardModifiers modifiers);
   void dropReceived(int fromShot, int toShot);
 protected:
   void mousePressEvent(QMouseEvent *e) override;
+  void mouseDoubleClickEvent(QMouseEvent *e) override;
   void resizeEvent(QResizeEvent *e) override;
   void dragEnterEvent(QDragEnterEvent *e) override;
   void dragMoveEvent(QDragMoveEvent *e) override;
   void dropEvent(QDropEvent *e) override;
 private slots:
-  void onEditClicked();
   void onDurationSpinChanged(int value);
 };
 
@@ -138,6 +146,8 @@ struct Shot {
   void addPanelWidget(int shotIdx, int panelIdx);
   void connectPanelWidget(PanelWidget *pw);
   void renumberAll();
+  // Generate shotLabel for shots[si] using the Board's own m_shots as context
+  void assignBoardShotLabel(int si);
   void resequenceXsheet();
   void clearShots();
   void updatePreview(int shotIdx, int panelIdx);

@@ -11,15 +11,16 @@
 
 struct NumberingConfig {
   enum Style { Simple, Sequence } style = Simple;
-  QString shotPrefix  = "sh";
-  QString seqPrefix   = "sq";
+  QString shotPrefix  = "SH";
+  QString seqPrefix   = "SQ";
+  QString panelPrefix = "P";
   int     step        = 10;
   int     padding     = 3;
-  int     seqPadding  = 2;
+  int     seqPadding  = 3;
   int     startNumber = 10;
   int     seqNumber   = 1;   // active sequence number (for Sequence style)
 
-  // Returns the shot name for a 0-based index, e.g. shotName(0)="sh010"
+  // Returns the shot name for a 0-based index (legacy; new code uses shotLabel)
   QString shotName(int idx) const;
 };
 
@@ -35,6 +36,15 @@ struct ZtoryClipEntry {
   TXshLevelP cutLevel;        // keeps sub-scene alive after immediate cut
 };
 
+// ─── SequenceData ─────────────────────────────────────────────────────────────
+// One sequence (e.g. "SQ010"). Shots belong to a sequence via sequenceId==uuid.
+
+struct SequenceData {
+  QString uuid;           // immutable unique key (assigned once at creation)
+  QString label;          // "SQ010" — stable display label
+  int     orderIndex = 10;
+};
+
 // ─── Strutture dati ───────────────────────────────────────────────────────────
 
 struct PanelData {
@@ -43,14 +53,24 @@ struct PanelData {
   QString dialog;
   QString action;
   QString notes;
+  QString panelLabel;    // "P003" — stable identifier within shot
+  int     orderIndex = 0;  // sort key (panel position)
   PanelData() : startFrame(0), duration(24) {}
 };
 
 struct ShotData {
   int                    xsheetColumn;
-  QString                shotNumber;
+  QString                shotNumber;    // legacy field — kept for XML backward compat
+  QString                shotLabel;     // "SH020" — stable identifier (primary, v4+)
+  int                    orderIndex = 0;  // sort key (100 × label number for step-10)
+  QString                sequenceId;    // uuid of parent SequenceData (may be empty)
   std::vector<PanelData> panels;
+
   ShotData() : xsheetColumn(0) {}
+
+  // Returns shotLabel if set, else shotNumber (backward compat with v1-v3 files)
+  QString label() const { return shotLabel.isEmpty() ? shotNumber : shotLabel; }
+
   int totalDuration() const {
     int tot = 0;
     for (const auto &p : panels) tot += p.duration;
@@ -74,16 +94,17 @@ enum class ZtoryWorkflow {
 class ZtoryModel : public QObject {
   Q_OBJECT
 
-  std::vector<ShotData>         m_shots;
+  std::vector<ShotData>             m_shots;
+  std::vector<SequenceData>         m_sequences;
   std::vector<std::vector<QPixmap>> m_previews; // [shotIdx][panelIdx]
-  int                           m_fps;
-  QString                       m_ztoryPath;
-  ZtoryWorkflow                 m_workflow = ZtoryWorkflow::Tradigital;
-  std::vector<ZtoryClipEntry>   m_sharedClip;      // shared across Board & Animatic
-  std::set<int>                 m_sharedSelection; // xsheet columns, last-panel-wins
+  int                               m_fps;
+  QString                           m_ztoryPath;
+  ZtoryWorkflow                     m_workflow = ZtoryWorkflow::Tradigital;
+  std::vector<ZtoryClipEntry>       m_sharedClip;
+  std::set<int>                     m_sharedSelection;
+  NumberingConfig                   m_numberingConfig;
 
   ZtoryModel();
-  NumberingConfig m_numberingConfig;
 
 public:
   static ZtoryModel *instance();
@@ -95,6 +116,14 @@ public:
   std::vector<ShotData>       &shots()       { return m_shots; }
   const std::vector<ShotData> &shots() const { return m_shots; }
   int  fps() const { return m_fps; }
+
+  // ── Sequences ─────────────────────────────────────────────────────────────
+  const std::vector<SequenceData>& sequences() const { return m_sequences; }
+  std::vector<SequenceData>&       sequences()       { return m_sequences; }
+  SequenceData* findSequence(const QString &uuid);
+  void ensureDefaultSequence();
+  // Find sequence by label (case-insensitive); create it with a new UUID if absent.
+  SequenceData* findOrCreateSequence(const QString &label);
 
   // ── Preview ───────────────────────────────────────────────────────────────
   QPixmap preview(int shotIdx, int panelIdx) const;
@@ -112,13 +141,36 @@ public:
   void moveShot(int fromIdx, int toIdx);
   void cloneShot(int shotIdx);
 
-  // ── Numerazione ───────────────────────────────────────────────────────────
-  void renumberAll();                       // full renumber using m_numberingConfig
-  void assignKeepNumbers(int insertAt);     // letter-suffix for Keep-# mode
+  // ── Numerazione / Labelling ───────────────────────────────────────────────
+  void    renumberAll();                    // full renumber using m_numberingConfig
+  void    assignKeepNumbers(int insertAt);  // letter-suffix for Keep-# mode (legacy)
   QString nextShotName() const;             // next auto name after existing shots
+
   void setNumberingConfig(const NumberingConfig &cfg);
   NumberingConfig       &numberingConfig()       { return m_numberingConfig; }
   const NumberingConfig &numberingConfig() const { return m_numberingConfig; }
+
+  // Assign shotLabel + orderIndex to shot at si using the midpoint algorithm.
+  // Falls back to alphabetical suffix (e.g. "SH010A") when no integer space.
+  // Also keeps shotNumber in sync for backward compat.
+  void generateShotLabel(int si);
+
+  // Static variant — works on any vector<ShotData>.
+  // Used by both ZtoryModel::generateShotLabel() and StoryboardPanel when its
+  // local m_shots list is temporarily projected to ShotData.
+  static void assignShotLabel(std::vector<ShotData> &shots, int si,
+                               const NumberingConfig &cfg);
+
+  // Bulk-reassign all shotLabels with clean step-10 numbering.
+  // Resets orderIndex too. Does NOT ask for confirmation — caller must.
+  void cleanRenumber();
+
+  // Assign panelLabel (step-1: P001, P002, …) to all panels in shot si.
+  void generatePanelLabels(int si);
+
+  // Full label including sequence prefix: "SQ010_SH020".
+  // Returns just label() if no sequence is assigned or found.
+  QString fullLabel(int shotIdx) const;
 
   // ── Panel automatici ──────────────────────────────────────────────────────
   void detectAndUpdatePanels(int shotIdx);
@@ -135,7 +187,6 @@ public:
 
   // ── Shared selection (Board ↔ Animatic) — xsheet column indices ─────────
   // Written by whichever panel last had user interaction.
-  // Used by merge buttons as fallback when own selection is < 2 shots.
   const std::set<int>& sharedSelection() const { return m_sharedSelection; }
   void setSharedSelection(std::set<int> s)      { m_sharedSelection = std::move(s); }
 
@@ -145,7 +196,7 @@ public:
   // Returns true if at main xsheet level; optionally shows a warning dialog.
   static bool assertMainXsheet(bool showWarning = true);
 
-  // ── Workflow state ──────────────────────────────────────────────────────────
+  // ── Workflow state ────────────────────────────────────────────────────────
   ZtoryWorkflow currentWorkflow() const { return m_workflow; }
   void setWorkflow(ZtoryWorkflow w);
 

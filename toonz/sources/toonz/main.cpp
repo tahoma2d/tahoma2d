@@ -168,7 +168,7 @@ static void initToonzEnv(QHash<QString, QString> &argPathValues) {
     ++i;
   }
 
-  QCoreApplication::setOrganizationName("Tahoma2D");
+  QCoreApplication::setOrganizationName("Ztoryc");
   QCoreApplication::setOrganizationDomain("");
   QCoreApplication::setApplicationName(
       QString::fromStdString(TEnv::getApplicationName()));
@@ -664,7 +664,7 @@ int main(int argc, char *argv[]) {
 
   loadShaderInterfaces(ToonzFolder::getLibraryFolder() + TFilePath("shaders"));
 
-  splash.showMessage(offsetStr + QObject::tr("Initializing Tahoma2D..."),
+  splash.showMessage(offsetStr + QObject::tr("Initializing Ztoryc..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
@@ -784,7 +784,7 @@ int main(int argc, char *argv[]) {
 
   w.setWindowTitle(QString::fromStdString(TEnv::getApplicationFullName()));
   if (TEnv::getIsPortable()) {
-    splash.showMessage(offsetStr + QObject::tr("Starting Tahoma2D..."),
+    splash.showMessage(offsetStr + QObject::tr("Starting Ztoryc..."),
                        Qt::AlignRight | Qt::AlignBottom, Qt::black);
   } else {
     splash.showMessage(offsetStr + QObject::tr("Starting main window..."),

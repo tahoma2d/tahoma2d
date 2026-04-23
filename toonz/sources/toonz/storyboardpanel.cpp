@@ -67,6 +67,15 @@
 #include <QStackedWidget>
 #include <QApplication>
 
+// Strip leading alphabetic characters from a label; optionally capture the prefix.
+// E.g. "SH010" → "010" (prefix="SH"),  "010" → "010" (prefix=""),  "SQ001" → "001"
+static QString stripAlphaPrefix(const QString &s, QString *prefix = nullptr) {
+  int i = 0;
+  while (i < s.length() && s[i].isLetter()) i++;
+  if (prefix) *prefix = s.left(i);
+  return s.mid(i);
+}
+
 // Merge helpers defined in ztoryanimatic.cpp (non-static so they can be shared)
 void materializeCells(TXshChildLevel *cl, int duration);
 void trimChildXsheetTo(TXshChildLevel *cl, int keepFrames);
@@ -107,8 +116,19 @@ PanelWidget::PanelWidget(QWidget *parent)
     return l;
   };
 
-  m_shotLabel = new QLineEdit("01");
-  m_shotLabel->setFixedWidth(36);
+  // SQ field — editable sequence label; shows number only (prefix stored in m_storedSeqPrefix)
+  m_seqField = new QLineEdit();
+  m_seqField->setFixedWidth(42);
+  m_seqField->setPlaceholderText("—");
+  m_seqField->setStyleSheet(
+    "QLineEdit{color:#88aaff;background:#3a3a3a;border:none;font-size:10px;font-weight:bold;padding:0 2px;}"
+    "QLineEdit:focus{background:#444;border:1px solid #88aaff;}");
+  m_storedSeqPrefix = "SQ";  // default prefix
+
+  // SH field — editable shot label; shows number only (prefix stored in m_storedShotPrefix)
+  m_shotLabel = new QLineEdit();
+  m_shotLabel->setFixedWidth(42);
+  m_storedShotPrefix = "SH";  // default prefix
   m_shotLabel->setStyleSheet(
     "QLineEdit{color:#fff;background:#3a3a3a;border:none;font-size:10px;font-weight:bold;padding:0 2px;}"
     "QLineEdit:focus{background:#555;border:1px solid #888;}");
@@ -138,12 +158,6 @@ PanelWidget::PanelWidget(QWidget *parent)
   m_totalSpin->setStyleSheet(
     "QSpinBox{background:#222;color:#aaffaa;border:1px solid #555;font-size:10px;padding:1px;}");
 
-  m_editButton = new QPushButton("Edit");
-  m_editButton->setFixedSize(34, 18);
-  m_editButton->setStyleSheet(
-    "QPushButton{background:#555;color:#ddd;border-radius:3px;font-size:9px;}"
-    "QPushButton:hover{background:#777;}");
-
   m_matchButton = new QPushButton("\u21d4");  // ⇔ match timeline to sub-scene
   m_matchButton->setFixedSize(22, 18);
   m_matchButton->setToolTip("Match timeline duration to sub-scene actual duration");
@@ -151,7 +165,9 @@ PanelWidget::PanelWidget(QWidget *parent)
     "QPushButton{background:#444;color:#ffcc55;border-radius:3px;font-size:10px;}"
     "QPushButton:hover{background:#666;}");
 
-  hl->addWidget(lbl("S:"));
+  hl->addWidget(lbl("SQ:"));
+  hl->addWidget(m_seqField);
+  hl->addWidget(lbl("SH:"));
   hl->addWidget(m_shotLabel);
   hl->addWidget(lbl("P:"));
   hl->addWidget(m_panelLabel);
@@ -161,7 +177,6 @@ PanelWidget::PanelWidget(QWidget *parent)
   hl->addWidget(m_totalSpin);
   hl->addWidget(m_matchButton);
   hl->addStretch();
-  hl->addWidget(m_editButton);
   layout->addWidget(header);
 
   m_previewLabel = new QLabel();
@@ -195,11 +210,26 @@ PanelWidget::PanelWidget(QWidget *parent)
     "QTextEdit{background:#2a2a2a;color:#eee;border:1px solid #444;font-size:11px;padding:2px;}");
   layout->addWidget(m_notesField);
 
-  connect(m_editButton, &QPushButton::clicked, this, &PanelWidget::onEditClicked);
   connect(m_matchButton, &QPushButton::clicked, this,
           [this](){ emit matchDurationRequested(m_shotIndex); });
   connect(m_shotLabel, &QLineEdit::editingFinished, [this](){
     emit dataChanged(m_shotIndex, m_panelIndex);
+  });
+  connect(m_seqField, &QLineEdit::editingFinished, [this](){
+    QString entered = m_seqField->text().trimmed();
+    if (entered.isEmpty()) return;
+    // Reconstruct full sequence label: if user typed digits only, prepend stored prefix;
+    // if they typed something like "SQ020", use the alpha part as the new prefix.
+    QString fullLabel;
+    if (!entered.isEmpty() && entered[0].isLetter()) {
+      QString pfx;
+      stripAlphaPrefix(entered, &pfx);
+      if (!pfx.isEmpty()) m_storedSeqPrefix = pfx;
+      fullLabel = entered;  // already has prefix
+    } else {
+      fullLabel = m_storedSeqPrefix + entered;
+    }
+    emit seqLabelEdited(m_shotIndex, fullLabel);
   });
   connect(m_totalSpin, QOverload<int>::of(&QSpinBox::valueChanged),
           this, [this](int frames){ emit totalDurationChanged(frames); });
@@ -265,12 +295,36 @@ void PanelWidget::setPanelIndex(int pi, int total) {
     : "QSpinBox{background:#333;color:#666;border:1px solid #444;font-size:10px;padding:1px;}");
 }
 
-void PanelWidget::setShotNumber(const QString &n) {
+void PanelWidget::setShotNumber(const QString &label) {
+  // Split "SQ001_SH010" → sqPart="SQ001", shPart="SH010"
+  // or    "SH010"       → sqPart="",      shPart="SH010"
+  QString sqPart, shPart;
+  int sep = label.indexOf('_');
+  if (sep >= 0) {
+    sqPart = label.left(sep);
+    shPart = label.mid(sep + 1);
+  } else {
+    shPart = label;
+  }
+
+  // SH field: strip alpha prefix, store it, show only the numeric part
+  QString shNum = stripAlphaPrefix(shPart, &m_storedShotPrefix);
   m_shotLabel->blockSignals(true);
-  m_shotLabel->setText(n.isEmpty()
-    ? QString("%1").arg(m_shotIndex + 1, 2, 10, QChar(48))
-    : n);
+  m_shotLabel->setText(shNum.isEmpty() ? shPart : shNum);
   m_shotLabel->blockSignals(false);
+
+  // SQ field: if the label carried a SQ part, update it too
+  if (!sqPart.isEmpty()) {
+    QString seqNum = stripAlphaPrefix(sqPart, &m_storedSeqPrefix);
+    m_seqField->blockSignals(true);
+    m_seqField->setText(seqNum.isEmpty() ? sqPart : seqNum);
+    m_seqField->blockSignals(false);
+  }
+}
+
+QString PanelWidget::shotNumber() const {
+  // Reconstruct full shot label with its stored prefix (e.g. "SH" + "010" → "SH010")
+  return m_storedShotPrefix + m_shotLabel->text();
 }
 
 void PanelWidget::setFps(int fps) {
@@ -325,7 +379,26 @@ QString PanelWidget::dialog()   const { return m_dialogField->toPlainText(); }
 QString PanelWidget::action()   const { return m_actionField->toPlainText(); }
 QString PanelWidget::notes()    const { return m_notesField->toPlainText(); }
 
-void PanelWidget::onEditClicked() { emit editRequested(m_shotIndex); }
+void PanelWidget::mouseDoubleClickEvent(QMouseEvent *e) {
+  // Double-click on preview area or header (text fields consume their own
+  // double-clicks and don't propagate here) — enter the shot's sub-scene.
+  // Accept the event so it does NOT bubble up to StoryboardPanel::mouseDoubleClickEvent,
+  // which would immediately close the sub-scene again.
+  emit editRequested(m_shotIndex);
+  e->accept();
+}
+
+void PanelWidget::setSeqLabel(const QString &seq) {
+  // Strip alpha prefix and show only the numeric part; store the prefix for reconstruction.
+  m_seqField->blockSignals(true);
+  if (seq.isEmpty()) {
+    m_seqField->clear();
+  } else {
+    QString num = stripAlphaPrefix(seq, &m_storedSeqPrefix);
+    m_seqField->setText(num.isEmpty() ? seq : num);
+  }
+  m_seqField->blockSignals(false);
+}
 
 void PanelWidget::onDurationSpinChanged(int value) {
   m_durationLabel->setText(framesToTimecode(value));
@@ -651,7 +724,16 @@ void StoryboardPanel::addPanelWidget(int shotIdx, int panelIdx) {
   pw->setFps(m_fps);
   pw->setShotIndex(shotIdx);
   pw->setPanelIndex(panelIdx, (int)shot.data.panels.size());
-  pw->setShotNumber(shot.data.shotNumber);
+  pw->setShotNumber(shot.data.label());
+  // Show sequence label if one is assigned; otherwise show "—"
+  {
+    QString seqLbl;
+    if (!shot.data.sequenceId.isEmpty()) {
+      const SequenceData *seq = ZtoryModel::instance()->findSequence(shot.data.sequenceId);
+      if (seq) seqLbl = seq->label;
+    }
+    pw->setSeqLabel(seqLbl);
+  }
   pw->setDuration(shot.data.panels[panelIdx].duration);
   pw->setTotalDuration(shot.data.totalDuration());
   pw->setDialog(shot.data.panels[panelIdx].dialog);
@@ -679,30 +761,99 @@ void StoryboardPanel::connectPanelWidget(PanelWidget *pw) {
   connect(pw, &PanelWidget::dropReceived, this, &StoryboardPanel::onMoveShot);
   connect(pw, &PanelWidget::dataChanged, [this](int si, int pi){
     if (si >= 0 && si < (int)m_shots.size()) {
-      m_shots[si].data.shotNumber = m_shots[si].panels[0]->shotNumber();
+      // Update both shotLabel (primary) and shotNumber (legacy compat)
+      QString edited = m_shots[si].panels[0]->shotNumber();
+      m_shots[si].data.shotLabel  = edited;
+      m_shots[si].data.shotNumber = edited;
       for (PanelWidget *p : m_shots[si].panels)
-        p->setShotNumber(m_shots[si].data.shotNumber);
+        p->setShotNumber(m_shots[si].data.label());
       updateColumnName(si);
     }
     saveZtoryc();
   });
+  // Sequence field edited: cascade the sequence assignment forward until a
+  // shot with a different (non-empty) sequenceId is encountered.
+  connect(pw, &PanelWidget::seqLabelEdited, this,
+          [this](int si, QString fullLabel) {
+    if (si < 0 || si >= (int)m_shots.size()) return;
+    ZtoryModel *model = ZtoryModel::instance();
+    SequenceData *seq = model->findOrCreateSequence(fullLabel);
+    if (!seq) return;
+    // Remember what sequenceId the target shot had before the edit so we
+    // know when to stop cascading (stop at the first shot that already
+    // belongs to a *different* sequence).
+    QString prevSeqId = m_shots[si].data.sequenceId;
+    for (int i = si; i < (int)m_shots.size(); i++) {
+      if (i > si && !m_shots[i].data.sequenceId.isEmpty() &&
+          m_shots[i].data.sequenceId != prevSeqId)
+        break;
+      m_shots[i].data.sequenceId = seq->uuid;
+      for (PanelWidget *pw2 : m_shots[i].panels)
+        pw2->setSeqLabel(seq->label);
+      if (i < model->shotCount())
+        model->shot(i).sequenceId = seq->uuid;
+    }
+    model->save();
+    saveZtoryc();
+  });
+}
+
+void StoryboardPanel::assignBoardShotLabel(int si) {
+  if (si < 0 || si >= (int)m_shots.size()) return;
+  // Project Board shots to a plain ShotData vector so we can use the shared
+  // static algorithm (which needs the full neighbour context).
+  std::vector<ShotData> shotDatas;
+  shotDatas.reserve(m_shots.size());
+  for (const Shot &s : m_shots) shotDatas.push_back(s.data);
+  ZtoryModel::assignShotLabel(shotDatas, si, ZtoryModel::instance()->numberingConfig());
+  // Copy result back
+  m_shots[si].data.shotLabel  = shotDatas[si].shotLabel;
+  m_shots[si].data.orderIndex = shotDatas[si].orderIndex;
+  m_shots[si].data.shotNumber = shotDatas[si].shotLabel;
 }
 
 void StoryboardPanel::renumberAll() {
-  const NumberingConfig &cfg = ZtoryModel::instance()->numberingConfig();
+  ZtoryModel *model             = ZtoryModel::instance();
+  const NumberingConfig &cfg    = model->numberingConfig();
+  const int scale               = 100;
   for (int i = 0; i < (int)m_shots.size(); i++) {
     Shot &shot = m_shots[i];
     if (m_autoRenumber) {
-      // Use the project's numbering config for consistent naming
-      shot.data.shotNumber = cfg.shotName(i);
-    } else if (shot.data.shotNumber.isEmpty()) {
-      // Keep-# mode: only fill in shots that have no number yet
-      shot.data.shotNumber = cfg.shotName(i);
+      // Auto mode: reassign ALL labels with clean sequential numbering.
+      // This correctly handles inserts: the new shot takes the "next" position
+      // and existing shots above it get renumbered (e.g. SH020→SH030).
+      QString raw = cfg.shotName(i);   // may be "SQ001_SH010" in Sequence style
+      int sep = raw.indexOf('_');
+      if (sep >= 0) {
+        // Sequence style: split SQ part and SH part
+        QString sqPart = raw.left(sep);       // e.g. "SQ001"
+        QString shPart = raw.mid(sep + 1);    // e.g. "SH010"
+        SequenceData *seq = model->findOrCreateSequence(sqPart);
+        shot.data.shotLabel  = shPart;
+        shot.data.shotNumber = shPart;
+        shot.data.sequenceId = seq ? seq->uuid : QString();
+      } else {
+        shot.data.shotLabel  = raw;
+        shot.data.shotNumber = raw;
+        shot.data.sequenceId = QString();
+      }
+      shot.data.orderIndex = (cfg.startNumber + i * cfg.step) * scale;
+    } else if (shot.data.shotLabel.isEmpty()) {
+      // Keep-# mode: only assign label to slots that have none yet.
+      // Use the midpoint algorithm on the Board's own shot list.
+      assignBoardShotLabel(i);
     }
     updateColumnName(i);
+    // Resolve sequence label for display
+    QString seqLabel;
+    if (!shot.data.sequenceId.isEmpty()) {
+      SequenceData *seq = model->findSequence(shot.data.sequenceId);
+      if (seq) seqLabel = seq->label;
+    }
     for (PanelWidget *pw : shot.panels) {
       pw->setShotIndex(i);
-      pw->setShotNumber(shot.data.shotNumber);
+      pw->setShotNumber(shot.data.label());
+      if (!seqLabel.isEmpty()) pw->setSeqLabel(seqLabel);
       pw->setPanelIndex(pw->panelIndex(), (int)shot.panels.size());
     }
   }
@@ -811,7 +962,7 @@ void StoryboardPanel::updateColumnName(int si) {
   int col = si; // la colonna corrisponde all indice dello shot
   TStageObject *obj = xsh->getStageObjectTree()->getStageObject(TStageObjectId::ColumnId(col), false);
   if (obj) {
-    obj->setName(m_shots[si].data.shotNumber.toStdString());
+    obj->setName(m_shots[si].data.label().toStdString());
     app->getCurrentXsheet()->notifyXsheetChanged();
   }
 }
@@ -829,8 +980,10 @@ void StoryboardPanel::saveZtoryc() {
   for (int si = 0; si < (int)m_shots.size(); si++) {
     const Shot &shot = m_shots[si];
     xml.writeStartElement("shot");
-    xml.writeAttribute("index", QString::number(si));
+    xml.writeAttribute("index",  QString::number(si));
     xml.writeAttribute("number", shot.data.shotNumber);
+    xml.writeAttribute("label",  shot.data.shotLabel);
+    xml.writeAttribute("order",  QString::number(shot.data.orderIndex));
     for (int pi = 0; pi < (int)shot.data.panels.size(); pi++) {
       const PanelData &pd = shot.data.panels[pi];
       xml.writeStartElement("panel");
@@ -861,8 +1014,15 @@ void StoryboardPanel::loadZtoryc() {
     if (xml.isStartElement()) {
       if (xml.name() == QLatin1String("shot")) {
         si = xml.attributes().value("index").toInt();
-        if (si < (int)m_shots.size())
+        if (si < (int)m_shots.size()) {
           m_shots[si].data.shotNumber = xml.attributes().value("number").toString();
+          m_shots[si].data.shotLabel  = xml.attributes().value("label").toString();
+          m_shots[si].data.orderIndex = xml.attributes().value("order").toInt();
+          // Backward compat (v1-v2 files written by StoryboardPanel):
+          // if shotLabel absent, use shotNumber
+          if (m_shots[si].data.shotLabel.isEmpty())
+            m_shots[si].data.shotLabel = m_shots[si].data.shotNumber;
+        }
       }
       else if (xml.name() == QLatin1String("panel")) {
         pi = xml.attributes().value("index").toInt();
@@ -1273,9 +1433,15 @@ void StoryboardPanel::onShotInserted(int col) {
       m_shots[i].data.xsheetColumn++;
 
   m_shots.insert(m_shots.begin() + col, shot);
+  // Copy shotLabel + orderIndex from ZtoryModel (generateShotLabel was already called there)
+  ZtoryModel *model = ZtoryModel::instance();
+  if (col < model->shotCount() && !model->shot(col).shotLabel.isEmpty()) {
+    m_shots[col].data.shotLabel  = model->shot(col).shotLabel;
+    m_shots[col].data.orderIndex = model->shot(col).orderIndex;
+    m_shots[col].data.shotNumber = m_shots[col].data.shotLabel;
+  }
   addPanelWidget(col, 0);
 
-  if (!m_autoRenumber) assignKeepNumbers(col);
   renumberAll();
   rebuildGrid();
   saveZtoryc();
