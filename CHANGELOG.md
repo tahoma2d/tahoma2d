@@ -6,6 +6,71 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-23] — Numerazione SQ/SH, rename app Ztoryc, fix firma bundle
+
+### Added
+- **Sequenze editabili nel Board** — campo SQ separato e editabile per ogni shot.
+  Digitando un numero di sequenza (es. "020") viene assegnata la sequenza a quello
+  shot e a tutti i seguenti fino al prossimo cambio manuale (`seqLabelEdited` cascade).
+- **`ZtoryModel::findOrCreateSequence()`** — trova o crea `SequenceData` by label,
+  usata sia dal cascade handler che dal renumber automatico.
+- **`ZtoryModel::assignShotLabel()` (static)** — algoritmo midpoint condiviso tra
+  `ZtoryModel` e `StoryboardPanel` per generare label senza duplicati al momento
+  dell'inserimento (Keep mode → SH015 tra SH010 e SH020; Auto mode → rinumera tutto).
+
+### Fixed
+- **Doppio click entra e ritorna subito** — `PanelWidget::mouseDoubleClickEvent`
+  chiamava `QFrame::mouseDoubleClickEvent(e)` che propagava l'evento a
+  `StoryboardPanel::mouseDoubleClickEvent` il quale eseguiva `MI_CloseChild`.
+  Fix: sostituito con `e->accept()`.
+- **Shot duplicato al momento dell'inserimento** — in modalità Auto, `renumberAll()`
+  usava `ZtoryModel::m_shots` come sorgente invece della lista locale del Board,
+  ottenendo l'indice errato. Fix: algoritmo statico opera sulla lista locale del Board.
+- **Campo SH mostrava "SH - sq01_sh010"** — `setShotNumber()` ora separa SQ e SH
+  sul separatore `_`, mostra solo la parte numerica in ciascun campo e salva il
+  prefisso in `m_storedShotPrefix`/`m_storedSeqPrefix` per la ricostruzione.
+- **`renumberAll()` Auto + Sequence style** — `cfg.shotName(i)` restituisce
+  "SQ001_SH010"; ora viene splittato correttamente: SH → `shotLabel`, SQ → `sequenceId`.
+
+### Modified
+- **Rename app: Tahoma2D → Ztoryc** — bundle ID `io.github.ztoryc.Ztoryc`,
+  `CFBundleName/ExecutableName = Ztoryc`, versione 1.0.0.
+  File cambiati: `CMakeLists.txt` (target), `BundleInfo.plist.in`, `main.cpp`,
+  `Ztoryc.entitlements`, `build_and_deploy.sh`.
+- **`build_and_deploy.sh`** — firma corretta senza `--deep` (dylib firmate
+  singolarmente prima del bundle); `xattr -cr` prima della firma; `rm -rf profiles/`
+  per evitare "unsealed contents in bundle root"; copia automatica `SystemVar.ini`
+  se mancante; copia dylib secondarie dal build tree.
+
+### Notes
+- `Ztoryc.app/profiles/` viene ricreata dall'app ad ogni avvio — è normale,
+  non invalida la firma al lancio (il seal è valido al momento di `open`).
+- `SystemVar.ini` punta a `/Volumes/ZioSam/.../stuff` — path assoluto,
+  non portabile; da parametrizzare per distribuzione.
+- Per permessi TCC stabili: aggiungere Ztoryc.app al Full Disk Access in
+  System Settings → Privacy & Security.
+
+---
+## [2026-04-23b] — Branding Ztoryc completato
+
+### Modified
+- **`tversion.h`** — `applicationName = "Ztoryc"`, versione 1.0 (era Tahoma2D 1.6).
+  Propaga su titolo finestra, startup popup, about dialog, tutti i log.
+- **`tahoma2d_splash.svg`** — icona Ztoryc (PNG embedded base64) + wordmark +
+  tagline "STORYBOARD · ANIMATIC · ANIMATION" su sfondo scuro.
+- **`tahoma2d_startup.svg`** — banner orizzontale: icona + "ZTORYC" in giallo `#F5B800`.
+- **`tipspopup.cpp`** — titolo "Ztoryc Tips".
+- **`mainwindow.cpp`** — update checker punta a github.com/matitanimata/ztoryc.
+- **`main.cpp`** — tips popup disabilitato; update check automatico disabilitato
+  (contenuti ancora riferiti a Tahoma2D).
+- **`Ztoryc.icns`** — generato da `ztoryc_icon.png` con tutte le risoluzioni macOS
+  (16×16 → 1024×1024).
+
+### Notes
+- `toonz.qrc` va touchato prima di ogni modifica SVG per forzare la ricompilazione
+  delle risorse Qt: `touch toonz/sources/toonz/toonz.qrc && ./build_and_deploy.sh`
+
+---
 ## [2026-04-20] — Fix: 7 crash + audio export + workflow switch lento
 
 ### Fixed
