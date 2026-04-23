@@ -6,6 +6,7 @@ extern "C" {
 }
 
 #include <algorithm>
+#include <cmath>
 
 #include "tlin/tlin_cblas_wrap.h"
 
@@ -286,6 +287,24 @@ void tlin::traduceD(const tlin::sparse_matrix<double> &m, SuperMatrix *&A) {
 void tlin::factorize(SuperMatrix *A, SuperFactors *&F, superlu_options_t *opt) {
   assert(A->nrow == A->ncol);
   int n = A->nrow;
+
+  // Guard: validate all matrix values before passing to dgstrf().
+  // NaN or Inf entries cause dgstrf() to corrupt the stack-allocated
+  // SuperLUStat_t (by overflowing internal work buffers), which makes the
+  // subsequent StatFree() crash with POINTER_BEING_FREED_WAS_NOT_ALLOCATED.
+  // This happens when mesh triangles are degenerate (zero-area) and
+  // ortCoords() returns NaN/Inf that propagates into the sparse matrix.
+  {
+    assert(A->Stype == SLU_NC);
+    const NCformat *storage = static_cast<const NCformat *>(A->Store);
+    const double *values    = static_cast<const double *>(storage->nzval);
+    for (int i = 0; i < storage->nnz; ++i) {
+      if (!std::isfinite(values[i])) {
+        F = 0;
+        return;
+      }
+    }
+  }
 
   if (!F) F = (SuperFactors *)SUPERLU_MALLOC(sizeof(SuperFactors));
 
