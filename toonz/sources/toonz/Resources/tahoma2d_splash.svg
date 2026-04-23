@@ -1,161 +1,42 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="344" height="344" viewBox="0 0 344 344">
+  <!-- Background -->
+  <rect width="344" height="344" fill="#1a1a1a"/>
 
-<svg
-   width="512.00012"
-   height="512"
-   viewBox="0 0 512.00012 512"
-   version="1.1"
-   id="svg5"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <defs
-     id="defs2">
-    <linearGradient
-       id="linearGradient136543">
-      <stop
-         style="stop-color:#6a0456;stop-opacity:1;"
-         offset="0"
-         id="stop136539" />
-      <stop
-         style="stop-color:#d60784;stop-opacity:1;"
-         offset="1"
-         id="stop136541" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient103120">
-      <stop
-         style="stop-color:#6a0456;stop-opacity:1;"
-         offset="0"
-         id="stop103118" />
-      <stop
-         style="stop-color:#d60784;stop-opacity:1;"
-         offset="1"
-         id="stop103116" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient64554">
-      <stop
-         style="stop-color:#d60784;stop-opacity:1;"
-         offset="0"
-         id="stop64550" />
-      <stop
-         style="stop-color:#fa5abb;stop-opacity:1;"
-         offset="1"
-         id="stop64552" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient10274">
-      <stop
-         style="stop-color:#f9d17f;stop-opacity:1;"
-         offset="0"
-         id="stop10270" />
-      <stop
-         style="stop-color:#ff8162;stop-opacity:1;"
-         offset="1"
-         id="stop10272" />
-    </linearGradient>
-    <radialGradient
-       xlink:href="#linearGradient136543"
-       id="radialGradient5588"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.00697344,2.0148195,-1.8554451,-0.00642185,739.45626,-160.79512)"
-       cx="214.64622"
-       cy="275.26733"
-       fx="214.64622"
-       fy="275.26733"
-       r="97.074219" />
-    <radialGradient
-       xlink:href="#linearGradient103120"
-       id="radialGradient5590"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.42698339,0.90410449,-1.6273689,0.76856102,754.68234,-363.6358)"
-       cx="376.66306"
-       cy="378.45047"
-       fx="376.66306"
-       fy="378.45047"
-       r="90.959961" />
-    <linearGradient
-       xlink:href="#linearGradient10274"
-       id="linearGradient443146"
-       gradientUnits="userSpaceOnUse"
-       x1="223.34654"
-       y1="178.96219"
-       x2="383.60956"
-       y2="461.58252"
-       spreadMethod="pad" />
-    <linearGradient
-       xlink:href="#linearGradient64554"
-       id="linearGradient443148"
-       gradientUnits="userSpaceOnUse"
-       x1="296.09436"
-       y1="428.85638"
-       x2="225.34616"
-       y2="159.83855" />
-  </defs>
-  <g
-     id="layer4"
-     style="display:inline">
-    <g
-       id="g30626"
-       style="display:none"
-       transform="translate(3.2590779e-5)">
-      <rect
-         style="display:inline;fill:#ff2a73;fill-opacity:1;fill-rule:evenodd;stroke-width:1.05652"
-         id="rect49106"
-         width="160.38654"
-         height="291.89447"
-         x="175.80673"
-         y="220.10553" />
-      <rect
-         style="display:inline;fill:#ff2a73;fill-opacity:1;fill-rule:evenodd;stroke-width:1.2402"
-         id="rect49108"
-         width="533.63458"
-         height="163.69743"
-         x="4.466041e-05"
-         y="172.24954"
-         transform="matrix(0.9594582,-0.28185096,-2.2456096e-7,1,0,0)" />
-    </g>
-    <g
-       id="g446650"
-       style="display:inline"
-       transform="translate(3e-5)">
-      <rect
-         style="fill:url(#linearGradient443146);fill-opacity:1"
-         id="rect9335"
-         width="512"
-         height="512"
-         x="0"
-         y="0" />
-      <path
-         id="rect61114"
-         style="display:inline;fill:url(#linearGradient443148);fill-opacity:1;fill-rule:evenodd;stroke-width:1.05652"
-         d="M 512,21.84375 0,172.25 V 335.9473 L 175.80664,284.3027 V 512 H 336.19336 V 237.18555 L 512,185.54102 Z" />
-      <path
-         id="path132953"
-         style="font-variation-settings:normal;display:inline;opacity:1;vector-effect:none;fill:url(#radialGradient5588);fill-opacity:1;fill-rule:evenodd;stroke-width:1.05652;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         d="M 204.33594,237.92188 0,297.9473 v 38 L 175.80664,284.3027 V 512 h 28.5293 z" />
-      <path
-         id="path134358"
-         style="font-variation-settings:normal;display:inline;opacity:1;vector-effect:none;fill:url(#radialGradient5590);fill-opacity:1;fill-rule:evenodd;stroke-width:1.05652;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         d="M 512,147.54102 327.66406,201.69141 V 512 h 8.5293 V 237.18555 L 512,185.54102 Z" />
-    </g>
-  </g>
-  <metadata
-     id="metadata9">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:creator>
-          <cc:Agent>
-            <dc:title>keyslackt</dc:title>
-          </cc:Agent>
-        </dc:creator>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
+  <!-- Rounded square behind icon -->
+  <rect x="82" y="52" width="180" height="180" rx="36" ry="36" fill="#232323"/>
+
+  <!-- Z shape: top bar -->
+  <polygon points="98,70 262,70 262,96 150,96" fill="#2e2e2e"/>
+  <!-- Z shape: yellow diagonal -->
+  <polygon points="150,96 262,96 194,166 82,166" fill="#F5B800"/>
+  <!-- Z shape: bottom bar -->
+  <polygon points="82,166 194,166 262,206 262,232 82,232" fill="#2e2e2e"/>
+  <!-- Yellow bottom accent -->
+  <polygon points="194,166 262,166 262,206" fill="#F5B800"/>
+
+  <!-- App name -->
+  <text x="172" y="274"
+        font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="30"
+        font-weight="200"
+        letter-spacing="9"
+        fill="#ffffff"
+        text-anchor="middle">ZTORYC</text>
+
+  <!-- Tagline -->
+  <text x="172" y="304"
+        font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="10"
+        font-weight="300"
+        letter-spacing="2.5"
+        fill="#888888"
+        text-anchor="middle">STORYBOARD · ANIMATIC · ANIMATION</text>
+
+  <!-- Version -->
+  <text x="172" y="332"
+        font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="9"
+        fill="#555555"
+        text-anchor="middle">v1.0.0</text>
 </svg>
