@@ -14,6 +14,7 @@
 #include "toonz/txsheethandle.h"
 #include "toonz/txshleveltypes.h"
 #include "toonz/txshlevelcolumn.h"
+#include "toonz/txshmeshcolumn.h"
 #include "toonzqt/stageobjectsdata.h"
 #include "tfxattributes.h"
 #include "toonz/fxdag.h"
@@ -947,7 +948,36 @@ void StoryboardPanel::updatePreview(int shotIdx, int panelIdx) {
   TXsheet *subXsh = cl->getXsheet();
   if (not subXsh) return;
   int frame = shot.data.panels[panelIdx].startFrame;
-  QPixmap px = IconGenerator::renderXsheetFrame(subXsh, frame, TDimension(320, 180));
+
+  // Guard: if the sub-xsheet contains mesh (plastic deformation) columns,
+  // renderXsheetFrame() will crash via PlasticDeformerStorage → tlin::factorize
+  // → StatFree() freeing an uninitialized SuperLU matrix (SIGABRT).
+  // Fall back to getIcon() on the first simple-level drawing found instead.
+  bool hasMesh = false;
+  for (int c = 0; c < subXsh->getColumnCount(); c++) {
+    TXshColumn *col = subXsh->getColumn(c);
+    if (col && col->getMeshColumn()) { hasMesh = true; break; }
+  }
+
+  QPixmap px;
+  if (hasMesh) {
+    // Safe fallback: find the first non-empty simple-level cell and get its icon
+    for (int c = 0; c < subXsh->getColumnCount() && px.isNull(); c++) {
+      TXshColumn *col = subXsh->getColumn(c);
+      if (!col || col->getMeshColumn()) continue;
+      int r0 = 0, r1 = 0;
+      col->getRange(r0, r1);
+      for (int r = r0; r <= r1 && px.isNull(); r++) {
+        TXshCell cell = subXsh->getCell(r, c);
+        if (!cell.isEmpty() && cell.getSimpleLevel())
+          px = IconGenerator::instance()->getIcon(
+              cell.m_level.getPointer(), cell.getFrameId());
+      }
+    }
+  } else {
+    px = IconGenerator::renderXsheetFrame(subXsh, frame, TDimension(320, 180));
+  }
+
   if (not px.isNull())
     shot.panels[panelIdx]->setPreviewPixmap(px);
 }
