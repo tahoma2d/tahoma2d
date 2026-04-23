@@ -28,7 +28,7 @@
 TipsPopup::TipsPopup()
     : DVGui::Dialog(TApp::instance()->getMainWindow(), true, false,
                     "TipsPopup") {
-  setWindowTitle(tr("Tahoma2D Tips"));
+  setWindowTitle(tr("Ztoryc Tips"));
   setObjectName("TipsPopup");
   setModal(false);
 

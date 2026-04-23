@@ -812,8 +812,9 @@ int main(int argc, char *argv[]) {
 
   a.setQuitOnLastWindowClosed(false);
   // a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
-  if (Preferences::instance()->isLatestVersionCheckEnabled())
-    w.checkForUpdates();
+  // Update check disabled — Ztoryc uses its own release channel
+  // if (Preferences::instance()->isLatestVersionCheckEnabled())
+  //   w.checkForUpdates();
   DvDirModel::instance()->forceRefresh();
 
   w.show();
@@ -828,15 +829,7 @@ int main(int argc, char *argv[]) {
     startupPopup->activateWindow();
   }
 
-  if (Preferences::instance()->isTipsPopupEnabled()) {
-    TipsPopup *tipsPopup = new TipsPopup();
-    tipsPopup->setModal(true); // On startup only, this forces to the top
-    tipsPopup->resize(600, 600);
-    tipsPopup->show();
-    tipsPopup->raise();
-    tipsPopup->activateWindow();
-  }
-
+  // Tips popup disabled — Ztoryc has its own onboarding flow
   CommandManager::instance()->execute(T_Hand);
   if (!loadFilePath.isEmpty()) {
     splash.showMessage(QString(QObject::tr("Loading file '%1'..."))

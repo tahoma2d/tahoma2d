@@ -17,8 +17,8 @@ public:
   std::string getAppVersionInfo(std::string msg);
 
 private:
-  const char *applicationName     = "Tahoma2D";
-  const float applicationVersion  = 1.6f;
+  const char *applicationName     = "Ztoryc";
+  const float applicationVersion  = 1.0f;
   const float applicationRevision = 0;
   const char *applicationNote     = "";
 };
