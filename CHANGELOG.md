@@ -6,6 +6,39 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-24] — resetOnSeqChange: riavvio contatore SH per sequenza
+
+### Added
+- **`NumberingConfig::resetOnSeqChange`** — nuovo campo bool (default `false`).
+  Quando `true` (solo Sequence style): il contatore SH si azzera a `startNumber`
+  ad ogni cambio di sequenza (SQ01→SH010, SQ02→SH010…). Quando `false`:
+  numerazione globale continua tra tutte le sequenze.
+- **`m_resetOnSeqChangeCB`** in `StartupPopup` — checkbox "Restart shot # at each
+  new sequence", visibile solo in Sequence style; stato salvato in `NumberingConfig`.
+- **`resetOnSeqCB`** in `StoryboardPanel::onNumberingConfig()` — stessa checkbox
+  nel dialogo di configurazione numerazione del Board.
+
+### Modified
+- **`StoryboardPanel::renumberAll()`** — in Auto mode, le sequenze sopravvivono
+  al renumber (solo SH cambia). I nuovi shot senza `sequenceId` ereditano la
+  sequenza dello shot precedente. Con `resetOnSeqChange`, `shotIdx` è relativo
+  alla sequenza (non globale).
+- **`StartupPopup::onCreateButton()`** — in Sequence mode, crea una sequenza
+  default "sq01" e vi assegna tutti gli shot iniziali (campo SQ pre-popolato).
+
+### Fixed
+- **Crash SIGABRT su import scena con Plastic Deformer** — `ZtoryAnimaticTrack::
+  refreshFromScene()` e `ZtoryStoryStripPanel::refreshFromScene()` chiamavano
+  `IconGenerator::getIcon()` sincronicamente durante `xsheetChanged`. Durante
+  l'import di una scena, la xsheet non è ancora stabilizzata: il rendering
+  triggerava `PlasticDeformerStorage::process()` → `PlasticDeformer::initialize()`
+  → `tlin::factorize()` → `StatFree()` su SuperLU Matrix non inizializzata → crash.
+  Fix: entrambi gli handler `xsheetChanged` wrappati con `QTimer::singleShot(0)`
+  per differire l'esecuzione all'iterazione successiva dell'event loop.
+  Rimossa anche la chiamata ridondante `updateAllPreviews()` da
+  `ZtoryModel::onXsheetChanged()` (violava regola AGENTS.md).
+
+---
 ## [2026-04-23] — Numerazione SQ/SH, rename app Ztoryc, fix firma bundle
 
 ### Added
