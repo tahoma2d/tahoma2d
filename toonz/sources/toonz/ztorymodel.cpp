@@ -772,5 +772,10 @@ void ZtoryModel::updateColumnName(int si) {
   if (obj) obj->setName(m_shots[si].label().toStdString());
 }
 
-void ZtoryModel::onXsheetChanged() { updateAllPreviews(); }
-void ZtoryModel::onSceneChanged()  { refreshFromScene(); load(); updateAllPreviews(); }
+// NOTE: updateAllPreviews() must NOT be called from onXsheetChanged().
+// Calling IconGenerator::getIcon() during an xsheet mutation (e.g. import scene)
+// triggers PlasticDeformerStorage::process() in an uninitialized GL context → crash.
+// Thumbnail refresh happens via frameSwitched signal with a debounce timer
+// (see StoryboardPanel). See AGENTS.md: "Thumbnail refresh = on frameSwitched".
+void ZtoryModel::onXsheetChanged() { /* thumbnails updated via frameSwitched debounce */ }
+void ZtoryModel::onSceneChanged()  { refreshFromScene(); load(); }

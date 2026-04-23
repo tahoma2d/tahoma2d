@@ -2401,9 +2401,14 @@ ZtoryStoryStripPanel::ZtoryStoryStripPanel(QWidget *parent)
           this, &ZtoryStoryStripPanel::refreshFromScene);
   connect(TApp::instance()->getCurrentXsheet(), &TXsheetHandle::xsheetChanged,
           this, [this]() {
-    ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-    if (scene && scene->getChildStack()->getAncestorCount() == 0)
-      refreshFromScene();
+    // Defer: xsheetChanged fires mid-import (xsheet not yet stable).
+    // Calling IconGenerator::getIcon() synchronously here can trigger
+    // PlasticDeformerStorage::process() with an uninitialized GL context → crash.
+    QTimer::singleShot(0, this, [this]() {
+      ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+      if (scene && scene->getChildStack()->getAncestorCount() == 0)
+        refreshFromScene();
+    });
   });
   // Highlight current column when column selection changes
   connect(TApp::instance()->getCurrentColumn(), &TColumnHandle::columnIndexSwitched,
@@ -2643,9 +2648,14 @@ ZtoryAnimaticPanel::ZtoryAnimaticPanel(QWidget *parent) : TPanel(parent) {
   });
   connect(TApp::instance()->getCurrentXsheet(), &TXsheetHandle::xsheetChanged,
           this, [this](){
-    ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-    if (scene && scene->getChildStack()->getAncestorCount() == 0)
-      refreshFromScene();
+    // Defer: xsheetChanged fires mid-import (xsheet not yet stable).
+    // Calling IconGenerator::getIcon() synchronously here can trigger
+    // PlasticDeformerStorage::process() with an uninitialized GL context → crash.
+    QTimer::singleShot(0, this, [this](){
+      ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+      if (scene && scene->getChildStack()->getAncestorCount() == 0)
+        refreshFromScene();
+    });
   });
   // 13a: refresh ruler when onion skin changes (markers update)
   connect(TApp::instance()->getCurrentOnionSkin(),
