@@ -284,47 +284,11 @@ void tlin::traduceD(const tlin::sparse_matrix<double> &m, SuperMatrix *&A) {
 
 //---------------------------------------------------------------
 
-//---------------------------------------------------------------
-// Safety net around dgstrf(): SuperLU 4.1's dgstrf has been observed to
-// SIGSEGV on some matrices produced by the PlasticDeformer pipeline (e.g.
-// after room switches with non-trivial meshes).  The crash is deep inside
-// dgstrf (offset varies with the build) and cannot be prevented by NaN/Inf
-// pre-validation alone.  To keep the application alive we install a
-// process-level SIGSEGV handler for the duration of the dgstrf call and
-// siglongjmp() back to the caller if the signal fires.  On siglongjmp the
-// dgstrf allocations leak (etree, Glu, perm_r/c …) but that is acceptable
-// compared to aborting the whole application.
-
-#include <csetjmp>
-#include <csignal>
-
-namespace {
-
-thread_local sigjmp_buf g_dgstrfJmp;
-thread_local bool g_dgstrfGuardActive = false;
-
-void dgstrfSignalHandler(int sig) {
-  if (g_dgstrfGuardActive) {
-    g_dgstrfGuardActive = false;
-    siglongjmp(g_dgstrfJmp, sig);
-  }
-  // Not inside a guarded call: reset to default and re-raise so the normal
-  // crash handler fires.
-  struct sigaction dfl;
-  dfl.sa_handler = SIG_DFL;
-  sigemptyset(&dfl.sa_mask);
-  dfl.sa_flags = 0;
-  sigaction(sig, &dfl, nullptr);
-  raise(sig);
-}
-
-}  // anonymous namespace
-
 void tlin::factorize(SuperMatrix *A, SuperFactors *&F, superlu_options_t *opt) {
   assert(A->nrow == A->ncol);
   int n = A->nrow;
 
-  // Guard #1: validate all matrix values before passing to dgstrf().
+  // Guard: validate all matrix values before passing to dgstrf().
   // NaN or Inf entries cause dgstrf() to corrupt the stack-allocated
   // SuperLUStat_t (by overflowing internal work buffers), which makes the
   // subsequent StatFree() crash with POINTER_BEING_FREED_WAS_NOT_ALLOCATED.
@@ -340,32 +304,6 @@ void tlin::factorize(SuperMatrix *A, SuperFactors *&F, superlu_options_t *opt) {
         return;
       }
     }
-    // Bounds-check row indices and monotonicity of colptr: malformed
-    // column storage has been seen to drive dgstrf into an infinite read
-    // past the end of nzval.
-    const int *colptr = storage->colptr;
-    const int *rowind = storage->rowind;
-    if (!colptr || !rowind || colptr[0] != 0 || colptr[n] != storage->nnz) {
-      F = 0;
-      return;
-    }
-    for (int c = 0; c < n; ++c) {
-      if (colptr[c] > colptr[c + 1] || colptr[c + 1] > storage->nnz) {
-        F = 0;
-        return;
-      }
-    }
-    for (int i = 0; i < storage->nnz; ++i) {
-      if (rowind[i] < 0 || rowind[i] >= A->nrow) {
-        F = 0;
-        return;
-      }
-    }
-  }
-
-  if (n <= 0) {
-    F = 0;
-    return;
   }
 
   if (!F) F = (SuperFactors *)SUPERLU_MALLOC(sizeof(SuperFactors));
@@ -388,45 +326,16 @@ void tlin::factorize(SuperMatrix *A, SuperFactors *&F, superlu_options_t *opt) {
   SuperLUStat_t stat;
   StatInit(&stat);
 
-  int result = -1;
+  int result;
 
-  // Install SIGSEGV/SIGBUS handlers guarding the dgstrf call.
-  struct sigaction prevSegv, prevBus, act;
-  act.sa_handler = dgstrfSignalHandler;
-  sigemptyset(&act.sa_mask);
-  act.sa_flags = 0;
-  sigaction(SIGSEGV, &act, &prevSegv);
-  sigaction(SIGBUS, &act, &prevBus);
-
-  bool crashed = false;
-  if (sigsetjmp(g_dgstrfJmp, 1) == 0) {
-    g_dgstrfGuardActive = true;
-    // sp_ienv(1) = panel_size (12), sp_ienv(2) = relax (6 in SRC, 1 in EXAMPLE).
-    // dgstrf signature is (options, A, relax, panel_size, ...) — the correct
-    // mapping is (sp_ienv(2), sp_ienv(1)).
 #if defined(SUPERLU_MAJOR_VERSION) && (SUPERLU_MAJOR_VERSION >= 5)
-    GlobalLU_t Glu;
-    dgstrf(opt, &AC, sp_ienv(2), sp_ienv(1), etree, NULL, 0, F->perm_c,
-           F->perm_r, F->L, F->U, &Glu, &stat, &result);
+  GlobalLU_t Glu;
+  dgstrf(opt, &AC, sp_ienv(1), sp_ienv(2), etree, NULL, 0, F->perm_c, F->perm_r,
+         F->L, F->U, &Glu, &stat, &result);
 #else
-    dgstrf(opt, &AC, sp_ienv(2), sp_ienv(1), etree, NULL, 0, F->perm_c,
-           F->perm_r, F->L, F->U, &stat, &result);
+  dgstrf(opt, &AC, sp_ienv(1), sp_ienv(2), etree, NULL, 0, F->perm_c, F->perm_r,
+         F->L, F->U, &stat, &result);
 #endif
-    g_dgstrfGuardActive = false;
-  } else {
-    // siglongjmp landed here: dgstrf crashed.  Leak allocations and bail.
-    crashed        = true;
-    g_dgstrfGuardActive = false;
-  }
-
-  // Restore previous signal handlers.
-  sigaction(SIGSEGV, &prevSegv, nullptr);
-  sigaction(SIGBUS, &prevBus, nullptr);
-
-  if (crashed) {
-    F = 0;
-    return;
-  }
 
   StatFree(&stat);
 

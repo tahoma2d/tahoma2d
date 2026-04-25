@@ -948,31 +948,8 @@ void StoryboardPanel::updatePreview(int shotIdx, int panelIdx) {
   TXsheet *subXsh = cl->getXsheet();
   if (not subXsh) return;
 
-  // NOTE: renderXsheetFrame() triggers the full Tahoma2D rendering pipeline
-  // (PlasticDeformerStorage → tlin::factorize → StatFree) which crashes with
-  // SIGABRT when the sub-scene contains plastic/mesh deformation content.
-  // We always use getIcon() on the first simple-level drawing instead: it renders
-  // only the raw level frame without running the composite/deformation stack.
-  QPixmap px;
-  int startFrame = shot.data.panels[panelIdx].startFrame;
-  for (int c = 0; c < subXsh->getColumnCount() && px.isNull(); c++) {
-    TXshColumn *col = subXsh->getColumn(c);
-    if (!col || col->isEmpty()) continue;
-    int r0 = 0, r1 = 0;
-    col->getRange(r0, r1);
-    // Prefer the cell at the panel's start frame; fall back to any non-empty cell
-    int preferredRow = qBound(r0, startFrame, r1);
-    auto tryCell = [&](int r) {
-      TXshCell cell = subXsh->getCell(r, c);
-      if (!cell.isEmpty() && cell.getSimpleLevel())
-        px = IconGenerator::instance()->getIcon(
-            cell.m_level.getPointer(), cell.getFrameId());
-    };
-    tryCell(preferredRow);
-    for (int r = r0; r <= r1 && px.isNull(); r++)
-      tryCell(r);
-  }
-
+  int frame = shot.data.panels[panelIdx].startFrame;
+  QPixmap px = IconGenerator::renderXsheetFrame(subXsh, frame, TDimension(320, 180));
   if (not px.isNull())
     shot.panels[panelIdx]->setPreviewPixmap(px);
 }
