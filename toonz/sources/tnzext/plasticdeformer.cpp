@@ -7,6 +7,7 @@
 #include "tlin/tlin.h"
 
 // STD includes
+#include <array>
 #include <assert.h>
 #include <cmath>
 #include <memory>
@@ -294,8 +295,19 @@ public:
   void releaseInitializedData();
 
 public:
-  std::vector<SuperFactorsPtr>
-      m_invF;  //!< Each of step 2's systems factorizations
+  //!< Step 2 solves a 4×4 system F·v = c per face.  F has the block form
+  //!<   F = [αI  B ; Bᵀ  α'I]   with  B = [[β, γ], [−γ, β]] and BᵀB = (β²+γ²)I
+  //!< so F⁻¹ = (1/Δ) [α'I  −B ; −Bᵀ  αI]  where  Δ = α·α' − β² − γ².
+  //!<
+  //!< Bypassing SuperLU: the bundled libsuperlu_4.1.a (thirdparty, ARM64)
+  //!< corrupts SuperLUStat_t inside dgstrf() for this matrix pattern,
+  //!< causing StatFree() to abort with POINTER_BEING_FREED_WAS_NOT_ALLOCATED.
+  //!< Apply the analytical inverse directly in deformStep2() — O(1) per
+  //!< face, no allocations, no SuperLU.
+  //!<
+  //!< Per-face storage: {α, α', β, γ, 1/Δ}.  invΔ == 0 means the face is
+  //!< degenerate (NaN/Inf ortCoords or near-singular F) — use identity fit.
+  std::vector<std::array<double, 5>> m_invF;
 
   TPointDPtr m_relativeCoords;  //!< Faces' p2 coordinates in (p0, p1)'s
                                 //! orthogonal reference
@@ -599,16 +611,24 @@ void PlasticDeformer::Imp::initializeStep2() {
   const TTextureMesh &mesh = *m_mesh;
   int f, fCount = mesh.facesCount();
 
-  // Clear and re-initialize vars
-  tlin::spmat F(4, 4);
-  tlin::SuperMatrix *trF;
-
-  std::vector<SuperFactorsPtr>(fCount).swap(m_invF);
+  // Per-face storage: {α, α', β, γ, 1/Δ}.  Initialised to all-zeros so
+  // invΔ == 0 automatically flags every face as "not yet populated".
+  m_invF.assign(fCount, std::array<double, 5>{0.0, 0.0, 0.0, 0.0, 0.0});
 
   m_relativeCoords.reset(new TPointD[fCount]);
   m_fitTriangles.reset(new TPointD[3 * fCount]);
 
-  // Build step 2's system factorizations (yep, can be done at this point)
+  // Precompute the analytical inverse coefficients of each face's 4×4 F
+  // matrix.  F is built by buildF(px, py) with entries:
+  //   α  = 1 + (1−px)² + py²     (diagonal of upper-left 2×2 block)
+  //   α' = 1 + px² + py²         (diagonal of lower-right 2×2 block)
+  //   β  = px·(1−px) − py²       (off-diagonal block B[0,0] = B[1,1])
+  //   γ  = py                    (off-diagonal block B[0,1] = −B[1,0])
+  // Schur analysis on the block form gives
+  //   F⁻¹ = (1/Δ)·[α'I  −B; −Bᵀ  αI],   Δ = α·α' − (β² + γ²).
+  // Δ > 0 for any non-degenerate triangle (α ≥ 1, α' ≥ 1, and one can show
+  // α·α' ≥ 1 + β² + γ² for all real px, py), so the inverse always exists
+  // unless ortCoords itself was NaN/Inf (zero-area triangle).
   const TPointD *p0, *p1, *p2;
 
   for (f = 0; f < fCount; ++f) {
@@ -617,28 +637,20 @@ void PlasticDeformer::Imp::initializeStep2() {
     TPointD c(tcg::point_ops::ortCoords(*p2, *p0, *p1));
     m_relativeCoords[f] = c;
 
-    // ortCoords returns NaN/Inf when the triangle is degenerate (zero-area or
-    // coincident vertices → denominator = 0).  Passing NaN to buildF produces
-    // a singular matrix that makes dgstrf (SuperLU) crash with SIGSEGV instead
-    // of returning an error code.  Skip the factorization for such triangles;
-    // deformStep2() checks for null m_invF[f] and falls back to identity.
-    if (!std::isfinite(c.x) || !std::isfinite(c.y)) {
-      m_invF[f].reset(nullptr);
-      continue;
-    }
+    // ortCoords returns NaN/Inf for zero-area (coincident-vertex) triangles.
+    if (!std::isfinite(c.x) || !std::isfinite(c.y)) continue;
 
-    F.clear();
-    buildF(c.x, c.y, F);
+    const double one_px = 1.0 - c.x, sqPy = c.y * c.y;
+    const double alpha  = 1.0 + one_px * one_px + sqPy;
+    const double alphaP = 1.0 + c.x * c.x + sqPy;
+    const double beta   = c.x * one_px - sqPy;
+    const double gamma  = c.y;
+    const double delta  = alpha * alphaP - (beta * beta + gamma * gamma);
 
-    trF = 0;
-    tlin::traduceS(F, trF);
+    // Guard against floating-point underflow / pathological meshes.
+    if (!(delta > 1e-12)) continue;
 
-    tlin::SuperFactors *invF = 0;
-
-    tlin::factorize(trF, invF);
-    m_invF[f].reset(invF);
-
-    tlin::freeS(trF);
+    m_invF[f] = {alpha, alphaP, beta, gamma, 1.0 / delta};
   }
 }
 
@@ -678,14 +690,26 @@ void PlasticDeformer::Imp::deformStep2(const TPointD *dstHandles,
 
     build_c(*v0x, *v0y, *v1x, *v1y, *v2x, *v2y, relCoord->x, relCoord->y, m_c);
 
-    double *vPtr = (double *)m_v;
-    if (!m_invF[f]) {
-      // Degenerate triangle — no valid factorization.  Output an identity-like
-      // fit: keep vertices at their original (undeformed) positions.
+    const std::array<double, 5> &inv = m_invF[f];
+    const double invDelta = inv[4];
+    if (invDelta == 0.0) {
+      // Degenerate triangle — no valid inverse.  Output an identity-like fit:
+      // keep vertices at their original (undeformed) positions.
       m_v[0] = *v0x; m_v[1] = *v0y;
       m_v[2] = *v1x; m_v[3] = *v1y;
     } else {
-      tlin::solve(m_invF[f].get(), (double *)m_c, vPtr);
+      // m_v = F⁻¹ · m_c using the closed-form block inverse derived in
+      // initializeStep2().  Replaces the former tlin::solve() call which
+      // went through SuperLU's dgstrs → broken on the bundled 4.1 binary.
+      const double alpha  = inv[0];
+      const double alphaP = inv[1];
+      const double beta   = inv[2];
+      const double gamma  = inv[3];
+      const double c0 = m_c[0], c1 = m_c[1], c2 = m_c[2], c3 = m_c[3];
+      m_v[0] = invDelta * ( alphaP * c0 - beta  * c2 - gamma * c3);
+      m_v[1] = invDelta * ( alphaP * c1 + gamma * c2 - beta  * c3);
+      m_v[2] = invDelta * (-beta   * c0 + gamma * c1 + alpha * c2);
+      m_v[3] = invDelta * (-gamma  * c0 - beta  * c1 + alpha * c3);
     }
 
     fitTri[0].x = m_v[0], fitTri[0].y = m_v[1];

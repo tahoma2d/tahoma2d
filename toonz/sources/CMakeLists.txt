@@ -92,7 +92,11 @@ if(BUILD_ENV_MSVC)
     set(_init_SYSTEM_SUPERLU                 OFF)
 elseif(BUILD_ENV_APPLE)
     set(_init_SYSTEM_LZO                     OFF)
-    set(_init_SYSTEM_SUPERLU                 OFF)
+    # Use Homebrew's libsuperlu (v7) on macOS — the bundled SuperLU 4.1
+    # has UB that crashes dgstrf on arm64 (and corrupts memory in ways
+    # that surface as unrelated drag-and-drop / event-loop crashes too).
+    # Install via:  brew install superlu
+    set(_init_SYSTEM_SUPERLU                 ON)
 elseif(BUILD_ENV_UNIXLIKE)
     set(_init_SYSTEM_LZO                     ON)
     set(_init_SYSTEM_SUPERLU                 ON)
