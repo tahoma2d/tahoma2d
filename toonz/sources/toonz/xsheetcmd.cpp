@@ -1064,11 +1064,6 @@ public:
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     while (c <= m_range.m_c1) {
       col = c;
-      // Convert implicit cell at end of selected range into a populated cell
-      if (xsh->isImplicitCell((m_range.m_r1 + 1), col)) {
-        TXshCell origCell = xsh->getCell((m_range.m_r1 + 1), col);
-        xsh->setCell((m_range.m_r1 + 1), col, origCell);
-      }
       while (r <= m_range.m_r1) {
         row = r;
         if (row == m_range.m_r0 || !xsh->isImplicitCell(row, col))
@@ -1220,9 +1215,9 @@ bool DrawingSubtitutionUndo::changeDrawing(int delta, int row, int col) {
   TTool::Application *app = TTool::getApplication();
   TXsheet *xsh            = app->getCurrentScene()->getScene()->getXsheet();
   TXshCell cell           = xsh->getCell(row, col);
+  TXshCell prevCell       = xsh->getCell(row - 1, col);
   bool usePrevCell        = false;
   if (cell.isEmpty()) {
-    TXshCell prevCell = xsh->getCell(row - 1, col);
     if (prevCell.isEmpty() || !(prevCell.m_level->getSimpleLevel() ||
                                 prevCell.m_level->getChildLevel() ||
                                 prevCell.m_level->getSoundTextLevel()))
@@ -1289,7 +1284,11 @@ bool DrawingSubtitutionUndo::changeDrawing(int delta, int row, int col) {
   else
     cellFrameId = TFrameId(index);
 
-  setDrawing(cellFrameId, row, col, cell, level);
+  if (Preferences::instance()->isImplicitHoldEnabled() && !prevCell.isEmpty() &&
+      prevCell.getFrameId() == cellFrameId)
+    setDrawing(TFrameId::EMPTY_FRAME, row, col, TXshCell(), nullptr);
+  else
+    setDrawing(cellFrameId, row, col, cell, level);
 
   return true;
 }
