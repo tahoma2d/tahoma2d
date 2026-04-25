@@ -6,6 +6,43 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-25] — fix crash plastic deformer + drag (SuperLU bundled vs Homebrew)
+
+### Fixed
+- **PlasticDeformer SIGSEGV su arm64**: il bundled SuperLU 4.1 ha UB latente
+  che su Apple Silicon nativo corrompe memoria — `dgstrf` crasha direttamente
+  in `compileStep1`/`initializeStep2`, e (sorpresa) la stessa corruzione
+  emerge come `BUG IN CLIENT OF LIBPLATFORM: recursive os_unfair_lock` nel
+  drag-and-drop di scene nel cast (NSCoreDragManager).
+- **Root cause**: dopo il rebranding Ztoryc, `WITH_SYSTEM_SUPERLU` di default
+  su macOS è rimasto `OFF` → linker ha incluso libsuperlu_4.1.a bundled
+  invece di `libsuperlu.7.dylib` di Homebrew (che la vecchia Tahoma2D.app
+  funzionante usava dinamicamente).
+
+### Modified
+- `toonz/sources/CMakeLists.txt`: default `WITH_SYSTEM_SUPERLU=ON` su macOS.
+  Richiede `brew install superlu` una sola volta.
+- `toonz/cmake/BundleInfo.plist.in`: re-aggiunto `LSRequiresCarbon=true`
+  (era nel vecchio Tahoma2D, dropped nel rename Ztoryc).
+- `toonz/sources/tnzext/tlin/tlin_superlu_wrap.cpp`: guard difensivi
+  permanenti in `factorize()` — validazione NaN/Inf valori, bounds-check
+  rowind, monotonia colptr, safety net `sigsetjmp`/`siglongjmp` intorno
+  a `dgstrf`, fix swap argomenti `relax`/`panel_size`.
+- `toonz/sources/tnzext/plasticdeformer.cpp`: rimpiazzato SuperLU per la
+  factorizzazione 4×4 per-faccia in `initializeStep2`/`deformStep2` con
+  inversa analitica closed-form (Schur complement) — più veloce e azzera
+  esposizione UB SuperLU per il sistema per-triangolo.
+- `toonz/sources/toonz/storyboardpanel.cpp`: rimosso workaround mesh-column
+  in `updatePreview()` (non più necessario), thumbnail sempre via `getIcon()`.
+
+### Notes
+- L'app è arm64 nativo (non Rosetta come sospettato inizialmente). Il vecchio
+  Tahoma2D.app funzionante era anch'esso arm64 ma linkava dinamicamente la
+  SuperLU 7 di Homebrew → da qui il diverso comportamento.
+- Setup post-pull per dev macOS: `brew install superlu` (one-shot).
+- Commit: `fc625e448 fix: PlasticDeformer + drag crashes — switch to system SuperLU on macOS`
+
+---
 ## [2026-04-24] — resetOnSeqChange: riavvio contatore SH per sequenza
 
 ### Added
