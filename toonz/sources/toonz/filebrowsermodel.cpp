@@ -15,7 +15,9 @@
 
 #include "tapp.h"
 #include "toonz/tscenehandle.h"
+#include "toonz/preferences.h"
 #include "mainwindow.h"
+#include "startuppopup.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -710,6 +712,12 @@ void DvDirVersionControlProjectNode::makeCurrent() {
   if (!IoCmd::saveSceneIfNeeded(QObject::tr("Change project"))) return;
   pm->setCurrentProjectPath(projectPath);
   IoCmd::newScene();
+  if (Preferences::instance()->isStartupPopupEnabled()) {
+    StartupPopup *popup = new StartupPopup();
+    popup->show();
+    popup->raise();
+    popup->activateWindow();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -803,6 +811,12 @@ void DvDirModelProjectNode::makeCurrent() {
   RecentFiles::instance()->addFilePath(projectFolder.getQString(),
                                        RecentFiles::Project);
   IoCmd::newScene();
+  if (Preferences::instance()->isStartupPopupEnabled()) {
+    StartupPopup *popup = new StartupPopup();
+    popup->show();
+    popup->raise();
+    popup->activateWindow();
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -6,6 +6,34 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+
+## [2026-04-25c] — fix: import subscene asset path double-nesting + startup popup on project switch
+
+### Fixed
+- **Import subscene double-nesting** (`iocommand.cpp`): importando una scena A
+  dentro una scena B, gli asset finivano in `+extras/A/A/file` invece di
+  `+extras/B/A/file`. Root cause: il path veniva prefissato con `m_dstFolder`
+  anche quando `tail` iniziava già con quella stessa cartella.
+  Fix: split di `tail` — se il primo segmento coincide con `m_dstFolder`,
+  si usa il nome della scena destinazione come prefisso
+  (`destSceneFolder = scene->getScenePath().getName()`).
+- **`dstFolder` in `loadResources()`** (`iocommand.cpp`): usava
+  `isSubsceneFolderEnabled()` (preferenza globale) invece di
+  `importDialog.isImportEnabled()`. Import → sottocartella col nome della
+  subscene, Load → assets in place.
+
+### Added
+- **Startup popup su cambio progetto** (`filebrowsermodel.cpp`):
+  `DvDirVersionControlProjectNode` e `DvDirModelProjectNode` mostrano
+  `StartupPopup` dopo `IoCmd::newScene()` se `isStartupPopupEnabled()`.
+
+### Notes
+- `storyboardpanel.cpp/.h` e `stopmotioncontroller.h` modificati ma non
+  correlati — verificare prima del commit se includere o separare.
+- Da testare: Import con subscene folder ON/OFF, asset in cartella condivisa,
+  path relativo vs assoluto, nome scena uguale alla libreria.
+
+---
 ## [2026-04-25b] — revert side-fix, mantenuto solo Homebrew SuperLU
 
 ### Modified

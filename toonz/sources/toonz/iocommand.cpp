@@ -223,7 +223,19 @@ public:
         std::wstring head;
         TFilePath tail;
         dstPath.split(head, tail);
-        dstPath = TFilePath(head) + m_dstFolder + tail;
+        // Don't prepend dstFolder if tail already starts with it
+        // (avoids double-nesting: +extras/lib_bimba/lib_bimba/file)
+        std::wstring tailHead;
+        TFilePath tailTail;
+        tail.split(tailHead, tailTail);
+        if (TFilePath(tailHead) == m_dstFolder) {
+          // Asset already has subscene folder in path (standard Tahoma settings).
+          // Prefix with destination scene name to isolate the copy.
+          // +extras/lib_bimba/ch.psd => +extras/scSH020/lib_bimba/ch.psd
+          TFilePath destSceneFolder(scene->getScenePath().getName());
+          dstPath = TFilePath(head) + destSceneFolder + tail;
+        } else
+          dstPath = TFilePath(head) + m_dstFolder + tail;
       }
     } else {
       dstPath = scene->getImportedLevelPath(srcPath);
@@ -2770,9 +2782,11 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
     TXshLevel *xl = 0;
     if (isScene) {
       TFilePath oldDstFolder = importDialog.getDstFolder();
-      TFilePath dstFolder = (Preferences::instance()->isSubsceneFolderEnabled())
-                                ? TFilePath(path.getName())
-                                : TFilePath();
+      // If user chose Import, copy assets into a subfolder named after the
+      // subscene. If user chose Load, leave assets in place (empty dstFolder).
+      TFilePath dstFolder =
+          importDialog.isImportEnabled() ? TFilePath(path.getName())
+                                        : TFilePath();
 
       importDialog.setDstFolder(dstFolder);
       importDialog.setIsLastResource(false);
