@@ -6,6 +6,30 @@
 > Voci più vecchie di ~2 settimane → spostarle in `CHANGELOG_ARCHIVE.md`.
 
 ---
+## [2026-04-25b] — revert side-fix, mantenuto solo Homebrew SuperLU
+
+### Modified
+- Revert di `tlin_superlu_wrap.cpp` e `plasticdeformer.cpp` allo stato pre-sessione
+  (commit `d3ac737e3`). Le modifiche aggiuntive (safety net sigsetjmp,
+  inversa analitica 4×4, validazioni colptr) erano superflue una volta
+  passato a Homebrew SuperLU 7 e creavano potenziale per bug subdoli.
+- `BundleInfo.plist.in`: rimosso `LSRequiresCarbon=true` — bloccava
+  l'AutoFill UI. Era stato aggiunto come tentativo, ma il vero fix del
+  drag crash era già il cambio a Homebrew SuperLU.
+- `storyboardpanel.cpp::updatePreview()`: ripristinato
+  `IconGenerator::renderXsheetFrame()` (i preview thumbnail si aggiornano
+  di nuovo al cambio xsheet — ora safe con Homebrew SuperLU).
+
+### Notes
+- Unica modifica essenziale del fix di oggi rimasta: `CMakeLists.txt`
+  `WITH_SYSTEM_SUPERLU=ON` di default su macOS (commit `fc625e448`).
+- Crash open: `TProjectManager::notifyListeners()` SIGBUS durante click
+  in DvDirTreeView (dangling listener pointer). Da indagare in nuova
+  sessione — chiunque chiama `addListener` su `TProjectManager::instance()`
+  e non rimuove nel distruttore.
+- Commit revert: `48b42a8d3 revert: keep only essential SuperLU fix (Homebrew)`
+
+---
 ## [2026-04-25] — fix crash plastic deformer + drag (SuperLU bundled vs Homebrew)
 
 ### Fixed
