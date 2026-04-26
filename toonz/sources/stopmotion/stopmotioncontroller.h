@@ -87,7 +87,7 @@ class FrameNumberLineEdit : public DVGui::LineEdit,
 public:
   FrameNumberLineEdit(QWidget *parent = 0, TFrameId fId = TFrameId(1),
                       bool acceptLetter = true);
-  ~FrameNumberLineEdit() {}
+  ~FrameNumberLineEdit() { TProjectManager::instance()->removeListener(this); }
 
   /*! Set text in field to \b value. */
   void setValue(TFrameId fId);
