@@ -1,3 +1,12 @@
+Ztoryc additions and modifications
+Copyright (c) 2025-2026 Franco Bianco / Matitanimata
+All rights reserved.
+
+The original Tahoma2D and OpenToonz code retains its original copyright
+as stated below.
+
+- - - - - - - - - - - - - - - -
+
 Some of code in this repository is derived from thirdparty libraries.
 For files in the "thirdparty" directory: Please consult with the licenses in the appropriate READMEs or source codes.
 For files in the "stuff/library/mypaint brushes" directory: Please see the licenses in stuff/library/mypaint brushes/Licenses.txt.
