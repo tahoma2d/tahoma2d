@@ -167,7 +167,8 @@ PanelWidget::PanelWidget(QWidget *parent)
     "QPushButton{background:#444;color:#ffcc55;border-radius:3px;font-size:10px;}"
     "QPushButton:hover{background:#666;}");
 
-  hl->addWidget(lbl("SQ:"));
+  m_seqLabel = lbl("SQ:");
+  hl->addWidget(m_seqLabel);
   hl->addWidget(m_seqField);
   hl->addWidget(lbl("SH:"));
   hl->addWidget(m_shotLabel);
@@ -180,6 +181,11 @@ PanelWidget::PanelWidget(QWidget *parent)
   hl->addWidget(m_matchButton);
   hl->addStretch();
   layout->addWidget(header);
+
+  // Hide SQ row in Simple mode from the start
+  bool seqMode = (ZtoryModel::instance()->numberingConfig().style == NumberingConfig::Sequence);
+  m_seqLabel->setVisible(seqMode);
+  m_seqField->setVisible(seqMode);
 
   m_previewLabel = new QLabel();
   m_previewLabel->setAlignment(Qt::AlignCenter);
@@ -400,6 +406,11 @@ void PanelWidget::setSeqLabel(const QString &seq) {
     m_seqField->setText(num.isEmpty() ? seq : num);
   }
   m_seqField->blockSignals(false);
+}
+
+void PanelWidget::setSeqVisible(bool visible) {
+  m_seqLabel->setVisible(visible);
+  m_seqField->setVisible(visible);
 }
 
 void PanelWidget::onDurationSpinChanged(int value) {
@@ -832,8 +843,16 @@ void StoryboardPanel::renumberAll() {
       // Sequence assignments survive auto-renumber — only the SH number changes.
       // If this is a brand-new shot (no sequence yet), inherit from the
       // previous shot so it lands in the same sequence automatically.
-      if (shot.data.sequenceId.isEmpty() && i > 0)
-        shot.data.sequenceId = m_shots[i - 1].data.sequenceId;
+      // Shot 0 in Sequence mode gets the default sequence (e.g. "SQ01").
+      if (shot.data.sequenceId.isEmpty() && cfg.style == NumberingConfig::Sequence) {
+        if (i > 0 && !m_shots[i - 1].data.sequenceId.isEmpty())
+          shot.data.sequenceId = m_shots[i - 1].data.sequenceId;
+        else if (i == 0) {
+          model->ensureDefaultSequence();
+          if (!model->sequences().empty())
+            shot.data.sequenceId = model->sequences().front().uuid;
+        }
+      }
 
       // Compute the shot index within its sequence (for resetOnSeqChange)
       int shotIdx = i;  // global index by default (continuous numbering)
@@ -862,9 +881,11 @@ void StoryboardPanel::renumberAll() {
       SequenceData *seq = model->findSequence(shot.data.sequenceId);
       if (seq) seqLabel = seq->label;
     }
+    bool isSeq = (cfg.style == NumberingConfig::Sequence);
     for (PanelWidget *pw : shot.panels) {
       pw->setShotIndex(i);
       pw->setShotNumber(shot.data.label());
+      pw->setSeqVisible(isSeq);
       if (!seqLabel.isEmpty()) pw->setSeqLabel(seqLabel);
       pw->setPanelIndex(pw->panelIndex(), (int)shot.panels.size());
     }
@@ -2437,10 +2458,16 @@ void StoryboardPanel::onNumberingConfig() {
   cfg.seqNumber        = seqNumSB->value();
   cfg.resetOnSeqChange = resetOnSeqCB->isChecked();
 
-  // If in auto-renumber mode, renumber all shots immediately
+  // If in auto-renumber mode, renumber all shots immediately (also updates visibility).
   if (m_autoRenumber) {
     renumberAll();
     saveZtoryc();
+  } else {
+    // Even without renumbering, update SQ field visibility immediately.
+    bool isSeq = (cfg.style == NumberingConfig::Sequence);
+    for (Shot &s : m_shots)
+      for (PanelWidget *pw : s.panels)
+        pw->setSeqVisible(isSeq);
   }
 }
 

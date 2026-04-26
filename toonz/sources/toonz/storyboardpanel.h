@@ -38,6 +38,7 @@ class PanelWidget final : public QFrame {
   int  m_fps;
   bool m_selected;
   QLineEdit   *m_seqField;       // editable sequence label (shows number part only)
+  QLabel      *m_seqLabel;       // "SQ:" header label — hidden in Simple mode
   QLineEdit   *m_shotLabel;      // editable shot label (shows number part only)
   QString      m_storedShotPrefix;  // e.g. "SH" — restored when shotNumber() is read
   QString      m_storedSeqPrefix;   // e.g. "SQ" — restored on seqLabelEdited
@@ -69,6 +70,7 @@ public:
   void setNotes(const QString &t);
   void setShotNumber(const QString &n);
   void setSeqLabel(const QString &seq);
+  void setSeqVisible(bool visible);
   void rescalePreview();
   int     shotIndex()  const { return m_shotIndex; }
   int     panelIndex() const { return m_panelIndex; }
