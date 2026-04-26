@@ -7,6 +7,38 @@
 
 ---
 
+## [2026-04-26] — fix: SIGBUS project switch + storyboard SQ visibility + repo cleanup
+
+### Fixed
+- **SIGBUS su cambio progetto** (`stopmotioncontroller.h`): `FrameNumberLineEdit`
+  non rimuoveva il listener da `TProjectManager` nel distruttore — causava
+  dangling pointer e SIGBUS in `notifyListeners()` al click in DvDirTreeView.
+  Fix: aggiunto `TProjectManager::instance()->removeListener(this)` nel distruttore.
+- **SQ row visibilità** (`storyboardpanel.cpp/.h`): il campo sequenza (SQ) restava
+  visibile anche in modalità Simple. Fix: hide/show sincronizzato con
+  `NumberingConfig::Sequence` sia all'inizializzazione che in `renumberAll()`.
+- **`renumberAll()` shot 0 in Sequence mode** (`storyboardpanel.cpp`): il primo
+  shot non ereditava la sequenza di default — resta senza `sequenceId`. Fix: se
+  `i == 0` e sequenceId è vuoto, assegna la prima sequenza disponibile via
+  `ensureDefaultSequence()`.
+
+### Changed
+- **`CONTRIBUTING.md`**: riscritto per Ztoryc/Matitanimata, rimossi riferimenti
+  a workflow e canali di Tahoma2D.
+- **`appveyor.yml`**: neutralizzato (AppVeyor non usato da Ztoryc).
+- **`LICENSE.txt`**: aggiunto header copyright Ztoryc/Matitanimata in cima,
+  mantenuto intatto il copyright originale Tahoma2D/OpenToonz.
+- **`.gitignore`**: aggiunte esclusioni Ztoryc (`.claude/`, `Ztoryc.app/`,
+  `SuperLU TESTING/`).
+
+### Notes
+- Commits: 13c2bba80, 0ade733ed, 0014005aa, b5ff7da71, 8943bcd62
+- SIGBUS era annotato nel changelog [2026-04-25b] come crash aperto da indagare —
+  ora risolto.
+- Branch `diag/preview-transparent-raster` mergiato su master ed eliminato.
+
+---
+
 ## [2026-04-25c] — fix: import subscene asset path double-nesting + startup popup on project switch
 
 ### Fixed
