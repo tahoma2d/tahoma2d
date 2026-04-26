@@ -86,3 +86,8 @@ thirdparty/superlu/SuperLU_4.1/SRC/*.o
 thirdparty/superlu/SuperLU_4.1/lib/*.a
 toonz/Tahoma2D.app.extras/
 .aider*
+
+# Ztoryc
+.claude/
+/toonz/Ztoryc.app/
+thirdparty/superlu/SuperLU_4.1/TESTING/
