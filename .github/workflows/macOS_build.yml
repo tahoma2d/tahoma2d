@@ -6,7 +6,7 @@ jobs:
   macOS:
     runs-on: macos-15-intel
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
         with:
@@ -20,7 +20,7 @@ jobs:
           mkdir /Users/runner/.ccache
       - name: Restore cache
         id: restore-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: |
             /Users/runner/.ccache
@@ -63,11 +63,11 @@ jobs:
           ci-scripts/osx/tahoma-build.sh
       - name: Create Package
         run: bash ./ci-scripts/osx/tahoma-buildpkg.sh
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Tahoma2D-portable-osx.dmg
           path: toonz/build/Tahoma2D-portable-osx.dmg
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Tahoma2D-install-osx.pkg
           path: toonz/build/Tahoma2D-install-osx.pkg
@@ -127,7 +127,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Save cache
         if: ${{ steps.restore-cache.outputs.cache-hit != 'true' || github.ref == 'refs/heads/master' }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: |
             /Users/runner/.ccache

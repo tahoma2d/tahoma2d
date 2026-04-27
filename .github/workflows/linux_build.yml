@@ -16,7 +16,7 @@ jobs:
             cc: clang
             cxx: clang++
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
         with:
@@ -30,7 +30,7 @@ jobs:
           mkdir -p /home/runner/.ccache
       - name: Restore cache
         id: restore-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: |
             /home/runner/.ccache
@@ -77,11 +77,11 @@ jobs:
           ci-scripts/linux/tahoma-buildpkg.sh
           mv toonz/build/Tahoma2D-linux.tar.gz toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
           mv toonz/build/Tahoma2D-linux.deb toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.deb
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
           path: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Tahoma2D-linux-${{ matrix.compiler }}.deb
           path: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.deb
@@ -141,7 +141,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Save cache
         if: ${{ steps.restore-cache.outputs.cache-hit != 'true' || github.ref == 'refs/heads/master' }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: |
             /home/runner/.ccache

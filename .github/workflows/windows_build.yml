@@ -6,7 +6,7 @@ jobs:
   Windows:
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: |
           ci-scripts\windows\tahoma-install.bat
@@ -15,7 +15,7 @@ jobs:
           mkdir %LOCALAPPDATA%\ccache
       - name: Restore cache
         id: restore-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: |
             ~/AppData/Local/ccache
@@ -34,18 +34,18 @@ jobs:
         run: |
           ci-scripts\windows\tahoma-get3rdpartyapps.bat
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
       - name: Build Tahoma2D
         run: |
           ci-scripts\windows\tahoma-build.bat
       - name: Create Package
         run: |
           ci-scripts\windows\tahoma-buildpkg.bat
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Tahoma2D-portable-win.zip
           path: toonz\build\Tahoma2D-portable-win.zip
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Tahoma2D-install-win.exe
           path: toonz\build\Tahoma2D-install-win.exe
@@ -106,7 +106,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Save cache
         if: ${{ steps.restore-cache.outputs.cache-hit != 'true' || github.ref == 'refs/heads/master' }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: |
             ~/AppData/Local/ccache
