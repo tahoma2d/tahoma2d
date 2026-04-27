@@ -1236,7 +1236,7 @@ BatchesController *BatchesController::instance() {
       m_instance->m_localControllerPortNumber = portNumber;
 
       //      static MyLocalControllerController *TheLocalController =
-      new MyLocalControllerController(portNumber);
+      // new MyLocalControllerController(portNumber);
     }
   }
   return m_instance;

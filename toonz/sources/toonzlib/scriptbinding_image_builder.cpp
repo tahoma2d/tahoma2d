@@ -185,12 +185,12 @@ QString ImageBuilder::add(const TImageP &img, const TAffine &aff) {
     // vector image
     if (!m_img) {
       // transform
-      TVectorImageP vi = img->cloneImage();
+      TVectorImageP vi = dynamic_cast<TVectorImage*>(img->cloneImage());
       vi->transform(aff);
       m_img = vi;
     } else {
       // merge
-      TVectorImageP up = img;
+      TVectorImageP up = dynamic_cast<TVectorImage*>(img.getPointer());
       TVectorImageP dn = m_img;
       dn->mergeImage(up, aff);
     }

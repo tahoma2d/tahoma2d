@@ -35,6 +35,19 @@
 #include <boost/xpressive/xpressive_static.hpp>
 #include <boost/xpressive/regex_actions.hpp>
 
+// Windows port fix: provide boost::throw_exception implementations
+// required by boost::xpressive when not linking boost_system
+#include <stdexcept>
+namespace boost {
+    void throw_exception(std::exception const& e) {
+        throw e;
+    }
+    struct source_location;
+    void throw_exception(std::exception const& e, boost::source_location const&) {
+        throw e;
+    }
+}
+
 namespace {
 // reference : columncommand.cpp
 bool canRemoveFx(const std::set<TFx*>& leaves, TFx* fx) {

@@ -284,7 +284,7 @@ void PanelWidget::rescalePreview() {
   if (w <= 0) w = 200;
   int h = w * 9 / 16;
   m_previewLabel->setFixedHeight(h);
-  if (not m_previewPixmap.isNull())
+  if (!m_previewPixmap.isNull())
     m_previewLabel->setPixmap(
       m_previewPixmap.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
@@ -455,7 +455,7 @@ void PanelWidget::dragMoveEvent(QDragMoveEvent *e) {
 }
 
 void PanelWidget::dropEvent(QDropEvent *e) {
-  if (not e->mimeData()->hasFormat("application/x-ztoryc-shotindex")) return;
+  if (!e->mimeData()->hasFormat("application/x-ztoryc-shotindex")) return;
   int fromShot = e->mimeData()->data("application/x-ztoryc-shotindex").toInt();
   if (fromShot != m_shotIndex)
     emit dropReceived(fromShot, m_shotIndex);
@@ -954,7 +954,7 @@ void StoryboardPanel::updatePreview(int shotIdx, int panelIdx) {
   if (panelIdx < 0 || panelIdx >= (int)shot.panels.size()) return;
   TApp *app = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
-  if (not scene) return;
+  if (!scene) return;
   TXsheet *xsh = scene->getChildStack()->getTopXsheet();
   if (not xsh) return;
   TXshChildLevel *cl = nullptr;

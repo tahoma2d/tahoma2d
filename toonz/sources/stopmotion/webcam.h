@@ -137,13 +137,14 @@ private:
 
   bool m_useCalibration;
   cv::Mat m_calibrationMapX, m_calibrationMapY;
-
+  
+  bool                         m_useAVCapture = false;
 #ifdef Q_OS_MAC
   AVCaptureSession_t*          m_avSession   = nullptr;
   AVCaptureDeviceInput_t*      m_avInput     = nullptr;
   AVCaptureVideoDataOutput_t*  m_avOutput    = nullptr;
   AVCaptureDelegate_t*         m_avDelegate  = nullptr;
-  bool                         m_useAVCapture = false;
+
   cv::Mat                      m_avCurrentFrame;
   QMutex*                      m_avFrameMutex = nullptr;
 #endif

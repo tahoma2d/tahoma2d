@@ -111,7 +111,6 @@ int ColumnLevel::getFrameCount() const {
 }
 
 //-----------------------------------------------------------------------------
-
 int ColumnLevel::getVisibleFrameCount() const {
   if (!m_soundLevel) return -1;
   return getFrameCount() - getStartOffset() - getEndOffset();

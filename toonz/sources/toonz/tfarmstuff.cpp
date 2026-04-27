@@ -34,37 +34,13 @@ TFarmController *TFarmStuff::getTFarmController() {
 
 //------------------------------------------------------------------------------
 
-namespace {
-
-inline bool doTestConnection(const QString &hostname, const QString &ipaddr,
-                             int port) {
-  int sock;
-  TTcpIpClient client;
-
-  int ret = client.connect(hostname, ipaddr, port, sock);
-  if (ret == OK) {
-    client.disconnect(sock);
-    return true;
-  }
+// Windows port: TTcpIpClient not available, farm connection disabled
+bool TFarmStuff::testConnection(const QString &hostname, int port) {
   return false;
 }
-}
-
 //------------------------------------------------------------------------------
-
-bool TFarmStuff::testConnection(const QString &hostname, int port) {
-  return doTestConnection(hostname, "", port);
-}
-
-//------------------------------------------------------------------------------
-
 bool TFarmStuff::testConnectionToController() {
-  QString hostName;
-  QString ipAddr;
-  int port;
-
-  getControllerData(hostName, ipAddr, port);
-  return doTestConnection(hostName, ipAddr, port);
+  return false;
 }
 
 //------------------------------------------------------------------------------
