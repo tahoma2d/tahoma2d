@@ -6,7 +6,7 @@ jobs:
   macOS:
     runs-on: macos-15-intel
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v5
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
         with:

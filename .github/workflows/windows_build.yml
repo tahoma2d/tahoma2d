@@ -6,7 +6,7 @@ jobs:
   Windows:
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v5
       - name: Install Dependencies
         run: |
           ci-scripts\windows\tahoma-install.bat
