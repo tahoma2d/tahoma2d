@@ -1,5 +1,5 @@
 #!/bin/bash
-export TAHOMA2DVERSION=1.6
+export TAHOMA2DVERSION=1.6.1
 
 if [ -d /usr/local/Cellar/qt@5 ]
 then
@@ -133,7 +133,7 @@ function checkLibFile() {
          then
             local SRC=$DEPFILE
             local Z=`echo $DEPFILE | cut -c 1-16`
-            local Z2=`echo $DEPFILE | cut -c 1-6`
+            local Z2=`echo $DEPFILE | cut -c 1.6.1`
             if [ "$Z" = "@loader_path/../" ]
             then
                local V=`echo $DEPFILE | sed -e"s/^.*\/\.\.\///"`

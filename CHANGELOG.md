@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2026-05-01
+
+### Fixed
+
+- Write lipsync script file as explicit UTF-8 [#2073]
+- Fix Tip's release link [#2079]
+- Fix Function Editor UI issues [#2094]
+- Fix erratic ping pong playback behavior [#2100]
+- Block more incompatible dlls [#2102]
+- Fixes for ease handles and interpolation management from timeline/xsheet [#2104]
+- Fix reading xml tags with special characters [#2108, #2134]
+- Fix looped frame logic crash [#2110]
+- Additional fixes for timeline/xsheet ease handles and interpolation [#2116]
+- Fix standard raster brush with grid option enabled [#2128]
+- Fix permanent layer offset after key delete [#2132]
+- Fix crashing on version check [#2133]
+- Fix Drawing Substitution with implicit cells [#2142]
+
+### Other
+
+- Fix compiling without Libgphoto2 [#2074]
+- Fix non-Ubuntu linux build errors [#2121]
+- Update OS X reference to macOS in README [#2129]
+- Update build actions to use Node.js 24 [#2145]
+- Change order of uploading nightlies [#2146]
+- Stop failing fast on linux builds [#2147]
+- Drop actions/checkout to v5 [#2149]
+
 ## [1.6.0] - 2026-03-01
 
 ### Added
@@ -1039,6 +1067,7 @@ Some features, when used, are saved to the scene file and will prevent the scene
 [^10]: Partial. Changes not relevant to T2D were not applied
 [^11]: Partial. Similar changes already in T2D were not applied
 
+[1.6.1]: https://github.com/tahoma2d/tahoma2d/compare/v1.6...v1.6.1
 [1.6.0]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.4...v1.6
 [1.5.4]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.3...v1.5.4
 [1.5.3]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.2...v1.5.3

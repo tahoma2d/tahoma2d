@@ -1,5 +1,5 @@
 #!/bin/bash
-export TAHOMA2DVERSION=1.6
+export TAHOMA2DVERSION=1.6.1
 #source /opt/qt515/bin/qt515-env.sh
 
 echo ">>> Temporary install of Tahoma2D"
