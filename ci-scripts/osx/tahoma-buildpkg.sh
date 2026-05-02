@@ -133,7 +133,7 @@ function checkLibFile() {
          then
             local SRC=$DEPFILE
             local Z=`echo $DEPFILE | cut -c 1-16`
-            local Z2=`echo $DEPFILE | cut -c 1.6.1`
+            local Z2=`echo $DEPFILE | cut -c 1-6`
             if [ "$Z" = "@loader_path/../" ]
             then
                local V=`echo $DEPFILE | sed -e"s/^.*\/\.\.\///"`
