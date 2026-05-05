@@ -355,7 +355,7 @@ void ToolOptionControlBuilder::visit(TColorChipProperty *p) {
 
 void ToolOptionControlBuilder::visit(TStylusProperty *p) {
   ToolOptionStylusConfigButton *obj =
-      new ToolOptionStylusConfigButton(m_tool, p);
+      new ToolOptionStylusConfigButton(m_panel, m_tool, p);
   obj->setToolTip(p->getQStringName());
 
   // This should be following another control.  Remove space item added after
@@ -373,7 +373,8 @@ void ToolOptionControlBuilder::visit(TStylusProperty *p) {
 //-----------------------------------------------------------------------------
 
 void ToolOptionControlBuilder::visit(TBrushTipProperty *p) {
-  ToolOptionBrushTipButton *obj = new ToolOptionBrushTipButton(m_tool, p);
+  ToolOptionBrushTipButton *obj =
+      new ToolOptionBrushTipButton(m_panel, m_tool, p);
   obj->setToolTip(p->getQStringName());
 
   hLayout()->addWidget(obj, 100);
