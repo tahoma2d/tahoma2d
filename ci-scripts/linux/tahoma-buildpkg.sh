@@ -95,6 +95,7 @@ fi
 
 export LD_LIBRARY_PATH=appdir/usr/lib/tahoma2d
 $LINUXDEPLOYQT appdir/usr/bin/Tahoma2D -bundle-non-qt-libs -verbose=0 -always-overwrite -no-strip \
+   -extra-plugins=platforms/libqwayland-xcomposite-glx.so,platforms/libqwayland-generic.so,platforms/libqwayland-egl.so,platforms/libqwayland-xcomposite-egl.so,wayland-decoration-client,wayland-graphics-integration-client,wayland-graphics-integration-server,wayland-shell-integration \
    -executable=appdir/usr/bin/lzocompress \
    -executable=appdir/usr/bin/lzodecompress \
    -executable=appdir/usr/bin/tcleanup \
