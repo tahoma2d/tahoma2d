@@ -201,6 +201,8 @@ since underlying onion-skinned drawings must be visible.
 
   int getFrameIdxFromRos(int ros, TXsheet *xsh, int row, int col);
 
+  void restoreOnionSkinData();
+
 private:
   std::vector<std::pair<int, double>> m_fos,
       m_mos, m_dos;               //!< Fixed, Mobile (relative frames mode), Drawing Onion Skin

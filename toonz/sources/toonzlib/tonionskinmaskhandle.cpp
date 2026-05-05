@@ -29,3 +29,9 @@ void TOnionSkinMaskHandle::setOnionSkinMask(
 //-----------------------------------------------------------------------------
 
 void TOnionSkinMaskHandle::clear() { m_onionSkinMask.clear(); }
+
+//-----------------------------------------------------------------------------
+
+void TOnionSkinMaskHandle::restoreOnionSkinData() {
+  m_onionSkinMask.restoreOnionSkinData();
+}

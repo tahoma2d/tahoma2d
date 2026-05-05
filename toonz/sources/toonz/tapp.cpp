@@ -133,6 +133,9 @@ TApp::TApp()
 
   m_paletteController = new PaletteController();
 
+  // Restore onion skin data from env file
+  m_currentOnionSkinMask->restoreOnionSkinData();
+
   bool ret = true;
 
   ret = ret && QObject::connect(m_currentXsheet, SIGNAL(xsheetChanged()), this,

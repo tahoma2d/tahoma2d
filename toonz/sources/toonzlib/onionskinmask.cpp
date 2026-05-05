@@ -51,6 +51,37 @@ double inline getIncrement(int paperThickness) {
   return Incr[paperThickness];
 }
 
+std::string osDataToString(std::vector<std::pair<int, double>> osData) {
+  QString osString;
+
+  if (osData.empty()) return "";
+
+  std::vector<std::pair<int, double>>::iterator it;
+  for (it = osData.begin(); it != osData.end(); it++) {
+    if (!osString.isEmpty()) osString += "|";
+    osString += QString::number(it->first) + ":" + QString::number(it->second);
+  }
+
+  return osString.toStdString();
+}
+
+std::vector<std::pair<int, double>> osStringToData(std::string osStdString) {
+  std::vector<std::pair<int, double>> osData;
+
+  QString osString = QString::fromStdString(osStdString);
+  if (osString.isEmpty()) return osData;
+
+  QStringList osPairs = osString.split("|");
+  foreach (QString osPair, osPairs) {
+    QStringList info = osPair.split(":");
+    osData.push_back(
+        std::pair<int, double>(info.at(0).toDouble(), info.at(1).toDouble()));
+  }
+
+  return osData;
+}
+
+
 }  // namespace
 
 //***************************************************************************
@@ -61,18 +92,27 @@ TEnv::IntVar WholeScene("OnionSkinWholeScene", 0);
 TEnv::IntVar EveryFrame("OnionSkinEveryFrame", 1);
 TEnv::IntVar RelativeFrameMode("OnionSkinRelativeFrameMode", 1);
 
-OnionSkinMask::OnionSkinMask() {
-  m_enabled = false;
-  m_wholeScene = WholeScene;
-  m_everyFrame = EveryFrame;
-  m_LightTableStatus = false;
+TEnv::StringVar OnionSkinMOS("OnionSkinMOS", "");
+TEnv::StringVar OnionSkinDOS("OnionSkinDOS", "");
+
+OnionSkinMask::OnionSkinMask()
+    : m_enabled(false)
+    , m_LightTableStatus(false)
+    , m_wholeScene(false)
+    , m_everyFrame(true)
+    , m_isRelativeFrameMode(true) {}
+
+void OnionSkinMask::restoreOnionSkinData() {
+  m_wholeScene          = WholeScene;
+  m_everyFrame          = EveryFrame;
   m_isRelativeFrameMode = RelativeFrameMode;
+
+  m_mos = osStringToData(OnionSkinMOS.getValue());
+  m_dos = osStringToData(OnionSkinDOS.getValue());
 }
 
 void OnionSkinMask::clear() {
   m_fos.clear();
-  m_mos.clear();
-  m_dos.clear();
 
   m_shiftTraceStatus = DISABLED;
 
@@ -200,6 +240,8 @@ void OnionSkinMask::setMos(int drow, bool on) {
   } else {
     if (r != m_mos.end() && r->first == drow) m_mos.erase(r);
   }
+
+  OnionSkinMOS = osDataToString(m_mos);
 }
 
 //-------------------------------------------------------------------
@@ -234,6 +276,8 @@ void OnionSkinMask::setDos(int drow, bool on) {
   } else {
     if (r != m_dos.end() && r->first == drow) m_dos.erase(r);
   }
+
+  OnionSkinDOS = osDataToString(m_dos);
 }
 
 //-------------------------------------------------------------------
@@ -246,6 +290,8 @@ void OnionSkinMask::setMosOpacity(int drow, double opacity) {
       break;
     }
   }
+
+  OnionSkinMOS = osDataToString(m_mos);
 }
 
 //-------------------------------------------------------------------
@@ -290,6 +336,8 @@ void OnionSkinMask::setDosOpacity(int drow, double opacity) {
       break;
     }
   }
+
+  OnionSkinDOS = osDataToString(m_dos);
 }
 
 //-------------------------------------------------------------------

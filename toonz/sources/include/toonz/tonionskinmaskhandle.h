@@ -34,6 +34,8 @@ public:
   TOnionSkinMaskHandle();
   ~TOnionSkinMaskHandle();
 
+  void restoreOnionSkinData();
+
   const OnionSkinMask &getOnionSkinMask() const;
   void setOnionSkinMask(const OnionSkinMask &onionSkinMask);
 
