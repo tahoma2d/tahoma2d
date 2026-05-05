@@ -4180,8 +4180,6 @@ void SettingsPage::onOpenStylusConfig() {
   m_stylusConfig->blockSignals(false);
 
   // Display Popup -- Accounts for scrolled panel
-  m_stylusConfig->show();
-
   QScrollArea *sa = (QScrollArea *)senderWidget->parentWidget()
                         ->parentWidget()
                         ->parentWidget();
@@ -4209,6 +4207,8 @@ void SettingsPage::onOpenStylusConfig() {
   if (distanceX != 0 || distanceY != 0)
     m_stylusConfig->move(m_stylusConfig->x() - distanceX,
                          m_stylusConfig->y() - distanceY);
+
+  m_stylusConfig->show();
 }
 
 //-----------------------------------------------------------------------------

@@ -514,7 +514,7 @@ void ToolOptionTextField::onValueChanged() {
 //=============================================================================
 
 ToolOptionStylusConfigButton::ToolOptionStylusConfigButton(
-    TTool *tool, TStylusProperty *property)
+    QWidget *parent, TTool *tool, TStylusProperty *property)
     : QPushButton()
     , ToolOptionControl(tool, property->getName())
     , m_property(property) {
@@ -525,7 +525,7 @@ ToolOptionStylusConfigButton::ToolOptionStylusConfigButton(
 
   m_property->addListener(this);
 
-  m_stylusConfig = new StylusConfigPopup(m_property->getQStringName(), 0);
+  m_stylusConfig = new StylusConfigPopup(m_property->getQStringName(), parent);
 
   bool useLinearCurves = m_property->useLinearCurves();
   QList<TPointD> defaultPressureCurve =
@@ -595,7 +595,6 @@ void ToolOptionStylusConfigButton::onClicked() {
 
   updateStatus();
 
-  m_stylusConfig->show();
   QPoint configPos= mapToGlobal(QPoint(0, pos().y()));
   configPos.setY(configPos.y() + height());
   m_stylusConfig->move(configPos);
@@ -617,6 +616,8 @@ void ToolOptionStylusConfigButton::onClicked() {
   if (distanceX != 0 || distanceY != 0)
     m_stylusConfig->move(m_stylusConfig->x() - distanceX,
                          m_stylusConfig->y() - distanceY);
+
+  m_stylusConfig->show();
 }
 
 //-----------------------------------------------------------------------------
@@ -648,8 +649,8 @@ void ToolOptionStylusConfigButton::onConfigCurveChanged(int configId, bool isDra
 
 //=============================================================================
 
-ToolOptionBrushTipButton::ToolOptionBrushTipButton(
-    TTool *tool, TBrushTipProperty *property)
+ToolOptionBrushTipButton::ToolOptionBrushTipButton(QWidget *parent, TTool *tool,
+                                                   TBrushTipProperty *property)
     : QPushButton()
     , ToolOptionControl(tool, property->getName())
     , m_property(property) {
@@ -659,7 +660,7 @@ ToolOptionBrushTipButton::ToolOptionBrushTipButton(
 
   m_property->addListener(this);
 
-  m_brushTips = new BrushTipPopup(0);
+  m_brushTips = new BrushTipPopup(parent);
 
   updateStatus();
 
@@ -706,7 +707,6 @@ void ToolOptionBrushTipButton::onClicked() {
 
   updateStatus();
 
-  m_brushTips->show();
   QPoint configPos = mapToGlobal(QPoint(0, pos().y()));
   configPos.setY(configPos.y() + height());
   m_brushTips->move(configPos);
@@ -728,6 +728,8 @@ void ToolOptionBrushTipButton::onClicked() {
   if (distanceX != 0 || distanceY != 0)
     m_brushTips->move(m_brushTips->x() - distanceX,
                       m_brushTips->y() - distanceY);
+
+  m_brushTips->show();
 }
 
 //-----------------------------------------------------------------------------

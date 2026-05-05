@@ -274,7 +274,8 @@ protected:
   int m_pressureId, m_tiltId;
 
 public:
-  ToolOptionStylusConfigButton(TTool *tool, TStylusProperty *property);
+  ToolOptionStylusConfigButton(QWidget *parent, TTool *tool,
+                               TStylusProperty *property);
   void updateStatus() override;
   TStylusProperty *getProperty() { return m_property; }
 
@@ -297,7 +298,8 @@ protected:
   int m_pressureId, m_tiltId;
 
 public:
-  ToolOptionBrushTipButton(TTool *tool, TBrushTipProperty *property);
+  ToolOptionBrushTipButton(QWidget *parent, TTool *tool,
+                           TBrushTipProperty *property);
   void updateStatus() override;
   TBrushTipProperty *getProperty() { return m_property; }
 
