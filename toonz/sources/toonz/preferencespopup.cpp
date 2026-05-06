@@ -1789,6 +1789,8 @@ PreferencesPopup::PreferencesPopup()
                        SLOT(onImportPreferences()));
 
   assert(ret);
+
+  onCategoryListChanged(-1);
 }
 
 //-----------------------------------------------------------------------------
@@ -2699,7 +2701,7 @@ void PreferencesPopup::onColorFieldChanged(const TPixel32& color,
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onImportPreferences() {
-  m_categoryList->clearSelection();
+  m_categoryList->setCurrentRow(-1);
   onCategoryListChanged(m_categoryList->count());
 }
 
@@ -2997,15 +2999,16 @@ void PreferencesPopup::onCategoryListChanged(int index) {
   if (isImport) {
     m_searchLabel->setEnabled(false);
     m_searchEdit->setEnabled(false);
-    index = totalCategories - 1;
   } else if (!m_searchEdit->isEnabled()) {
     m_searchLabel->setEnabled(true);
     m_searchEdit->setEnabled(true);
   }
 
-    for (int i = 0; i < totalCategories; i++)
-      m_categoryBoxes[i]->setVisible(i == index || index == -1);
+  for (int i = 0; i < (totalCategories - 1); i++)
+    m_categoryBoxes[i]->setVisible(i == index || index == -1);
+  m_categoryBoxes[totalCategories - 1]->setVisible(isImport);
 }
+
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onSelectionCleared() { onCategoryListChanged(-1); }
