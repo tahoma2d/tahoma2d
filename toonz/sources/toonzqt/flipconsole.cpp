@@ -870,35 +870,43 @@ void FlipConsole::playNextFrame(QElapsedTimer *timer, qint64 targetInstant) {
     to   = m_stopAt;
   }
 
+  int playFrame = m_currentFrame;
+
+  // Did we jump out of play range?
+  if (m_currentFrame < from)
+    playFrame = from;
+  else if (m_currentFrame > to)
+    playFrame = to;
+
   if (m_framesCount == 0 || ((m_isLoop || m_isPingPong) && from == to) ||
-      (m_isPlay && m_playFrame == (m_reverse ? from : to))) {
+      (m_isPlay && playFrame == (m_reverse ? from : to))) {
     doButtonPressed(ePause);
     setChecked(m_isPlay ? ePlay : eLoop, false);
     setChecked(ePause, true);
-    m_playFrame = m_currentFrame;
+    playFrame = m_currentFrame;
     if (Preferences::instance()->rewindAfterPlaybackEnabled())
-      m_playFrame = (m_reverse ? to : from);
+      playFrame = (m_reverse ? to : from);
     emit playStateChanged(false);
   } else {
     if (drawBlanks(from, to, timer, targetInstant)) return;
 
     if (m_reverse)
-      m_playFrame = ((m_playFrame - m_step < from) ? (m_isPingPong ? from : to)
-                                                   : m_playFrame - m_step);
+      playFrame = ((playFrame - m_step < from) ? (m_isPingPong ? from : to)
+                                               : playFrame - m_step);
     else
-      m_playFrame = ((m_playFrame + m_step > to) ? (m_isPingPong ? to : from)
-                                                 : m_playFrame + m_step);
+      playFrame = ((playFrame + m_step > to) ? (m_isPingPong ? to : from)
+                                             : playFrame + m_step);
 
-    if (m_isPingPong && (m_playFrame <= from || m_playFrame >= to))
+    if (m_isPingPong && (playFrame <= from || playFrame >= to))
       m_reverse = !m_reverse;
   }
 
-  m_currFrameSlider->setValue(m_playFrame);
-  m_editCurrFrame->setText(QString::number(m_playFrame));
+  m_currFrameSlider->setValue(playFrame);
+  m_editCurrFrame->setText(QString::number(playFrame));
   updateCurrentTime();
   m_settings.m_blankColor        = TPixel::Transparent;
   m_settings.m_recomputeIfNeeded = true;
-  m_consoleOwner->onDrawFrame(m_playFrame, m_settings, timer, targetInstant);
+  m_consoleOwner->onDrawFrame(playFrame, m_settings, timer, targetInstant);
 }
 
 //-----------------------------------------------------------------------------
@@ -1747,8 +1755,6 @@ void FlipConsole::doButtonPressed(UINT button) {
       if (m_fpsField) m_fpsField->setLineEditBackgroundColor(Qt::red);
     }
 
-    m_playFrame = m_currentFrame;
-
     m_playbackExecutor.resetFps(m_isInbetweenFlip
                                     ? ((float)m_inbetweenFlipDrawings /
                                        ((float)m_inbetweenFlipSpeed / 1000.0))
@@ -1762,12 +1768,12 @@ void FlipConsole::doButtonPressed(UINT button) {
       // if the play button pressed at the end frame, then go back to the
       // start frame and play
       if (!m_isInbetweenFlip &&
-          (m_playFrame <= from ||
-           m_playFrame >=
+          (m_currentFrame <= from ||
+           m_currentFrame >=
                to))  // the first frame of the playback is drawn right now
-        m_playFrame = m_reverse ? to : from;
+        m_currentFrame = m_reverse ? to : from;
       m_settings.m_recomputeIfNeeded = true;
-      m_consoleOwner->onDrawFrame(m_playFrame, m_settings);
+      m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
     }
 
     emit playStateChanged(true);
@@ -1803,7 +1809,6 @@ void FlipConsole::doButtonPressed(UINT button) {
     m_isLoop       = false;
     m_isPingPong   = false;
     m_blanksToDraw = 0;
-    m_playFrame    = 0;
 
     m_consoleOwner->swapBuffers();
     m_consoleOwner->changeSwapBehavior(true);
