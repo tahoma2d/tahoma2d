@@ -358,12 +358,13 @@ int TApp::getCurrentImageType() {
 
 //-----------------------------------------------------------------------------
 
-void TApp::updateXshLevel() {
+void TApp::updateXshLevel(bool isColumnSwitch) {
   TXshLevel *xl = 0;
-  if (m_currentFrame->isEditingScene()) {
+  if (isColumnSwitch || m_currentFrame->isEditingScene()) {
     int frame       = m_currentFrame->getFrame();
     int column      = m_currentColumn->getColumnIndex();
     TXsheet *xsheet = m_currentXsheet->getXsheet();
+    TFrameId fid    = TFrameId::EMPTY_FRAME;
 
     bool isSoundColumn = false;
     if (xsheet->getColumn(column) &&
@@ -382,12 +383,14 @@ void TApp::updateXshLevel() {
                !xsheet->isColumnEmpty(column)) {
       TXshCell cell = xsheet->getCell(frame, column);
       xl            = cell.m_level.getPointer();
+      fid           = cell.getFrameId();
 
       // If I'm on an empty cell next to cells of a certain level
       // I take this as the current level.
       if (!xl && frame > 0) {
         TXshCell cell = xsheet->getCell(frame - 1, column);
         xl            = cell.m_level.getPointer();
+        fid           = cell.getFrameId();
       }
 
       // If we're on an empty cell and auto create is enabled,
@@ -399,12 +402,20 @@ void TApp::updateXshLevel() {
           TXshCell cell = xsheet->getCell(r, column);
           if (cell.isEmpty()) continue;
           xl = cell.m_level.getPointer();
+          fid = cell.getFrameId();
           break;
         }
+      }
+
+      if (xl && fid == TFrameId::STOP_FRAME) {
+        std::vector<TFrameId> fids;
+        xl->getFids(fids);
+        if (fids.size()) fid = fids[0];
       }
     }
 
     m_currentLevel->setLevel(xl);
+    if (m_currentFrame->isEditingLevel()) m_currentFrame->setFid(fid);
 
     // level could be the same, but palette could have changed
     if (xl && xl->getSimpleLevel()) {
@@ -558,7 +569,7 @@ void TApp::onFxSwitched() {
 
 void TApp::onColumnIndexSwitched() {
   // update xsheetlevel
-  updateXshLevel();
+  updateXshLevel(true);
 
   // update current object
   int columnIndex = m_currentColumn->getColumnIndex();

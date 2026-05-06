@@ -238,7 +238,7 @@ protected:
   bool m_canHideTitleBars = false;
 
 private:
-  void updateXshLevel();
+  void updateXshLevel(bool isColumnSwitch = false);
   void updateCurrentFrame();
 
 protected slots:
