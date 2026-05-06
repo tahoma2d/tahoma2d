@@ -276,6 +276,12 @@ If \b scene is in +scenes/name.tnz return name,
 
   int getPreviewFrameCount();
 
+  int getStartRow() const { return m_startRow; }
+  void setStartRow(int startRow) { m_startRow = startRow; }
+
+  int getStartCol() const { return m_startCol; }
+  void setStartCol(int startCol) { m_startCol = startCol; }
+
 private:
   TFilePath m_scenePath;  //!< Full path to the scene file (.tnz).
 
@@ -300,6 +306,8 @@ private:
   int m_overlayOpacity;
   TXshLevelColumn *m_overlayLevelColumn;
   TLevelColumnFx *m_overlayFx;
+
+  int m_startRow, m_startCol;
 
 private:
   // noncopyable

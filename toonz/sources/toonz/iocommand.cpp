@@ -1618,6 +1618,8 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
   
   TApp::instance()->setSaveInProgress(true);
   try {
+    scene->setStartRow(TApp::instance()->getCurrentFrame()->getFrameIndex());
+    scene->setStartCol(TApp::instance()->getCurrentColumn()->getColumnIndex());
     scene->save(scenePath, xsheet);
   } catch (const TSystemException &se) {
     DVGui::warning(QString::fromStdWString(se.getMessage()));
@@ -2109,8 +2111,8 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   }
   app->getCurrentScene()->setScene(scene);
   app->getCurrentScene()->notifyNameSceneChange();
-  app->getCurrentFrame()->setFrame(0);
-  app->getCurrentColumn()->setColumnIndex(0);
+  app->getCurrentFrame()->setFrame(scene->getStartRow());
+  app->getCurrentColumn()->setColumnIndex(scene->getStartCol());
   TPalette *palette = 0;
   if (app->getCurrentLevel() && app->getCurrentLevel()->getSimpleLevel())
     palette = app->getCurrentLevel()->getSimpleLevel()->getPalette();
