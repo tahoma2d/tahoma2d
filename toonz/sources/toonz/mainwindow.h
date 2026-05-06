@@ -251,6 +251,8 @@ protected slots:
   void toggleTransparency(bool);
   void makeTransparencyDialog();
 
+  void onHistoryChanged();
+
 public slots:
   /*--- タイトルにシーン名を入れる ---*/
   void changeWindowTitle();

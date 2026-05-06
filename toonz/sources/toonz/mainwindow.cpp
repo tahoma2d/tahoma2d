@@ -524,6 +524,10 @@ centralWidget->setLayout(centralWidgetLayout);*/
 
   connect(TApp::instance(), SIGNAL(activeViewerChanged()), this,
           SLOT(onActiveViewerChanged()));
+
+  connect(TUndoManager::manager(), SIGNAL(historyChanged()), this,
+          SLOT(onHistoryChanged()));
+  onHistoryChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -1066,6 +1070,14 @@ void MainWindow::onRedo() {
 
   bool ret = TUndoManager::manager()->redo();
 //  if (!ret) DVGui::error(QObject::tr("No more Redo operations available."));
+}
+
+void MainWindow::onHistoryChanged() {
+  QAction *action = CommandManager::instance()->getAction(MI_Undo);
+  action->setEnabled(!TUndoManager::manager()->atBeginning());
+
+  action = CommandManager::instance()->getAction(MI_Redo);
+  action->setEnabled(!TUndoManager::manager()->atEnd());
 }
 
 //-----------------------------------------------------------------------------

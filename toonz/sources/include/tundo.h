@@ -99,6 +99,9 @@ If n = -1 remove all elements before or after m_imp->m_current.*/
   int getCurrentHistoryIndex();
   TUndo *getUndoItem(int index);
 
+  bool atBeginning();
+  bool atEnd();
+
 Q_SIGNALS:
 
   void historyChanged();

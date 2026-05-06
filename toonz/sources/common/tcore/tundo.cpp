@@ -414,3 +414,17 @@ TUndo *TUndoManager::getUndoItem(int index) {
 
   return m_imp->m_undoList.at(index - 1);
 }
+
+//-----------------------------------------------------------------------------
+
+bool TUndoManager::atBeginning() {
+  UndoListIterator &it = m_imp->m_current;
+  return it == m_imp->m_undoList.begin();
+}
+
+//-----------------------------------------------------------------------------
+
+bool TUndoManager::atEnd() {
+  UndoListIterator &it = m_imp->m_current;
+  return it == m_imp->m_undoList.end();
+}
