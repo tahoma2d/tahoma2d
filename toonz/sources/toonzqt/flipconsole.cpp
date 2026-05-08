@@ -872,33 +872,56 @@ void FlipConsole::playNextFrame(QElapsedTimer *timer, qint64 targetInstant) {
 
   int playFrame = m_currentFrame;
 
-  // Did we jump out of play range?
-  if (m_currentFrame < from)
-    playFrame = from;
-  else if (m_currentFrame > to)
-    playFrame = to;
+  bool aborted = m_framesCount == 0 ||
+                 ((m_isLoop || m_isPingPong) && from == to) ||
+                 (m_isPlay && playFrame == (m_reverse ? from : to));
 
-  if (m_framesCount == 0 || ((m_isLoop || m_isPingPong) && from == to) ||
-      (m_isPlay && playFrame == (m_reverse ? from : to))) {
+  // Did we jump out of play range?
+  if (m_currentFrame < from && m_reverse) {
+    if (m_isPlay)
+      aborted = true;
+    else if (m_isPingPong)
+      m_reverse != m_reverse;
+  } else if (m_currentFrame > to && !m_reverse) {
+    if (m_isPlay)
+      aborted = true;
+    else if (m_isPingPong)
+      m_reverse != m_reverse;
+  }
+
+  if (aborted) {
     doButtonPressed(ePause);
     setChecked(m_isPlay ? ePlay : eLoop, false);
     setChecked(ePause, true);
-    playFrame = m_currentFrame;
     if (Preferences::instance()->rewindAfterPlaybackEnabled())
       playFrame = (m_reverse ? to : from);
     emit playStateChanged(false);
   } else {
     if (drawBlanks(from, to, timer, targetInstant)) return;
 
-    if (m_reverse)
-      playFrame = ((playFrame - m_step < from) ? (m_isPingPong ? from : to)
-                                               : playFrame - m_step);
-    else
-      playFrame = ((playFrame + m_step > to) ? (m_isPingPong ? to : from)
-                                             : playFrame + m_step);
+    if (m_reverse) {
+      playFrame = playFrame - m_step;
 
-    if (m_isPingPong && (playFrame <= from || playFrame >= to))
-      m_reverse = !m_reverse;
+      if (playFrame < from) {
+        if (m_isLoop)
+          playFrame = to;
+        else if (m_isPingPong) {
+          playFrame = playFrame + (m_step * 2);
+          m_reverse = !m_reverse;
+        }
+      }
+    } else {
+      playFrame = playFrame + m_step;
+
+      if (playFrame > to) {
+        if (m_isLoop)
+          playFrame = from;
+        else if (m_isPingPong) {
+          playFrame = playFrame - (m_step * 2);
+          m_reverse = !m_reverse;
+        }
+      }
+    }
   }
 
   m_currFrameSlider->setValue(playFrame);
