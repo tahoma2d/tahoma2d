@@ -432,7 +432,8 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
     , m_tool(tool)
     , m_frameHandle(frameHandle)
     , m_objHandle(objHandle)
-    , m_xshHandle(xshHandle) {
+    , m_xshHandle(xshHandle)
+    , m_updateControls(true) {
   setFrameStyle(QFrame::StyledPanel);
   setObjectName("toolOptionsPanel");
   setFixedHeight(26);
@@ -1176,6 +1177,55 @@ bool ArrowToolOptionsBox::canSetInterpolation(int axisId, bool allKeys,
 }
 
 void ArrowToolOptionsBox::updateStatus() {
+  // General
+  m_chooseActiveAxisCombo->updateStatus();
+  m_pickCombo->updateStatus();
+
+  // Position
+  m_motionPathPosField->updateStatus();
+  m_ewPosField->updateStatus();
+  m_nsPosField->updateStatus();
+  m_zField->updateStatus();
+  m_noScaleZField->updateStatus();
+  m_lockEWPosCheckbox->updateStatus();
+  m_lockNSPosCheckbox->updateStatus();
+  m_soField->updateStatus();
+
+  // Rotation
+  m_rotationField->updateStatus();
+
+  // Scale
+  m_globalScaleField->updateStatus();
+  m_scaleHField->updateStatus();
+  m_scaleVField->updateStatus();
+  m_lockScaleHCheckbox->updateStatus();
+  m_lockScaleVCheckbox->updateStatus();
+  m_maintainCombo->updateStatus();
+
+  // Shear
+  m_shearHField->updateStatus();
+  m_shearVField->updateStatus();
+  m_lockShearHCheckbox->updateStatus();
+  m_lockShearVCheckbox->updateStatus();
+
+  // Drawing Number
+  m_drawingNumberField->updateStatus();
+
+  // Center Position
+  m_ewCenterField->updateStatus();
+  m_nsCenterField->updateStatus();
+  m_lockEWCenterCheckbox->updateStatus();
+  m_lockNSCenterCheckbox->updateStatus();
+
+  m_globalKey->updateStatus();
+
+  bool splined = isCurrentObjectSplined();
+  if (splined != m_splined) setSplined(splined);
+
+  if (m_updateControls) updateControls();
+}
+
+void ArrowToolOptionsBox::updateControls() {
   TStageObjectId objId        = m_objHandle->getObjectId();
   TStageObject *stageObj      = m_xshHandle->getXsheet()->getStageObject(objId);
   int frame                   = m_frameHandle->getFrameIndex();
@@ -1188,15 +1238,12 @@ void ArrowToolOptionsBox::updateStatus() {
   QString inBetweenColorName = getInBetweenBorderColor().name();
 
   bool isPlaying = m_frameHandle->isPlaying();
+  if (isPlaying) m_updateControls = false; // Stop updating on next pass
   QString highlightKey =
       isPlaying ? "" : "QLineEdit {background-color: " + keyColorName + ";}";
   QString highlightInbetween =
       isPlaying ? ""
                 : "QLineEdit {background-color: " + inBetweenColorName + ";}";
-
-  // General
-  m_chooseActiveAxisCombo->updateStatus();
-  m_pickCombo->updateStatus();
 
   // Position
   m_motionPathPosField->setStyleSheet(
@@ -1229,14 +1276,6 @@ void ArrowToolOptionsBox::updateStatus() {
           : (stageObj->isChannelInterpolated(TStageObject::T_SO, frame)
                  ? highlightInbetween
                  : ""));
-  m_motionPathPosField->updateStatus();
-  m_ewPosField->updateStatus();
-  m_nsPosField->updateStatus();
-  m_zField->updateStatus();
-  m_noScaleZField->updateStatus();
-  m_lockEWPosCheckbox->updateStatus();
-  m_lockNSPosCheckbox->updateStatus();
-  m_soField->updateStatus();
 
   // Rotation
   m_rotationField->setStyleSheet(
@@ -1245,7 +1284,6 @@ void ArrowToolOptionsBox::updateStatus() {
           : (stageObj->isChannelInterpolated(TStageObject::T_Angle, frame)
                  ? highlightInbetween
                  : ""));
-  m_rotationField->updateStatus();
 
   // Scale
   m_globalScaleField->setStyleSheet(
@@ -1266,12 +1304,6 @@ void ArrowToolOptionsBox::updateStatus() {
           : (stageObj->isChannelInterpolated(TStageObject::T_ScaleY, frame)
                  ? highlightInbetween
                  : ""));
-  m_globalScaleField->updateStatus();
-  m_scaleHField->updateStatus();
-  m_scaleVField->updateStatus();
-  m_lockScaleHCheckbox->updateStatus();
-  m_lockScaleVCheckbox->updateStatus();
-  m_maintainCombo->updateStatus();
 
   // Shear
   m_shearHField->setStyleSheet(
@@ -1286,10 +1318,6 @@ void ArrowToolOptionsBox::updateStatus() {
           : (stageObj->isChannelInterpolated(TStageObject::T_ShearY, frame)
                  ? highlightInbetween
                  : ""));
-  m_shearHField->updateStatus();
-  m_shearVField->updateStatus();
-  m_lockShearHCheckbox->updateStatus();
-  m_lockShearVCheckbox->updateStatus();
 
   // Drawing Number
   m_drawingNumberField->setStyleSheet(
@@ -1299,18 +1327,6 @@ void ArrowToolOptionsBox::updateStatus() {
                                              frame)
                  ? highlightInbetween
                  : ""));
-  m_drawingNumberField->updateStatus();
-
-  // Center Position
-  m_ewCenterField->updateStatus();
-  m_nsCenterField->updateStatus();
-  m_lockEWCenterCheckbox->updateStatus();
-  m_lockNSCenterCheckbox->updateStatus();
-
-  m_globalKey->updateStatus();
-
-  bool splined = isCurrentObjectSplined();
-  if (splined != m_splined) setSplined(splined);
 
   int axisId   = m_chooseActiveAxisCombo->currentIndex();
   bool allKeys = axisId == AXIS::AllAxis || m_globalKey->isChecked();
@@ -1352,13 +1368,25 @@ void ArrowToolOptionsBox::updateStatus() {
 
 //-----------------------------------------------------------------------------
 
-void ArrowToolOptionsBox::onPlayingStatusChanged() {
-  if (!m_frameHandle->isPlaying()) updateStatus();
+void ArrowToolOptionsBox::onFrameSwitched() {
+  updateStatus();
 }
 
 //-----------------------------------------------------------------------------
 
-void ArrowToolOptionsBox::onStageObjectChange() { updateStatus(); }
+void ArrowToolOptionsBox::onPlayingStatusChanged() {
+  if (!m_frameHandle->isPlaying()) {
+    m_updateControls = true;
+    updateStatus();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onStageObjectChange(bool isDragging) {
+  m_updateControls = !isDragging;
+  updateStatus();
+}
 
 //-----------------------------------------------------------------------------
 /*! update the object list in combobox
@@ -4198,17 +4226,17 @@ void ToolOptions::showEvent(QShowEvent *) {
 
   TObjectHandle *currObject = app->getCurrentObject();
   if (currObject) {
-    onStageObjectChange();
-    connect(currObject, SIGNAL(objectSwitched()), SLOT(onStageObjectChange()));
+    onStageObjectChange(false);
+    connect(currObject, SIGNAL(objectSwitched()), SLOT(onStageObjectChange(bool)));
     connect(currObject, SIGNAL(objectChanged(bool)),
-            SLOT(onStageObjectChange()));
+            SLOT(onStageObjectChange(bool)));
   }
 
   TXshLevelHandle *currLevel = app->getCurrentLevel();
 
   if (currLevel)
     connect(currLevel, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
-            SLOT(onStageObjectChange()));
+            SLOT(onStageObjectChange(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -4340,7 +4368,7 @@ void ToolOptions::onToolChanged() {
 
 //-----------------------------------------------------------------------------
 
-void ToolOptions::onStageObjectChange() {
+void ToolOptions::onStageObjectChange(bool isDragging) {
   TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
   if (!tool) return;
 
@@ -4348,7 +4376,7 @@ void ToolOptions::onStageObjectChange() {
   if (it == m_panels.end()) return;
 
   ToolOptionsBox *panel = it->second;
-  panel->onStageObjectChange();
+  panel->onStageObjectChange(isDragging);
 }
 
 //***********************************************************************************

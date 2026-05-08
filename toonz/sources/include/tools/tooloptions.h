@@ -125,7 +125,7 @@ public:
 
   virtual void
   updateStatus();  //!< Invokes updateStatus() on all registered controls
-  virtual void onStageObjectChange() {}
+  virtual void onStageObjectChange(bool isDragging = false) {}
 
   QHBoxLayout *hLayout() { return m_layout; }
   void addControl(ToolOptionControl *control);
@@ -291,6 +291,8 @@ class ArrowToolOptionsBox final : public ToolOptionsBox {
   QPushButton *m_hFlipButton, *m_vFlipButton, *m_leftRotateButton,
       *m_rightRotateButton, *m_setKeyButton, *m_resetCenterButton;
 
+  bool m_updateControls;
+
   // enables adjusting value by dragging on the label
   void connectLabelAndField(ClickableLabel *label, MeasuredValueField *field);
 
@@ -300,7 +302,8 @@ public:
                       TXsheetHandle *xshHandle, ToolHandle *toolHandle);
 
   void updateStatus();
-  void onStageObjectChange();
+  void updateControls();
+  void onStageObjectChange(bool isDragging = false);
 
 protected:
   void showEvent(QShowEvent *);
@@ -313,7 +316,7 @@ protected:
                            TStageObject *stageObj);
 
 protected slots:
-  void onFrameSwitched() { updateStatus(); }
+  void onFrameSwitched();
   void onPlayingStatusChanged();
   // update the object list in combobox
   void updateStageObjectComboItems();
@@ -954,7 +957,7 @@ public slots:
 
   void onToolSwitched();
   void onToolChanged();
-  void onStageObjectChange();
+  void onStageObjectChange(bool);
 
 signals:
   // used in ComboViewer to handle Tab focus

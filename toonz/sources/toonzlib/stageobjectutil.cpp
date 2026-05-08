@@ -364,7 +364,7 @@ void UndoStageObjectMove::undo() const {
   // the actual removal of the key happens immediately after this.
   QTimer::singleShot(50, [=]() {
     m_xsheetHandle->notifyXsheetChanged();
-    m_objectHandle->notifyObjectIdChanged(true);
+    m_objectHandle->notifyObjectIdChanged(false);
   });
 }
 
