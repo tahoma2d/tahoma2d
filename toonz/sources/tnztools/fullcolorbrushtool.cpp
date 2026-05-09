@@ -1288,7 +1288,6 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   TXshSimpleLevelP simLevel = level->getSimpleLevel();
 
   if (m_tileSet->getTileCount() > 0) {
-    delete m_tileSaver;
     TFrameId frameId = getCurrentFid();
     TRasterP subras  = ras->extract(m_strokeRect)->clone();
     TUndoManager::manager()->add(new FullColorBrushUndo(
@@ -1314,11 +1313,13 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
 
   notifyImageChanged();
   m_strokeRect.empty();
+  delete m_tileSaver;
   m_mousePressed     = false;
   m_isStraight       = false;
   m_oldPressure      = -1.0;
   m_perspectiveIndex = -1;
   m_tiltAngle        = 0;
+  m_tileSaver        = 0;
 }
 
 //---------------------------------------------------------------------------------------------------------------

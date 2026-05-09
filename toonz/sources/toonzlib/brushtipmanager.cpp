@@ -232,6 +232,11 @@ void BrushTipLoaderTask::run() {
     imageContour = createImagecontour(tmp);
 #endif
 
+    if (tmp) {
+      delete tmp;
+      tmp = nullptr;
+    }
+
     QString name   = QString::fromStdString(m_fp.getName());
     std::string id = TTextureStyle::staticBrushIdName(m_rpath.toStdWString());
     QString folder = (m_rpath.toStdString() != m_fp.getLevelName())
