@@ -32,6 +32,34 @@
 #include <QApplication>
 #include <QLabel>
 
+namespace {
+//-----------------------------------------------------------------------------
+
+static QByteArray packStringList(const QStringList& lst) {
+  QByteArray ba;
+  QDataStream ds(&ba, QIODevice::WriteOnly);
+  ds << (qint32)lst.size();
+  int i;
+  for (i = 0; i < lst.size(); i++) ds << lst.at(i);
+  return ba;
+}
+
+//-----------------------------------------------------------------------------
+static QStringList unpackStringList(const QByteArray& ba) {
+  QStringList lst;
+  QDataStream ds(ba);
+  qint32 n = 0;
+  ds >> n;
+  int i;
+  for (i = 0; i < n; i++) {
+    QString s;
+    ds >> s;
+    lst.append(s);
+  }
+  return lst;
+}
+}  // namespace
+
 //=============================================================================
 // CommandItem
 //-----------------------------------------------------------------------------
@@ -165,33 +193,54 @@ QTreeWidgetItem* CommandListTree::addFolder(const QString& title,
 //-----------------------------------------------------------------------------
 
 void CommandListTree::mousePressEvent(QMouseEvent* event) {
-  setCurrentItem(itemAt(event->pos()));
-  CommandItem* commandItem = dynamic_cast<CommandItem*>(itemAt(event->pos()));
-  SeparatorItem* separatorItem =
-      dynamic_cast<SeparatorItem*>(itemAt(event->pos()));
+  QTreeWidget::mousePressEvent(event);
 
-  if (commandItem || separatorItem) {
-    std::string dragStr;
-    QString dragPixmapTxt;
+  QList<QTreeWidgetItem*> selected = selectedItems();
+  QStringList addList;
+  QString dragPixmapTxt;
+
+  foreach (QTreeWidgetItem* item2, selected) {
+    CommandItem* commandItem     = dynamic_cast<CommandItem*>(item2);
+    SeparatorItem* separatorItem = dynamic_cast<SeparatorItem*>(item2);
+    QString itemStr;
+
     if (commandItem) {
-      dragStr =
+      std::string id =
           CommandManager::instance()->getIdFromAction(commandItem->getAction());
-      dragPixmapTxt = commandItem->getAction()->text();
-      dragPixmapTxt.remove("&");
-    } else {
-      dragStr       = "separator";
-      dragPixmapTxt = tr("----Separator----");
+
+      addList.append(QString::fromStdString(id));
+      itemStr = commandItem->text(0);
+    } else if (separatorItem) {
+      addList.append("separator");
+      itemStr = tr("----Separator----");
     }
 
+    if (!itemStr.isEmpty()) {
+      if (!dragPixmapTxt.isEmpty()) dragPixmapTxt.append("\n");
+      dragPixmapTxt.append(itemStr);
+    }
+  }
+
+  if (!addList.isEmpty()) {
     QMimeData* mimeData = new QMimeData;
+    mimeData->setData("application/vnd.toonz.commandlist",
+                      packStringList(addList));
+
+    std::string dragStr = dragPixmapTxt.toStdString();
+
     mimeData->setText(QString::fromStdString(dragStr));
 
     QFontMetrics fm(QApplication::font());
-    QPixmap pix(fm.boundingRect(dragPixmapTxt).adjusted(-2, -2, 2, 2).size());
+    QPixmap pix(
+        fm.boundingRect(QRect(0, 0, 500, 500), Qt::TextWordWrap, dragPixmapTxt)
+            .adjusted(-2, -2, 2, 2)
+            .size());
     QPainter painter(&pix);
-    painter.fillRect(pix.rect(), Qt::white);
-    painter.setPen(Qt::black);
-    painter.drawText(pix.rect(), Qt::AlignCenter, dragPixmapTxt);
+    painter.fillRect(pix.rect(),
+                     palette().color(QPalette::Active, QPalette::Highlight));
+    painter.setPen(
+        palette().color(QPalette::Active, QPalette::HighlightedText));
+    painter.drawText(pix.rect(), Qt::AlignLeft, dragPixmapTxt);
 
     QDrag* drag = new QDrag(this);
     drag->setMimeData(mimeData);
@@ -199,8 +248,6 @@ void CommandListTree::mousePressEvent(QMouseEvent* event) {
 
     drag->exec(Qt::CopyAction);
   }
-
-  QTreeWidget::mousePressEvent(event);
 }
 
 //-----------------------------------------------------------------------------
@@ -410,18 +457,36 @@ void CommandBarTree::saveMenuRecursive(QXmlStreamWriter& writer,
 
 //-----------------------------------------------------------------------------
 
+void CommandBarTree::dropEvent(QDropEvent* event) {
+  QList<QTreeWidgetItem*> selected = selectedItems();
+
+  QTreeWidget::dropEvent(event);
+
+  // On move, ExtendedMode clears prior selection but doesn't reselect. 
+  if (!selectedItems().size() && selected.size())
+    foreach (QTreeWidgetItem* item, selected) item->setSelected(true);
+};
+
+//-----------------------------------------------------------------------------
+
 bool CommandBarTree::dropMimeData(QTreeWidgetItem* parent, int index,
                                   const QMimeData* data,
                                   Qt::DropAction action) {
-  if (data->hasText()) {
-    QString txt = data->text();
+  QStringList commandList =
+      unpackStringList(data->data("application/vnd.toonz.commandlist"));
+
+  if (commandList.isEmpty()) return false;
+
+  clearSelection();
+
+  foreach (QString txt, commandList) {
     QTreeWidgetItem* item;
     if (txt == "separator")
       item = new SeparatorItem(0);
     else {
       QAction* act =
           CommandManager::instance()->getAction(txt.toStdString().c_str());
-      if (!act) return false;
+      if (!act) continue;
       item = new CommandItem(0, act);
     }
 
@@ -430,10 +495,10 @@ bool CommandBarTree::dropMimeData(QTreeWidgetItem* parent, int index,
     else
       insertTopLevelItem(index, item);
 
-    return true;
+    item->setSelected(true);
   }
 
-  return false;
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -449,13 +514,19 @@ QStringList CommandBarTree::mimeTypes() const {
 void CommandBarTree::contextMenuEvent(QContextMenuEvent* event) {
   QTreeWidgetItem* item = itemAt(event->pos());
   if (item != currentItem()) setCurrentItem(item);
+  if (!item) return;
+
   QMenu* menu = new QMenu(this);
   QAction* action;
 
-  if (item) {
+  QList<QTreeWidgetItem*> selected = selectedItems();
+
+  if (selected.count() == 1)
     action = menu->addAction(tr("Remove \"%1\"").arg(item->text(0)));
-    connect(action, SIGNAL(triggered()), this, SLOT(removeItem()));
-  }
+  else
+    action = menu->addAction(tr("Remove Selected Commands"));
+
+  connect(action, SIGNAL(triggered()), this, SLOT(removeItem()));
 
   menu->exec(event->globalPos());
   delete menu;
@@ -464,15 +535,14 @@ void CommandBarTree::contextMenuEvent(QContextMenuEvent* event) {
 //-----------------------------------------------------------------------------
 
 void CommandBarTree::removeItem() {
-  QTreeWidgetItem* item = currentItem();
-  if (!item) return;
+  QList<QTreeWidgetItem*> selected = selectedItems();
 
-  if (indexOfTopLevelItem(item) >= 0)
+  if (selected.isEmpty()) return;
+
+  foreach (QTreeWidgetItem* item, selected) {
     takeTopLevelItem(indexOfTopLevelItem(item));
-  else
-    item->parent()->removeChild(item);
-
-  delete item;
+    delete item;
+  }
 }
 
 //=============================================================================
@@ -513,15 +583,46 @@ CommandBarPopup::CommandBarPopup(QString barId, CommandBarType barType)
   }
 
   m_commandListTree = new CommandListTree(commandBarLabel->text(), this);
-  m_menuBarTree     = new CommandBarTree(m_path, m_defaultPath, this);
+  m_commandListTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  m_menuBarTree = new CommandBarTree(m_path, m_defaultPath, this);
+  m_menuBarTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   QPushButton* okBtn     = new QPushButton(tr("OK"), this);
+  okBtn->setFocusPolicy(Qt::NoFocus);
+
   QPushButton* cancelBtn = new QPushButton(tr("Cancel"), this);
+  cancelBtn->setFocusPolicy(Qt::NoFocus);
+
+  m_moveItemUpBtn = new QPushButton(this);
+  m_moveItemUpBtn->setFixedSize(QSize(22, 20));
+  m_moveItemUpBtn->setIconSize(QSize(20, 20));
+  m_moveItemUpBtn->setToolTip(tr("Move Up"));
+  m_moveItemUpBtn->setIcon(createQIcon("folder_arrow_up"));
+
+  m_moveItemDownBtn = new QPushButton(this);
+  m_moveItemDownBtn->setFixedSize(QSize(22, 20));
+  m_moveItemDownBtn->setIconSize(QSize(20, 20));
+  m_moveItemDownBtn->setToolTip(tr("Move Down"));
+  m_moveItemDownBtn->setIcon(createQIcon("folder_arrow_down"));
+
+  m_removeItemBtn = new QPushButton(this);
+  m_removeItemBtn->setFixedSize(QSize(22, 20));
+  m_removeItemBtn->setIconSize(QSize(20, 20));
+  m_removeItemBtn->setToolTip(tr("Remove"));
+  m_removeItemBtn->setIcon(createQIcon("folder_arrow_left"));
+
+  m_addItemBtn = new QPushButton(this);
+  m_addItemBtn->setFixedSize(QSize(22, 20));
+  m_addItemBtn->setIconSize(QSize(20, 20));
+  m_addItemBtn->setToolTip(tr("Add"));
+  m_addItemBtn->setIcon(createQIcon("folder_arrow_right"));
+
+  m_addItemBtn->setEnabled(false);
+  m_moveItemUpBtn->setEnabled(false);
+  m_moveItemDownBtn->setEnabled(false);
+  m_removeItemBtn->setEnabled(false);
 
   m_saveAsDefaultCB = new QCheckBox(tr("Save as Default"));
-
-  okBtn->setFocusPolicy(Qt::NoFocus);
-  cancelBtn->setFocusPolicy(Qt::NoFocus);
 
   QLabel* commandItemListLabel = new QLabel(tr("Commands"), this);
 
@@ -548,11 +649,8 @@ CommandBarPopup::CommandBarPopup(QString barId, CommandBarType barType)
     mainUILay->setHorizontalSpacing(8);
     mainUILay->setVerticalSpacing(5);
     {
+      // Left Column (Commands)
       mainUILay->addWidget(commandItemListLabel, 0, 0);
-      mainUILay->addWidget(commandBarLabel, 0, 1);
-
-      mainUILay->addWidget(m_menuBarTree, 1, 1, 2, 1);
-
       QHBoxLayout* searchLay = new QHBoxLayout();
       searchLay->setContentsMargins(0, 0, 0, 0);
       searchLay->setSpacing(5);
@@ -563,13 +661,33 @@ CommandBarPopup::CommandBarPopup(QString barId, CommandBarType barType)
       mainUILay->addLayout(searchLay, 1, 0);
       mainUILay->addWidget(m_commandListTree, 2, 0);
 
-      mainUILay->addWidget(noticeLabel, 3, 0, 1, 2);
+      // Center Column (Buttons)
+      QVBoxLayout* buttonLay = new QVBoxLayout();
+      buttonLay->setContentsMargins(0, 0, 0, 0);
+      buttonLay->setSpacing(10);
+      {
+        buttonLay->addStretch(1);
+        buttonLay->addWidget(m_moveItemUpBtn);
+        buttonLay->addWidget(m_addItemBtn);
+        buttonLay->addWidget(m_removeItemBtn);
+        buttonLay->addWidget(m_moveItemDownBtn);
+        buttonLay->addStretch(1);
+      }
+      mainUILay->addLayout(buttonLay, 2, 1);
+
+      // Right Column (Command Bar)
+      mainUILay->addWidget(commandBarLabel, 0, 2);
+      mainUILay->addWidget(m_menuBarTree, 1, 2, 2, 1);
+
+      // Bottom Row
+      mainUILay->addWidget(noticeLabel, 3, 0, 1, 3);
     }
     mainUILay->setRowStretch(0, 0);
-    mainUILay->setRowStretch(1, 1);
-    mainUILay->setRowStretch(2, 0);
+    mainUILay->setRowStretch(1, 0);
+    mainUILay->setRowStretch(2, 1);
     mainUILay->setColumnStretch(0, 1);
     mainUILay->setColumnStretch(1, 1);
+    mainUILay->setColumnStretch(2, 1);
 
     m_topLayout->addLayout(mainUILay, 1);
   }
@@ -608,6 +726,21 @@ CommandBarPopup::CommandBarPopup(QString barId, CommandBarType barType)
   ret = ret && connect(searchEdit, SIGNAL(textChanged(const QString&)), this,
                        SLOT(onSearchTextChanged(const QString&)));
 
+
+  ret = ret &&
+        connect(m_moveItemUpBtn, SIGNAL(clicked()), this, SLOT(onMoveItemUp()));
+  ret = ret && connect(m_moveItemDownBtn, SIGNAL(clicked()), this,
+                       SLOT(onMoveItemDown()));
+  ret =
+      ret && connect(m_addItemBtn, SIGNAL(clicked()), this, SLOT(onAddItem()));
+  ret = ret &&
+        connect(m_removeItemBtn, SIGNAL(clicked()), this, SLOT(onRemoveItem()));
+
+  ret = ret && connect(m_commandListTree, SIGNAL(itemSelectionChanged()), this,
+                       SLOT(onCommandListSelectionChanged()));
+  ret = ret && connect(m_menuBarTree, SIGNAL(itemSelectionChanged()), this,
+                       SLOT(onMenuBarSelectionChanged()));
+
   assert(ret);
 }
 
@@ -628,4 +761,139 @@ void CommandBarPopup::onSearchTextChanged(const QString& text) {
   busy = true;
   m_commandListTree->searchItems(text);
   busy = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBarPopup::onMoveItemUp() {
+  QList<QTreeWidgetItem*> selected = m_menuBarTree->selectedItems();
+
+  if (selected.isEmpty()) return;
+
+  int topIndex = m_menuBarTree->topLevelItemCount() - 1;
+
+  foreach (QTreeWidgetItem* item, selected) {
+    topIndex = std::min(topIndex, m_menuBarTree->indexOfTopLevelItem(item));
+    if (topIndex == 0) return;
+  }
+
+  foreach (QTreeWidgetItem* item, selected) {
+    m_menuBarTree->takeTopLevelItem(m_menuBarTree->indexOfTopLevelItem(item));
+    m_menuBarTree->insertTopLevelItem(topIndex - 1, item);
+    topIndex++;
+  }
+
+  m_menuBarTree->clearSelection();
+
+  foreach (QTreeWidgetItem* item, selected) item->setSelected(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBarPopup::onMoveItemDown() {
+  QList<QTreeWidgetItem*> selected = m_menuBarTree->selectedItems();
+
+  if (selected.isEmpty()) return;
+
+  int topIndex  = 0;
+  int lastIndex = m_menuBarTree->topLevelItemCount() - 1;
+
+  foreach (QTreeWidgetItem* item, selected) {
+    topIndex = std::max(topIndex, m_menuBarTree->indexOfTopLevelItem(item));
+    if (topIndex >= lastIndex) return;
+  }
+
+  foreach (QTreeWidgetItem* item, selected)
+    m_menuBarTree->removeItemWidget(item, 0);
+
+  foreach (QTreeWidgetItem* item, selected) {
+    m_menuBarTree->takeTopLevelItem(m_menuBarTree->indexOfTopLevelItem(item));
+    m_menuBarTree->insertTopLevelItem(topIndex + 1, item);
+  }
+
+  m_menuBarTree->clearSelection();
+
+  foreach (QTreeWidgetItem* item, selected) item->setSelected(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBarPopup::onAddItem() {
+  QList<QTreeWidgetItem*> selected = m_commandListTree->selectedItems();
+  QList<QTreeWidgetItem*> newSelection;
+
+  if (selected.isEmpty()) return;
+
+  int topIndex = m_menuBarTree->topLevelItemCount();
+
+  foreach (QTreeWidgetItem* item, m_menuBarTree->selectedItems())
+    topIndex = std::min(topIndex, m_menuBarTree->indexOfTopLevelItem(item));
+
+  foreach (QTreeWidgetItem* item, selected) {
+    CommandItem* commandItem     = dynamic_cast<CommandItem*>(item);
+    SeparatorItem* separatorItem = dynamic_cast<SeparatorItem*>(item);
+
+    std::string itemStr;
+    if (commandItem) {
+      itemStr =
+          CommandManager::instance()->getIdFromAction(commandItem->getAction());
+      QAction* act = CommandManager::instance()->getAction(itemStr.c_str());
+      if (!act) continue;
+      CommandItem* newItem = new CommandItem(0, act);
+      m_menuBarTree->insertTopLevelItem(topIndex++, newItem);
+      newSelection.append(newItem);
+    } else if (separatorItem) {
+      SeparatorItem* sep = new SeparatorItem(0);
+      m_menuBarTree->insertTopLevelItem(topIndex++, sep);
+      newSelection.append(sep);
+    }
+  }
+
+  if (newSelection.isEmpty()) return;
+
+  m_menuBarTree->clearSelection();
+
+  foreach (QTreeWidgetItem* item, newSelection) item->setSelected(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBarPopup::onRemoveItem() {
+  QList<QTreeWidgetItem*> selected = m_menuBarTree->selectedItems();
+
+  if (selected.isEmpty()) return;
+
+  foreach (QTreeWidgetItem* item, selected) {
+    m_menuBarTree->takeTopLevelItem(m_menuBarTree->indexOfTopLevelItem(item));
+    delete item;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBarPopup::onCommandListSelectionChanged() {
+  QList<QTreeWidgetItem*> selected = m_commandListTree->selectedItems();
+
+  bool hasSelection = false;
+
+  foreach (QTreeWidgetItem* item, selected) {
+    CommandItem* commandItem     = dynamic_cast<CommandItem*>(item);
+    SeparatorItem* separatorItem = dynamic_cast<SeparatorItem*>(item);
+    if (commandItem || separatorItem) {
+      hasSelection = true;
+      break;
+    }
+  }
+
+  m_addItemBtn->setEnabled(hasSelection);
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBarPopup::onMenuBarSelectionChanged() {
+  bool hasSelection = m_menuBarTree->selectedItems().size() > 0;
+
+  m_moveItemUpBtn->setEnabled(hasSelection);
+  m_moveItemDownBtn->setEnabled(hasSelection);
+  m_removeItemBtn->setEnabled(hasSelection);
 }

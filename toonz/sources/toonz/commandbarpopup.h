@@ -83,6 +83,7 @@ public:
   void saveMenuTree(TFilePath& path);
 
 protected:
+  void dropEvent(QDropEvent* event) override;
   bool dropMimeData(QTreeWidgetItem* parent, int index, const QMimeData* data,
                     Qt::DropAction action) override;
   QStringList mimeTypes() const override;
@@ -102,12 +103,21 @@ class CommandBarPopup final : public DVGui::Dialog {
   QCheckBox* m_saveAsDefaultCB;
   TFilePath m_path, m_defaultPath;
 
+  QPushButton *m_moveItemUpBtn, *m_moveItemDownBtn, *m_removeItemBtn,
+      *m_addItemBtn;
+
 public:
   CommandBarPopup(QString barId,
                   CommandBarType barType = CommandBarType::Command);
 protected slots:
   void onOkPressed();
   void onSearchTextChanged(const QString& text);
+  void onMoveItemUp();
+  void onMoveItemDown();
+  void onAddItem();
+  void onRemoveItem();
+  void onCommandListSelectionChanged();
+  void onMenuBarSelectionChanged();
 };
 
 #endif
