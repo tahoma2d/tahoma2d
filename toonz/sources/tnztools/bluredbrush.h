@@ -95,6 +95,8 @@ public:
                      BrushTipData *brushTip = 0, double spacing = 1,
                      double rotation = 0, bool flipH = false,
                      bool flipV = false, double scatter = 0);
+  
+  ~RasterBlurredBrush();
 
   void addSymmetryBrushes(double lines, double rotation, TPointD centerPoint,
                           bool useLineSymmetry, TPointD dpiScale);

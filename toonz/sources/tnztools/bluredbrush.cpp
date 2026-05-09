@@ -673,6 +673,14 @@ RasterBlurredBrush::RasterBlurredBrush(const TRaster32P &ras, int size,
 
 //------------------------------------------------------------------
 
+RasterBlurredBrush::~RasterBlurredBrush() {
+  for (BluredBrush *brush : m_blurredBrushes) {
+    delete brush;
+  }
+}
+
+//------------------------------------------------------------------
+
 void RasterBlurredBrush::addSymmetryBrushes(double lines, double rotation,
                                             TPointD centerPoint,
                                             bool useLineSymmetry,
