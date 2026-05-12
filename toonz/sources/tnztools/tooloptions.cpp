@@ -657,13 +657,6 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_resetCenterButton->setIconSize(QSize(20, 20));
   m_resetCenterButton->setToolTip(tr("Reset Center"));
 
-  int interpolationType = Preferences::instance()->getKeyframeType();
-  for (int i = 0; i < m_interpolationCombo->count(); ++i)
-    if (m_interpolationCombo->itemData(i) == interpolationType) {
-      m_interpolationCombo->setCurrentIndex(i);
-      break;
-    }
-
   bool splined                        = isCurrentObjectSplined();
   if (splined != m_splined) m_splined = splined;
   setSplined(m_splined);
@@ -982,6 +975,13 @@ void ArrowToolOptionsBox::connectLabelAndField(ClickableLabel *label,
 //-----------------------------------------------------------------------------
 
 void ArrowToolOptionsBox::showEvent(QShowEvent *) {
+  int interpolationType = Preferences::instance()->getKeyframeType();
+  for (int i = 0; i < m_interpolationCombo->count(); ++i)
+    if (m_interpolationCombo->itemData(i) == interpolationType) {
+      m_interpolationCombo->setCurrentIndex(i);
+      break;
+    }
+
   connect(m_frameHandle, SIGNAL(frameSwitched()), SLOT(onFrameSwitched()));
   connect(m_frameHandle, SIGNAL(isPlayingStatusChanged()),
           SLOT(onPlayingStatusChanged()));
@@ -1088,6 +1088,8 @@ int ArrowToolOptionsBox::getKeysStatus(int axisId, bool allKeys,
   return 0;                                              // None
 }
 
+//-----------------------------------------------------------------------------
+
 bool ArrowToolOptionsBox::canSetInterpolation(int axisId, bool allKeys,
                                               int frame,
                                               TStageObject *stageObj) {
@@ -1176,6 +1178,8 @@ bool ArrowToolOptionsBox::canSetInterpolation(int axisId, bool allKeys,
 
   return canSet;
 }
+
+//-----------------------------------------------------------------------------
 
 void ArrowToolOptionsBox::updateStatus() {
   // General
@@ -1385,7 +1389,7 @@ void ArrowToolOptionsBox::onPlayingStatusChanged() {
 //-----------------------------------------------------------------------------
 
 void ArrowToolOptionsBox::onStageObjectChange(bool isDragging) {
-  m_updateControls = !isDragging;
+  m_updateControls = !isDragging && !m_tool->isDragging();
   updateStatus();
 }
 
