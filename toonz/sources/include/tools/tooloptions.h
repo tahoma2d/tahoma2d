@@ -85,6 +85,11 @@ class QStackedWidget;
 
 #define TOOL_OPTIONS_LEFT_MARGIN 5
 
+static QIcon m_noKeyIcon, m_partialKeyIcon, m_fullKeyIcon;
+
+const int ITEM_SPACING  = 10;
+const int LABEL_SPACING = 3;
+
 //=============================================================================
 
 //***********************************************************************************************
@@ -334,6 +339,63 @@ protected slots:
   void onRotateRight();
   void onSetKey();
   void onResetCenter();
+};
+
+//=============================================================================
+//
+// SkeletonToolOptionsBox
+//
+//=============================================================================
+
+class SkeletonToolOptionsBox final : public ToolOptionsBox {
+  Q_OBJECT
+
+  TTool *m_tool;
+  TFrameHandle *m_frameHandle;
+  TObjectHandle *m_objHandle;
+  TXsheetHandle *m_xshHandle;
+
+  ToolOptionCheckbox *m_globalKey;
+  ToolOptionCombo *m_mode;
+
+  QComboBox *m_interpolationCombo;
+  QPushButton *m_leftRotateButton, *m_rightRotateButton, *m_setKeyButton;
+
+  PegbarChannelField *m_ewPosField, *m_nsPosField, *m_rotationField;
+
+  PegbarCenterField  *m_ewCenterField, *m_nsCenterField;
+
+  ClickableLabel *m_ewPosLabel, *m_nsPosLabel, *m_rotationLabel,
+      *m_ewCenterLabel, *m_nsCenterLabel;
+
+  bool m_updateControls;
+
+public:
+  SkeletonToolOptionsBox(QWidget *parent, TTool *tool,
+                         TFrameHandle *frameHandle, TObjectHandle *objHandle,
+                         TXsheetHandle *xshHandle, ToolHandle *toolHandle);
+
+  void updateControls();
+  void updateStatus();
+  void onStageObjectChange(bool isDragging = false);
+
+protected:
+  void connectLabelAndField(ClickableLabel *label, MeasuredValueField *field);
+  void showEvent(QShowEvent *);
+  void hideEvent(QShowEvent *);
+
+  int getKeysStatus(TStageObject::Keyframe keys);
+  bool canSetInterpolation(int frame, TStageObject *stageObj);
+
+protected slots:
+  void onFrameSwitched();
+  void onModeChanged(int);
+  void onGlobalKeyChanged(bool);
+  void onPlayingStatusChanged();
+  void onRotateLeft();
+  void onRotateRight();
+  void onSetKey();
+  void onInterpolationComboActivated(int index);
 };
 
 //=============================================================================
