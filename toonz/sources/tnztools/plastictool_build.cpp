@@ -640,6 +640,8 @@ void PlasticTool::leftButtonUp_build(const TPointD &pos,
     TUndoManager::manager()->add(new MoveVertexUndo_Build(
         m_svSel.objects(), m_pressedVxsPos, m_pos - m_pressedPos));
 
+    m_dragged = false;  // Turn this off now so toolbar updates
+
     ::stageObject()
         ->invalidate();  // Should be a TStageObject's implementation detail ...
     invalidate();        // .. it's that it caches placement data and we must

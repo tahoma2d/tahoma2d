@@ -2645,11 +2645,12 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_SetKeyframes, QT_TR_NOOP("&Set Key"), "Z",
                              "set_key");
   createRightClickMenuAction(MI_SetRestKeyframes, QT_TR_NOOP("&Set Rest Key"),
-                             "", "");
+                             "", "rest_key");
   createRightClickMenuAction(MI_SetGlobalKeyframes,
-                             QT_TR_NOOP("&Set Global Key"), "", "");
+                             QT_TR_NOOP("&Set Global Key"), "", "global_key");
   createRightClickMenuAction(MI_SetGlobalRestKeyframes,
-                             QT_TR_NOOP("&Set Global Rest Key"), "", "");
+                             QT_TR_NOOP("&Set Global Rest Key"), "",
+                             "global_rest_key");
 
   createRightClickMenuAction(MI_ShiftKeyframesDown,
                              QT_TR_NOOP("&Shift Keys Down"), "",

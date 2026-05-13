@@ -175,6 +175,8 @@ void PlasticTool::leftButtonUp_animate(const TPointD &pos,
 
     TUndoManager::manager()->add(undo);
 
+    m_dragged = false; // Turn this off now so toolbar updates
+
     // This is needed to refresh the xsheet (there may be new keyframes)
     TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
     TTool::getApplication()->getCurrentObject()->notifyObjectIdChanged(false);

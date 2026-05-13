@@ -6,6 +6,7 @@
 // TnzCore includes
 #include "tproperty.h"
 #include "tmeshimage.h"
+#include "tooloptionscontrols.h"
 
 // TnzBase includes
 #include "tparamchange.h"
@@ -215,6 +216,8 @@ public:
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &me) override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &me) override;
 
+  bool isDragging() const override { return m_dragged; }
+
   void draw() override;
 
 public:
@@ -405,17 +408,36 @@ class PlasticToolOptionsBox final : public GenericToolOptionsBox,
 
 public:
   PlasticToolOptionsBox(QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
-                        ToolHandle *toolHandle);
+                        ToolHandle *toolHandle, TFrameHandle *frameHandle,
+                        TObjectHandle *objHandle, TXsheetHandle *xshHandle);
 
 private:
   class SkelIdsComboBox;
 
 private:
   TTool *m_tool;
+  TFrameHandle *m_frameHandle; 
+  TObjectHandle *m_objHandle;
+  TXsheetHandle *m_xshHandle;
   GenericToolOptionsBox **m_subToolbars;
 
   SkelIdsComboBox *m_skelIdComboBox;
   QPushButton *m_addSkelButton, *m_removeSkelButton;
+
+  // Animate
+  ToolOptionParamRelayField *m_distanceField, *m_angleField, *m_soField;
+  QComboBox *m_interpolationCombo;
+  QPushButton *m_setKeyButton, *m_setRestKeyButton;
+  bool m_updateControls;
+
+  void updateControls();
+  void updateStatus();
+  void onStageObjectChange(bool isDragging = false);
+
+  int getKeysStatus(int frame, SkVD *vd);
+  bool canSetInterpolation(int frame, TStageObject *stageObj);
+
+  bool isSDChannelInterpolated(SkVD *vd, SkVD::Params param, int frame);
 
 private:
   void showEvent(QShowEvent *se) override;
@@ -431,6 +453,12 @@ private slots:
 
   void onAddSkeleton();
   void onRemoveSkeleton();
+
+  void onSetKey();
+  void onSetRestKey();
+  void onInterpolationComboActivated(int index);
+  void onFrameSwitched();
+  void onPlayingStatusChanged();
 };
 
 //****************************************************************************************
