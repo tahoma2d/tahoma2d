@@ -335,6 +335,14 @@ void OutputSettingsPopup::onSyncWithPlayRangeChanged(int state) {
   bool enabled = (state == Qt::Checked);
   getProperties()->setSyncWithPlayRangeEnabled(enabled);
   SyncOutputWithPlayRange = enabled;
+  if (enabled) {
+    int r0, r1, step;
+    ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+    scene->getProperties()->getPreviewProperties()->getRange(r0, r1, step);
+    if (r1 < r0) r1 = r0;
+    m_startFld->setValue(r0 + 1);
+    m_endFld->setValue(r1 + 1);
+  }
 }
 
 //-----------------------------------------------------------------------------
