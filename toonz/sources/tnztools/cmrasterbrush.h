@@ -35,7 +35,7 @@ public:
                 int styleId, const TThickPoint &p, bool selective,
                 int selectedStyle, bool lockAlpha, bool keepAntialias,
                 bool isPaletteOrder = false);
-  ~CMRasterBrush(){};
+  ~CMRasterBrush();
 
   void addSymmetryBrushes(double lines, double rotation, TPointD centerPoint,
                           bool useLineSymmetry, TPointD dpiScale);

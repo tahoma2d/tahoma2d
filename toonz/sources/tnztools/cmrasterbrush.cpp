@@ -32,6 +32,14 @@ CMRasterBrush::CMRasterBrush(const TRasterCM32P &raster, Tasks task,
 
 //------------------------------------------------------------------
 
+CMRasterBrush::~CMRasterBrush() {
+  for (RasterStrokeGenerator *track : m_rasterTracks) {
+    delete track;
+  }
+}
+
+//------------------------------------------------------------------
+
 void CMRasterBrush::addSymmetryBrushes(double lines, double rotation,
                                        TPointD centerPoint,
                                        bool useLineSymmetry, TPointD dpiScale) {
