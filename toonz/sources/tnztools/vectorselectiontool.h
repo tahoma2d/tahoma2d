@@ -315,6 +315,8 @@ public:
 
   bool isSelectionEditable() override { return m_strokeSelection.isEditable(); }
 
+  bool onPropertyChanged(std::string propertyName) override;
+
 protected:
   void onActivate() override;
   void onDeactivate() override;
@@ -330,7 +332,6 @@ protected:
   void updateAction(TPointD pos, const TMouseEvent &e) override;
   void onSelectedFramesChanged() override;
 
-  bool onPropertyChanged(std::string propertyName) override;
   void onImageChanged() override;
 
   int getCursorId() const override {
@@ -361,6 +362,7 @@ private:
                                     //! image, styles...).
   TBoolProperty m_includeIntersection;
   TBoolProperty m_constantThickness;
+  TBoolProperty m_showStrokeDirection;
 
   StrokeSelection m_strokeSelection;        //!< Standard selection of a set of
                                             //! strokes in current image.
@@ -372,6 +374,7 @@ private:
   TIntProperty m_miterJoinLimit;  //!< Stroke joins threshold value.
 
   TPropertyGroup m_outlineProps;
+  TPropertyGroup m_otherProps;
 
   int m_selectionCount;  //!< \deprecated  This is \a not related to stroke
                          //! selections;

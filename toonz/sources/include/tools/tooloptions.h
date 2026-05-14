@@ -434,7 +434,7 @@ class SelectionToolOptionsBox final : public ToolOptionsBox,
   ToolOptionIntSlider *m_miterField;
 
   QPushButton *m_hFlipButton, *m_vFlipButton, *m_leftRotateButton,
-      *m_rightRotateButton;
+      *m_rightRotateButton, *m_flipStrokeButton;
 
 public:
   SelectionToolOptionsBox(QWidget *parent, TTool *tool,
@@ -453,6 +453,7 @@ protected slots:
   void onFlipVertical();
   void onRotateLeft();
   void onRotateRight();
+  void onFlipDirection();
 };
 
 //=============================================================================
