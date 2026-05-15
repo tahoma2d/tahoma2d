@@ -845,6 +845,21 @@ bool TApp::eventFilter(QObject *watched, QEvent *e) {
     }
   }
 
+  if (e->type() == QEvent::Shortcut) {
+    QShortcutEvent *sev = dynamic_cast<QShortcutEvent *>(e);
+    if (sev && sev->isAmbiguous()) {
+      QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+      QKeySequence keySeq = sev->key();
+      QAction *action =
+          CommandManager::instance()->getActionFromShortcut(keySeq.toString().toStdString());
+      if (action) {
+        action->trigger();
+        e->accept();
+        return true;
+      }
+    }
+  }
+
   if (e->type() == QEvent::KeyRelease) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
     if (TApp::instance()->getCurrentTool()->isTempToolActive()) {
