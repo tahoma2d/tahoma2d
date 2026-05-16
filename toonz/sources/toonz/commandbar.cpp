@@ -37,11 +37,6 @@ CommandBar::CommandBar(QWidget *parent, Qt::WindowFlags flags,
     , m_barType(barType)
     , m_barId("")
     , m_isDefault(true) {
-  if (barType == CommandBarType::Main) {
-    setAllowedAreas(Qt::TopToolBarArea);
-    setMovable(false);
-    setFloatable(false);
-  }
   setObjectName("cornerWidget");
   setObjectName("CommandBar");
   if (barType == CommandBarType::Command) {

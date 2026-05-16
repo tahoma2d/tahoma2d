@@ -10,7 +10,13 @@
 #include <QContextMenuEvent>
 
 MainToolbar::MainToolbar(QWidget *parent)
-    : CommandBar(parent, Qt::WindowFlags(), false, CommandBarType::Main) {}
+    : CommandBar(parent, Qt::WindowFlags(), false, CommandBarType::Main) {
+  setAllowedAreas(Qt::TopToolBarArea);
+  setMovable(false);
+  setFloatable(false);
+  setFixedHeight(29);
+  setIconSize(QSize(20, 20));
+}
 
 MainToolbar::~MainToolbar() {}
 
