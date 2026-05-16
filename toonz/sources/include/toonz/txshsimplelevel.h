@@ -322,6 +322,10 @@ The oldFp is used when the current scene path change...
   bool canConvertSingleFileToSequence();
   void convertSingleFileToSequence(TXsheet *xsh);
 
+  std::map<TFrameId, int> getDrawingMarks() const { return m_drawingMarks; }
+  int getDrawingMark(const TFrameId &fid) const;
+  void setDrawingMark(const TFrameId &fid, int markId);
+
 public:
   // Auxiliary files management: hooks, tpl, etc.
   // May throw; copy and rename perform touchparentdir
@@ -400,6 +404,8 @@ private:
   bool m_isSubsequence, m_16BitChannelLevel, m_floatChannelLevel, m_isReadOnly,
       m_temporaryHookMerged;  //!< Used only during hook merge (and hence during
                               //! saving)
+
+  std::map<TFrameId, int> m_drawingMarks;
 
 private:
   //! Save simple level in scene-decoded path \p decodedFp.

@@ -162,11 +162,13 @@ DrawingData *DrawingData::clone() const { return new DrawingData(this); }
 //-----------------------------------------------------------------------------
 
 void DrawingData::setLevelFrames(TXshSimpleLevel *sl,
-                                 std::set<TFrameId> &frames) {
+                                 std::set<TFrameId> &frames,
+                                 bool copyDrawingMarks) {
   if (!sl || frames.empty()) return;
 
   m_level = sl;
   m_imageSet.clear();
+  m_drawingMarks.clear();
 
   std::set<TFrameId>::iterator it;
 
@@ -202,6 +204,8 @@ void DrawingData::setLevelFrames(TXshSimpleLevel *sl,
       copiedHook->setAPos(frameId, levelHook->getAPos(frameId));
       copiedHook->setBPos(frameId, levelHook->getBPos(frameId));
     }
+
+    if (copyDrawingMarks) m_drawingMarks[frameId] = sl->getDrawingMark(frameId);
   }
 }
 
@@ -258,6 +262,8 @@ bool DrawingData::getLevelFrames(TXshSimpleLevel *sl,
   // framesToInsert = new frames
   std::vector<TFrameId> oldFids;
   sl->getFids(oldFids);
+
+  std::map<TFrameId, int> oldDrawingMarks = sl->getDrawingMarks();
 
   std::set<TFrameId> framesToInsert;
   if (setType == INSERT) {
@@ -336,6 +342,21 @@ bool DrawingData::getLevelFrames(TXshSimpleLevel *sl,
       levelHook->setBPos(image.first, copiedHook->getBPos((*frameIt).first));
     }
     ++frameIt;
+  }
+
+  // merge drawing marks
+  if (m_drawingMarks.size()) {
+    frameIt = m_imageSet.begin();
+    for (auto const &image : usedImageSet) {
+      TFrameId newFrameId = image.first;
+      TFrameId oldFrameId = frameIt->first;
+      int markId = m_drawingMarks.find(oldFrameId) != m_drawingMarks.end()
+                       ? m_drawingMarks.at(oldFrameId)
+                       : -1;
+      sl->setDrawingMark(newFrameId, markId);
+
+      ++frameIt;
+    }
   }
 
   sl->setDirtyFlag(true);
@@ -423,8 +444,10 @@ TImageP DrawingData::getImage(QString imageId, TXshSimpleLevel *sl,
 //-----------------------------------------------------------------------------
 
 void DrawingData::setFrames(const std::map<TFrameId, QString> &imageSet,
-                            TXshSimpleLevel *level, const HookSet &levelHooks) {
-  m_levelHooks = levelHooks;
+                            TXshSimpleLevel *level, const HookSet &levelHooks,
+                            const std::map<TFrameId, int> &drawingMarks) {
+  m_levelHooks   = levelHooks;
+  m_drawingMarks = drawingMarks;
   m_imageSet.clear();
 
   assert(!imageSet.empty());

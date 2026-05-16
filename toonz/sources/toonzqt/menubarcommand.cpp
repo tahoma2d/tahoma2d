@@ -129,7 +129,8 @@ void CommandManager::define(CommandId id, CommandType type,
        (node->m_handler || node->m_qaction->actionGroup() != 0)) ||
       node->m_type == MiscCommandType ||
       node->m_type == ToolModifierCommandType ||
-      node->m_type == CellMarkCommandType);
+      node->m_type == CellMarkCommandType ||
+      node->m_type == DrawingMarkCommandType);
   node->m_iconSVGName = iconSVGName;
 
   m_qactionTable[qaction] = node;

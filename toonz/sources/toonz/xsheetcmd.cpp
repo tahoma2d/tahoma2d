@@ -48,6 +48,8 @@
 #include "toonz/txshpegbarcolumn.h"
 #include "toonz/tstageobjectcmd.h"
 
+#include "../toonz/filmstripselection.h"
+
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/gutil.h"
@@ -2765,6 +2767,75 @@ public:
   }
 
 } ToggleXsheetOpenCloseFolderCommand;
+
+//-----------------------------------------------------------------------------
+
+class SetDrawingMarkCommand final : public MenuItemHandler {
+  int m_markId;
+
+public:
+  SetDrawingMarkCommand(int markId)
+      : MenuItemHandler(
+            ((std::string)MI_SetDrawingMark + std::to_string(markId)).c_str())
+      , m_markId(markId) {}
+
+  void execute() override {
+    TApp *app         = TApp::instance();
+    TXsheet *xsh      = app->getCurrentXsheet()->getXsheet();
+
+    TSelection *selection = app->getCurrentSelection()->getSelection();
+    if (!selection) return;
+
+    if (TApp::instance()->getCurrentFrame()->isEditingLevel()) {
+      TFilmstripSelection *filmstripSelection =
+          dynamic_cast<TFilmstripSelection *>(selection);
+      if (!filmstripSelection) return;
+
+      filmstripSelection->setDrawingMark(m_markId);
+      return;
+    }
+
+    TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(selection);
+    if (!cellSelection) return;
+
+    int r0, r1, c0, c1;
+    cellSelection->getSelectedCells(r0, c0, r1, c1);
+    if (c0 < 0) c0 = 0;
+
+    std::vector<TXshCell> cells;
+
+    // Find all unique cells with a drawing
+    for (int c = c0; c <= c1; c++) {
+      for (int r = r0; r <= r1; r++) {
+        TXshCell cell = xsh->getCell(r, c, true, false);
+        if (cell.isEmpty() || cell.getFrameId().isStopFrame() ||
+            !cell.getSimpleLevel())
+          continue;
+        if (std::find(cells.begin(), cells.end(), cell) != cells.end())
+          continue;
+        cells.push_back(cell);
+      }
+    }
+
+    if (cells.empty()) return;
+
+    XsheetGUI::SetDrawingMarkUndo *undo = new XsheetGUI::SetDrawingMarkUndo(cells, m_markId);
+    undo->redo();
+    TUndoManager::manager()->add(undo);
+  }
+};
+SetDrawingMarkCommand DrawingMarkCommand0(0);
+SetDrawingMarkCommand DrawingMarkCommand1(1);
+SetDrawingMarkCommand DrawingMarkCommand2(2);
+SetDrawingMarkCommand DrawingMarkCommand3(3);
+SetDrawingMarkCommand DrawingMarkCommand4(4);
+SetDrawingMarkCommand DrawingMarkCommand5(5);
+SetDrawingMarkCommand DrawingMarkCommand6(6);
+SetDrawingMarkCommand DrawingMarkCommand7(7);
+SetDrawingMarkCommand DrawingMarkCommand8(8);
+SetDrawingMarkCommand DrawingMarkCommand9(9);
+SetDrawingMarkCommand DrawingMarkCommand10(10);
+SetDrawingMarkCommand DrawingMarkCommand11(11);
 
 //-----------------------------------------------------------------------------
 

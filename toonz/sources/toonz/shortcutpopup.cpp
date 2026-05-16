@@ -261,6 +261,7 @@ ShortcutTree::ShortcutTree(QWidget *parent) : QTreeWidget(parent) {
 
   addFolder(tr("Right-click Menu Commands"), RightClickMenuCommandType);
   QTreeWidgetItem *rcmSubFolder = m_folders.back();
+  addFolder(tr("Drawing Mark"), DrawingMarkCommandType, rcmSubFolder);
   addFolder(tr("Cell Mark"), CellMarkCommandType, rcmSubFolder);
 
   addFolder(tr("Tools"), ToolCommandType);

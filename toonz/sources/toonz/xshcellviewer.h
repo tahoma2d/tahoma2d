@@ -34,6 +34,20 @@ public:
   int getHistoryType() override;
 };
 
+class SetDrawingMarkUndo final : public TUndo {
+  std::vector<TXshCell> m_cells;
+  std::vector<int> m_oldDrawingMark;
+  int m_newDrawingMark;
+
+public:
+  SetDrawingMarkUndo(std::vector<TXshCell> cells, int markId);
+  void undo() const override;
+  void redo() const override;
+  int getSize() const override;
+  QString getHistoryString() override;
+  int getHistoryType() override;
+};
+
 class NoteWidget;
 class DragTool;
 
@@ -148,6 +162,7 @@ class CellArea final : public QWidget {
   void drawCellMarker(QPainter &p, int markId, QRect rect,
                       bool hasFrame = false, bool isNextEmpty = true);
   void drawLoopFrameMarker(QPainter &p, int row, int col);
+  void drawDrawingMarker(QPainter &p, int markId, QRect rect, TFrameId fid);
 
   // Restistusce true
   bool getEaseHandles(int r0, int r1, double e0, double e1, int &rh0, int &rh1);
@@ -218,6 +233,7 @@ protected slots:
   // replace level with another level in the cast
   void onReplaceByCastedLevel(QAction *action);
   void onSetCellMark();
+  void onSetDrawingMark();
   void onDelayToolTip();
 };
 
