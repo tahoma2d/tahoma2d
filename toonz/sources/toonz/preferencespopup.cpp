@@ -1262,7 +1262,10 @@ void PreferencesPopup::insertDualUIs(PreferencesItemId leftId,
     QWidget* leftWidget =
         createUI(leftId, leftComboItems, false, leftMinMaxSlider);
     leftWidgetList.append(leftWidget);
-
+    if (m_pref->getItem(leftId).type == QMetaType::Bool) {
+      QCheckBox* cb = dynamic_cast<QCheckBox*>(leftWidget);
+      leftText      = cb->text();
+    }
     innerLay->addWidget(leftWidget, 0);
 
     if ((m_pref->getItem(leftId).type == QMetaType::Bool &&
@@ -1279,6 +1282,10 @@ void PreferencesPopup::insertDualUIs(PreferencesItemId leftId,
     QWidget* rightWidget =
         createUI(rightId, rightComboItems, false, rightMinMaxSlider);
     rightWidgetList.append(rightWidget);
+    if (m_pref->getItem(rightId).type == QMetaType::Bool) {
+      QCheckBox* cb = dynamic_cast<QCheckBox*>(rightWidget);
+      rightText     = cb->text();
+    }
 
     innerLay->addWidget(rightWidget, 0);
     innerLay->addStretch(1);
