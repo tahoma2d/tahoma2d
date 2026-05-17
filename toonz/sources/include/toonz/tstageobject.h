@@ -376,6 +376,8 @@ with the frame.
   /** Gets a range of keyframes */
   void getKeyframes(KeyframeMap &keyframes) const;
   bool getKeyframeRange(int &r0, int &r1) const;
+  void getSDKeyframes(KeyframeMap &keyframes) const;
+  bool getSDKeyframeRange(int &r0, int &r1) const;
 
   bool getKeyframeSpan(int row, int &r0, double &ease0, int &r1,
                        double &ease1) const;

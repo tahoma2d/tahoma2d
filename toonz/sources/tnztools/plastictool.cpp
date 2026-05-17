@@ -3,7 +3,6 @@
 #include "plastictool.h"
 
 // TnzTools includes
-#include "tooloptionscontrols.h"
 #include "tools/toolcommandids.h"
 
 // TnzQt includes
@@ -388,11 +387,18 @@ void PlasticToolOptionsBox::SkelIdsComboBox::updateCurrentSkeleton() {
 
 PlasticToolOptionsBox::PlasticToolOptionsBox(QWidget *parent, TTool *tool,
                                              TPaletteHandle *pltHandle,
-                                             ToolHandle *toolHandle)
+                                             ToolHandle *toolHandle,
+                                             TFrameHandle *frameHandle,
+                                             TObjectHandle *objHandle,
+                                             TXsheetHandle *xshHandle)
     : GenericToolOptionsBox(parent, tool, pltHandle, PlasticTool::MODES_COUNT,
                             toolHandle)
     , m_tool(tool)
+    , m_frameHandle(frameHandle)
+    , m_objHandle(objHandle)
+    , m_xshHandle(xshHandle)
     , m_subToolbars(new GenericToolOptionsBox *[PlasticTool::MODES_COUNT])
+    , m_updateControls(true)
 //, m_subToolbarActions(new QAction*[PlasticTool::MODES_COUNT])
 {
   struct locals {
@@ -470,66 +476,115 @@ PlasticToolOptionsBox::PlasticToolOptionsBox(QWidget *parent, TTool *tool,
   }
 
   // Distance
-  ToolOptionParamRelayField *distanceField = new ToolOptionParamRelayField(
+  m_distanceField = new ToolOptionParamRelayField(
       &l_plasticTool, &l_plasticTool.m_distanceRelay);
-  distanceField->setGlobalKey(&l_plasticTool.m_globalKey,
-                              &l_plasticTool.m_relayGroup);
+  m_distanceField->setGlobalKey(&l_plasticTool.m_globalKey,
+                                &l_plasticTool.m_relayGroup);
 
   ClickableLabel *distanceLabel = new ClickableLabel(tr("Distance"));
   distanceLabel->setFixedHeight(20);
 
   // Angle
-  ToolOptionParamRelayField *angleField = new ToolOptionParamRelayField(
-      &l_plasticTool, &l_plasticTool.m_angleRelay);
-  angleField->setGlobalKey(&l_plasticTool.m_globalKey,
-                           &l_plasticTool.m_relayGroup);
+  m_angleField = new ToolOptionParamRelayField(&l_plasticTool,
+                                               &l_plasticTool.m_angleRelay);
+  m_angleField->setGlobalKey(&l_plasticTool.m_globalKey,
+                             &l_plasticTool.m_relayGroup);
 
   ClickableLabel *angleLabel = new ClickableLabel(tr("Angle"));
   angleLabel->setFixedHeight(20);
 
   // SO
-  ToolOptionParamRelayField *soField =
+  m_soField =
       new ToolOptionParamRelayField(&l_plasticTool, &l_plasticTool.m_soRelay);
-  soField->setGlobalKey(&l_plasticTool.m_globalKey,
-                        &l_plasticTool.m_relayGroup);
+  m_soField->setGlobalKey(&l_plasticTool.m_globalKey,
+                          &l_plasticTool.m_relayGroup);
 
   ClickableLabel *soLabel = new ClickableLabel(tr("SO"));
   soLabel->setFixedHeight(20);
 
+  m_noKeyIcon      = createQIcon("key_off");
+  m_partialKeyIcon = createQIcon("key_partial");
+  m_fullKeyIcon    = createQIcon("key_on");
+
+  m_setKeyButton = new QPushButton(this);
+  m_setKeyButton->setFixedSize(QSize(22, 20));
+  m_setKeyButton->setIconSize(QSize(20, 20));
+  m_setKeyButton->setToolTip(tr("Set Key"));
+
+  m_interpolationCombo = new QComboBox(this);
+  m_interpolationCombo->setSizeAdjustPolicy(
+      QComboBox::SizeAdjustPolicy::AdjustToContents);
+  m_interpolationCombo->setToolTip(tr("Default Interpolation"));
+  // This list must match what's in preferences
+  m_interpolationCombo->addItem(tr("Constant"), 1);
+  m_interpolationCombo->addItem(tr("Linear"), 2);
+  m_interpolationCombo->addItem(tr("Speed In / Speed Out"), 3);
+  m_interpolationCombo->addItem(tr("Ease In / Ease Out"), 4);
+  m_interpolationCombo->addItem(tr("Ease In / Ease Out %"), 5);
+  m_interpolationCombo->addItem(tr("Exponential"), 6);
+  m_interpolationCombo->addItem(tr("Expression "), 7);
+  m_interpolationCombo->addItem(tr("File"), 8);
+
+  m_setRestKeyButton = new QPushButton(this);
+  m_setRestKeyButton->setFixedSize(QSize(22, 20));
+  m_setRestKeyButton->setIconSize(QSize(20, 20));
+  m_setRestKeyButton->setToolTip(tr("Set Rest Key"));
+  m_setRestKeyButton->setIcon(createQIcon("rest_key"));
+
   QHBoxLayout *animateLayout = animateOptionsBox->hLayout();
-  animateLayout->insertWidget(0, soField);
+  animateLayout->insertWidget(0, m_soField);
   animateLayout->insertWidget(0, soLabel);
-  animateLayout->insertWidget(0, angleField);
+  animateLayout->insertWidget(0, m_angleField);
   animateLayout->insertWidget(0, angleLabel);
-  animateLayout->insertWidget(0, distanceField);
+  animateLayout->insertWidget(0, m_distanceField);
   animateLayout->insertWidget(0, distanceLabel);
+  animateLayout->insertWidget(0, m_setRestKeyButton);
+  animateLayout->insertWidget(0, m_setKeyButton);
+  animateLayout->insertWidget(0, m_interpolationCombo);
 
   ret = ret && connect(distanceLabel, SIGNAL(onMousePress(QMouseEvent *)),
-                       distanceField, SLOT(receiveMousePress(QMouseEvent *)));
+                       m_distanceField, SLOT(receiveMousePress(QMouseEvent *)));
   ret = ret && connect(distanceLabel, SIGNAL(onMouseMove(QMouseEvent *)),
-                       distanceField, SLOT(receiveMouseMove(QMouseEvent *)));
-  ret = ret && connect(distanceLabel, SIGNAL(onMouseRelease(QMouseEvent *)),
-                       distanceField, SLOT(receiveMouseRelease(QMouseEvent *)));
+                       m_distanceField, SLOT(receiveMouseMove(QMouseEvent *)));
+  ret =
+      ret && connect(distanceLabel, SIGNAL(onMouseRelease(QMouseEvent *)),
+                     m_distanceField, SLOT(receiveMouseRelease(QMouseEvent *)));
   ret = ret && connect(angleLabel, SIGNAL(onMousePress(QMouseEvent *)),
-                       angleField, SLOT(receiveMousePress(QMouseEvent *)));
+                       m_angleField, SLOT(receiveMousePress(QMouseEvent *)));
   ret = ret && connect(angleLabel, SIGNAL(onMouseMove(QMouseEvent *)),
-                       angleField, SLOT(receiveMouseMove(QMouseEvent *)));
+                       m_angleField, SLOT(receiveMouseMove(QMouseEvent *)));
   ret = ret && connect(angleLabel, SIGNAL(onMouseRelease(QMouseEvent *)),
-                       angleField, SLOT(receiveMouseRelease(QMouseEvent *)));
-  ret = ret && connect(soLabel, SIGNAL(onMousePress(QMouseEvent *)), soField,
+                       m_angleField, SLOT(receiveMouseRelease(QMouseEvent *)));
+  ret = ret && connect(soLabel, SIGNAL(onMousePress(QMouseEvent *)), m_soField,
                        SLOT(receiveMousePress(QMouseEvent *)));
-  ret = ret && connect(soLabel, SIGNAL(onMouseMove(QMouseEvent *)), soField,
+  ret = ret && connect(soLabel, SIGNAL(onMouseMove(QMouseEvent *)), m_soField,
                        SLOT(receiveMouseMove(QMouseEvent *)));
-  ret = ret && connect(soLabel, SIGNAL(onMouseRelease(QMouseEvent *)), soField,
-                       SLOT(receiveMouseRelease(QMouseEvent *)));
+  ret = ret && connect(soLabel, SIGNAL(onMouseRelease(QMouseEvent *)),
+                       m_soField, SLOT(receiveMouseRelease(QMouseEvent *)));
+
+  ret = ret && connect(m_setKeyButton, SIGNAL(clicked()), SLOT(onSetKey()));
+
+  ret = ret && connect(m_setRestKeyButton, SIGNAL(clicked()), SLOT(onSetRestKey()));
+
+  ret = ret && connect(m_interpolationCombo, SIGNAL(activated(int)), this,
+                       SLOT(onInterpolationComboActivated(int)));
+
   assert(ret);
 
   onPropertyChanged();
+  updateStatus();
 }
 
 //------------------------------------------------------------------------
 
 void PlasticToolOptionsBox::showEvent(QShowEvent *se) {
+  int interpolationType = Preferences::instance()->getKeyframeType();
+  for (int i = 0; i < m_interpolationCombo->count(); ++i)
+    if (m_interpolationCombo->itemData(i) == interpolationType) {
+      m_interpolationCombo->setCurrentIndex(i);
+      break;
+    }
+
   bool ret = true;
 
   ret = ret && connect(&l_plasticTool, SIGNAL(skelIdsListChanged()),
@@ -543,9 +598,15 @@ void PlasticToolOptionsBox::showEvent(QShowEvent *se) {
   ret = ret && connect(m_removeSkelButton, SIGNAL(released()),
                        SLOT(onRemoveSkeleton()));
 
+  ret = ret && connect(m_frameHandle, SIGNAL(frameSwitched()),
+                       SLOT(onFrameSwitched()));
+  ret = ret && connect(m_frameHandle, SIGNAL(isPlayingStatusChanged()),
+                       SLOT(onPlayingStatusChanged()));
+
   assert(ret);
 
   m_skelIdComboBox->updateSkeletonsList();
+  updateStatus();
 }
 
 //------------------------------------------------------------------------
@@ -555,6 +616,181 @@ void PlasticToolOptionsBox::hideEvent(QHideEvent *he) {
   disconnect(m_skelIdComboBox, 0, this, 0);
   disconnect(m_addSkelButton, 0, this, 0);
   disconnect(m_removeSkelButton, 0, this, 0);
+  disconnect(m_frameHandle, 0, this, 0);
+}
+
+//-----------------------------------------------------------------------------
+
+void PlasticToolOptionsBox::updateStatus() {
+  if (m_updateControls) updateControls();
+}
+
+//-----------------------------------------------------------------------------
+
+void PlasticToolOptionsBox::updateControls() {
+  if (l_plasticTool.m_mode.getIndex() != l_plasticTool.ANIMATE_IDX) return;
+
+  TStageObjectId objId        = m_objHandle->getObjectId();
+  TStageObject *stageObj      = m_xshHandle->getXsheet()->getStageObject(objId);
+  int frame                   = m_frameHandle->getFrameIndex();
+
+  PlasticSkeletonDeformationP sd = l_plasticTool.m_sd;
+
+  SkVD *vd   = 0;
+  int skelId = ::skeletonId();
+  if (sd && l_plasticTool.m_svSel.hasSingleObject())
+    vd = sd->vertexDeformation(skelId, l_plasticTool.m_svSel);
+
+  QString keyColorName       = getKeyFrameBorderColor().name();
+  QString inBetweenColorName = getInBetweenBorderColor().name();
+
+  bool isPlaying = m_frameHandle->isPlaying();
+  if (isPlaying) m_updateControls = false;  // Stop updating on next pass
+
+  QString highlightKey =
+      isPlaying ? "" : "QLineEdit {background-color: " + keyColorName + ";}";
+  QString highlightInbetween =
+      isPlaying ? ""
+                : "QLineEdit {background-color: " + inBetweenColorName + ";}";
+
+  bool enableWidget = vd;  //&& objId.is;
+
+  m_distanceField->setStyleSheet(
+      vd && vd->m_params[SkVD::DISTANCE]->isKeyframe(frame)
+          ? highlightKey
+          : (isSDChannelInterpolated(vd, SkVD::DISTANCE, frame)
+                 ? highlightInbetween
+                 : ""));
+  m_angleField->setStyleSheet(
+      vd && vd->m_params[SkVD::ANGLE]->isKeyframe(frame)
+          ? highlightKey
+          : (isSDChannelInterpolated(vd, SkVD::ANGLE, frame)
+                 ? highlightInbetween
+                 : ""));
+  m_soField->setStyleSheet(vd && vd->m_params[SkVD::SO]->isKeyframe(frame)
+                               ? highlightKey
+                               : (isSDChannelInterpolated(vd, SkVD::SO, frame)
+                                      ? highlightInbetween
+                                      : ""));
+
+  m_setKeyButton->setEnabled(enableWidget);
+  m_setRestKeyButton->setEnabled(enableWidget);
+
+  bool enableInterpolation =
+      enableWidget && canSetInterpolation(frame, stageObj);
+  if (!isPlaying) m_interpolationCombo->setEnabled(enableInterpolation);
+
+  bool isKey = sd && sd->isKeyframe(frame);
+  if (!isKey || isPlaying) {
+    m_setKeyButton->setIcon(m_noKeyIcon);
+    return;
+  }
+
+  int keysStatus = getKeysStatus(frame, vd);
+
+  m_setKeyButton->setIcon(
+      !keysStatus ? m_noKeyIcon
+                  : (keysStatus == 1 ? m_partialKeyIcon : m_fullKeyIcon));
+}
+
+//------------------------------------------------------------------------
+
+int PlasticToolOptionsBox::getKeysStatus(int frame, SkVD* vd) {
+  if (!vd) return 0;
+
+  int keysFound = 0;
+  
+  if (vd->m_params[SkVD::DISTANCE]->isKeyframe(frame)) keysFound++;
+  if (vd->m_params[SkVD::ANGLE]->isKeyframe(frame)) keysFound++;
+  if (vd->m_params[SkVD::SO]->isKeyframe(frame)) keysFound++;
+
+  if (keysFound > 0 && keysFound == 3) return 2;  // Full
+  if (keysFound > 0 && keysFound != 3) return 1;  // Partial
+  
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+
+bool PlasticToolOptionsBox::canSetInterpolation(int frame, TStageObject *stageObj) {
+  bool canSet = true;
+
+  int r0, r1;
+  TStageObject::KeyframeMap keyframes;
+  stageObj->getSDKeyframes(keyframes);
+  stageObj->getSDKeyframeRange(r0, r1);
+
+  if (frame >= r0 && frame <= r1) {
+    auto it    = keyframes.lower_bound(frame);
+    bool isKey = frame == it->first;
+    PlasticSkeletonDeformationP sd = l_plasticTool.m_sd;
+    int skelId                     = ::skeletonId();
+    SkVD *vd                       = 0;
+    if (sd && l_plasticTool.m_svSel.hasSingleObject())
+      vd = sd->vertexDeformation(skelId, l_plasticTool.m_svSel);
+
+    if ((frame == r0 && it->first == r0) || (frame == r1 && it->first == r1)) {
+      canSet = getKeysStatus(frame, vd) != 2;
+    } else {
+      int keyCount  = 3;
+      int keysFound = 0;
+
+      if (vd && (vd->m_params[SkVD::DISTANCE]->isKeyframe(frame) ||
+                 isSDChannelInterpolated(vd, SkVD::DISTANCE, frame)))
+        keysFound++;
+      if (vd && vd->m_params[SkVD::ANGLE]->isKeyframe(frame) ||
+          isSDChannelInterpolated(vd, SkVD::ANGLE, frame))
+        keysFound++;
+      if (vd && vd->m_params[SkVD::SO]->isKeyframe(frame) ||
+          isSDChannelInterpolated(vd, SkVD::SO, frame))
+        keysFound++;
+
+      canSet = keyCount != keysFound;
+    }
+  }
+
+  return canSet;
+}
+
+//-----------------------------------------------------------------------------
+
+bool PlasticToolOptionsBox::isSDChannelInterpolated(SkVD *vd,
+                                                    SkVD::Params param,
+                                                    int frame) {
+  if (!vd || frame < 0) return false;
+
+  TStageObjectId objId   = m_objHandle->getObjectId();
+  TStageObject *stageObj = m_xshHandle->getXsheet()->getStageObject(objId);
+
+  TStageObject::KeyframeMap keyframes;
+  stageObj->getSDKeyframes(keyframes);
+
+  if (keyframes.empty() || frame < keyframes.begin()->first ||
+      frame > keyframes.rbegin()->first)
+    return false;
+
+  bool upperKeyFound = false, lowerKeyFound = false;
+
+  auto it = keyframes.lower_bound(frame);
+  while (it != keyframes.end()) {
+    if (vd->m_params[param]->isKeyframe(it->first)) {
+      upperKeyFound = true;
+      break;
+    }
+    it++;
+  }
+
+  it = keyframes.lower_bound(frame);
+  std::map<int, TStageObject::Keyframe>::reverse_iterator rit(it);
+  while (rit != keyframes.rend()) {
+    if (vd->m_params[param]->isKeyframe(rit->first)) {
+      lowerKeyFound = true;
+      break;
+    }
+    rit++;
+  }
+
+  return upperKeyFound && lowerKeyFound;
 }
 
 //------------------------------------------------------------------------
@@ -620,6 +856,51 @@ void PlasticToolOptionsBox::onRemoveSkeleton() {
       l_plasticTool.m_mode.notifyListeners();
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void PlasticToolOptionsBox::onSetKey() {
+  if (l_plasticTool.m_globalKey.getValue())
+    l_plasticTool.setGlobalKey_undo();
+  else if (TSelection::getCurrent() == &l_plasticTool.m_svSel)
+    l_plasticTool.setKey_undo();
+}
+
+//-----------------------------------------------------------------------------
+
+void PlasticToolOptionsBox::onSetRestKey() {
+  if (l_plasticTool.m_globalKey.getValue())
+    l_plasticTool.setGlobalRestKey_undo();
+  else if (TSelection::getCurrent() == &l_plasticTool.m_svSel)
+    l_plasticTool.setRestKey_undo();
+}
+
+//-----------------------------------------------------------------------------
+
+void PlasticToolOptionsBox::onInterpolationComboActivated(int index) {
+  Preferences::instance()->setValue(keyframeType,
+                                    m_interpolationCombo->itemData(index));
+}
+
+//-----------------------------------------------------------------------------
+
+void PlasticToolOptionsBox::onFrameSwitched() { updateControls(); }
+
+//-----------------------------------------------------------------------------
+
+void PlasticToolOptionsBox::onPlayingStatusChanged() {
+  if (!m_frameHandle->isPlaying()) {
+    m_updateControls = true;
+    updateControls();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void PlasticToolOptionsBox::onStageObjectChange(bool isDragging) {
+  m_updateControls = !isDragging && !m_tool->isDragging();
+  updateStatus();
 }
 
 //****************************************************************************************
@@ -757,9 +1038,13 @@ ToolOptionsBox *PlasticTool::createOptionsBox() {
   // Create the options box
   TPaletteHandle *currPalette =
       TTool::getApplication()->getPaletteController()->getCurrentLevelPalette();
-  ToolHandle *currTool = m_application->getCurrentTool();
-  PlasticToolOptionsBox *optionsBox =
-      new PlasticToolOptionsBox(0, this, currPalette, currTool);
+  ToolHandle *currTool      = m_application->getCurrentTool();
+  TFrameHandle *currFrame   = m_application->getCurrentFrame();
+  TObjectHandle *currObj    = m_application->getCurrentObject();
+  TXsheetHandle *currXsheet = m_application->getCurrentXsheet();
+
+  PlasticToolOptionsBox *optionsBox = new PlasticToolOptionsBox(
+      0, this, currPalette, currTool, currFrame, currObj, currXsheet);
 
   // Connect it to receive m_mode notifications
   m_mode.addListener(optionsBox);
@@ -1143,6 +1428,7 @@ void PlasticTool::setSkeletonSelection(const PlasticVertexSelection &vSel) {
     m_svSel.selectNone();
     m_svSel.makeNotCurrent();
 
+    TTool::getApplication()->getCurrentObject()->notifyObjectIdChanged(false);
     return;
   }
 

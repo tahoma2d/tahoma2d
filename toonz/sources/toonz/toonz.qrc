@@ -333,6 +333,8 @@
 		<file>icons/dark/actions/16/rolldown.svg</file>
 		<file>icons/dark/actions/16/remove_empty_columns.svg</file>
 		<file>icons/dark/actions/16/merge.svg</file>
+		<file>icons/dark/actions/16/rest_key.svg</file>
+		<file>icons/dark/actions/16/global_rest_key.svg</file>
 
 		<file>icons/dark/actions/16/new_level.svg</file>
 		<file>icons/dark/actions/16/new_raster_level.svg</file>

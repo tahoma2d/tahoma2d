@@ -119,6 +119,8 @@ public:
   void leftButtonDrag(const TPointD& pos, const TMouseEvent&) override;
   void leftButtonUp(const TPointD& pos, const TMouseEvent&) override;
 
+  bool isDragging() const override { return m_dragTool ? true : false; }
+
   void mouseMove(const TPointD&, const TMouseEvent& e) override;
 
   void draw() override;

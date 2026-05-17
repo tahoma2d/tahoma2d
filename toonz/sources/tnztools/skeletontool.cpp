@@ -54,10 +54,6 @@ using namespace SkeletonSubtools;
 TEnv::IntVar SkeletonGlobalKeyFrame("SkeletonToolGlobalKeyFrame", 0);
 TEnv::IntVar SkeletonInverseKinematics("SkeletonToolInverseKinematics", 0);
 
-#define BUILD_SKELETON L"Build Skeleton"
-#define ANIMATE L"Animate"
-#define INVERSE_KINEMATICS L"Inverse Kinematics"
-
 const double alpha = 0.4;
 
 using SkeletonSubtools::HookData;

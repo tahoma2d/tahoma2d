@@ -35,7 +35,11 @@ public:
       : m_h0(h0), m_h1(h1), m_dist2(dist2) {}
   bool operator<(const MagicLink &link) const { return m_dist2 < link.m_dist2; }
 };
-}
+}  // namespace SkeletonSubtools
+
+#define BUILD_SKELETON L"Build Skeleton"
+#define ANIMATE L"Animate"
+#define INVERSE_KINEMATICS L"Inverse Kinematics"
 
 class SkeletonTool : public TTool {
   Q_DECLARE_TR_FUNCTIONS(SkeletonTool)
@@ -90,6 +94,8 @@ public:
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
   void mouseMove(const TPointD &, const TMouseEvent &e) override;
+
+  bool isDragging() const override { return m_dragTool ? true : false; }
 
   void onImageChanged() override { invalidate(); }
 

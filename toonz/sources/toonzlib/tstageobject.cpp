@@ -1155,6 +1155,34 @@ bool TStageObject::getKeyframeRange(int &r0, int &r1) const {
 
 //-----------------------------------------------------------------------------
 
+void TStageObject::getSDKeyframes(KeyframeMap &keyframes) const {
+  const KeyframeMap &data = lazyData().m_keyframes;
+  KeyframeMap::const_iterator it;
+  for (it = data.begin(); it != data.end(); it++) {
+    if (it->second.m_skeletonKeyframe.m_vertexKeyframes.size())
+      keyframes.insert(*it);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+bool TStageObject::getSDKeyframeRange(int &r0, int &r1) const {
+  KeyframeMap keyframes;
+  getSDKeyframes(keyframes);
+
+  if (keyframes.empty()) {
+    r0 = 0;
+    r1 = -1;
+    return false;
+  }
+  r0 = keyframes.begin()->first;
+  r1 = keyframes.rbegin()->first;
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 bool TStageObject::getKeyframeSpan(int row, int &r0, double &ease0, int &r1,
                                    double &ease1) const {
   const KeyframeMap &keyframes = lazyData().m_keyframes;
