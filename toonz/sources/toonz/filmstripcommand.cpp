@@ -2129,6 +2129,8 @@ class FilmstripSwingUndo final : public TUndo {
   TXshSimpleLevelP m_level;
   std::set<TFrameId> m_frames;
   std::set<TFrameId> m_newFrames;
+  std::vector<TFrameId> m_oldFrames;
+  bool m_updateXSheet;
 
 public:
   FilmstripSwingUndo(const TXshSimpleLevelP &level,
@@ -2136,19 +2138,35 @@ public:
       : m_level(level), m_frames(frames) {
     int count = frames.size() - 1;
     if (count <= 0) return;  // niente swing con un solo frame
+    m_level->getFids(m_oldFrames);
     TFrameId lastFid     = *frames.rbegin();
     TFrameId insertPoint = lastFid + 1;
     std::set<TFrameId> framesToInsert;
     int i;
     for (i = 0; i < count; i++) m_newFrames.insert(insertPoint + i);
+    m_updateXSheet =
+        Preferences::instance()->isSyncLevelRenumberWithXsheetEnabled();
   }
 
   void undo() const override {
+    int count = m_frames.size() - 1;
+    if (count <= 0) return;
     TSelection *selection = TSelection::getCurrent();
     if (selection) selection->selectNone();
     removeFramesWithoutUndo(m_level, m_newFrames);
+    if (m_updateXSheet) {
+      std::vector<TFrameId> newFrames;
+      m_level->getFids(newFrames);
+      updateXSheet(m_level.getPointer(), newFrames, m_oldFrames);
+    }
+    m_level->renumber(m_oldFrames);
+    m_level->setDirtyFlag(true);
+    TApp::instance()->getCurrentLevel()->notifyLevelChange();
+
   }
   void redo() const override {
+    int count = m_frames.size() - 1;
+    if (count <= 0) return;
     TSelection *selection = TSelection::getCurrent();
     if (selection) selection->selectNone();
     performSwing(m_level, m_frames);
@@ -2170,8 +2188,8 @@ public:
 
 void FilmstripCmd::swing(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
   if (!sl || sl->isSubsequence() || sl->isReadOnly() || !frames.size()) return;
-  performSwing(sl, frames);
   TUndoManager::manager()->add(new FilmstripSwingUndo(sl, frames));
+  performSwing(sl, frames);
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 }
 
@@ -2250,7 +2268,6 @@ public:
 
   void undo() const override {
     removeFramesWithoutUndo(m_level, m_insertedFrames);
-    std::set<TFrameId>::const_iterator it = m_frames.begin();
     if (m_updateXSheet) {
       std::vector<TFrameId> newFrames;
       m_level->getFids(newFrames);
