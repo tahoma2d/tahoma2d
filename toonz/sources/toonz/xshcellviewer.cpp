@@ -5097,6 +5097,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
 
       QMenu *marksMenu    = new QMenu(tr("Drawing Mark"), this);
       QAction *markAction = marksMenu->addAction(tr("None"));
+      markAction->setIconVisibleInMenu(true);
       markAction->setCheckable(true);
       markAction->setChecked(markId == -1);
       markAction->setEnabled(markId != -1);
@@ -5111,6 +5112,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
       for (auto mark : marks) {
         QString label = QString("%1: %2").arg(curId).arg(mark.name);
         markAction = marksMenu->addAction(getColorChipIcon(mark.color), label);
+        markAction->setIconVisibleInMenu(true);
         markAction->setCheckable(true);
         markAction->setChecked(markId == curId);
         markAction->setEnabled(markId != curId);
@@ -5145,6 +5147,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
     QMenu *marksMenu    = new QMenu(tr("Cell Mark"), this);
     int markId          = cellColumn->getCellMark(row);
     QAction *markAction = marksMenu->addAction(tr("None"));
+    markAction->setIconVisibleInMenu(true);
     markAction->setCheckable(true);
     markAction->setChecked(markId == -1);
     markAction->setEnabled(markId != -1);
@@ -5159,6 +5162,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
     for (auto mark : marks) {
       QString label = QString("%1: %2").arg(curId).arg(mark.name);
       markAction    = marksMenu->addAction(getColorChipIcon(mark.color), label);
+      markAction->setIconVisibleInMenu(true);
       markAction->setCheckable(true);
       markAction->setChecked(markId == curId);
       markAction->setEnabled(markId != curId);

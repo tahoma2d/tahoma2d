@@ -1452,6 +1452,7 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
         markId       = sl->getDrawingMark(fid);
       }
       QAction *markAction = marksMenu->addAction(tr("None"));
+      markAction->setIconVisibleInMenu(true);
       markAction->setCheckable(true);
       markAction->setChecked(markId == -1);
       markAction->setEnabled(markId != -1);
@@ -1466,6 +1467,7 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
       for (auto mark : marks) {
         QString label = QString("%1: %2").arg(curId).arg(mark.name);
         markAction = marksMenu->addAction(getColorChipIcon(mark.color), label);
+        markAction->setIconVisibleInMenu(true);
         markAction->setCheckable(true);
         markAction->setChecked(markId == curId);
         markAction->setEnabled(markId != curId);
