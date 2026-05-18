@@ -930,6 +930,7 @@ void FlipConsole::playNextFrame(QElapsedTimer *timer, qint64 targetInstant) {
   m_settings.m_blankColor        = TPixel::Transparent;
   m_settings.m_recomputeIfNeeded = true;
   m_consoleOwner->onDrawFrame(playFrame, m_settings, timer, targetInstant);
+  m_currentFrame = playFrame;
 }
 
 //-----------------------------------------------------------------------------
