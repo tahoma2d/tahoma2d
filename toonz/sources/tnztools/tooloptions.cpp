@@ -2275,6 +2275,18 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
     m_miterField->setEnabled(m_joinStyle->currentIndex() ==
                              TStroke::OutlineOptions::MITER_JOIN);
 
+    addSeparator();
+    if (tool && tool->getProperties(2)) tool->getProperties(2)->accept(builder);
+
+    m_flipStrokeButton = new QPushButton(tr("Flip Direction"), this);
+    int buttonWidth =
+        fontMetrics().horizontalAdvance(m_flipStrokeButton->text()) + 10;
+    m_flipStrokeButton->setFixedWidth(buttonWidth);
+    m_flipStrokeButton->setFixedHeight(20);
+    connect(m_flipStrokeButton, SIGNAL(clicked()), this, SLOT(onFlipDirection()));
+
+    hLayout()->addWidget(m_flipStrokeButton);
+
     onPropertyChanged();
   }
 
@@ -2327,6 +2339,8 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
   connect(selectionTool, SIGNAL(clickFlipVertical()), SLOT(onFlipVertical()));
   connect(selectionTool, SIGNAL(clickRotateLeft()), SLOT(onRotateLeft()));
   connect(selectionTool, SIGNAL(clickRotateRight()), SLOT(onRotateRight()));
+
+  connect(selectionTool, SIGNAL(clickFlipDirection()), SLOT(onFlipDirection()));
 
   // assert(ret);
 
@@ -2426,6 +2440,14 @@ void SelectionToolOptionsBox::onRotateLeft() {
 void SelectionToolOptionsBox::onRotateRight() {
   m_rotationField->setValue(m_rotationField->getValue() - 90);
   m_rotationField->applyChange(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void SelectionToolOptionsBox::onFlipDirection() {
+  VectorSelectionTool *vectorSelectionTool =
+      dynamic_cast<VectorSelectionTool *>(m_tool);
+  if (vectorSelectionTool) vectorSelectionTool->onPropertyChanged("FlipDirection");
 }
 
 //-----------------------------------------------------------------------------
@@ -4921,3 +4943,17 @@ public:
     }
   }
 } rotateRightCHInstance("A_ToolOption_RotateRight");
+
+class FlipDirectionCommandHandler final : public MenuItemHandler {
+public:
+  FlipDirectionCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
+  void execute() override {
+    TTool::Application *app = TTool::getApplication();
+    TTool *tool             = app->getCurrentTool()->getTool();
+    if (!tool) return;
+    if (tool->getName() == T_Selection) {
+      SelectionTool *selectionTool = dynamic_cast<SelectionTool *>(tool);
+      emit selectionTool->clickFlipDirection();
+    }
+  }
+} flipDirectionCHInstance("A_ToolOption_FlipDirection");

@@ -620,11 +620,12 @@ void ToolOptionsShortcutInvoker::onToolSwitched() {
     // amount of the property groups
     int pgCount = 1;
     if (tool->getName() == T_Geometric || tool->getName() == T_Type ||
-        (tool->getName() == T_Selection &&
-         (tool->getTargetType() & TTool::Vectors)) ||
         (tool->getName() == T_Brush &&
          (tool->getTargetType() & TTool::Vectors)))
       pgCount = 2;
+    if (tool->getName() == T_Selection &&
+        (tool->getTargetType() & TTool::Vectors))
+      pgCount = 3;
     if (tool->getName() == T_Plastic) pgCount = 5;
     for (int pgId = 0; pgId < pgCount; pgId++) {
       TPropertyGroup* pg = tool->getProperties(pgId);

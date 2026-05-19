@@ -3333,6 +3333,13 @@ void MainWindow::defineActions() {
                           QT_TR_NOOP("Rotate Selection/Object Right"), "");
   createToolOptionsAction("A_ToolOption_PaintBehind", QT_TR_NOOP("Paint Behind"),
                           "");
+
+  createToolOptionsAction("A_ToolOption_ShowDirection",
+                          QT_TR_NOOP("Show Direction"), "");
+  createToolOptionsAction("A_ToolOption_FlipDirection",
+                          QT_TR_NOOP("Flip Direction"), "");
+
+
   // Visualization
 
   createViewerAction(V_ZoomIn, QT_TR_NOOP("Zoom In"), "+");

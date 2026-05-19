@@ -1212,6 +1212,7 @@ VectorSelectionTool::VectorSelectionTool(int targetType)
     , m_selectionTarget("Mode:")
     , m_includeIntersection("Include Intersection", false)
     , m_constantThickness("Preserve Thickness", false)
+    , m_showStrokeDirection("Show Direction", false)
     , m_levelSelection(m_strokeSelection)
     , m_capStyle("Cap")
     , m_joinStyle("Join")
@@ -1239,6 +1240,7 @@ VectorSelectionTool::VectorSelectionTool(int targetType)
   m_includeIntersection.setId("IncludeIntersection");
   m_constantThickness.setId("PreserveThickness");
   m_selectionTarget.setId("SelectionMode");
+  m_showStrokeDirection.setId("ShowDirection");
 
   m_capStyle.addValue(BUTT_WSTR, QString::fromStdWString(BUTT_WSTR));
   m_capStyle.addValue(ROUNDC_WSTR, QString::fromStdWString(ROUNDC_WSTR));
@@ -1256,6 +1258,8 @@ VectorSelectionTool::VectorSelectionTool(int targetType)
   m_outlineProps.bind(m_capStyle);
   m_outlineProps.bind(m_joinStyle);
   m_outlineProps.bind(m_miterJoinLimit);
+
+  m_otherProps.bind(m_showStrokeDirection);
 }
 
 //------------------------------------------------------------------------------
@@ -1358,6 +1362,9 @@ void VectorSelectionTool::updateTranslation() {
   m_joinStyle.setItemUIName(BEVEL_WSTR, tr("Bevel join"));
 
   m_miterJoinLimit.setQStringName(tr("Miter:"));
+
+  m_showStrokeDirection.setQStringName(tr("Show Direction"));
+
   SelectionTool::updateTranslation();
 }
 
@@ -1777,8 +1784,62 @@ void VectorSelectionTool::drawInLevelType(const TVectorImage &vi) {
 }
 
 //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+static void drawArrows(TStroke *stroke) {
+  double length = stroke->getLength(0.0, 1.0);
+  int points    = length / 20;
+  if (points < 2) points += 1;
+  double currentPosition = 0.0;
+
+  TPointD prePoint, point, postPoint;
+  TPointD point2;
+  for (int i = 0; i <= points; i++) {
+    currentPosition = i / (double)points;
+    point           = stroke->getPointAtLength(length * currentPosition);
+    prePoint =
+        (i == 0) ? point
+                 : stroke->getPointAtLength(length * (currentPosition - 0.02));
+    postPoint =
+        (i == points)
+            ? point
+            : stroke->getPointAtLength(length * (currentPosition + 0.02));
+
+    if (prePoint == postPoint) continue;
+
+    double radian =
+        std::atan2(postPoint.y - prePoint.y, postPoint.x - prePoint.x);
+    double degree = radian * 180.0 / 3.14159265;
+
+    glPushMatrix();
+
+    glTranslated(point.x, point.y, 0);
+    glRotated(degree, 0, 0, 1);
+
+    glBegin(GL_LINES);
+    glVertex2d(0, 0);
+    glVertex2d(-4, -4);
+    glVertex2d(0, 0);
+    glVertex2d(-4, 4);
+    glEnd();
+
+    glPopMatrix();
+  }
+}
 
 void VectorSelectionTool::drawSelectedStrokes(const TVectorImage &vi) {
+  GLint src, dst;
+  bool isEnabled;
+
+  int devPixRatio = m_viewer->getDevPixRatio();
+
+  tglColor(TPixel32::White);
+  isEnabled = glIsEnabled(GL_BLEND);
+  glGetIntegerv(GL_BLEND_SRC, &src);
+  glGetIntegerv(GL_BLEND_DST, &dst);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+
   glEnable(GL_LINE_STIPPLE);
 
   double pixelSize = getPixelSize();
@@ -1789,16 +1850,21 @@ void VectorSelectionTool::drawSelectedStrokes(const TVectorImage &vi) {
       TStroke *stroke = vi.getStroke(s);
 
       glLineStipple(1, 0xF0F0);
-      tglColor(TPixel32::Black);
       drawStrokeCenterline(*stroke, pixelSize);
 
-      glLineStipple(1, 0x0F0F);
-      tglColor(TPixel32::White);
-      drawStrokeCenterline(*stroke, pixelSize);
+      if (m_showStrokeDirection.getValue()) {
+        glLineWidth(2.0 * devPixRatio);
+        glLineStipple(1, 0xFFFF);
+        drawArrows(stroke);
+        glLineWidth(1.0 * devPixRatio);
+      }
     }
   }
 
   glDisable(GL_LINE_STIPPLE);
+
+  if (!isEnabled) glDisable(GL_BLEND);
+  glBlendFunc(src, dst);
 }
 
 //-----------------------------------------------------------------------------
@@ -2119,6 +2185,8 @@ TPropertyGroup *VectorSelectionTool::getProperties(int idx) {
     return &m_prop;
   case 1:
     return &m_outlineProps;
+  case 2:
+    return &m_otherProps;
   default:
     return 0;
   };
@@ -2128,6 +2196,26 @@ TPropertyGroup *VectorSelectionTool::getProperties(int idx) {
 
 bool VectorSelectionTool::onPropertyChanged(std::string propertyName) {
   if (!m_strokeSelection.isEditable()) return false;
+
+  if (propertyName == "FlipDirection") {
+    TVectorImageP vi                = m_strokeSelection.getImage();
+    const std::vector<int> &indices = m_strokeSelection.getSelection();
+
+    std::vector<int>::const_iterator it;
+    for (it = indices.begin(); it != indices.end(); ++it) {
+      TStroke *stroke = vi->getStroke(*it);
+      if (!stroke) continue;
+      stroke->changeDirection();
+    }
+    TXshSimpleLevel *sl =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+
+    sl->setDirtyFlag(true);
+    getViewer()->invalidateAll();
+    m_application->getCurrentLevel()->notifyLevelChange();
+
+    return true;
+  }
 
   if (propertyName == m_strokeSelectionType.getName())
     l_strokeSelectionType = ::to_string(m_strokeSelectionType.getValue());
