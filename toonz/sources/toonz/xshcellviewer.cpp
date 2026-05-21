@@ -2177,8 +2177,9 @@ void CellArea::drawLoopFrameMarker(QPainter &p, int row, int col) {
 //-----------------------------------------------------------------------------
 
 void CellArea::drawDrawingMarker(QPainter &p, int markId, QRect rect,
-                                 TFrameId fid) {
-  if (markId < 0 || fid.getNumber() < 0) return;
+                                 TFrameId fid, bool hasFrame,
+                                 bool isLoopedCell) {
+  if (markId < 0 || fid.getNumber() < 0 || (!hasFrame && !isLoopedCell)) return;
 
   int x0 = rect.left();
   int y0 = rect.top();
@@ -2192,8 +2193,9 @@ void CellArea::drawDrawingMarker(QPainter &p, int markId, QRect rect,
                      ->getProperties()
                      ->getCellMark(markId)
                      .color;
-  QColor markColor   = QColor(col.r, col.g, col.b);
-  QColor borderColor = QColor(col.r + 50, col.g + 50, col.b + 50);
+  int opacity        = isLoopedCell ? 102 : 255;
+  QColor markColor   = QColor(col.r, col.g, col.b, opacity);
+  QColor borderColor = QColor(col.r + 50, col.g + 50, col.b + 50, opacity);
 
   p.setBrush(markColor);
   p.setPen(borderColor);
@@ -2420,7 +2422,6 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
       Preferences::instance()->isCurrentTimelineIndicatorEnabled())
     drawCurrentTimeIndicator(p, xy);
 
-  if (!isImplicitCell) {
     bool isStart = row == 0 || prevCell.isEmpty() || prevIsImplicit ||
                    prevCell.m_level.getPointer() != cell.m_level.getPointer() ||
                    prevCell.getFrameId() != cell.getFrameId();
@@ -2444,11 +2445,14 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
           else
             markRect.adjust(0, 7, 0, 0);
         }
-        drawDrawingMarker(p, drawingMarkId, markRect, fid);
+        drawDrawingMarker(
+            p, drawingMarkId, markRect, fid, !isImplicitCell,
+            (isLoopedCell && prevCell.m_frameId != cell.m_frameId));
       }
     }
 
-    if (Preferences::instance()->isShowDragBarsEnabled()) {
+  if (!isImplicitCell) {
+      if (Preferences::instance()->isShowDragBarsEnabled()) {
       drawDragHandle(p, isStart, isLastRow, xy, sideColor);
       drawEndOfDragHandle(p, isLastRow, xy, cellColor);
       dottedLineColor = cellColor;

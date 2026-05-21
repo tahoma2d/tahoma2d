@@ -162,7 +162,8 @@ class CellArea final : public QWidget {
   void drawCellMarker(QPainter &p, int markId, QRect rect,
                       bool hasFrame = false, bool isNextEmpty = true);
   void drawLoopFrameMarker(QPainter &p, int row, int col);
-  void drawDrawingMarker(QPainter &p, int markId, QRect rect, TFrameId fid);
+  void drawDrawingMarker(QPainter &p, int markId, QRect rect, TFrameId fid,
+                         bool hasFrame, bool isLoopedCell);
 
   // Restistusce true
   bool getEaseHandles(int r0, int r1, double e0, double e1, int &rh0, int &rh1);
