@@ -73,6 +73,7 @@ TOutputProperties::TOutputProperties(const TOutputProperties &src)
     , m_boardSettings(new BoardSettings(*src.m_boardSettings))
     , m_formatTemplateFId(src.m_formatTemplateFId)
     , m_syncColorSettings(src.m_syncColorSettings)
+    , m_syncWithPlayRange(src.m_syncWithPlayRange)
     , m_nonlinearBpp(src.m_nonlinearBpp)
     , m_appendVersionFormat(src.m_appendVersionFormat) {
   std::map<std::string, TPropertyGroup *>::iterator ft,
@@ -126,6 +127,8 @@ TOutputProperties &TOutputProperties::operator=(const TOutputProperties &src) {
   m_formatTemplateFId = src.m_formatTemplateFId;
 
   m_appendVersionFormat = src.m_appendVersionFormat;
+
+  m_syncWithPlayRange = src.m_syncWithPlayRange;
 
   return *this;
 }
