@@ -5253,6 +5253,7 @@ void CellArea::onStepChanged(QAction *act) {
     setParamStep(keyFrameIndex, step,
                  stageObject->getParam(TStageObject::T_ShearY));
   }
+  param         = stageObject->getParam(TStageObject::T_DrawingNumber);
   keyFrameIndex = param->getClosestKeyframe(frame);
   if (keyFrameIndex >= 0) {
     setParamStep(keyFrameIndex, step,
