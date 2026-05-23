@@ -1021,6 +1021,8 @@ public slots:
   void onToolSwitched();
   void onToolChanged();
   void onStageObjectChange(bool);
+  void onObjectSwitched();
+  void onXshLevelSwitched(TXshLevel *);
 
 signals:
   // used in ComboViewer to handle Tab focus

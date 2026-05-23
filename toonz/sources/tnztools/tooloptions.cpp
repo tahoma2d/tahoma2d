@@ -4717,7 +4717,7 @@ void ToolOptions::showEvent(QShowEvent *) {
   TObjectHandle *currObject = app->getCurrentObject();
   if (currObject) {
     onStageObjectChange(false);
-    connect(currObject, SIGNAL(objectSwitched()), SLOT(onStageObjectChange(bool)));
+    connect(currObject, SIGNAL(objectSwitched()), SLOT(onObjectSwitched()));
     connect(currObject, SIGNAL(objectChanged(bool)),
             SLOT(onStageObjectChange(bool)));
   }
@@ -4726,7 +4726,7 @@ void ToolOptions::showEvent(QShowEvent *) {
 
   if (currLevel)
     connect(currLevel, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
-            SLOT(onStageObjectChange(bool)));
+            SLOT(onXshLevelSwitched(TXshLevel *)));
 }
 
 //-----------------------------------------------------------------------------
@@ -4870,6 +4870,15 @@ void ToolOptions::onStageObjectChange(bool isDragging) {
 
   ToolOptionsBox *panel = it->second;
   panel->onStageObjectChange(isDragging);
+}
+//-----------------------------------------------------------------------------
+
+void ToolOptions::onObjectSwitched() { onStageObjectChange(false); }
+
+//-----------------------------------------------------------------------------
+
+void ToolOptions::onXshLevelSwitched(TXshLevel *) {
+  onStageObjectChange(false);
 }
 
 //***********************************************************************************
