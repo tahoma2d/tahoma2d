@@ -36,6 +36,7 @@
 #include "toonz/trasterimageutils.h"
 #include "toonz/tcamera.h"
 #include "toonz/preferences.h"
+#include "toonz/sceneproperties.h"
 #include "trop.h"
 #include "tools/toolhandle.h"
 #include "tools/rasterselection.h"
@@ -162,7 +163,7 @@ void copyFramesWithoutUndo(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
   QClipboard *clipboard = QApplication::clipboard();
   TXsheet *xsh          = TApp::instance()->getCurrentXsheet()->getXsheet();
   DrawingData *data     = new DrawingData();
-  data->setLevelFrames(sl, frames);
+  data->setLevelFrames(sl, frames, true);
   clipboard->setMimeData(data, QClipboard::Clipboard);
 }
 
@@ -444,6 +445,7 @@ void cutFramesWithoutUndo(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
   std::map<TFrameId, QString> imageSet;
 
   HookSet *levelHooks   = sl->getHookSet();
+  std::map<TFrameId, int> drawingMarks = sl->getDrawingMarks();
   int currentFrameIndex = TApp::instance()->getCurrentFrame()->getFrameIndex();
   std::set<TFrameId>::const_iterator it;
   int i = 0;
@@ -462,7 +464,7 @@ void cutFramesWithoutUndo(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
 
   QClipboard *clipboard = QApplication::clipboard();
   DrawingData *data     = new DrawingData();
-  data->setFrames(imageSet, sl, *levelHooks);
+  data->setFrames(imageSet, sl, *levelHooks, drawingMarks);
   clipboard->setMimeData(data, QClipboard::Clipboard);
 
   for (it = frames.begin(); it != frames.end(); ++it, i++) {
@@ -1809,7 +1811,7 @@ void FilmstripCmd::pasteInto(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
   if (const DrawingData *drawingData =
           dynamic_cast<const DrawingData *>(clipboard->mimeData())) {
     DrawingData *data = new DrawingData();
-    data->setLevelFrames(sl, frames);
+    data->setLevelFrames(sl, frames, true);
 
     HookSet *oldLevelHooks = new HookSet();
     *oldLevelHooks         = *sl->getHookSet();
@@ -1867,10 +1869,11 @@ void FilmstripCmd::deleteFrames(TXshSimpleLevel *sl,
   sl->getFids(oldFrames);
 
   // set up the drawing data that will be necessary to undo the delete.
-  HookSet *levelHooks = sl->getHookSet();
+  HookSet *levelHooks                  = sl->getHookSet();
+  std::map<TFrameId, int> drawingMarks = sl->getDrawingMarks();
   std::map<TFrameId, QString> imageSet = deleteFramesWithoutUndo(sl, frames);
   DrawingData *oldData = new DrawingData();
-  oldData->setFrames(imageSet, sl, *levelHooks);
+  oldData->setFrames(imageSet, sl, *levelHooks, drawingMarks);
 
   TUndoManager::manager()->add(
       new DeleteFramesUndo(sl, framesToDelete, oldFrames, oldData));
@@ -1895,12 +1898,13 @@ void FilmstripCmd::clear(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
     }
   }
 
-  HookSet *levelHooks          = sl->getHookSet();
-  std::set<TFrameId> oldFrames = frames;
+  HookSet *levelHooks                  = sl->getHookSet();
+  std::map<TFrameId, int> drawingMarks = sl->getDrawingMarks();
+  std::set<TFrameId> oldFrames         = frames;
   std::map<TFrameId, QString> clearedFrames =
       clearFramesWithoutUndo(sl, frames);
   DrawingData *oldData = new DrawingData();
-  oldData->setFrames(clearedFrames, sl, *levelHooks);
+  oldData->setFrames(clearedFrames, sl, *levelHooks, drawingMarks);
   DrawingData *newData = new DrawingData();
   newData->setLevelFrames(sl, frames);
   frames.clear();
@@ -2838,4 +2842,82 @@ void FilmstripCmd::renumberDrawing(TXshSimpleLevel *sl, const TFrameId &oldFid,
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentLevel()->notifyLevelChange();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+}
+
+//=============================================================================
+
+//-----------------------------------------------------------------------------
+namespace {
+//-----------------------------------------------------------------------------
+
+//=============================================================================
+// SetDrawingMarkUndo
+//-----------------------------------------------------------------------------
+
+class SetDrawingMarkUndo final : public TUndo {
+  TXshSimpleLevel *m_sl;
+  std::map<TFrameId, int> m_oldDrawingMarks;
+  int m_newDrawingMark;
+
+public:
+  SetDrawingMarkUndo(TXshSimpleLevel *sl, std::set<TFrameId> fids, int markId)
+      : m_sl(sl), m_newDrawingMark(markId) {
+    for (TFrameId fid : fids) {
+      m_oldDrawingMarks[fid] = sl->getDrawingMark(fid);
+    }
+  }
+  void undo() const override {
+    std::map<TFrameId, int>::const_iterator it = m_oldDrawingMarks.begin();
+    for (; it != m_oldDrawingMarks.end(); it++)
+      m_sl->setDrawingMark(it->first, it->second);
+
+    TApp::instance()->getCurrentLevel()->notifyLevelChange();
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  void redo() const override {
+    std::map<TFrameId, int>::const_iterator it = m_oldDrawingMarks.begin();
+    for (; it != m_oldDrawingMarks.end(); it++)
+      m_sl->setDrawingMark(it->first, m_newDrawingMark);
+
+    TApp::instance()->getCurrentLevel()->notifyLevelChange();
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  int getSize() const override { return sizeof *this; }
+  QString getHistoryString() override {
+    QString markName;
+    if (m_newDrawingMark < 0)
+      markName = QObject::tr("None", "Drawing Mark");
+    else
+      markName = TApp::instance()
+                     ->getCurrentScene()
+                     ->getScene()
+                     ->getProperties()
+                     ->getCellMark(m_newDrawingMark)
+                     .name;
+    if (m_oldDrawingMarks.size() > 1)
+      return QObject::tr("Set Drawing Mark on multiple frames to %1")
+          .arg(markName);
+
+    return QObject::tr("Set Drawing Mark on Frame %1 to %2")
+        .arg(QString::number(m_oldDrawingMarks.begin()->first.getNumber()))
+        .arg(markName);
+  }
+  int getHistoryType() override { return HistoryType::Xsheet; }
+};
+
+}  // namespace
+
+//=============================================================================
+// setDrawingMark
+//-----------------------------------------------------------------------------
+
+void FilmstripCmd::setDrawingMark(TXshSimpleLevel *sl,
+                                  std::set<TFrameId> &frames, int markId) {
+  if (!sl || sl->isSubsequence() || sl->isReadOnly() || !frames.size()) return;
+
+  SetDrawingMarkUndo *undo = new SetDrawingMarkUndo(sl, frames, markId);
+  undo->redo();
+  TUndoManager::manager()->add(undo);
 }

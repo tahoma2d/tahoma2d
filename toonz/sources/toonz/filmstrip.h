@@ -171,6 +171,7 @@ protected slots:
   void navigatorToggled(bool);
   void levelSelected(int);
   void disconnectViewer();
+  void onSetDrawingMark();
 
 private:
   // QSS Properties

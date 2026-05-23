@@ -451,3 +451,11 @@ void TFilmstripSelection::inbetweenEaseInOut() {
   TFrameId fid2 = *m_selectedFrames.rbegin();
   FilmstripCmd::inbetween(sl, fid1, fid2, FilmstripCmd::II_EaseInOut);
 }
+
+//-----------------------------------------------------------------------------
+
+void TFilmstripSelection::setDrawingMark(int markId) {
+  if (markId < -1) return;
+  TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
+  if (sl) FilmstripCmd::setDrawingMark(sl, m_selectedFrames, markId);
+}

@@ -35,6 +35,7 @@
 #include "toonz/toonzscene.h"
 #include "toonz/levelset.h"
 #include "toonz/preferences.h"
+#include "toonz/sceneproperties.h"
 
 // TnzCore includes
 #include "tpalette.h"
@@ -817,6 +818,35 @@ void FilmstripFrames::drawFrameIcon(QPainter &p, const QRect &r, int index,
   if (!pm.isNull()) {
     p.drawPixmap(r.left(), r.top(), pm);
 
+    int markId = sl->getDrawingMark(fid);
+    if (markId >= 0) {
+      int x0 = r.left();
+      int y0 = r.top();
+
+      QBrush origBrush = p.brush();
+      QPen origPen     = p.pen();
+
+      TPixel32 col = TApp::instance()
+                         ->getCurrentScene()
+                         ->getScene()
+                         ->getProperties()
+                         ->getCellMark(markId)
+                         .color;
+      QColor markColor   = QColor(col.r, col.g, col.b);
+      QColor borderColor = QColor(col.r + 50, col.g + 50, col.b + 50);
+
+      p.setBrush(markColor);
+      p.setPen(borderColor);
+
+      int markerHeight = 20;
+      QPoint points[4] = {QPoint(x0, y0), QPoint(x0 + markerHeight, y0),
+                          QPoint(x0, y0 + markerHeight), QPoint(x0, y0)};
+      p.drawPolygon(points, 4);
+
+      p.setBrush(origBrush);
+      p.setPen(origPen);
+    }
+
     if (sl && sl->getType() == PLI_XSHLEVEL && flags & F_INBETWEEN_RANGE) {
       if (m_isVertical) {
         int x1 = r.right();
@@ -1347,6 +1377,12 @@ void FilmstripFrames::timerEvent(QTimerEvent *) {
 
 //-----------------------------------------------------------------------------
 
+QIcon getColorChipIcon(TPixel32 color) {
+  QPixmap pm(15, 15);
+  pm.fill(QColor(color.r, color.g, color.b));
+  return QIcon(pm);
+}
+
 void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
   QMenu *menu             = new QMenu();
   TXshSimpleLevel *sl     = getLevel();
@@ -1402,6 +1438,50 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
              (sl->getType() == OVL_XSHLEVEL && !sl->getPath().isUneditable())))
     menu->addAction(cm->getAction(MI_RevertToLastSaved));
   menu->addSeparator();
+
+  if (sl && (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL ||
+             sl->getType() == OVL_XSHLEVEL)) {
+    bool hasSelection = !m_selection->isEmpty();
+    int selectCount   = m_selection->getSelectedFids().size();
+    QMenu *marksMenu  = new QMenu(tr("Drawing Mark"), this);
+    marksMenu->setEnabled(hasSelection);
+    if (hasSelection) {
+      int markId = -2;
+      if (selectCount == 1) {
+        TFrameId fid = *(m_selection->getSelectedFids().begin());
+        markId       = sl->getDrawingMark(fid);
+      }
+      QAction *markAction = marksMenu->addAction(tr("None"));
+      markAction->setIconVisibleInMenu(true);
+      markAction->setCheckable(true);
+      markAction->setChecked(markId == -1);
+      markAction->setEnabled(markId != -1);
+      markAction->setData(-1);
+      connect(markAction, SIGNAL(triggered()), this, SLOT(onSetDrawingMark()));
+      QList<TSceneProperties::CellMark> marks = TApp::instance()
+                                                    ->getCurrentScene()
+                                                    ->getScene()
+                                                    ->getProperties()
+                                                    ->getCellMarks();
+      int curId = 0;
+      for (auto mark : marks) {
+        QString label = QString("%1: %2").arg(curId).arg(mark.name);
+        markAction = marksMenu->addAction(getColorChipIcon(mark.color), label);
+        markAction->setIconVisibleInMenu(true);
+        markAction->setCheckable(true);
+        markAction->setChecked(markId == curId);
+        markAction->setEnabled(markId != curId);
+        markAction->setData(curId);
+        connect(markAction, SIGNAL(triggered()), this,
+                SLOT(onSetDrawingMark()));
+        curId++;
+      }
+    }
+
+    menu->addMenu(marksMenu);
+
+    menu->addSeparator();
+  }
   createSelectLevelMenu(menu);
   QMenu *panelMenu           = menu->addMenu(tr("Panel Settings"));
   QAction *toggleOrientation = panelMenu->addAction(tr("Toggle Orientation"));
@@ -1451,6 +1531,24 @@ void FilmstripFrames::createSelectLevelMenu(QMenu *menu) {
       }
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void FilmstripFrames::onSetDrawingMark() {
+  if (m_selection->isEmpty()) return;
+
+  QAction *senderAction = qobject_cast<QAction *>(sender());
+  if (!senderAction) return;
+
+  TXshSimpleLevel *sl = getLevel();
+  if (!sl) return;
+
+  int markId = senderAction->data().toInt();
+
+  std::set<TFrameId> fids = m_selection->getSelectedFids();
+
+  FilmstripCmd::setDrawingMark(sl, fids, markId);
 }
 
 //-----------------------------------------------------------------------------

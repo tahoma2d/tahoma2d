@@ -64,6 +64,7 @@ public:
   void inbetweenEaseIn();
   void inbetweenEaseOut();
   void inbetweenEaseInOut();
+  void setDrawingMark(int markId);
 };
 
 #endif  // TFILMSTRIPSELECTION_H
