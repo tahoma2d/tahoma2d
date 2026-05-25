@@ -827,7 +827,9 @@ void TDoubleParam::setKeyframe(const TDoubleKeyframe &k) {
   } else {
     if (keyframes.size()) {
       if (it == keyframes.end()) {  // Adding after the last one
-        keyframes.rbegin()->m_type = k.m_prevType;
+        keyframes.rbegin()->m_type = k.m_prevType != TDoubleKeyframe::None
+                                         ? k.m_prevType
+                                         : TDoubleKeyframe::Linear;
         atEnd                      = true;
       }
     }
