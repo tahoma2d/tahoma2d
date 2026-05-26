@@ -1265,6 +1265,7 @@ void OutputSettingsPopup::updateField() {
     m_renderKeysOnly->setEnabled(prop->getMultimediaRendering());
     m_renderToFolders->setEnabled(prop->getMultimediaRendering());
 
+    prop->setSyncWithPlayRangeEnabled(SyncOutputWithPlayRange);
     prop->setAppendVersionFormat((TOutputProperties::AppendVersionFormat)(int)AppendVersionFormat);
   }
 
@@ -1314,8 +1315,17 @@ void OutputSettingsPopup::updateField() {
   int r0 = 0, r1 = -1, step;
   prop->getRange(r0, r1, step);
   if (r0 > r1) {
-    r0 = 0;
-    r1 = scene->getFrameCount() - 1;
+    if (!m_isPreviewSettings && prop->isSyncWithPlayRangeEnabled()) {
+      // First time opening Render properties. If sync play range is enabled,
+      // initialize range fields to whatever the preview range is
+      TOutputProperties *p = scene->getProperties()->getPreviewProperties();
+      int ignore;
+      p->getRange(r0, r1, ignore);
+    }
+    if (r0 > r1) {
+      r0 = 0;
+      r1 = scene->getFrameCount() - 1;
+    }
     if (r1 < 0) r1 = 0;
   }
   m_startFld->setValue(r0 + 1);
