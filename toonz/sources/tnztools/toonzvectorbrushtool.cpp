@@ -433,11 +433,11 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
                        autoGroup, autoFill, sendToBack));
   }
 
-  if (autoGroup && stroke->isSelfLoop()) {
+  if (autoGroup) {
     int index             = vi->getStrokeCount() - 1;
     if (sendToBack) index = addedStrokeIndex;
     vi->group(index, 1);
-    if (autoFill) {
+    if (autoFill && stroke->isSelfLoop()) {
       // to avoid filling other strokes, I enter into the new stroke group
       int currentGroup = vi->exitGroup();
       vi->enterGroup(index);
