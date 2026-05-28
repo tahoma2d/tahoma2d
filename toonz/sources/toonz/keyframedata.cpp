@@ -137,7 +137,21 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
     TStageObject::Keyframe newKey = pegbar->getKeyframe(row);
     // Process 1st key added in column
     if (itF != firstRowCol.end() && itF->second == row) {
-      if (row > kF) {
+      if (row > kL) {
+        // If new key was added after the existing last one, create new
+        // interpolation between them using preference setting
+        TStageObject::Keyframe prevKey = pegbar->getKeyframe(kL);
+        for (int i = 0; i < TStageObject::T_ChannelCount; i++) {
+          if (newKey.m_channels[i].m_isKeyframe &&
+              prevKey.m_channels[i].m_isKeyframe) {
+            prevKey.m_channels[i].m_type = TDoubleKeyframe::Type(
+                Preferences::instance()->getKeyframeType());
+            newKey.m_channels[i].m_prevType = prevKey.m_channels[i].m_type;
+          }
+        }
+        pegbar->setKeyframeWithoutUndo(kL, prevKey);
+        pegbar->setKeyframeWithoutUndo(row, newKey);
+      } else if (row > kF) {
         // If new key was added between existing keys, sync new key's previous
         // interpolation to key just before it
         if (!pegbar->getKeyframeSpan(row - 1, kP, e0, kN, e1)) kP = row - 1;
@@ -152,7 +166,21 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
     }
     // Process last key added in column
     if (itL != lastRowCol.end() && itL->second == row) {
-      if (row < kL) {
+      if (row < kF) {
+        // If new key was added before the existing 1st one, create new
+        // interpolation between them using preference setting
+        TStageObject::Keyframe nextKey = pegbar->getKeyframe(kF);
+        for (int i = 0; i < TStageObject::T_ChannelCount; i++) {
+          if (newKey.m_channels[i].m_isKeyframe &&
+              nextKey.m_channels[i].m_isKeyframe) {
+            newKey.m_channels[i].m_type = TDoubleKeyframe::Type(
+                Preferences::instance()->getKeyframeType());
+            nextKey.m_channels[i].m_prevType = newKey.m_channels[i].m_type;
+          }
+        }
+        pegbar->setKeyframeWithoutUndo(row, newKey);
+        pegbar->setKeyframeWithoutUndo(kF, nextKey);
+      } else if (row < kL) {
         // If new key was added between existing keys, sync new key to the next
         // key's previous interpolation
         if (!pegbar->getKeyframeSpan(row + 1, kP, e0, kN, e1)) kN = row + 1;
