@@ -359,7 +359,11 @@ int main(int argc, char *argv[]) {
 
   // Enables high-DPI scaling. This attribute must be set before QApplication is
   // constructed. Available from Qt 5.6.
-  if (Preferences::instance()->isHighDpiScalingEnabled())
+  if (Preferences::instance()->isHighDpiScalingEnabled()
+#ifdef __ANDROID__
+      || true
+#endif
+  )
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
 #ifdef Q_OS_WIN
@@ -569,7 +573,7 @@ int main(int argc, char *argv[]) {
   QOpenGLFramebufferObjectFormat fmt;
   fmt.setAttachment(QOpenGLFramebufferObject::Attachment::CombinedDepthStencil);
 
-#ifndef __HAIKU__
+#if !defined(__HAIKU__) && !defined(__ANDROID__)
   glutInit(&argc, argv);
 #endif
 

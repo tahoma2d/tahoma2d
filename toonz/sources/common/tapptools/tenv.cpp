@@ -81,7 +81,7 @@ public:
     settingsPath = getWorkingDirectory() +
                    QString("/Contents/Resources/SystemVar.ini");
 #else
-#ifdef HAIKU
+#if defined(HAIKU) || defined(__ANDROID__)
     settingsPath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/SystemVar.ini";
 #else /* Generic Unix */
     // TODO: use QStandardPaths::ConfigLocation when we drop Qt4

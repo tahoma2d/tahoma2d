@@ -9,7 +9,7 @@ typedef unsigned __int32 TUINT32;
 typedef __int64 TINT64;
 typedef unsigned __int64 TUINT64;
 
-#elif defined(MACOSX)
+#elif defined(MACOSX) || defined(__ANDROID__)
 
 #include <stdint.h>
 

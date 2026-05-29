@@ -121,7 +121,7 @@ void initToonzEvent(TMouseEvent &toonzEvent, QTabletEvent *event,
   bool isBusy = ((event->buttons() & Qt::LeftButton) ||
                  (event->buttons() & Qt::RightButton) ||
                  (event->buttons() & Qt::MiddleButton))
-#if defined(LINUX) || defined(FREEBSD)
+#if defined(LINUX) || defined(FREEBSD) || defined(__ANDROID__)
                 // Since Linux doesn't always register leave events, include
                 // pressure in check
                 && pressure != 0.0
@@ -271,7 +271,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
   if (m_freezedStatus != NO_FREEZED) return;
 
   m_tabletEvent = true;
-#if defined(LINUX) || defined(FREEBSD)
+#if defined(LINUX) || defined(FREEBSD) || defined(__ANDROID__)
   // For Linux, ignore pressure when not actively pressing
   // Means we are hovering
   if (m_tabletState != None)
@@ -343,7 +343,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       m_tabletEvent = false;
 #endif
 
-#if defined(LINUX) || defined(FREEBSD)
+#if defined(LINUX) || defined(FREEBSD) || defined(__ANDROID__)
     // for Linux, create context menu on right click here.
     // could possibly merge with OSX code above
     if (e->button() == Qt::RightButton) {
