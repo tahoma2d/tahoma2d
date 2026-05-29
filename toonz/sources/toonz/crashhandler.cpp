@@ -12,9 +12,13 @@
 #ifdef MACOSX
 #include <mach-o/dyld.h>
 #else
+#ifndef __ANDROID__
 #include <link.h>
 #endif
+#endif
+#ifndef __ANDROID__
 #include <execinfo.h>
+#endif
 #include <signal.h>
 #include <unistd.h>
 #include <err.h>
@@ -117,8 +121,11 @@ static void printModules(std::string &out) {
   }
 }
 
+#ifndef __ANDROID__
 #define HAS_BACKTRACE
+#endif
 static void printBacktrace(std::string &out) {
+#ifdef HAS_BACKTRACE
   int frameStack = 0;
   int frameSkip  = 3;
 
@@ -215,6 +222,7 @@ static void printBacktrace(std::string &out) {
   }
 
   SymCleanup(hProcess);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -358,8 +366,11 @@ static void printModules(std::string &out) {
 
 //-----------------------------------------------------------------------------
 
+#ifndef __ANDROID__
 #define HAS_BACKTRACE
+#endif
 static void printBacktrace(std::string &out) {
+#ifdef HAS_BACKTRACE
   int frameStack = 0;
   int frameSkip  = 3;
 
@@ -415,6 +426,7 @@ static void printBacktrace(std::string &out) {
 
     out.append(found ? line : (sym + "\n"));
   }
+#endif
 }
 
 void signalHandler(int sig) {

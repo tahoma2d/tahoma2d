@@ -46,7 +46,7 @@
 // #include "lmcons.h"
 #endif
 
-#ifdef LINUX
+#if defined(LINUX) || defined(__ANDROID__)
 #define PLATFORM LINUX
 #include <grp.h>
 #include <utime.h>
@@ -220,7 +220,7 @@ bool TSystem::memoryShortage() {
   // to be done...
   return false;
 
-#elif defined(LINUX)
+#elif defined(LINUX) || defined(__ANDROID__)
 
   // to be done...
   return false;
@@ -283,7 +283,7 @@ TINT64 TSystem::getFreeMemorySize(bool onlyPhysicalMemory) {
   free(table);
   totalFree = (virtualFree << 4) + physicalFree;
 
-#elif defined(LINUX)
+#elif defined(LINUX) || defined(__ANDROID__)
 
   struct sysinfo *sysInfo = (struct sysinfo *)calloc(1, sizeof(struct sysinfo));
 
@@ -453,7 +453,7 @@ TINT64 TSystem::getMemorySize(bool onlyPhysicalMemory) {
     return ((size_t)0);
   else
     return logSwapLibero >> 1;
-#elif defined(LINUX)
+#elif defined(LINUX) || defined(__ANDROID__)
 
   struct sysinfo *sysInfo = (struct sysinfo *)calloc(1, sizeof(struct sysinfo));
   TINT64 ret              = 0;
@@ -568,7 +568,7 @@ void TSystem::moveFileToRecycleBin(const TFilePath &fp) {
     } catch (...) {
     }
   }
-#elif defined(LINUX)
+#elif defined(LINUX) && !defined(__ANDROID__)
   //
   // From https://stackoverflow.com/questions/17964439/move-files-to-trash-recycle-bin-in-qt
   //

@@ -371,6 +371,9 @@ int main(int argc, char *argv[]) {
   // angle,	force Qt to use desktop OpenGL
   QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
 #endif
+#ifdef __ANDROID__
+  QApplication::setAttribute(Qt::AA_UseOpenGLES, true);
+#endif
 
   QApplication a(argc, argv);
 

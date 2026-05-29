@@ -424,6 +424,8 @@ qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 
 if(BUILD_ENV_MSVC)
     add_executable(Tahoma2D WIN32 ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES} ${RC_FILE})
+elseif(BUILD_TARGET_ANDROID)
+    add_library(Tahoma2D SHARED ${HEADERS} ${SOURCES} ${OBJCSOURCES} ${RESOURCES})
 else()
     set(MACOSX_BUNDLE_ICON_FILE "Tahoma2D.icns")
     set_source_files_properties(Tahoma2D.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
