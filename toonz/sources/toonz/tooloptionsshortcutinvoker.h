@@ -257,6 +257,8 @@ protected slots:
   /*-- Brush Tool + mode switching shortcuts --*/
   void ToggleBrushAutoFillOff();
   void ToggleBrushAutoFillOn();
+  void ToggleBrushAutoCloseOn();
+  void ToggleBrushAutoGroupOn();
 };
 
 #endif

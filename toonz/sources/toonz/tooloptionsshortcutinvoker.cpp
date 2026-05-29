@@ -593,6 +593,10 @@ void ToolOptionsShortcutInvoker::initialize() {
                     &ToolOptionsShortcutInvoker::ToggleBrushAutoFillOff);
   setCommandHandler(MI_BrushAutoFillOn, this,
                     &ToolOptionsShortcutInvoker::ToggleBrushAutoFillOn);
+  setCommandHandler(MI_BrushAutoCloseOn, this,
+                    &ToolOptionsShortcutInvoker::ToggleBrushAutoCloseOn);
+  setCommandHandler(MI_BrushAutoGroupOn, this,
+                    &ToolOptionsShortcutInvoker::ToggleBrushAutoGroupOn);
 }
 
 //-----------------------------------------------------------------------------
@@ -1158,7 +1162,15 @@ void ToolOptionsShortcutInvoker::TogglePlasticAnimate() {
 /*-- Brush tool + mode switching shortcuts --*/
 void ToolOptionsShortcutInvoker::ToggleBrushAutoFillOff() {
   CommandManager::instance()->getAction(T_Brush)->trigger();
-  QAction *ac = CommandManager::instance()->getAction("A_ToolOption_AutoClose");
+  QAction* ac = CommandManager::instance()->getAction("A_ToolOption_Autofill");
+  if (ac->isChecked()) {
+    ac->trigger();
+  }
+  ac = CommandManager::instance()->getAction("A_ToolOption_AutoGroup");
+  if (ac->isChecked()) {
+    ac->trigger();
+  }
+  ac = CommandManager::instance()->getAction("A_ToolOption_AutoClose");
   if (ac->isChecked()) {
     ac->trigger();
   }
@@ -1167,6 +1179,22 @@ void ToolOptionsShortcutInvoker::ToggleBrushAutoFillOff() {
 void ToolOptionsShortcutInvoker::ToggleBrushAutoFillOn() {
   CommandManager::instance()->getAction(T_Brush)->trigger();
   QAction *ac = CommandManager::instance()->getAction("A_ToolOption_Autofill");
+  if (!ac->isChecked()) {
+    ac->trigger();
+  }
+}
+
+void ToolOptionsShortcutInvoker::ToggleBrushAutoCloseOn() {
+  CommandManager::instance()->getAction(T_Brush)->trigger();
+  QAction* ac = CommandManager::instance()->getAction("A_ToolOption_AutoClose");
+  if (!ac->isChecked()) {
+    ac->trigger();
+  }
+}
+
+void ToolOptionsShortcutInvoker::ToggleBrushAutoGroupOn() {
+  CommandManager::instance()->getAction(T_Brush)->trigger();
+  QAction* ac = CommandManager::instance()->getAction("A_ToolOption_AutoGroup");
   if (!ac->isChecked()) {
     ac->trigger();
   }
