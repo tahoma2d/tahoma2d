@@ -22,6 +22,7 @@ Please download the latest release at <https://github.com/tahoma2d/tahoma2d/rele
 - [Windows](./doc/how_to_build_win.md)
 - [macOS](./doc/how_to_build_macosx.md)
 - [Linux](./doc/how_to_build_linux.md)
+- [Android](./doc/how_to_build_android.md)
 
 For instructions on how to build stylesheets, please [see here](./doc/how_to_stylesheet.md).
 
