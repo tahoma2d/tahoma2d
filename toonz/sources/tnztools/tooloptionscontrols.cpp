@@ -106,6 +106,7 @@ ToolOptionCheckbox::ToolOptionCheckbox(TTool *tool, TBoolProperty *property,
   // synchronize the state with the same widgets in other tool option bars
   if (toolHandle)
     connect(this, SIGNAL(clicked(bool)), toolHandle, SIGNAL(toolChanged()));
+  connect(this, SIGNAL(clicked(bool)), SLOT(onClicked(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -116,6 +117,15 @@ void ToolOptionCheckbox::updateStatus() {
   if (isChecked() == check) return;
 
   setCheckState(check ? Qt::Checked : Qt::Unchecked);
+
+  onClicked(check);
+}
+
+void ToolOptionCheckbox::onClicked(bool check) {
+  // sync state of shortcut if there is one
+  std::string id = "A_ToolOption_" + m_property->getId();
+  QAction *ac    = CommandManager::instance()->getAction(id.c_str());
+  if (ac) ac->setChecked(check);
 }
 
 //-----------------------------------------------------------------------------
