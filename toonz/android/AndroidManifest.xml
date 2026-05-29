@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<manifest android:versionName="1.6.1" android:versionCode="1" package="org.tahoma2d.tahoma2d" xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:label="Tahoma2D" android:icon="@drawable/icon">
+        <activity android:name="org.qtproject.qt5.android.bindings.QtActivity" android:label="Tahoma2D" android:screenOrientation="unspecified" android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <meta-data android:name="android.app.lib_name" android:value="Tahoma2D"/>
+        </activity>
+    </application>
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+    <uses-feature android:name="android.hardware.faketouch" android:required="false"/>
+</manifest>

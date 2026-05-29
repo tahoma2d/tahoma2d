@@ -823,7 +823,11 @@ int main(int argc, char *argv[]) {
     w.checkForUpdates();
   DvDirModel::instance()->forceRefresh();
 
+#ifdef __ANDROID__
+  w.showMaximized();
+#else
   w.show();
+#endif
 
   // Show floating panels only after the main window has been shown
   w.startupFloatingPanels();
