@@ -153,7 +153,9 @@ enum class PredefinedRect {
   TOGGLE_COLUMN_NUMBER_AREA,
   TOGGLE_COLUMN_NUMBER,
   TOGGLE_COLUMN_PARENT_AREA,
-  TOGGLE_COLUMN_PARENT
+  TOGGLE_COLUMN_PARENT,
+  TOGGLE_CAMERASTAND_BUTTON_AREA,
+  TOGGLE_CAMERASTAND_BUTTON
 };
 enum class PredefinedLine {
   LOCKED,              //! dotted vertical line when cell is locked

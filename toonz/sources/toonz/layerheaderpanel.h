@@ -40,6 +40,7 @@ public slots:
   void onPreviewClicked();
   void onCamstandClicked();
   void onLockClicked();
+  void onPreferenceChanged(const QString &prefName);
 };
 
 #endif

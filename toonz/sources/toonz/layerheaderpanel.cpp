@@ -54,12 +54,19 @@ LayerHeaderPanel::LayerHeaderPanel(XsheetViewer *viewer, QWidget *parent,
   m_camstandButton->setIcon(createQIcon("table"));
   m_lockButton->setIcon(createQIcon("lock_on"));
 
+  m_camstandButton->setVisible(
+      !Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled());
+
   connect(m_previewButton, &QToolButton::clicked, this,
           &LayerHeaderPanel::onPreviewClicked);
   connect(m_camstandButton, &QToolButton::clicked, this,
           &LayerHeaderPanel::onCamstandClicked);
   connect(m_lockButton, &QToolButton::clicked, this,
           &LayerHeaderPanel::onLockClicked);
+
+  connect(TApp::instance()->getCurrentScene(),
+          SIGNAL(preferenceChanged(const QString &)), this,
+          SLOT(onPreferenceChanged(const QString &)));
 
   // Add widgets to the layout
   layout->addWidget(m_previewButton);
@@ -112,7 +119,12 @@ void LayerHeaderPanel::toggleColumnVisibility(int visibilityFlag) {
 //-----------------------------------------------------------------------------
 
 void LayerHeaderPanel::onPreviewClicked() {
-  toggleColumnVisibility(ToggleAllPreviewVisible);
+  // When unify visibility button is enabled, it follows the camstand status,
+  // not the preview status
+  toggleColumnVisibility(
+      Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled()
+          ? ToggleAllTransparency
+          : ToggleAllPreviewVisible);
 }
 
 void LayerHeaderPanel::onCamstandClicked() {
@@ -121,6 +133,12 @@ void LayerHeaderPanel::onCamstandClicked() {
 
 void LayerHeaderPanel::onLockClicked() {
   toggleColumnVisibility(ToggleAllLock);
+}
+
+void LayerHeaderPanel::onPreferenceChanged(const QString &prefName) {
+  if (prefName == "unifyColumnVisibilityToggles")
+    m_camstandButton->setVisible(
+        !Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled());
 }
 
 //-----------------------------------------------------------------------------

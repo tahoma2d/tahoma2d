@@ -2254,8 +2254,12 @@ public:
         o->rect(PredefinedRect::FOLDER_INDICATOR_AREA).translated(orig);
     if (o->isVerticalTimeline())
       rect.adjust(0, indicatorRect.height() * columnDepth, 0, 0);
-    else
-      rect.adjust(indicatorRect.width() * columnDepth, 0, 0, 0);
+    else {
+      int shiftLeft = 0;
+      if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
+        shiftLeft = o->rect(PredefinedRect::PREVIEW_LAYER_AREA).width();
+      rect.adjust((indicatorRect.width() * columnDepth) - shiftLeft, 0, 0, 0);
+    }
 
     p.setPen(QColor(190, 220, 255));
     p.setBrush(Qt::NoBrush);
