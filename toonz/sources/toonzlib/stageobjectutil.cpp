@@ -417,7 +417,7 @@ void UndoChannelDelete::undo() const {
     TStageObjectId objId   = m_objectHandle->getObjectId();
     TStageObject *stageObj = m_xsheetHandle->getXsheet()->getStageObject(objId);
     int frame              = m_frameHandle->getFrameIndex();
-    stageObj->setCenterAndOffset(m_center, m_offset);
+    if (stageObj) stageObj->setCenterAndOffset(m_center, m_offset);
   }
 
   m_objectHandle->notifyObjectIdChanged(false);
@@ -434,9 +434,11 @@ void UndoChannelDelete::redo() const {
   TStageObject *stageObj = m_xsheetHandle->getXsheet()->getStageObject(objId);
   int frame              = m_frameHandle->getFrameIndex();
 
-  stageObj->getParam(m_actionId)->deleteKeyframe(frame);
-  if (m_center != TPointD() && !stageObj->isKeyframe(frame))
-    stageObj->setCenter(frame, m_center, true);
+  if (stageObj) {
+    stageObj->getParam(m_actionId)->deleteKeyframe(frame);
+    if (m_center != TPointD() && !stageObj->isKeyframe(frame))
+      stageObj->setCenter(frame, m_center, true);
+  }
 
   m_xsheetHandle->notifyXsheetChanged();
   m_objectHandle->notifyObjectIdChanged(false);
