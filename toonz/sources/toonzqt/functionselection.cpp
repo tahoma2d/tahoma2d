@@ -158,8 +158,9 @@ public:
            it != keyframes.end(); ++it) {
         m_columns[col].m_keyframes[*it] = param->getKeyframe(*it);
         TStageObject *stgObj            = m_sheet->getStageObject(col);
-        stgObj->getCenterAndOffset(m_columns[col].m_center,
-                                   m_columns[col].m_offset);
+        if (stgObj)
+          stgObj->getCenterAndOffset(m_columns[col].m_center,
+                                     m_columns[col].m_offset);
       }
     }
   }
@@ -180,7 +181,7 @@ public:
         m_columns[col].m_param->setKeyframe(it->second);
         double frame = it->second.m_frame;
         TStageObject *stgObj = m_sheet->getStageObject(col);
-        if (m_columns[col].m_center != TPointD())
+        if (stgObj && m_columns[col].m_center != TPointD())
           stgObj->setCenterAndOffset(m_columns[col].m_center,
                                      m_columns[col].m_offset);
       }
@@ -195,7 +196,8 @@ public:
         double frame = it->second.m_frame;
         m_columns[col].m_param->deleteKeyframe(frame);
         TStageObject *stgObj = m_sheet->getStageObject(col);
-        if (m_columns[col].m_center != TPointD() && !stgObj->isKeyframe(frame))
+        if (stgObj && m_columns[col].m_center != TPointD() &&
+            !stgObj->isKeyframe(frame))
           stgObj->setCenter(frame, m_columns[col].m_center, true);
       }
     }
