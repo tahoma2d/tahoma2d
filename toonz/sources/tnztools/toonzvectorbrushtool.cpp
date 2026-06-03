@@ -433,11 +433,11 @@ static void addStroke(TTool::Application *application, const TVectorImageP &vi,
                        autoGroup, autoFill, sendToBack));
   }
 
-  if (autoGroup && stroke->isSelfLoop()) {
+  if (autoGroup) {
     int index             = vi->getStrokeCount() - 1;
     if (sendToBack) index = addedStrokeIndex;
     vi->group(index, 1);
-    if (autoFill) {
+    if (autoFill && stroke->isSelfLoop()) {
       // to avoid filling other strokes, I enter into the new stroke group
       int currentGroup = vi->exitGroup();
       vi->enterGroup(index);
@@ -2289,26 +2289,17 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
   }
 
   if (propertyName == m_autoClose.getName() && !m_autoClose.getValue()) {
+    // We need autofill off if off.
     m_autoFill.setValue(false);
-    m_autoGroup.setValue(false);
-    V_VectorBrushAutoFill  = m_autoFill.getValue();
-    V_VectorBrushAutoGroup = m_autoGroup.getValue();
-    notifyTool             = true;
+    V_VectorBrushAutoFill = m_autoFill.getValue();
+    notifyTool            = true;
   }
 
-  if (propertyName == m_autoGroup.getName()) {
-    // We need close turned on if on,
+  if (propertyName == m_autoGroup.getName() && !m_autoGroup.getValue()) {
     // We need autofill off if off.
-    if (m_autoGroup.getValue()) {
-      m_autoClose.setValue(true);
-      V_VectorBrushAutoClose = m_autoClose.getValue();
-      notifyTool             = true;
-    }
-    if (!m_autoGroup.getValue() && m_autoFill.getValue()) {
-      m_autoFill.setValue(false);
-      V_VectorBrushAutoFill = m_autoFill.getValue();
-      notifyTool            = true;
-    }
+    m_autoFill.setValue(false);
+    V_VectorBrushAutoFill = m_autoFill.getValue();
+    notifyTool            = true;
   }
 
   // we need close and group on
@@ -2472,11 +2463,6 @@ void ToonzVectorBrushTool::loadLastBrush() {
       m_autoGroup.setValue(true);
       V_VectorBrushAutoGroup = 1;
     }
-  }
-
-  if (m_autoGroup.getValue() && !m_autoClose.getValue()) {
-    m_autoClose.setValue(true);
-    V_VectorBrushAutoClose = 1;
   }
 
   switch (V_VectorBrushSnapSensitivity) {
