@@ -106,6 +106,9 @@ public:
 
 protected:
   void nextCheckState() override;
+
+protected slots:
+  void onClicked(bool check);
 };
 
 //-----------------------------------------------------------------------------
