@@ -437,6 +437,7 @@ protected slots:
   void onMenuAboutToHide();
   void onResetContextMenuTarget();
   void autoOpenCloseFolder();
+  void onPreferenceChanged(const QString &prefName);
 };
 
 //-----------------------------------------------------------------------------

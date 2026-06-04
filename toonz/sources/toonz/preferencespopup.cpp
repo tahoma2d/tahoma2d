@@ -1631,8 +1631,7 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
       {DragCellsBehaviour,
        {{tr("Cells Only"), 0},
         {tr("Cells and Column Data"), 1},
-// Disabled until OT officially releases it
-//        {tr("Disable Dragging Cells"), 2}
+        {tr("Disable Dragging Cells"), 2}
        }},
       {pasteCellsBehavior,
        {{tr("Insert Paste Whole Data"), 0},
@@ -2330,8 +2329,7 @@ QGridLayout* PreferencesPopup::createXsheetLayout() {
   }
   insertUI(showColumnNumbers, lay);
   insertUI(showColumnParents, lay);
-// Disabled until OT officially releases it
-//  insertUI(unifyColumnVisibilityToggles, lay);
+  insertUI(unifyColumnVisibilityToggles, lay);
   insertUI(parentColorsInXsheetColumn, lay);
   insertUI(highlightLineEverySecond, lay);
   if (Preferences::instance()->isShowAdvancedOptionsEnabled()) {

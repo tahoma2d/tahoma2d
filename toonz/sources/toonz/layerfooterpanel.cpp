@@ -35,6 +35,10 @@ LayerFooterPanel::LayerFooterPanel(XsheetViewer *viewer, QWidget *parent,
   m_toggleColumnParent->setToolTip(tr("Toggle Column Parents"));
   m_toggleColumnParent->setIcon(createQIcon("toggle_col_parent"));
 
+  m_toggleCameraStandButton = new QToolButton(this);
+  m_toggleCameraStandButton->setToolTip(tr("Toggle Camera Stand Buttons"));
+  m_toggleCameraStandButton->setIcon(createQIcon("toggle_camerastand_button"));
+
   m_noteArea = new XsheetGUI::FooterNoteArea(this, m_viewer);
 
   Qt::Orientation ori =
@@ -62,6 +66,8 @@ LayerFooterPanel::LayerFooterPanel(XsheetViewer *viewer, QWidget *parent,
           SLOT(onToggleColumnNumbers()));
   connect(m_toggleColumnParent, SIGNAL(clicked()), this,
           SLOT(onToggleColumnParents()));
+  connect(m_toggleCameraStandButton, SIGNAL(clicked()), this,
+          SLOT(onToggleCameraStandButtons()));
 }
 
 LayerFooterPanel::~LayerFooterPanel() {}
@@ -118,6 +124,13 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
 
   QRect toggleColNumObjRect = o->rect(PredefinedRect::TOGGLE_COLUMN_NUMBER);
   m_toggleColumnNumber->setGeometry(toggleColNumObjRect);
+
+  QRect toggleCamStandButtonRect =
+      o->rect(PredefinedRect::TOGGLE_CAMERASTAND_BUTTON_AREA);
+  p.fillRect(toggleCamStandButtonRect, Qt::NoBrush);
+
+  QRect toggleCamStandButtonObjRect = o->rect(PredefinedRect::TOGGLE_CAMERASTAND_BUTTON);
+  m_toggleCameraStandButton->setGeometry(toggleCamStandButtonObjRect);
 
   static QPixmap zoomIn         = generateIconPixmap("zoom_in");
   static QPixmap zoomInRollover = generateIconPixmap("zoom_in_rollover");
@@ -312,6 +325,16 @@ void LayerFooterPanel::onToggleColumnParents() {
       showColumnParents,
       !Preferences::instance()->isShowColumnParentsEnabled());
   m_viewer->updateColumnArea();
+}
+
+//-----------------------------------------------------------------------------
+
+void LayerFooterPanel::onToggleCameraStandButtons() {
+  Preferences::instance()->setValue(
+      unifyColumnVisibilityToggles,
+      !Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled());
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "unifyColumnVisibilityToggles");
 }
 
 //-----------------------------------------------------------------------------

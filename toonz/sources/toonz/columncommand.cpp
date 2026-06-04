@@ -705,7 +705,8 @@ void doUnifyColumnVisibilityToggles_Recursive(const TXsheet *xsh,
     if (colType == TXshColumn::ePaletteType ||
         colType == TXshColumn::eSoundType ||
         colType == TXshColumn::eSoundTextType ||
-        colType == TXshColumn::eFolderType)
+        colType == TXshColumn::eFolderType ||
+        colType == TXshColumn::ePegbarType)
       continue;
     // visibility check
     if (column->isPreviewVisible() != column->isCamstandVisible()) {

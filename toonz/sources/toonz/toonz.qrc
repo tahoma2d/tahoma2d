@@ -407,6 +407,8 @@
 		<file>icons/dark/actions/15/toggle_col_number_rollover.svg</file>
 		<file>icons/dark/actions/15/toggle_col_parent.svg</file>
 		<file>icons/dark/actions/15/toggle_col_parent_rollover.svg</file>
+		<file>icons/dark/actions/15/toggle_camerastand_button.svg</file>
+		<file>icons/dark/actions/15/toggle_camerastand_button_rollover.svg</file>
 
 		<file>icons/dark/actions/30/sound_header.svg</file>
 		<file>icons/dark/actions/30/sound_header_on.svg</file>

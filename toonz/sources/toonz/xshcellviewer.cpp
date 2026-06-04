@@ -1587,8 +1587,7 @@ void CellArea::drawExtenderHandles(QPainter &p) {
   if (cellSelection->isEmpty() || m_viewer->areSoundCellsSelected()) return;
 
   // if the drag move is disabled, the extender handles won't appear
-// Disabled until OT officially releases it
-//  if (Preferences::instance()->getDragCellsBehaviour() == 2) return;
+  if (Preferences::instance()->getDragCellsBehaviour() == 2) return;
 
   int selRow0, selCol0, selRow1, selCol1;
   cellSelection->getSelectedCells(selRow0, selCol0, selRow1, selCol1);
@@ -4259,7 +4258,7 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
         if (TCellKeyframeSelection *cellKeyframeSelection =
                 dynamic_cast<TCellKeyframeSelection *>(selection))
           setDragTool(XsheetGUI::DragTool::makeCellKeyframeMoverTool(m_viewer));
-        else //if (Preferences::instance()->getDragCellsBehaviour() != 2)    //Disabled until OT officially releases iteleas
+        else if (Preferences::instance()->getDragCellsBehaviour() != 2)
           setDragTool(XsheetGUI::DragTool::makeLevelMoverTool(m_viewer));
       } else {
         m_viewer->getKeyframeSelection()->selectNone();

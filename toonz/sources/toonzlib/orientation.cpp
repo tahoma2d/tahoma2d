@@ -1017,9 +1017,11 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::TOGGLE_COLUMN_NUMBER,
             toggleColNum.adjusted(0, 1, 0, 0));
 
-
   addRect(PredefinedRect::TOGGLE_COLUMN_PARENT_AREA, QRect(0, 0, -1, -1));
   addRect(PredefinedRect::TOGGLE_COLUMN_PARENT, QRect(0, 0, -1, -1));
+
+  addRect(PredefinedRect::TOGGLE_CAMERASTAND_BUTTON_AREA, QRect(0, 0, -1, -1));
+  addRect(PredefinedRect::TOGGLE_CAMERASTAND_BUTTON, QRect(0, 0, -1, -1));
 
   zoomSlider = QRect(0, toggleColNum.bottom() + 17, LAYER_FOOTER_PANEL_WIDTH,
                      use_header_height - 51);
@@ -1541,7 +1543,8 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
       QRect(0, 0, LAYER_HEADER_WIDTH + 2, LAYER_FOOTER_PANEL_HEIGHT));
   addRect(PredefinedRect::LAYER_FOOTER_PANEL, layerFooterPanel);
 
-  QRect toggleColNum, toggleColParent, zoomSlider, zoomIn, zoomOut, noteArea;  // addLevel,
+  QRect toggleColNum, toggleColParent, toggleCamStandButton, zoomSlider, zoomIn,
+      zoomOut, noteArea;  // addLevel,
 
   zoomSlider =
       QRect(layerFooterPanel.width() - 100, 0, 81, LAYER_FOOTER_PANEL_HEIGHT);
@@ -1575,6 +1578,13 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
   addRect(PredefinedRect::TOGGLE_COLUMN_NUMBER_AREA, toggleColNum);
   addRect(PredefinedRect::TOGGLE_COLUMN_NUMBER,
           toggleColNum.adjusted(1, 1, 0, 0));
+
+  toggleCamStandButton =
+      QRect(toggleColNum.left() - 20, 0, LAYER_FOOTER_PANEL_HEIGHT,
+            LAYER_FOOTER_PANEL_HEIGHT);
+  addRect(PredefinedRect::TOGGLE_CAMERASTAND_BUTTON_AREA, toggleCamStandButton);
+  addRect(PredefinedRect::TOGGLE_CAMERASTAND_BUTTON,
+          toggleCamStandButton.adjusted(1, 1, 0, 0));
 
   // Flags
   addFlag(PredefinedFlag::DRAG_LAYER_BORDER, false);

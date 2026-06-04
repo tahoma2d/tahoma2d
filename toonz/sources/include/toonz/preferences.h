@@ -434,9 +434,7 @@ public:
     return getBoolValue(showColumnParents);
   }
   bool isUnifyColumnVisibilityTogglesEnabled() const {
-  // Disabled until OT officially releases it
-  //  return getBoolValue(unifyColumnVisibilityToggles);
-    return false;
+    return getBoolValue(unifyColumnVisibilityToggles);
   }
   bool isParentColorsInXsheetColumnEnabled() const {
     return getBoolValue(parentColorsInXsheetColumn);

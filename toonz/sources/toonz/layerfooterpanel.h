@@ -25,7 +25,8 @@ class LayerFooterPanel final : public QWidget {
   QPoint m_pos;
 
   QSlider *m_frameZoomSlider;
-  QToolButton *m_toggleColumnNumber, *m_toggleColumnParent;
+  QToolButton *m_toggleColumnNumber, *m_toggleColumnParent,
+      *m_toggleCameraStandButton;
 
   bool isCtrlPressed        = false;
   bool m_zoomInHighlighted  = false;
@@ -67,6 +68,7 @@ public slots:
   void onFramesPerPageSelected();
   void onToggleColumnNumbers();
   void onToggleColumnParents();
+  void onToggleCameraStandButtons();
 };
 #endif
 #pragma once
