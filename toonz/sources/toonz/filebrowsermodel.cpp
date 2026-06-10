@@ -668,7 +668,7 @@ DvDirVersionControlRootNode::DvDirVersionControlRootNode(DvDirModelNode *parent,
                                                          std::wstring name,
                                                          const TFilePath &path)
     : DvDirVersionControlNode(parent, name, path) {
-  setPixmap(svgToPixmap(":Resources/vcroot.svg"));
+//  setPixmap(svgToPixmap(":Resources/vcroot.svg"));
   setIsUnderVersionControl(true);
 }
 
@@ -715,10 +715,13 @@ void DvDirVersionControlProjectNode::makeCurrent() {
 //-----------------------------------------------------------------------------
 
 QPixmap DvDirVersionControlProjectNode::getPixmap(bool isOpen) const {
-  static QPixmap openPixmap(
-      svgToPixmap(":Resources/browser_vcproject_open.svg"));
-  static QPixmap closePixmap(
-      svgToPixmap(":Resources/browser_vcproject_close.svg"));
+//  static QPixmap openPixmap(
+//      svgToPixmap(":Resources/browser_vcproject_open.svg"));
+//  static QPixmap closePixmap(
+//      svgToPixmap(":Resources/browser_vcproject_close.svg"));
+  static QPixmap openPixmap  = generateIconPixmap("folder_project_on");
+  static QPixmap closePixmap = generateIconPixmap("folder_project");
+
   static QPixmap openMissingPixmap(
       svgToPixmap(":Resources/vcfolder_mis_open.svg"));
   static QPixmap closeMissingPixmap(
@@ -1168,6 +1171,10 @@ void DvDirModelRootNode::refreshDefaultProjectPath() {
 
 void DvDirModelRootNode::refreshChildren() {
   m_childrenValid = true;
+
+  QList<SVNRepository> repositories =
+      VersionControl::instance()->getRepositories();
+
   if (m_children.empty()) {
     addChild(m_myComputerNode = new DvDirModelMyComputerNode(this));
 
@@ -1232,29 +1239,42 @@ void DvDirModelRootNode::refreshChildren() {
       }
     }
 
+    // SVN Repositories
+    int count = repositories.size();
+    // Add SVN Root repos
+    for (int i = 0; i < count; i++) {
+      SVNRepository repo = repositories.at(i);
+      TFilePath svnRoot(repo.m_localPath.toStdWString());
+      if (TProjectManager::instance()->isProject(svnRoot)) continue;
+      DvDirVersionControlRootNode *node = new DvDirVersionControlRootNode(
+          this, repo.m_name.toStdWString(), svnRoot);
+      node->setRepositoryPath(repo.m_repoPath.toStdWString());
+      node->setLocalPath(repo.m_localPath.toStdWString());
+      node->setUserName(repo.m_username.toStdWString());
+      node->setPassword(repo.m_password.toStdWString());
+      node->setPixmap(QPixmap(generateIconPixmap("projects_folder")));
+      m_versionControlNodes.push_back(node);
+      addChild(node);
+    }
+
+    // SVN Repo projects
+    for (int i = 0; i < count; i++) {
+      SVNRepository repo = repositories.at(i);
+      TFilePath svnProj(repo.m_localPath.toStdWString());
+      if (!TProjectManager::instance()->isProject(svnProj)) continue;
+      DvDirVersionControlProjectNode *node = new DvDirVersionControlProjectNode(
+          this, repo.m_name.toStdWString(), svnProj);
+      m_versionControlNodes.push_back(node);
+      addChild(node);
+      m_projectPaths.insert(svnProj);
+    }
+
     TProjectManager *pm          = TProjectManager::instance();
     TFilePath sandboxProjectPath = pm->getSandboxProjectFolder();
     m_projectPaths.insert(sandboxProjectPath);
     m_sandboxProjectNode = new DvDirModelProjectNode(this, sandboxProjectPath);
     addChild(m_sandboxProjectNode);
     m_projectNodes.push_back(m_sandboxProjectNode);
-
-    // SVN Repositories
-    QList<SVNRepository> repositories =
-        VersionControl::instance()->getRepositories();
-    int count = repositories.size();
-    for (int i = 0; i < count; i++) {
-      SVNRepository repo                = repositories.at(i);
-      DvDirVersionControlRootNode *node = new DvDirVersionControlRootNode(
-          this, repo.m_name.toStdWString(),
-          TFilePath(repo.m_localPath.toStdWString()));
-      node->setRepositoryPath(repo.m_repoPath.toStdWString());
-      node->setLocalPath(repo.m_localPath.toStdWString());
-      node->setUserName(repo.m_username.toStdWString());
-      node->setPassword(repo.m_password.toStdWString());
-      m_versionControlNodes.push_back(node);
-      addChild(node);
-    }
 
     // scenefolder node (access to the parent folder of the current scene file)
     m_sceneFolderNode =
@@ -1270,20 +1290,53 @@ void DvDirModelRootNode::refreshChildren() {
       if (TSystem::doesExistFileOrLevel(projectPath) &&
           m_projectPaths.find(projectPath) == m_projectPaths.end() &&
           pm->isProject(projectPath)) {
-        DvDirModelProjectNode *addedProjectNode =
-            new DvDirModelProjectNode(this, projectPath);
+        bool isSVN = false;
+        for (int i = 0; i < repositories.count(); i++) {
+          SVNRepository repo = repositories.at(i);
+          TFilePath svnPath(repo.m_localPath.toStdWString());
+          if (svnPath == projectPath || svnPath.isAncestorOf(projectPath)) {
+            isSVN = true;
+            break;
+          }
+        }
+
+        if (isSVN) {
+          DvDirVersionControlProjectNode *node =
+              new DvDirVersionControlProjectNode(
+                  this, projectPath.getWideName(), projectPath);
+          addChild(node);
+        } else {
+          DvDirModelProjectNode *addedProjectNode =
+              new DvDirModelProjectNode(this, projectPath);
+          addChild(addedProjectNode);
+          m_projectNodes.push_back(addedProjectNode);
+        }
         m_projectPaths.insert(projectPath);
-        addChild(addedProjectNode);
-        m_projectNodes.push_back(addedProjectNode);
       }
     }
 
     TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
     if (m_projectPaths.find(projectPath) == m_projectPaths.end()) {
-      std::string rootString = projectPath.getQString().toStdString();
-      m_currentProjectNode   = new DvDirModelProjectNode(this, projectPath);
+      bool isSVN = false;
+      for (int i = 0; i < repositories.count(); i++) {
+        SVNRepository repo = repositories.at(i);
+        TFilePath svnPath(repo.m_localPath.toStdWString());
+        if (svnPath == projectPath || svnPath.isAncestorOf(projectPath)) {
+          isSVN = true;
+          break;
+        }
+      }
+
+      if (isSVN) {
+        DvDirVersionControlProjectNode *node =
+            new DvDirVersionControlProjectNode(this, projectPath.getWideName(),
+                                               projectPath);
+        addChild(node);
+      } else {
+        m_currentProjectNode = new DvDirModelProjectNode(this, projectPath);
+        addChild(m_currentProjectNode);
+      }
       m_projectPaths.insert(projectPath);
-      addChild(m_currentProjectNode);
       updateSceneFolderNodeVisibility();
     }
   }
