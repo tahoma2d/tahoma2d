@@ -52,6 +52,19 @@ QPoint relativePos(QWidget* child, QWidget* refParent) {
     return child->pos() + relativePos(child->parentWidget(), refParent);
 }
 
+static QStringList unpackStringList(const QByteArray& ba) {
+  QStringList lst;
+  QDataStream ds(ba);
+  qint32 n = 0;
+  ds >> n;
+  int i;
+  for (i = 0; i < n; i++) {
+    QString s;
+    ds >> s;
+    lst.append(s);
+  }
+  return lst;
+}
 }  // namespace
 
 //=============================================================================
@@ -107,7 +120,9 @@ bool CustomPanelUIField::setCommand(QString commandId) {
 void CustomPanelUIField::enterEvent(QEvent* event) { emit highlight(m_id); }
 void CustomPanelUIField::leaveEvent(QEvent* event) { emit highlight(-1); }
 void CustomPanelUIField::dragEnterEvent(QDragEnterEvent* event) {
-  QString txt = event->mimeData()->text();
+  QStringList commandList = unpackStringList(
+      event->mimeData()->data("application/vnd.toonz.commandlist"));
+  QString txt = commandList.size() ? commandList[0] : event->mimeData()->text();
   if (CommandManager::instance()->getAction(txt.toStdString().c_str())) {
     event->setDropAction(Qt::CopyAction);
     event->accept();
@@ -120,8 +135,12 @@ void CustomPanelUIField::dragLeaveEvent(QDragLeaveEvent* event) {
 }
 
 void CustomPanelUIField::dropEvent(QDropEvent* event) {
-  QString oldCommandId = m_commandId;
-  QString commandId    = event->mimeData()->text();
+  QString oldCommandId    = m_commandId;
+  QStringList commandList = unpackStringList(
+      event->mimeData()->data("application/vnd.toonz.commandlist"));
+  QString commandId =
+      commandList.size() ? commandList[0] : event->mimeData()->text();
+
   if (setCommand(commandId)) {
     // if dragged from the command tree, command can be duplicated
     if (event->dropAction() == Qt::CopyAction)
@@ -214,7 +233,9 @@ void UiPreviewWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void UiPreviewWidget::dragEnterEvent(QDragEnterEvent* event) {
-  QString txt = event->mimeData()->text();
+  QStringList commandList = unpackStringList(
+      event->mimeData()->data("application/vnd.toonz.commandlist"));
+  QString txt = commandList.size() ? commandList[0] : event->mimeData()->text();
   if (CommandManager::instance()->getAction(txt.toStdString().c_str())) {
     event->setDropAction(Qt::MoveAction);
     event->accept();
@@ -229,7 +250,9 @@ void UiPreviewWidget::dragMoveEvent(QDragMoveEvent* event) {
     return;
   }
 
-  QString txt = event->mimeData()->text();
+  QStringList commandList = unpackStringList(
+      event->mimeData()->data("application/vnd.toonz.commandlist"));
+  QString txt = commandList.size() ? commandList[0] : event->mimeData()->text();
   if (CommandManager::instance()->getAction(txt.toStdString().c_str())) {
     event->setDropAction(Qt::MoveAction);
     event->accept();
@@ -237,7 +260,10 @@ void UiPreviewWidget::dragMoveEvent(QDragMoveEvent* event) {
 }
 
 void UiPreviewWidget::dropEvent(QDropEvent* event) {
-  QString commandId     = event->mimeData()->text();
+  QStringList commandList = unpackStringList(
+      event->mimeData()->data("application/vnd.toonz.commandlist"));
+  QString commandId =
+      commandList.size() ? commandList[0] : event->mimeData()->text();
   bool isDraggdFromTree = (event->dropAction() == Qt::CopyAction);
 
   emit dropped(m_highlightUiId, commandId, isDraggdFromTree);
@@ -325,7 +351,7 @@ void CustomPanelEditorPopup::createFields() {
     gridLay = dynamic_cast<QGridLayout*>(m_UiFieldsContainer->layout());
   else {
     gridLay = new QGridLayout();
-    gridLay->setContentsMargins(15, 15, 15, 15);;
+    gridLay->setContentsMargins(15, 15, 15, 15);
     gridLay->setHorizontalSpacing(10);
     gridLay->setVerticalSpacing(15);
     gridLay->setColumnStretch(0, 0);
