@@ -3478,6 +3478,12 @@ void MainWindow::defineActions() {
   createSpecialModifierAction(V_Scrub, QT_TR_NOOP("Viewer Scrub"), "#");
 
   // create drawing mark actions
+  std::string cmdId    = (std::string)MI_SetDrawingMark + "None";
+  std::string labelStr = QT_TR_NOOP("Remove Drawing Mark");
+  QAction *action      = createAction(cmdId.c_str(), labelStr.c_str(), "", "",
+                                      DrawingMarkCommandType);
+  action->setData(-1);
+
   for (int markId = 0; markId < 12; markId++) {
     std::string cmdId = (std::string)MI_SetDrawingMark + std::to_string(markId);
     std::string labelStr =
@@ -3488,6 +3494,11 @@ void MainWindow::defineActions() {
   }
 
   // create cell mark actions
+  cmdId    = (std::string)MI_SetCellMark + "None";
+  labelStr = QT_TR_NOOP("Remove Cell Mark");
+  action   = createAction(cmdId.c_str(), labelStr.c_str(), "", "",
+                          CellMarkCommandType);
+  action->setData(-1);
   for (int markId = 0; markId < 12; markId++) {
     std::string cmdId = (std::string)MI_SetCellMark + std::to_string(markId);
     std::string labelStr =
