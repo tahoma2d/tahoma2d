@@ -2915,7 +2915,7 @@ public:
 
 void FilmstripCmd::setDrawingMark(TXshSimpleLevel *sl,
                                   std::set<TFrameId> &frames, int markId) {
-  if (!sl || sl->isSubsequence() || sl->isReadOnly() || !frames.size()) return;
+  if (!sl || sl->isSubsequence() || !frames.size()) return;
 
   SetDrawingMarkUndo *undo = new SetDrawingMarkUndo(sl, frames, markId);
   undo->redo();
