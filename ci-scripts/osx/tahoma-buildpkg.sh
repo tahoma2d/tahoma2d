@@ -18,36 +18,36 @@ then
    export TOONZDIR=$TOONZDIR/Release
 fi
 
-if [ -d $TOONZDIR/Tahoma2D.app/tahomastuff ]
+if [ -d $TOONZDIR/Tahoma2D.app/Contents/Resources/tahomastuff ]
 then
    # In case of prior builds, replace stuff folder
-   rm -rf $TOONZDIR/Tahoma2D.app/tahomastuff
+   rm -rf $TOONZDIR/Tahoma2D.app/Contents/Resources/tahomastuff
 fi
 
 if [ -d thirdparty/apps/ffmpeg/bin ]
 then
-   echo ">>> Copying FFmpeg to Tahoma2D.app/ffmpeg"
-   if [ -d $TOONZDIR/Tahoma2D.app/ffmpeg ]
+   echo ">>> Copying FFmpeg to Tahoma2D.app/Contents/Resources/ffmpeg"
+   if [ -d $TOONZDIR/Tahoma2D.app/Contents/Resources/ffmpeg ]
    then
       # In case of prior builds, replace ffmpeg folder
-      rm -rf $TOONZDIR/Tahoma2D.app/ffmpeg
+      rm -rf $TOONZDIR/Tahoma2D.app/Contents/Resources/ffmpeg
    fi
-   mkdir $TOONZDIR/Tahoma2D.app/ffmpeg
-   cp -R thirdparty/apps/ffmpeg/bin/ffmpeg thirdparty/apps/ffmpeg/bin/ffprobe $TOONZDIR/Tahoma2D.app/ffmpeg
-   chmod -R 755 $TOONZDIR/Tahoma2D.app/ffmpeg
+   mkdir $TOONZDIR/Tahoma2D.app/Contents/Resources/ffmpeg
+   cp -R thirdparty/apps/ffmpeg/bin/ffmpeg thirdparty/apps/ffmpeg/bin/ffprobe $TOONZDIR/Tahoma2D.app/Contents/Resources/ffmpeg
+   chmod -R 755 $TOONZDIR/Tahoma2D.app/Contents/Resources/ffmpeg
 fi
 
 if [ -d thirdparty/apps/rhubarb ]
 then
-   echo ">>> Copying Rhubarb Lip Sync to Tahoma2D.app/rhubarb"
-   if [ -d $TOONZDIR/Tahoma2D.app/rhubarb ]
+   echo ">>> Copying Rhubarb Lip Sync to Tahoma2D.app/Contents/Resources/rhubarb"
+   if [ -d $TOONZDIR/Tahoma2D.app/Contents/Resources/rhubarb ]
    then
       # In case of prior builds, replace rhubarb folder
-      rm -rf $TOONZDIR/Tahoma2D.app/rhubarb
+      rm -rf $TOONZDIR/Tahoma2D.app/Contents/Resources/rhubarb
    fi
-   mkdir $TOONZDIR/Tahoma2D.app/rhubarb
-   cp -R thirdparty/apps/rhubarb/rhubarb thirdparty/apps/rhubarb/res $TOONZDIR/Tahoma2D.app/rhubarb
-   chmod -R 755 $TOONZDIR/Tahoma2D.app/rhubarb
+   mkdir $TOONZDIR/Tahoma2D.app/Contents/Resources/rhubarb
+   cp -R thirdparty/apps/rhubarb/rhubarb thirdparty/apps/rhubarb/res $TOONZDIR/Tahoma2D.app/Contents/Resources/rhubarb
+   chmod -R 755 $TOONZDIR/Tahoma2D.app/Contents/Resources/rhubarb
 fi
 
 if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/Frameworks ]
@@ -67,12 +67,12 @@ fi
 
 if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2 ]
 then
-   echo ">>> Copying libghoto2 supporting directories to Tahoma2D.app/Contents/Frameworks"
-   cp -R /usr/local/lib/libgphoto2 $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-   cp -R /usr/local/lib/libgphoto2_port $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+   echo ">>> Copying libghoto2 supporting directories to Tahoma2D.app/Contents/Resources"
+   cp -R /usr/local/lib/libgphoto2 $TOONZDIR/Tahoma2D.app/Contents/Resources
+   cp -R /usr/local/lib/libgphoto2_port $TOONZDIR/Tahoma2D.app/Contents/Resources
 
-   rm $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2/print-camera-list
-   find $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2* -name *.la -exec rm -f {} \;
+   rm $TOONZDIR/Tahoma2D.app/Contents/Resources/libgphoto2/print-camera-list
+   find $TOONZDIR/Tahoma2D.app/Contents/Resources/libgphoto2* -name *.la -exec rm -f {} \;
 fi
 
 echo ">>> Creating DSYM files"
@@ -87,9 +87,9 @@ do
    strip -S $X
 done
 
-if [ -d $TOONZDIR/Tahoma2D.app/DSYM ]
+if [ -d $TOONZDIR/Tahoma2D.app/Contents/Resources/DWARF ]
 then
-   rm -rf $TOONZDIR/Tahoma2D.app/DSYM
+   rm -rf $TOONZDIR/Tahoma2D.app/Contents/Resources/DWARF
 fi
 
 echo ">>> Configuring Tahoma2D.app for deployment"
@@ -142,6 +142,22 @@ function checkLibFile() {
             then
                 local SRC=/usr/local/lib/$Y
             fi
+            echo ">>>Checking for $SRC"
+            if [ ! -f $SRC ]
+            then
+               echo ">>>NOT Found...Searching /usr"
+               local SRC=`find /usr -name $Y | head -1`
+               if [ "$SRC" = "" ]
+               then
+                  echo ">>>NOT Found...Searching /opt"
+                  local SRC=`find /opt -name $Y | head -1`
+                  if [ "$SRC" = "" ]
+                  then
+                     echo "Error: Unable to find dependency $Y"
+                     exit 1
+                  fi
+               fi
+            fi
             echo "Copying $SRC to Frameworks"
             cp $SRC $TOONZDIR/Tahoma2D.app/Contents/Frameworks
             chmod 644 $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y
@@ -175,8 +191,17 @@ do
    checkLibFile $FILE
 done
 
-echo ">>> Moving DYSM to Tahoma2D.app"
-mv $TOONZDIR/DSYM $TOONZDIR/Tahoma2D.app
+echo ">>> Moving DSYM/Contents/Resources to Tahoma2D.app/Contents/Resources"
+mv $TOONZDIR/DSYM/Contents/Resources/* $TOONZDIR/Tahoma2D.app/Contents/Resources
+
+find $TOONZDIR/Tahoma2D.app -name .DS_Store -exec rm {} \;
+
+mv $TOONZDIR/Tahoma2D.app/Contents/MacOS/Tahoma2D $TOONZDIR/Tahoma2D.app/Contents/MacOS/Tahoma2D.real
+cp toonz/sources/scripts/AppRun_macos $TOONZDIR/Tahoma2D.app/Contents/MacOS/Tahoma2D
+chmod 755 $TOONZDIR/Tahoma2D.app/Contents/MacOS/Tahoma2D
+
+echo ">>> Codesign Tahoma2D.app (installed)"
+codesign --deep --force --sign - $TOONZDIR/Tahoma2D.app
 
 echo ">>> Creating Tahoma2D-install-osx.pkg"
 
@@ -186,10 +211,13 @@ mv $TOONZDIR/Tahoma2D-install-osx.pkg $TOONZDIR/..
 
 echo ">>> Creating Tahoma2D-portable-osx.dmg"
 
-cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
-chmod -R 777 $TOONZDIR/Tahoma2D.app/tahomastuff
+cp -R stuff $TOONZDIR/Tahoma2D.app/Contents/Resources/tahomastuff
+chmod -R 777 $TOONZDIR/Tahoma2D.app/Contents/Resources/tahomastuff
 
-find $TOONZDIR/Tahoma2D.app/tahomastuff -name .gitkeep -exec rm -f {} \;
+find $TOONZDIR/Tahoma2D.app/Contents/Resources/tahomastuff -name .gitkeep -exec rm -f {} \;
+
+echo ">>> Codesign Tahoma2D.app (portable)"
+codesign --deep --force --sign - $TOONZDIR/Tahoma2D.app
 
 cd $TOONZDIR
 
