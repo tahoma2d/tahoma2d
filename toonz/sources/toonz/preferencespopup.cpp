@@ -2631,8 +2631,13 @@ void PreferencesPopup::onImport() {
     return;
   }
 
+#ifdef MACOSX
+  TFilePath oldStuffPath = TFilePath(m_importPrefpath->getPath() +
+                                     "/Contents/Resources/tahomastuff");
+#else
   TFilePath oldStuffPath =
       TFilePath(m_importPrefpath->getPath() + "/tahomastuff");
+#endif
   if (!TFileStatus(oldStuffPath).doesExist()) {
     DVGui::error("Unable to find the 'tahomastuff' folder in " +
                  m_importPrefpath->getPath() +

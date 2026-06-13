@@ -40,6 +40,8 @@ exec_with_assert "cp -r #{APP_BUNDLE} #{VIRTUAL_ROOT}/#{APP}"
 PKG_PLIST = "#{BUILD_DIR}/app.plist"
 unless File.exist? PKG_PLIST then
     exec_with_assert "pkgbuild --root #{VIRTUAL_ROOT} --analyze #{PKG_PLIST}"
+    exec_with_assert "gsed -i -e \"14i <key>BundleIsRelocatable</key>\" #{PKG_PLIST}"
+    exec_with_assert "gsed -i -e \"15i <false/>\" #{PKG_PLIST}"
     exec_with_assert "gsed -i -e \"14i <key>BundlePreInstallScriptPath</key>\" #{PKG_PLIST}"
     exec_with_assert "gsed -i -e \"15i <string>preinstall-script.sh</string>\" #{PKG_PLIST}"
     exec_with_assert "gsed -i -e \"14i <key>BundlePostInstallScriptPath</key>\" #{PKG_PLIST}"
