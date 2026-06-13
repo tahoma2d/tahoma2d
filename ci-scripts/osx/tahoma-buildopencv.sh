@@ -15,6 +15,7 @@ cd build
 
 echo ">>> Cmaking opencv"
 cmake -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
       -DBUILD_JASPER=OFF \
       -DBUILD_JPEG=OFF \
       -DBUILD_OPENEXR=OFF \

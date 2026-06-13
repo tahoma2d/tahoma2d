@@ -199,6 +199,8 @@ elseif(BUILD_ENV_APPLE)
     else()
         message(FATAL_ERROR "Invalid PLATFORM:" ${PLATFORM} ". 'PLATFORM' must be 32 or 64.")
     endif()
+
+    set(CMAKE_CXX_STANDARD 17)
 elseif(BUILD_ENV_UNIXLIKE)
     # Needed for correct Qt detection
     cmake_minimum_required(VERSION 2.8.12)
@@ -646,7 +648,7 @@ if(BUILD_ENV_MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT=1")
 elseif(BUILD_ENV_APPLE)
-    # pass
+    include_directories(SYSTEM "/usr/local/include/")
 elseif(BUILD_ENV_UNIXLIKE)
     set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
