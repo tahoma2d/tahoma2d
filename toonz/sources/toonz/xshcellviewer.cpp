@@ -2424,10 +2424,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     bool isStart = row == 0 || prevCell.isEmpty() || prevIsImplicit ||
                    prevCell.m_level.getPointer() != cell.m_level.getPointer() ||
                    prevCell.getFrameId() != cell.getFrameId();
-    bool isLastRow =
-        nextCell.isEmpty() || isImplicitCellNext ||
-        cell.m_level.getPointer() != nextCell.m_level.getPointer() ||
-        cell.getFrameId() != nextCell.getFrameId();
+  bool isLastRow = nextCell.isEmpty() || isImplicitCellNext ||
+                   cell.m_level.getPointer() != nextCell.m_level.getPointer();
 
     if (cell.m_level && cell.m_level->getSimpleLevel() &&
         !cell.getFrameId().isStopFrame() && isStart) {
