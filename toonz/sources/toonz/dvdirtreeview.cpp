@@ -1321,32 +1321,6 @@ void DvDirTreeView::onRefreshStatusDone(const QString &text) {
 
   m_currentRefreshedNode->setExists(TFileStatus(nodePath).doesExist());
 
-  bool nodeChanged = false;
-
-  // If needed, transform the DvDirVersionControlNode "vcNode" to a
-  // DvDirVersionControlProjectNode
-  // And put it on the tree (removing the previous entry)
-  if (m_currentRefreshedNode->getNodeType() != "Project" &&
-      TProjectManager::instance()->isProject(nodePath)) {
-    DvDirModelNode *parentNode = m_currentRefreshedNode->getParent();
-    if (parentNode) {
-      std::wstring name = m_currentRefreshedNode->getName();
-
-      // Remove the old node (which is not a project node)
-      DvDirModel::instance()->removeRows(
-          m_currentRefreshedNode->getRow(), 1,
-          DvDirModel::instance()->getIndexByNode(parentNode));
-      // parentNode->removeChildren(vcNode->getRow(),1);
-
-      // Add a new project node instead of the old one
-      DvDirVersionControlProjectNode *newNode =
-          new DvDirVersionControlProjectNode(parentNode, name, nodePath);
-      parentNode->addChild(newNode);
-      nodeChanged            = true;
-      m_currentRefreshedNode = newNode;
-    }
-  }
-
   SVNStatusReader sr(text);
   QStringList checkPartialLockList =
       m_currentRefreshedNode->refreshVersionControl(sr.getStatus());
@@ -1354,9 +1328,6 @@ void DvDirTreeView::onRefreshStatusDone(const QString &text) {
   if (!checkPartialLockList.isEmpty())
     checkPartialLock(toQString(nodePath), checkPartialLockList);
   else {
-    // Refresh also the right side (thumbnails)
-    if (nodeChanged && m_currentRefreshedNode)
-      setCurrentNode(m_currentRefreshedNode);
     emit currentNodeChanged();
 
     QModelIndex index =

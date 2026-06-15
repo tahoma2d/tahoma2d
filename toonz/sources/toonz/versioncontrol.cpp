@@ -611,10 +611,10 @@ bool VersionControl::testSetup() {
 
     if (!list.isEmpty()) {
       QString firstLine = list.first();
-      firstLine         = firstLine.remove("svn, version ");
-
-      double version = firstLine.left(3).toDouble();
-      if (version <= 1.5) {
+      QStringList wordList = firstLine.split(" ");
+      QStringList version =
+          wordList.size() >= 3 ? wordList[2].split(".") : QStringList();
+      if (!version.size() || (version[0] == 1 && version[1] < 5)) {
         DVGui::warning(
             tr("The version control client application installed on your "
                "computer needs to be updated, otherwise some features may not "
