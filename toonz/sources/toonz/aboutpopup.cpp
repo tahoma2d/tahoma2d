@@ -88,7 +88,7 @@ AboutPopup::AboutPopup(QWidget* parent)
       new QLabel(tr("Tahoma2D is made possible with the help of "
                     "patrons.\nSpecial thanks to:")));
   QLabel* patrons = new QLabel(
-      "<i>Rodney Baker, Hans Jacob Wagner, Pierre Coffin, Adam Earle, MelieConieK</i>");
+      "<i>Rodney Baker, Hans Jacob Wagner, Pierre Coffin, Adam Earle, MelieConieK, Derock4Art</i>");
   patrons->setTextFormat(Qt::TextFormat::RichText);
   patrons->setWordWrap(true);
   mainLayout->addWidget(patrons);
