@@ -1343,7 +1343,8 @@ FunctionSheet::FunctionSheet(QWidget *parent, bool isFloating)
     , m_selectedCells()
     , m_selection(0)
     , m_isFloating(isFloating)
-    , m_buttonArea(nullptr) {
+    , m_buttonArea(nullptr)
+    , m_xshHandle(nullptr) {
   setColumnsPanel(m_columnHeadViewer = new FunctionSheetColumnHeadViewer(this));
   setRowsPanel(m_rowViewer = new FunctionSheetRowViewer(this));
   setCellsPanel(m_cellViewer = new FunctionSheetCellViewer(this));
