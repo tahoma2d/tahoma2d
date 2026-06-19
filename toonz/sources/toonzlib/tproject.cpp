@@ -839,11 +839,11 @@ TProjectManager *TProjectManager::instance() {
 }
 
 //-------------------------------------------------------------------
-// Clear all projecs roots container.
+// Clear all projects roots container.
 //void TProjectManager::clearProjectsRoot() { m_projectsRoots.clear(); }
 
 //-------------------------------------------------------------------
-/*! Adds the specified folder \b fp in the projecs roots container.\n
+/*! Adds the specified folder \b fp in the projects roots container.\n
         If \b fp is already contained in the container, the method does nothing.
         \note \b fp must be a folder and not a file path.*/
 // void TProjectManager::addProjectsRoot(const TFilePath &root) {
@@ -855,7 +855,7 @@ TProjectManager *TProjectManager::instance() {
 
 //-------------------------------------------------------------------
 
-/*! Adds the specified folder \b fp in the version control projecs roots
+/*! Adds the specified folder \b fp in the version control projects roots
    container.\n
         If \b fp is already contained in the container, the method does nothing.
         \note \b fp must be a folder and not a file path.*/
