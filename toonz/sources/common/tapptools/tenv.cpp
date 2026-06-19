@@ -239,7 +239,7 @@ public:
     // everything together when it translocates.
     if (!m_isPortable) {
       portableCheck =
-          TFilePath(m_workingDirectory) + "tahomastuff";
+          TFilePath(m_workingDirectory) + "Contents/Resources/tahomastuff";
       portableStatus = TFileStatus(portableCheck);
       m_isPortable   = portableStatus.doesExist();
       if (m_isPortable)

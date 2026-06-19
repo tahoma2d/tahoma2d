@@ -37,6 +37,6 @@ cmake ../sources  $CANON_FLAG \
       -DWITH_GPHOTO2=ON \
       -DQT_PATH=$USEQTLIB \
       -DTIFF_INCLUDE_DIR=../../thirdparty/tiff-4.2.0/libtiff/ \
-      -DSUPERLU_INCLUDE_DIR=../../thirdparty/superlu/SuperLU_4.1/include/
+      -DWITH_SYSTEM_SUPERLU=ON
 
 make -j7 # runs 7 jobs in parallel

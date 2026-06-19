@@ -569,7 +569,7 @@ int main(int argc, char *argv[]) {
   QOpenGLFramebufferObjectFormat fmt;
   fmt.setAttachment(QOpenGLFramebufferObject::Attachment::CombinedDepthStencil);
 
-#ifndef __HAIKU__
+#if !defined(__HAIKU__) && !defined(MACOSX)
   glutInit(&argc, argv);
 #endif
 
