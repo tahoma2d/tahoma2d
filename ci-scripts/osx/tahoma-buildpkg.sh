@@ -196,10 +196,6 @@ mv $TOONZDIR/DSYM/Contents/Resources/* $TOONZDIR/Tahoma2D.app/Contents/Resources
 
 find $TOONZDIR/Tahoma2D.app -name .DS_Store -exec rm {} \;
 
-mv $TOONZDIR/Tahoma2D.app/Contents/MacOS/Tahoma2D $TOONZDIR/Tahoma2D.app/Contents/MacOS/Tahoma2D.real
-cp toonz/sources/scripts/AppRun_macos $TOONZDIR/Tahoma2D.app/Contents/MacOS/Tahoma2D
-chmod 755 $TOONZDIR/Tahoma2D.app/Contents/MacOS/Tahoma2D
-
 echo ">>> Codesign Tahoma2D.app (installed)"
 codesign --deep --force --sign - $TOONZDIR/Tahoma2D.app
 
