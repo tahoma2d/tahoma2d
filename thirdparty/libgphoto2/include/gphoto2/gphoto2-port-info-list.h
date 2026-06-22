@@ -62,7 +62,6 @@ extern "C" {
 
 #ifdef _GPHOTO2_INTERNAL_CODE
 #include <gphoto2/gphoto2-port-log.h>
-extern const StringFlagItem gpi_gphoto_port_type_map[];
 #endif
 
 int gp_port_info_new (GPPortInfo *info);
@@ -106,6 +105,7 @@ int gp_port_init_localedir (const char *localedir);
  */
 #ifdef _GPHOTO2_INTERNAL_CODE
 #define IOLIBDIR_ENV "IOLIBS"
+#define IOLIBDIR_PREFIX_ENV "IOLIBS_PREFIX"
 #endif /* _GPHOTO2_INTERNAL_CODE */
 
 

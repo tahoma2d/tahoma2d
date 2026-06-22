@@ -1,41 +1,40 @@
 /** \file
+ * \brief internal header to help with locking e.g. MT-unsafe libltdl
  *
- * \author Copyright 2000 Scott Fritzinger
+ * \author Copyright 2017 Kris Adler <spurfan15@gmail.com>
+ * \author Copyright 2022 Marcus Meissner
+ * \author Copyright 2022 Hans Ulrich Niedermann
  *
- * \note
+ * \par License
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
  *
- * \note
+ * \par
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * \note
+ * \par
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef LIBGPHOTO2_GPHOTO2_SETTING_H
-#define LIBGPHOTO2_GPHOTO2_SETTING_H
+#ifndef LIBGPHOTO2_GPHOTO2_PORT_LOCKING_H
+#define LIBGPHOTO2_GPHOTO2_PORT_LOCKING_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#ifdef _GPHOTO2_INTERNAL_CODE
 
-typedef int(*gp_settings_func)(char*,char*,char*,void*);
-void gp_setting_set_get_func (gp_settings_func func, void *userdata);
-void gp_setting_set_set_func (gp_settings_func func, void *userdata);
-int gp_setting_set (char *id, char *key, char *value);
-int gp_setting_get (char *id, char *key, char *value);
+/** lock libltdl before calling lt_*() (libltdl is not thread safe) */
+extern void gpi_libltdl_lock(void);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+/** unlock libltdl after calling lt_*() (libltdl is not thread safe) */
+extern void gpi_libltdl_unlock(void);
 
-#endif /* !defined(LIBGPHOTO2_GPHOTO2_SETTING_H) */
+#endif /* defined(_GPHOTO2_INTERNAL_CODE) */
+
+#endif /* defined(LIBGPHOTO2_GPHOTO2_PORT_LOCKING_H) */

@@ -70,8 +70,7 @@ int  gp_log_add_func    (GPLogLevel level, GPLogFunc func, void *data);
 int  gp_log_remove_func (int id);
 
 /* Logging */
-void gp_log      (GPLogLevel level, const char *domain,
-		  const char *format, ...)
+void gp_log      (GPLogLevel level, const char *domain, const char *format, ...)
 #ifdef __GNUC__
 	__attribute__((__format__(printf,3,4)))
 #endif
@@ -83,8 +82,7 @@ void gp_log_with_source_location(
 	__attribute__((__format__(printf,5,6)))
 #endif
 ;
-void gp_logv     (GPLogLevel level, const char *domain, const char *format,
-		  va_list args)
+void gp_logv     (GPLogLevel level, const char *domain, const char *format, va_list args)
 #ifdef __GNUC__
 	__attribute__((__format__(printf,3,0)))
 #endif
@@ -110,7 +108,7 @@ __attribute__((__format__(printf,4,5)))
 #ifdef _GPHOTO2_INTERNAL_CODE
 #if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || _MSC_VER
 #define GP_DEBUG(...) \
-        gp_log(GP_LOG_DEBUG, GP_MODULE "/" __FILE__, __VA_ARGS__)
+	gp_log(GP_LOG_DEBUG, GP_MODULE "/" __FILE__, __VA_ARGS__)
 
 /*
  * GP_LOG_D/E:
@@ -123,7 +121,7 @@ __attribute__((__format__(printf,4,5)))
 
 #elif defined(__GNUC__) &&  __GNUC__ >= 2
 #define GP_DEBUG(msg, params...) \
-        gp_log(GP_LOG_DEBUG, GP_MODULE "/" __FILE__, msg, ##params)
+	gp_log(GP_LOG_DEBUG, GP_MODULE "/" __FILE__, msg, ##params)
 /*
  * GP_LOG_D/E:
  * simple helper macros for convenient and consistent logging of error
@@ -178,45 +176,44 @@ __attribute__((__format__(printf,4,5)))
 
 #ifdef _GPHOTO2_INTERNAL_CODE
 
-  typedef struct StringFlagItem {
-    char *str;
-    unsigned int flag;
-  } StringFlagItem;
+typedef struct StringFlagItem {
+	char *str;
+	unsigned int flag;
+} StringFlagItem;
 
-  typedef void (*string_item_func) (const char *str, void *data);
+typedef void (*string_item_func) (const char *str, void *data);
 
-  const char *
-  gpi_enum_to_string(const unsigned int _enum,
-		     const StringFlagItem *map);
+const char * gpi_enum_to_string (unsigned int _enum, const StringFlagItem *map);
+int gpi_string_to_enum (const char *str, unsigned int *result, const StringFlagItem *map);
+void gpi_flags_to_string_list (unsigned int flags, const StringFlagItem *map, string_item_func func, void *data);
+int gpi_string_or_to_flags (const char *str, unsigned int *flags, const StringFlagItem *map);
+unsigned int gpi_string_to_flag (const char *str, const StringFlagItem *map);
+unsigned int gpi_string_list_to_flags (const char *str[], const StringFlagItem *map);
 
-  int
-  gpi_string_to_enum(const char *str,
-		     unsigned int *result,
-		     const StringFlagItem *map);
+/* Allocates a sufficiently large buffer and interpolates the format
+* string with the proveded va_list args. The returned memory has to
+* be freed by the caller. */
+#ifdef __GNUC__
+__attribute__((__format__(printf,1,0)))
+#endif
+char*
+gpi_vsnprintf (const char* format, va_list args);
 
-  void
-  gpi_flags_to_string_list(const unsigned int flags,
-			   const StringFlagItem *map,
-			   string_item_func func, void *data);
+#ifdef __GNUC__
+__attribute__((__format__(printf,1,2)))
+#endif
+static inline char*
+aprintf(const char *fmt, ...)
+{
+	va_list ap;
+	char* res;
 
-  int
-  gpi_string_or_to_flags(const char *str,
-			 unsigned int *flags,
-			 const StringFlagItem *map);
+	va_start(ap, fmt);
+	res = gpi_vsnprintf(fmt, ap);
+	va_end(ap);
 
-  unsigned int
-  gpi_string_to_flag(const char *str,
-		     const StringFlagItem *map);
-
-  unsigned int
-  gpi_string_list_to_flags(const char *str[],
-			   const StringFlagItem *map);
-
-  /* Allocates a sufficiently large buffer and interpolates the format
-   * string with the proveded va_list args. The returned memory has to
-   * be freed by the caller. */
-  char*
-  gpi_vsnprintf (const char* format, va_list args);
+	return res;
+}
 
 #define C_MEM(MEM) do {\
 	if ((MEM) == NULL) {\

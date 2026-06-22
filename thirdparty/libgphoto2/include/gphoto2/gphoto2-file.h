@@ -43,6 +43,8 @@ extern "C" {
 #define GP_MIME_JPEG      "image/jpeg"
 #define GP_MIME_TIFF      "image/tiff"
 #define GP_MIME_BMP       "image/bmp"
+#define GP_MIME_QTKN      "image/qtkn"
+#define GP_MIME_QTKT      "image/qtkt"
 #define GP_MIME_QUICKTIME "video/quicktime"
 #define GP_MIME_AVI       "video/x-msvideo"
 #define GP_MIME_CRW       "image/x-canon-raw"
@@ -57,8 +59,11 @@ extern "C" {
 #define GP_MIME_ASF       "audio/x-asf"
 #define GP_MIME_MPEG      "video/mpeg"
 #define GP_MIME_AVCHD     "video/mp2t"
+#define GP_MIME_MPO       "video/mpo"
 #define GP_MIME_RW2       "image/x-panasonic-raw2"
 #define GP_MIME_ARW       "image/x-sony-arw"
+#define GP_MIME_RAF       "image/x-fuji-raf"
+#define GP_MIME_DNG       "image/x-adobe-dng"
 
 /**
  * \brief The type of view on the specified file.
