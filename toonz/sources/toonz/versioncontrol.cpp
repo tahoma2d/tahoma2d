@@ -614,7 +614,8 @@ bool VersionControl::testSetup() {
       QStringList wordList = firstLine.split(" ");
       QStringList version =
           wordList.size() >= 3 ? wordList[2].split(".") : QStringList();
-      if (!version.size() || (version[0] == 1 && version[1] < 5)) {
+      if (!version.size() ||
+          (version[0].toInt() == 1 && version[1].toInt() < 5)) {
         DVGui::warning(
             tr("The version control client application installed on your "
                "computer needs to be updated, otherwise some features may not "
