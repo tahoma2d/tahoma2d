@@ -245,6 +245,20 @@ public:
       if (m_isPortable)
         m_workingDirectory = portableCheck.getParentDir().getQString();
     }
+#elif defined(LINUX) || defined(FREEBSD)
+    // Linux AppImages are mounted and run in a different location separating it
+    // from the tahomastuff folder. This will use the original location of the
+    // AppImage to look for it
+    if (!m_isPortable) {
+      char *value = getenv("APPIMAGE");
+      if (value) {
+        portableCheck  = TFilePath(value).getParentDir() + "/tahomastuff";
+        portableStatus = TFileStatus(portableCheck);
+        m_isPortable   = portableStatus.doesExist();
+        if (m_isPortable)
+          m_workingDirectory = portableCheck.getParentDir().getQString();
+      }
+    }
 #endif
   }
   QString getWorkingDirectory() { return m_workingDirectory; }
