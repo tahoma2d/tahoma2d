@@ -178,11 +178,8 @@ function checkLibFile() {
             then
                local Y=`echo $DEPFILE | sed -e"s/^.*\/\.\.\///" -e"s/@rpath.//"`
             fi
-            if [ "$DEPFILE" != "@rpath/$Y" ]
-            then
-               echo "Fixing $DEPFILE in $LIBFILE"
-               install_name_tool -change $DEPFILE @rpath/$Y $LIBFILE
-            fi
+            echo "Fixing $DEPFILE in $LIBFILE"
+            install_name_tool -change $DEPFILE @executable_path/../Frameworks/$Y $LIBFILE
          fi
          FIXCHECK=`otool -D $LIBFILE | grep -v ":" | grep -e"\/usr\/local"`
          if [ "$FIXCHECK" == "$DEPFILE" ]
