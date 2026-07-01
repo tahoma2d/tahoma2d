@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2026-07-01
+
+### Fixed
+
+- Fix changing cell during playback [#2174, #2183]
+- Fix raster brush memory usage [#2178]
+- Fix Level Strip Insert & Swing undo/redo [#2190]
+- Fix copy-pasting first key as last key [#2201]
+- Fix shortcuts for toggling tool option checkboxes [#2206]
+- Fix delete Fx key crash [#2215]
+- Fix SVN check and File Browser listing [#2224, #2234]
+- Fix AppImage working directory [#2239]
+- Fix(t32birserv): Terminate the process when quiting or failing to init quickTime(OpenToonz port) [#2229[^10]]
+- Prevent crash by checking m_oldStyle before getPointer() (OpenToonz port) [#2229]
+- fix increase minimum size of buttons in insertfxpopup (OpenToonz port) [#2229]
+- Fix Random Wave FX on sub-xsheets with frame rounding (OpenToonz port) [#2229]
+- Fix: TCubic::getSpeed used an incorrect formula (OpenToonz port) [#2229]
+- Fix heap corruption in Iwa_TiledParticlesFx (OpenToonz port) [#2229]
+- Fix crash when reading empty and corrupted JPEG files (OpenToonz port) [#2229]
+- Fix JPG Reader crash on Windows (OpenToonz port) [#2229]
+- Fix long path issue in Ffmpeg by using hash (OpenToonz port) [#2229[^8]]
+- Revert References of Global Cleanup Parameters (OpenToonz port) [#2229]
+- Fix Output Settings > Linear Color Space Checkbox (OpenToonz port) [#2229]
+
+### Other
+
+- Add Wayland support [#2161, #2234]
+- Remove redundant appdata.xml [#2195]
+- Update to libfuse3-3 [#2218, #2231]
+- Build macOS 15 ARM (Silicon) and Intel [#2228, #2234, #2240]
+- Libgphoto2 2.5.34 [#2237]
+- Canon EDSDK 13.20.11 + macOS package fix [#2240]
+- fix: add braces to resolve dangling-else warnings (OpenToonz port) [#2229[^9]]
+- chore(thirdparty): update tinyexr.h to upstream release (OpenToonz port) [#2229]
+- chore(thirdparty): update kiss_fft to upstream release 131.2.0 (OpenToonz port) [#2229]
+- Fix typos in stuff/ and toonz/source/include subdirs (OpenToonz port) [#2229]
+- Fix compiler warnings and potential memory leaks in TIPC module (OpenToonz port) [#2229]
+
 ## [1.6.1] - 2026-05-01
 
 ### Fixed
@@ -128,7 +166,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix(Scene Depth/Quicktoolbar): Invisible after startup (OpenToonz port) [#1942]
 - Fix: Add missing fclose calls for proper file handling (OpenToonz port) [#1946]
 - fix: handle MSVC warnings C4723 and C4552 (OpenToonz port) [#1946[^10]]
-- fix: initialize popup, firstW, and lastW (OpenToonz port) [#1946]
+- fix: initialize popup, firstW, and lastW (OpenToonz port) [#1946]
 - fix: ODR violations (# 241) by adding flipbooksettings.h for toggle vars (OpenToonz port) [#1946]
 - Fix: Premultiply background color for Export Level Commands (OpenToonz port) [#1946[^9] ]
 - fix: Preview not Updating for New Toonz Raster Levels editted with Fill Tool (OpenToonz port) [#1946]
@@ -182,7 +220,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix Relative Drawing Mode Tweening [#1819]
 - Percentage spacing on pattern brushes. [#1829]
 - Fix rasterization of vector [#1843]
-- Block shortcuts while tool is busy [#1844]
+- Block shortcuts while tool is busy [#1844, #1853]
 - Fix Implicit Clear Frames [#1845]
 - Fix Mesh Animate crash of SmartVector Level [#1784[^7]]
 - Remove rasterized vector pink box [#1806[^7]]
@@ -1067,6 +1105,7 @@ Some features, when used, are saved to the scene file and will prevent the scene
 [^10]: Partial. Changes not relevant to T2D were not applied
 [^11]: Partial. Similar changes already in T2D were not applied
 
+[1.6.2]: https://github.com/tahoma2d/tahoma2d/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/tahoma2d/tahoma2d/compare/v1.6...v1.6.1
 [1.6.0]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.4...v1.6
 [1.5.4]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.3...v1.5.4
