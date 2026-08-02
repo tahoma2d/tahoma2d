@@ -141,7 +141,7 @@ void VectorBrushProp::draw(const TVectorRenderData &rd) {
 
         // Draw the outline
         colorStyle.setMainColor(brushStyle->getMainColor());
-        colorStyle.drawRegion(0, false, m_regionOutlines[r]);
+        colorStyle.drawRegion(rd.m_cf, false, m_regionOutlines[r]);
       }
     }
 
@@ -153,7 +153,7 @@ void VectorBrushProp::draw(const TVectorRenderData &rd) {
       if (!brushStyle) continue;
 
       colorStyle.setMainColor(brushStyle->getMainColor());
-      colorStyle.drawStroke(0, &m_strokeOutlines[t],
+      colorStyle.drawStroke(rd.m_cf, &m_strokeOutlines[t],
                             brushStroke);  // brushStroke unused but requested
     }
   }

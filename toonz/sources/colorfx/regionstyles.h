@@ -299,7 +299,7 @@ protected:
 private:
   double triangleArea(const TPointD &a, const TPointD &b,
                       const TPointD &c) const;
-  void shadowOnEdge_parallel(const TPointD &p0, const TPointD &p1,
+  void shadowOnEdge_parallel(TPixel32 color, const TPointD &p0, const TPointD &p1,
                              const TPointD &p2, TRandom &rnd) const;
 
   void deleteSameVerts(TRegionOutline::Boundary::iterator &rit,

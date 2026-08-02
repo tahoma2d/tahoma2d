@@ -1045,7 +1045,7 @@ double TPointShadowFillStyle::triangleArea(const TPointD &a, const TPointD &b,
 
 //------------------------------------------------------------
 
-void TPointShadowFillStyle::shadowOnEdge_parallel(const TPointD &p0,
+void TPointShadowFillStyle::shadowOnEdge_parallel(TPixel32 color, const TPointD &p0,
                                                   const TPointD &p1,
                                                   const TPointD &p2,
                                                   TRandom &rnd) const {
@@ -1069,8 +1069,8 @@ void TPointShadowFillStyle::shadowOnEdge_parallel(const TPointD &p0,
       TPointD u = p1 + (p2 - p1) * q;
       u         = u +
           r * (len1 * (1.0 - q) + len2 * q) * m_shadowDirection * m_shadowSize;
-      tglColor(TPixel32(m_shadowColor.r, m_shadowColor.g, m_shadowColor.b,
-                        (int)((1.0 - r) * (double)m_shadowColor.m)));
+      tglColor(TPixel32(color.r, color.g, color.b,
+                        (int)((1.0 - r) * (double)color.m)));
       tglVertex(u);
     }
   }
@@ -1154,7 +1154,7 @@ void TPointShadowFillStyle::drawRegion(const TColorFunction *cf,
       it0 = it1 == it_beg ? it_last : it1 - 1;
       it2 = it1 == it_last ? it_beg : it1 + 1;
 
-      shadowOnEdge_parallel(TPointD(it0->x, it0->y), TPointD(it1->x, it1->y),
+      shadowOnEdge_parallel(color, TPointD(it0->x, it0->y), TPointD(it1->x, it1->y),
                             TPointD(it2->x, it2->y), rnd);
     }
     glEnd();

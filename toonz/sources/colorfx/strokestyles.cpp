@@ -2145,10 +2145,10 @@ void TNormal2StrokeStyle::drawStroke(const TColorFunction *cf,
   glEnable(GL_LIGHT0);
   glEnable(GL_NORMALIZE);
   GLfloat mat_ambient[] = {(float)dcolor.r, (float)dcolor.g, (float)dcolor.b,
-                           1.0};
+                           (float)dcolor.m};
   GLfloat mat_specular[] = {(float)(m_metal * (1 - dcolor.r) + dcolor.r),
                             (float)(m_metal * (1 - dcolor.g) + dcolor.g),
-                            (float)(m_metal * (1 - dcolor.b) + dcolor.b), 1.0};
+                            (float)(m_metal * (1 - dcolor.b) + dcolor.b), (float)dcolor.m};
   GLfloat mat_shininess[] = {(float)m_shininess};
 
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
@@ -3450,7 +3450,7 @@ void TZigzagStrokeStyle::drawStroke(const TColorFunction *cf, Points &points,
   else
     color = m_color;
 
-  tglColor(m_color);
+  tglColor(color);
 
   glEnableClientState(GL_VERTEX_ARRAY);
 
