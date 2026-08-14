@@ -40,6 +40,14 @@
 #include "toonzqt/doublefield.h"
 #include "toonzqt/menubarcommand.h"
 
+#include <opencv2/core.hpp>
+
+#if CV_VERSION_MAJOR >= 5
+#include <opencv2/geometry.hpp>
+#else
+#include <opencv2/imgproc.hpp>
+#endif
+
 // Qt includes
 #include <QAction>
 #include <QApplication>
