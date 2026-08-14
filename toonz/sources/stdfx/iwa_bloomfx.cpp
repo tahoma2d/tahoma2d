@@ -2,6 +2,14 @@
 
 #include "tparamuiconcept.h"
 
+#include <opencv2/core.hpp>
+
+#if CV_VERSION_MAJOR >= 5
+#include <opencv2/geometry.hpp>
+#else
+#include <opencv2/imgproc.hpp>
+#endif
+
 #include <QVector>
 #include <QPair>
 
