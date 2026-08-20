@@ -312,13 +312,13 @@ if(BUILD_ENV_MSVC)
 endif()
 
 if(BUILD_ENV_MSVC)
-    find_package(OpenCV 4.1 REQUIRED
+    find_package(OpenCV REQUIRED
         PATHS "C:/OpenCV/opencv/build" "C:/opencv/build" "C:/Tools/opencv/build"
     )
 elseif(BUILD_ENV_UNIXLIKE)
     find_package(OpenCV REQUIRED)
 else()
-    find_package(OpenCV 4.1 REQUIRED)
+    find_package(OpenCV REQUIRED)
 endif()
 
 include_directories(
