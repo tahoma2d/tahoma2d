@@ -14,4 +14,12 @@ echo "IOLIBS: $IOLIBS"
 export QT_PLUGIN_PATH="$(readlink -f "$(dirname "$(find "${APPDIR}" -type d -path '*/plugins/platforms' 2>/dev/null)" 2>/dev/null)" 2>/dev/null)"
 echo "QT_PLUGIN_PATH=$QT_PLUGIN_PATH"
 
+# Due to Qt5 Wayland issues, let's force xcb if platform isn't specified
+if [ xx$QT_QPA_PLATFORM = xx ]
+then
+   echo "QT_QPA_PLATFORM is not set. Defaulting..."
+   export QT_QPA_PLATFORM=xcb
+fi
+echo "QT_QPA_PLATFORM=$QT_QPA_PLATFORM"
+
 $APPDIR/usr/bin/Tahoma2D "$@"
