@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3] - 2026-09-01
+
+### Fixed
+
+- Fix onion skin and column style support for some vector styles [#2263]
+- Fix saving global cleanup parameters [#2266]
+
+### Other
+
+- Fix macOS libghoto2 build [#2268]
+- Fix compile with OpenCV 4 or 5 [#2272]
+- Default AppImage QT_QPA_PLATFORM [#2279]
+
 ## [1.6.2] - 2026-07-01
 
 ### Fixed
@@ -1105,6 +1118,7 @@ Some features, when used, are saved to the scene file and will prevent the scene
 [^10]: Partial. Changes not relevant to T2D were not applied
 [^11]: Partial. Similar changes already in T2D were not applied
 
+[1.6.3]: https://github.com/tahoma2d/tahoma2d/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/tahoma2d/tahoma2d/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/tahoma2d/tahoma2d/compare/v1.6...v1.6.1
 [1.6.0]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.4...v1.6
