@@ -146,7 +146,7 @@ function _extract() {
 }
 
 function _extractAppImage() {
-    bin_folder="$final_folder/etc/skel/.local/share/Tahoma2D/"
+    bin_folder="$final_folder/opt/Tahoma2D/"
     mkdir -p "$bin_folder"
 
     # Skip appimage extract if -x was given
@@ -170,7 +170,7 @@ function _extractAppImage() {
 }
 
 function _moveFiles() {
-    dest_folder="$final_folder/etc/skel/.local/share/Tahoma2D"
+    dest_folder="$final_folder/opt/Tahoma2D"
     if [ -z "$compressed_file" ]; then
         if [ -d "$stuff_path" ]; then
             echo "[INFO] Copying $stuff_path"
@@ -225,8 +225,8 @@ function _moveFiles() {
     cp "$appimage_extract_path/usr/share/metainfo/org.tahoma2d.Tahoma2D.metainfo.xml" "$final_folder/usr/share/metainfo/org.tahoma2d.Tahoma2D.metainfo.xml"
 
     echo "[INFO] Copying $appimage_extract_path/AppRun"
-    mkdir -p "$final_folder/etc/skel/.local/share/Tahoma2D/"
-    cp "$appimage_extract_path/AppRun" "$final_folder/etc/skel/.local/share/Tahoma2D/AppRun"
+    mkdir -p "$final_folder/opt/Tahoma2D/"
+    cp "$appimage_extract_path/AppRun" "$final_folder/opt/Tahoma2D/AppRun"
 }
 
 function _generateMd5sums() {
@@ -242,7 +242,21 @@ function _setPermissions() {
     chmod +x "$final_folder/DEBIAN/postinst"
     chmod +x "$final_folder/usr/local/bin/tahoma2d"
     chmod +x "$final_folder/usr/local/bin/tahoma-permissions"
-    chmod +x "$final_folder/etc/skel/.local/share/Tahoma2D/AppRun"
+    chmod +x "$final_folder/opt/Tahoma2D/AppRun"
+
+    # With the data now living at /opt/Tahoma2D, an unprivileged user
+    # (via the tahoma2d launcher's first-run copy) is what actually
+    # reads this tree, not root. AppImage extraction / rsync can leave
+    # some directories without the "other" execute bit (observed:
+    # several directories under usr/, including usr/bin and
+    # usr/lib/libgphoto2*, ending up 0770 instead of 0755), which
+    # silently produces an incomplete copy for any user outside the
+    # owning group — cp skips what it cannot enter, and the app fails
+    # to start with "usr/bin/Tahoma2D: No such file or directory".
+    # Normalize here so every file/directory is at least
+    # world-readable, and world-executable where it already has any
+    # execute bit.
+    chmod -R o+rX "$final_folder/opt/Tahoma2D"
 }
 
 function _createDeb() {

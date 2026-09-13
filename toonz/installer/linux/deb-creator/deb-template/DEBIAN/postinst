@@ -1,11 +1,22 @@
 #!/bin/bash
 set -e
 
-SRC="/etc/skel/.local/share/Tahoma2D"
+SRC="/opt/Tahoma2D"
 if [ ! -d "$SRC" ]; then
   echo "Source directory $SRC does not exist. Aborting."
   exit 1
 fi
+
+# Safety net: $SRC is now read/copied by an UNPRIVILEGED user (the
+# tahoma2d launcher, on each user's first run), unlike the old
+# /etc/skel location, which was only ever read by root (adduser at
+# account creation, or this same postinst). If any directory under
+# $SRC lacks the "other" execute bit, a regular user can't even
+# traverse it, resulting in an incomplete copy (typically missing
+# usr/bin/Tahoma2D and usr/lib/libgphoto2*) despite a clean install.
+# debcreator.sh already normalizes this at build time; this is a
+# redundant safety net in case $SRC was populated some other way.
+chmod -R o+rX "$SRC"
 
 # Adjust permissions of files and directories
 adjust_permissions() {
@@ -65,7 +76,7 @@ for user_home in /home/*; do
     ! -path "$USER_TAHOMA/tahomastuff/profiles*" \
     -exec rm -rf {} + 2>/dev/null
 
-  # Copy all content from /etc/skel to user's Tahoma2D directory
+  # Copy all content from /opt/Tahoma2D to user's Tahoma2D directory
   echo "Copying from $SRC..."
   cp -a "$SRC/." "$USER_TAHOMA/"
 
