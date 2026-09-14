@@ -27,6 +27,10 @@ For instructions on how to build stylesheets, please [see here](./doc/how_to_sty
 
 Can't develop but still want to help? Help us test individual Pull Requests before they are merged with [these steps](./doc/how_to_test_prs.md).
 
+## AI Contribution Policy
+
+Please see [AI_POLICY.md](./AI_POLICY.md) for the AI Contribution Policy.
+
 ## Community
 
 - To share tips or to troubleshoot, join the [Google Tahoma2D Users forum](hhttps://groups.google.com/g/tahoma2d)
