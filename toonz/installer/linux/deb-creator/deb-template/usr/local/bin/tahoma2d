@@ -97,9 +97,9 @@ function _makeDirectory() {
 }
 
 function _copyFiles() {
-    echo "Copiando archivos desde /etc/skel/.local/share/Tahoma2D/ a $FILE..."
-    if [ -d "/etc/skel/.local/share/Tahoma2D/" ]; then
-        cp -r /etc/skel/.local/share/Tahoma2D/* "$FILE" || {
+    echo "Copiando archivos desde /opt/Tahoma2D/ a $FILE..."
+    if [ -d "/opt/Tahoma2D/" ]; then
+        cp -r /opt/Tahoma2D/* "$FILE" || {
             echo "$(_msg COPY_FAILED)" >&2
             exit 1
         }
