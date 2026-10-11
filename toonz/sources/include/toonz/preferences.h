@@ -311,6 +311,9 @@ public:
   bool getFfmpegMultiThread() const { return getBoolValue(ffmpegMultiThread); }
   QString getRhubarbPath() const { return getStringValue(rhubarbPath); }
   int getRhubarbTimeout() { return getIntValue(rhubarbTimeout); }
+  bool isLazyNezumiCanvasFocusEnabled() {
+    return getBoolValue(lazyNezumiCanvasFocusEnabled);
+  }
 
   // Drawing  tab
   QString getDefRasterFormat() const { return getStringValue(DefRasterFormat); }

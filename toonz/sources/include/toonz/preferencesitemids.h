@@ -88,6 +88,7 @@ enum PreferencesItemId {
   ffmpegMultiThread,
   rhubarbPath,
   rhubarbTimeout,
+  lazyNezumiCanvasFocusEnabled,
 
   //----------
   // Drawing

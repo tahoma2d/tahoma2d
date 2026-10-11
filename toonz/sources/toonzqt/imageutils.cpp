@@ -912,11 +912,12 @@ bool ShortcutZoomer::exec(QKeyEvent *event) {
 
 FullScreenWidget::FullScreenWidget(QWidget *parent) : QWidget(parent) {
 #if defined(_WIN32)
-  // Allow Lazy Nezumi to hook the canvas
-  setAttribute(Qt::WA_PaintOnScreen);
-  setAttribute(Qt::WA_NoSystemBackground);
-  setAttribute(Qt::WA_NativeWindow);
-  setAttribute(Qt::WA_DontCreateNativeAncestors);
+  if (Preferences::instance()->isLazyNezumiCanvasFocusEnabled()) {
+    // Allow Lazy Nezumi to hook the canvas
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_NativeWindow);
+    setAttribute(Qt::WA_DontCreateNativeAncestors);
+  }
 #endif
 
   QHBoxLayout *layout = new QHBoxLayout(this);
