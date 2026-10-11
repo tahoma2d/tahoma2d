@@ -57,11 +57,31 @@ for /d /r ""%VCINSTALLDIR%"" %%a in (14.*) do (
 :done
 echo "VCRUNTIME_PATH=%VCRUNTIME_PATH%"
 
-copy /Y "%VCRUNTIME_PATH%\vcruntime140.dll" Tahoma2D
-copy /Y "%VCRUNTIME_PATH%\vcruntime140_1.dll" Tahoma2D
+copy /Y "%VCRUNTIME_PATH%\concrt140.dll" Tahoma2D
 copy /Y "%VCRUNTIME_PATH%\msvcp140.dll" Tahoma2D
 copy /Y "%VCRUNTIME_PATH%\msvcp140_1.dll" Tahoma2D
 copy /Y "%VCRUNTIME_PATH%\msvcp140_2.dll" Tahoma2D
+copy /Y "%VCRUNTIME_PATH%\msvcp140_atomic_wait.dll" Tahoma2D
+copy /Y "%VCRUNTIME_PATH%\msvcp140_codecvt_ids.dll" Tahoma2D
+copy /Y "%VCRUNTIME_PATH%\vccorlib140.dll" Tahoma2D
+copy /Y "%VCRUNTIME_PATH%\vcruntime140.dll" Tahoma2D
+copy /Y "%VCRUNTIME_PATH%\vcruntime140_1.dll" Tahoma2D
+
+set VCOMP_PATH=
+for /d /r ""%VCINSTALLDIR%"" %%a in (14.*) do (
+    if exist "%%a\x64" (
+        for /d %%b in ("%%a\x64\*") do (
+            if exist "%%b\vcomp*.dll" (
+                set "VCRUNTIME_PATH=%%b"
+                goto :done
+            )
+        )
+    )
+)
+:done
+echo "VCOMP_PATH=%VCOMP_PATH%"
+
+copy /Y "%VCRUNTIME_PATH%\vcomp140.dll" Tahoma2D
 
 echo ">>> Configuring Tahoma2D.exe for deployment"
 
