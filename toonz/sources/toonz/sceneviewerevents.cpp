@@ -305,6 +305,12 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
   }
   switch (e->type()) {
   case QEvent::TabletPress: {
+#ifdef _WIN32
+    // tablet press cancells the pending "fake" mouse press
+    if (e->button() == Qt::LeftButton) {
+      m_pendingLeftMousePress = false;
+    }
+#endif
 #ifdef MACOSX
     // In OSX tablet action may cause only tabletEvent, not followed by
     // mousePressEvent.
@@ -512,17 +518,18 @@ void SceneViewer::onEnter() {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
-#ifdef _WIN32
-  if (m_pendingLeftMousePress && (event->buttons() & Qt::LeftButton)) {
-    stopPendingLeftMousePress();
-  }
-#endif
   // if this is called just after tabletEvent, skip the execution
   if (m_tabletEvent) return;
   // and touchscreens but not touchpads...
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
     return;
   }
+  //process the pending mouse input if a tablet press event has interruped it
+#ifdef _WIN32
+  if (m_pendingLeftMousePress && (event->buttons() & Qt::LeftButton)) {
+    stopPendingLeftMousePress();
+  }
+#endif
   // Strangely, mouseMoveEvent seems to be called once just after releasing
   // tablet. This condition avoids to proceed further in such case.
   if (event->buttons() != Qt::NoButton && m_mouseButton == Qt::NoButton) return;
@@ -820,7 +827,11 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 
   #ifdef _WIN32
   TTool *activeTool = TApp::instance()->getCurrentTool()->getTool();
-  // Delay the left-button drawing with the brush to stop unwanted mouse inputs while using a tablet
+  // On windows using a tablet, pen contact sometimes makes a "fake" mouse press
+  // before the "real" tablet press. This creates a small delay to see if the
+  // mouse press is "fake" or "real."
+  //  It also has a cancel to the delay if another mouse input happens before
+  //  the delay timer is reached.
   if (event->button() == Qt::LeftButton && m_mouseButton == Qt::NoButton &&
       !m_buttonClicked && activeTool && activeTool->isEnabled() &&
       activeTool->getName() == T_Brush &&
@@ -837,7 +848,7 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 
     //The first value can be changed but will create some lag for strokes, so it
     //is being kept as low as possible while still making the program functional
-    QTimer::singleShot(4.75, this, [this, pressId]() {
+    QTimer::singleShot(4, this, [this, pressId]() {
       if (m_pendingLeftMousePress && pressId == m_pendingLeftMousePressSerial) {
         stopPendingLeftMousePress();
       }
@@ -1465,12 +1476,7 @@ bool SceneViewer::event(QEvent *e) {
   switch (e->type()) {
   case QEvent::Enter:
   case QEvent::Leave:
-  case QEvent::TabletPress: {
-
-#ifdef _WIN32 if (e->button() == Qt::LeftButton) {
-      m_pendingLeftMousePress = false;
-    }
-#endif }
+  case QEvent::TabletPress: 
   case QEvent::TabletMove:
   case QEvent::TabletRelease:
   case QEvent::TouchBegin:
