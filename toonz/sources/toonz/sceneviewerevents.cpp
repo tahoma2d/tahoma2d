@@ -523,7 +523,8 @@ void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
     return;
   }
-  // process the pending mouse input if a tablet press event has interruped it
+  // process the pending mouse input if a tablet press has interruped it
+  // will allow mouse users to not wait unnecessarily because of the delay timer
 #ifdef _WIN32
   if (m_pendingLeftMousePress && (event->buttons() & Qt::LeftButton)) {
     stopPendingLeftMousePress();
