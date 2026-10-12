@@ -836,13 +836,19 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     return;
   }
   if (m_mouseButton != Qt::NoButton) {
-    if (event.m_isTablet && m_mouseState != None) {
-      //      qDebug() << "[onPress] Switched from MousePress to TabletPress";
-      // TabletPress came immediately after MousePress. Let's switch to
-      // tabletPress but not end the prior action or it leaves an extra
-      // stroke
-      m_mouseState    = None;
-      m_buttonClicked = false;
+    if (event.m_isTablet && m_mouseState != None &&
+        m_mouseButton == Qt::LeftButton) {
+      m_mouseState = None;
+      m_tabletState = StartStroke;
+      return;
+
+    //if (event.m_isTablet && m_mouseState != None) {
+    //  //      qDebug() << "[onPress] Switched from MousePress to TabletPress";
+    //  // TabletPress came immediately after MousePress. Let's switch to
+    //  // tabletPress but not end the prior action or it leaves an extra
+    //  // stroke
+    //  m_mouseState    = None;
+    //  m_buttonClicked = false;
     } else {
       // if some button is pressed while another button being active,
       // finish the action for the previous button first.
