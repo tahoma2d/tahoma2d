@@ -870,8 +870,13 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
 
   TPointD previousBrushPos = m_brushPos;
   m_brushPos = m_mousePos = pos;
-  m_mouseEvent            = e;
-  TRasterImageP ri        = (TRasterImageP)getImage(true);
+  //restore the enabled pressure after a double penDown initialization
+  if (e.isTablet() && !m_mouseEvent.isTablet()) {
+    updateCurrentStyle();
+  }
+  m_mouseEvent= e;
+
+  TRasterImageP ri = (TRasterImageP)getImage(true);
   if (!ri) return;
 
   TRasterP ras      = ri->getRaster();

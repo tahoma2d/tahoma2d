@@ -66,6 +66,7 @@
 #include <QDebug>
 #include <QMimeData>
 #include <QGestureEvent>
+#include <QTimer>
 
 // definito - per ora - in tapp.cpp
 extern QString updateToolEnableStatus(TTool *tool);
@@ -511,6 +512,11 @@ void SceneViewer::onEnter() {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
+#ifdef _WIN32
+  if (m_pendingLeftMousePress && (event->buttons() & Qt::LeftButton)) {
+    stopPendingLeftMousePress();
+  }
+#endif
   // if this is called just after tabletEvent, skip the execution
   if (m_tabletEvent) return;
   // and touchscreens but not touchpads...
@@ -812,13 +818,49 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
   // QEvent::TabletLeaveProximity
   // and will cancel the onPress operation called here.
 
+  #ifdef _WIN32
+  TTool *activeTool = TApp::instance()->getCurrentTool()->getTool();
+  // Delay the left-button drawing with the brush to stop unwanted mouse inputs while using a tablet
+  if (event->button() == Qt::LeftButton && m_mouseButton == Qt::NoButton &&
+      !m_buttonClicked && activeTool && activeTool->isEnabled() &&
+      activeTool->getName() == T_Brush &&
+      (activeTool->getTargetType() & TTool::RasterImage) &&
+      m_freezedStatus == NO_FREEZED && m_mousePanning == 0 &&
+      m_mouseRotating == 0 && m_mouseZooming == 0 && m_mouseScrubbing == 0 &&
+      !m_editPreviewSubCamera && !m_visualSettings.m_doCompare && !is3DView() &&
+      !StopMotion::instance()->isPickLiveViewZoom()) {
+    initToonzEvent(m_pendingLeftMouseEvent, event, height(), 1.0, 0.0, 0.0, 0.0,
+                   getDevPixRatio());
+
+    m_pendingLeftMousePress    = true;
+    const unsigned int pressId = ++m_pendingLeftMousePressSerial;
+
+    //The first value can be changed but will create some lag for strokes, so it
+    //is being kept as low as possible while still making the program functional
+    QTimer::singleShot(4.75, this, [this, pressId]() {
+      if (m_pendingLeftMousePress && pressId == m_pendingLeftMousePressSerial) {
+        stopPendingLeftMousePress();
+      }
+    });
+
+    return;
+  }
+  #endif
+
   TMouseEvent mouseEvent;
   m_mouseState = Touched;
   initToonzEvent(mouseEvent, event, height(), 1.0, 0.0, 0.0, 0.0,
                  getDevPixRatio());
   onPress(mouseEvent);
 }
+//-----------------------------------------------------------------------------
+void SceneViewer::stopPendingLeftMousePress() {
+  if (!m_pendingLeftMousePress) return;
 
+  m_pendingLeftMousePress = false;
+  m_mouseState            = Touched;
+  onPress(m_pendingLeftMouseEvent);
+}
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onPress(const TMouseEvent &event) {
@@ -955,6 +997,7 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     tool->leftButtonDown(pos, event);
   }
   if (m_mouseButton == Qt::RightButton) tool->rightButtonDown(pos, event);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -990,6 +1033,12 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event) {
     m_rotationDelta = 0.0;
     return;
   }
+
+#ifdef _WIN32
+  if (m_pendingLeftMousePress) {
+    stopPendingLeftMousePress();
+  }
+#endif
 
   TMouseEvent mouseEvent;
   if (m_mouseState != None) m_mouseState = Released;
@@ -1416,7 +1465,12 @@ bool SceneViewer::event(QEvent *e) {
   switch (e->type()) {
   case QEvent::Enter:
   case QEvent::Leave:
-  case QEvent::TabletPress:
+  case QEvent::TabletPress: {
+
+#ifdef _WIN32 if (e->button() == Qt::LeftButton) {
+      m_pendingLeftMousePress = false;
+    }
+#endif }
   case QEvent::TabletMove:
   case QEvent::TabletRelease:
   case QEvent::TouchBegin:
