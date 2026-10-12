@@ -78,7 +78,7 @@ namespace {
 void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
                     int widgetHeight, double pressure, double tiltX,
                     double tiltY, double rotation, int devPixRatio) {
-  toonzEvent.m_pos = TPointD(event->pos().x() * devPixRatio,
+  toonzEvent.m_pos      = TPointD(event->pos().x() * devPixRatio,
                                   widgetHeight - 1 - event->pos().y() * devPixRatio);
   toonzEvent.m_mousePos = event->pos();
   toonzEvent.m_pressure = 1.0;
@@ -412,8 +412,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     if (curPos != m_lastMousePos) {
       TMouseEvent mouseEvent;
       initToonzEvent(mouseEvent, e, height(), m_pressure, m_tiltX, m_tiltY,
-                     m_rotation, getDevPixRatio(),
-                     m_isBusyOnTabletMove);
+                     m_rotation, getDevPixRatio(), m_isBusyOnTabletMove);
       if (!m_isBusyOnTabletMove) {
         m_isBusyOnTabletMove = true;
         QTimer::singleShot(20, this, SLOT(releaseBusyOnTabletMove()));
@@ -524,7 +523,7 @@ void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
     return;
   }
-  //process the pending mouse input if a tablet press event has interruped it
+  // process the pending mouse input if a tablet press event has interruped it
 #ifdef _WIN32
   if (m_pendingLeftMousePress && (event->buttons() & Qt::LeftButton)) {
     stopPendingLeftMousePress();
@@ -591,11 +590,11 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     return;
   } else if (event.buttons() == Qt::LeftButton && m_mouseZooming > 0) {
     if (m_mouseZooming == 1) {
-      m_mouseZooming              = 2;
-      m_dragging                  = true;
-      int v                       = 1;
+      m_mouseZooming = 2;
+      m_dragging     = true;
+      int v          = 1;
       if (event.isAltPressed()) v = -1;
-      m_oldY                      = event.m_pos.y;
+      m_oldY = event.m_pos.y;
       // m_center = getViewer()->winToWorld(e.m_pos);
       m_center = TPointD(event.m_pos.x, event.m_pos.y);
       m_factor = 1;
@@ -618,8 +617,8 @@ void SceneViewer::onMove(const TMouseEvent &event) {
   } else if (event.buttons() == Qt::LeftButton && m_mouseScrubbing > 0) {
     if (m_mouseScrubbing == 1) {
       m_mouseScrubbing = 2;
-      m_dragging     = true;
-      m_oldPos       = event.m_pos;
+      m_dragging       = true;
+      m_oldPos         = event.m_pos;
       setToolCursor(this, ToolCursor::ScrubCursor);
       return;
     }
@@ -810,10 +809,11 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
   // if this is called just after tabletEvent, skip the execution
   if (m_tabletEvent
 #ifdef _WIN32
-    // See SceneViewer::doQuit() for why this is here
-    || m_tabletState == Released
+      // See SceneViewer::doQuit() for why this is here
+      || m_tabletState == Released
 #endif
-    ) return;
+  )
+    return;
   // and touchscreens but not touchpads...
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
     return;
@@ -825,7 +825,7 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
   // QEvent::TabletLeaveProximity
   // and will cancel the onPress operation called here.
 
-  #ifdef _WIN32
+#ifdef _WIN32
   TTool *activeTool = TApp::instance()->getCurrentTool()->getTool();
   // On windows using a tablet, pen contact sometimes makes a "fake" mouse press
   // before the "real" tablet press. This creates a small delay to see if the
@@ -846,8 +846,9 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
     m_pendingLeftMousePress    = true;
     const unsigned int pressId = ++m_pendingLeftMousePressSerial;
 
-    //The first value can be changed but will create some lag for strokes, so it
-    //is being kept as low as possible while still making the program functional
+    // The first value can be changed but will create some lag for strokes, so
+    // it is being kept as low as possible while still making the program
+    // functional
     QTimer::singleShot(4, this, [this, pressId]() {
       if (m_pendingLeftMousePress && pressId == m_pendingLeftMousePressSerial) {
         stopPendingLeftMousePress();
@@ -856,7 +857,7 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 
     return;
   }
-  #endif
+#endif
 
   TMouseEvent mouseEvent;
   m_mouseState = Touched;
@@ -891,17 +892,18 @@ void SceneViewer::onPress(const TMouseEvent &event) {
   if (m_mouseButton != Qt::NoButton) {
     if (event.m_isTablet && m_mouseState != None &&
         m_mouseButton == Qt::LeftButton) {
-      m_mouseState = None;
+      m_mouseState  = None;
       m_tabletState = StartStroke;
       return;
 
-    //if (event.m_isTablet && m_mouseState != None) {
-    //  //      qDebug() << "[onPress] Switched from MousePress to TabletPress";
-    //  // TabletPress came immediately after MousePress. Let's switch to
-    //  // tabletPress but not end the prior action or it leaves an extra
-    //  // stroke
-    //  m_mouseState    = None;
-    //  m_buttonClicked = false;
+      // if (event.m_isTablet && m_mouseState != None) {
+      //   //      qDebug() << "[onPress] Switched from MousePress to
+      //   TabletPress";
+      //   // TabletPress came immediately after MousePress. Let's switch to
+      //   // tabletPress but not end the prior action or it leaves an extra
+      //   // stroke
+      //   m_mouseState    = None;
+      //   m_buttonClicked = false;
     } else {
       // if some button is pressed while another button being active,
       // finish the action for the previous button first.
@@ -1008,7 +1010,6 @@ void SceneViewer::onPress(const TMouseEvent &event) {
     tool->leftButtonDown(pos, event);
   }
   if (m_mouseButton == Qt::RightButton) tool->rightButtonDown(pos, event);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1025,16 +1026,15 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event) {
   }
   // for touchscreens but not touchpads...
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
-    if (m_touchPoints == 2 &&
-        Preferences::instance()->getGestureUndoMethod() ==
-            Preferences::TwoFingerTap) {
+    if (m_touchPoints == 2 && Preferences::instance()->getGestureUndoMethod() ==
+                                  Preferences::TwoFingerTap) {
       CommandManager::instance()->execute("MI_Undo");
     } else if (m_touchPoints == 3 &&
                Preferences::instance()->getGestureRedoMethod() ==
                    Preferences::ThreeFingerTap) {
       CommandManager::instance()->execute("MI_Redo");
     }
-    m_touchPoints   = 0;
+    m_touchPoints = 0;
 
     m_gestureActive = false;
     m_rotating      = false;
@@ -1090,7 +1090,7 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
     m_buttonClicked = false;
 
     TApp::instance()->getCurrentTool()->setToolBusy(false);
-    if(tool) tool->setCanUndo(true);
+    if (tool) tool->setCanUndo(true);
 
     doQuit();
     return;
@@ -1187,7 +1187,8 @@ void SceneViewer::doQuit() {
   // from tabletEvent or not in mouseReleaseEvent.
   if (m_tabletState == Released) {  // only clear if tabletRelease event
 #ifdef _WIN32
-    // If this was a mouse event and tablet was just relased, clear tablet state now
+    // If this was a mouse event and tablet was just relased, clear tablet state
+    // now
     if (!m_tabletEvent) m_tabletState = None;
 #endif
     m_tabletEvent = false;
@@ -1205,15 +1206,15 @@ void SceneViewer::doQuit() {
       // To fix, keep the Released state until we get the mouse release
       && m_tabletState != Released
 #endif
-      )
+  )
     m_tabletState = None;
 
-  m_mouseState                                = None;
-  m_tabletMove                                = false;
-  m_pressure                                  = 0.0;
-  m_tiltX                                     = 0.0;
-  m_tiltY                                     = 0.0;
-  m_rotation                                  = 0.0;
+  m_mouseState = None;
+  m_tabletMove = false;
+  m_pressure   = 0.0;
+  m_tiltX      = 0.0;
+  m_tiltY      = 0.0;
+  m_rotation   = 0.0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1270,12 +1271,12 @@ void SceneViewer::wheelEvent(QWheelEvent *event) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-    {
-      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                   "Qt::MouseEventSynthesizedByApplication"
-                << std::endl;
-      break;
-    }
+  {
+    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                 "Qt::MouseEventSynthesizedByApplication"
+              << std::endl;
+    break;
+  }
 
   }  // end switch
 
@@ -1309,7 +1310,8 @@ void SceneViewer::wheelEvent(QWheelEvent *event) {
     else if ((m_gestureActive == true &&
               m_touchDevice == QTouchDevice::TouchScreen) ||
              m_gestureActive == false) {
-      zoomQt(event->position().toPoint() * getDevPixRatio(), exp(0.001 * delta));
+      zoomQt(event->position().toPoint() * getDevPixRatio(),
+             exp(0.001 * delta));
       m_panning = false;
     }
   }
@@ -1365,8 +1367,8 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         }
         if (m_zooming) {
           zoomQt(firstCenter * getDevPixRatio(), scaleFactor);
-          m_panning = false;
-          m_touchPoints = 100; // This will block undo/redo action
+          m_panning     = false;
+          m_touchPoints = 100;  // This will block undo/redo action
         }
         m_gestureActive = true;
       }
@@ -1374,8 +1376,8 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         qreal rotationDelta =
             gesture->rotationAngle() - gesture->lastRotationAngle();
         if (m_isFlippedX != m_isFlippedY) rotationDelta = -rotationDelta;
-        TAffine aff                                     = getViewMatrix().inv();
-        TPointD center                                  = aff * TPointD(0, 0);
+        TAffine aff    = getViewMatrix().inv();
+        TPointD center = aff * TPointD(0, 0);
         if (!m_rotating) {
           m_rotationDelta += rotationDelta;
           double absDelta = std::abs(m_rotationDelta);
@@ -1447,14 +1449,14 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
           Preferences::instance()->getGestureUndoMethod() ==
               Preferences::ThreeFingerDragLeft) {
         CommandManager::instance()->execute("MI_Undo");
-        m_undoPoint = newPoint;
+        m_undoPoint   = newPoint;
         m_touchPoints = 100;  // This will block undo/redo action
       }
       if ((m_undoPoint.x() - newPoint.x()) < -100 &&
           Preferences::instance()->getGestureRedoMethod() ==
               Preferences::ThreeFingerDragRight) {
         CommandManager::instance()->execute("MI_Redo");
-        m_undoPoint = newPoint;
+        m_undoPoint   = newPoint;
         m_touchPoints = 100;  // This will block undo/redo action
       }
     }
@@ -1476,7 +1478,7 @@ bool SceneViewer::event(QEvent *e) {
   switch (e->type()) {
   case QEvent::Enter:
   case QEvent::Leave:
-  case QEvent::TabletPress: 
+  case QEvent::TabletPress:
   case QEvent::TabletMove:
   case QEvent::TabletRelease:
   case QEvent::TouchBegin:
@@ -1501,8 +1503,7 @@ bool SceneViewer::event(QEvent *e) {
   if (e->type() == QEvent::KeyPress) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
     key                 = keyEvent->key();
-    if ((m_stopMotion->isPickLiveViewZoom() ||
-         m_stopMotion->isZooming()) &&
+    if ((m_stopMotion->isPickLiveViewZoom() || m_stopMotion->isZooming()) &&
         (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up ||
          key == Qt::Key_Down || key == Qt::Key_2 || key == Qt::Key_4 ||
          key == Qt::Key_6 || key == Qt::Key_8)) {
@@ -1533,17 +1534,16 @@ bool SceneViewer::event(QEvent *e) {
       e->accept();
       return true;
     } else if (m_stopMotion->m_liveViewStatus == 2 &&
-            (key == Qt::Key_Enter || key == Qt::Key_Return)) {
+               (key == Qt::Key_Enter || key == Qt::Key_Return)) {
       m_stopMotion->captureImage();
       e->accept();
       return true;
     }
   }
 
-  if (e->type() == QEvent::Gesture &&
-      CommandManager::instance()
-          ->getAction(MI_TouchGestureControl)
-          ->isChecked()) {
+  if (e->type() == QEvent::Gesture && CommandManager::instance()
+                                          ->getAction(MI_TouchGestureControl)
+                                          ->isChecked()) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }
@@ -1565,8 +1565,8 @@ bool SceneViewer::event(QEvent *e) {
       tool->isActive()) {
     isTyping = true;
   }
-  if (tool && tool->isEnabled()) toolEnabled   = true;
-  if (tool && tool->isActive()) toolActive     = true;
+  if (tool && tool->isEnabled()) toolEnabled = true;
+  if (tool && tool->isActive()) toolActive = true;
   if (tool && tool->isDragging()) toolDragging = true;
 
   if (!isTyping && (e->type() == QEvent::ShortcutOverride ||
@@ -1652,9 +1652,9 @@ bool SceneViewer::event(QEvent *e) {
         e->accept();
         return true;
       } else {
-        m_mousePanning  = 0;
-        m_mouseZooming  = 0;
-        m_mouseRotating = 0;
+        m_mousePanning   = 0;
+        m_mouseZooming   = 0;
+        m_mouseRotating  = 0;
         m_mouseScrubbing = 0;
         TApp::instance()->getCurrentTool()->setTempToolActive(false);
         invalidateToolStatus();
@@ -2166,11 +2166,11 @@ void SceneViewer::mouseRotate(const TMouseEvent &e) {
   if (false)
     m_center = TPointD(0, 0);
   else {
-    TAffine aff              = getViewMatrix().inv();
+    TAffine aff = getViewMatrix().inv();
     if (getIsFlippedX()) aff = aff * TScale(-1, 1);
     if (getIsFlippedY()) aff = aff * TScale(1, -1);
-    u                        = u * sqrt(aff.det());
-    m_center                 = aff * TPointD(0, 0);
+    u        = u * sqrt(aff.det());
+    m_center = aff * TPointD(0, 0);
   }
 
   m_sw.stop();
@@ -2200,12 +2200,11 @@ void SceneViewer::mouseRotate(const TMouseEvent &e) {
                  TPointD(m_center.x, u + m_center.y));
 }
 
-
 //-----------------------------------------------------------------------------
 
 void SceneViewer::mouseScrub(const TMouseEvent &e) {
   TPointD delta = e.m_pos - m_oldPos;
-  
+
   if (std::abs(delta.x) < 20) return;
 
   if (delta.x < 0)
@@ -2222,9 +2221,9 @@ void SceneViewer::resetNavigation() {
   if (m_dragging)
     m_resetOnRelease = true;
   else {
-    m_mousePanning  = 0;
-    m_mouseZooming  = 0;
-    m_mouseRotating = 0;
+    m_mousePanning   = 0;
+    m_mouseZooming   = 0;
+    m_mouseRotating  = 0;
     m_mouseScrubbing = 0;
     TApp::instance()->getCurrentTool()->setTempToolActive(false);
     invalidateToolStatus();

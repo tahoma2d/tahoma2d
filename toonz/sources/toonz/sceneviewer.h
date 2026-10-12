@@ -63,8 +63,7 @@ public:
 // SceneViewer
 //-----------------------------------------------------------------------------
 
-class SceneViewer final : public TTool::Viewer,
-                          public Previewer::Listener {
+class SceneViewer final : public TTool::Viewer, public Previewer::Listener {
   Q_OBJECT
 
   Q_PROPERTY(QColor BGColor READ getBGColor WRITE setBGColor)
@@ -82,9 +81,9 @@ class SceneViewer final : public TTool::Viewer,
   Qt::MouseButton m_mouseButton;
   bool m_foregroundDrawing;
   bool m_tabletEvent, m_tabletMove;
-  //Problem with an ambigious mouse press registering before a tablet press
-  //wait before accepting a mouse press
-  bool m_pendingLeftMousePress = false;
+  // Problem with an ambigious mouse press registering before a tablet press
+  // wait before accepting a mouse press
+  bool m_pendingLeftMousePress               = false;
   unsigned int m_pendingLeftMousePressSerial = 0;
   TMouseEvent m_pendingLeftMouseEvent;
 
