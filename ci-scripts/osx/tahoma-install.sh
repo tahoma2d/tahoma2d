@@ -1,5 +1,5 @@
 #!/bin/bash
-brew update
+#brew update
 # Remove symlink in order for latest python to install
 rm -f '/usr/local/bin/python3'
 rm -f '/usr/local/bin/python3.12'
