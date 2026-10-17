@@ -521,6 +521,10 @@ void Preferences::definePreferenceItems() {
   define(rhubarbPath, "rhubarbPath", QMetaType::QString, "");
   define(rhubarbTimeout, "rhubarbTimeout", QMetaType::Int, 0, 0,
          std::numeric_limits<int>::max());
+#ifdef _WIN32
+  define(lazyNezumiCanvasFocusEnabled, "lazyNezumiCanvasFocusEnabled",
+         QMetaType::Bool, false);
+#endif
 
   // Drawing
   define(DefRasterFormat, "DefRasterFormat", QMetaType::QString, "png");
