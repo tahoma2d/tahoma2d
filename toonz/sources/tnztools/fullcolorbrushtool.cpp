@@ -563,7 +563,7 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
     m_toonz_brush->beginStroke();
     m_toonz_brush->strokeTo(point, pressure, tiltX, tiltY, restartBrushTimer());
     m_highFreqBrushTimer = 0.0;
-    TRect updateRect = m_strokeSegmentRect * ras->getBounds();
+    TRect updateRect     = m_strokeSegmentRect * ras->getBounds();
     if (!updateRect.isEmpty()) {
       TRaster32P sourceRas = m_modifierPaintBehind.getValue()
                                  ? (TRaster32P)m_backUpRas
@@ -697,7 +697,7 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
     m_brushPos = m_mousePos = pos;
     return;
   }
-    
+
   TRectD invalidateRect;
   invalidateRect = TRectD(m_firstPoint, m_lastPoint).enlarge(2);
   m_lastPoint    = pos;
@@ -870,8 +870,13 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
 
   TPointD previousBrushPos = m_brushPos;
   m_brushPos = m_mousePos = pos;
-  m_mouseEvent            = e;
-  TRasterImageP ri        = (TRasterImageP)getImage(true);
+  // restore the enabled pressure after a double penDown initialization
+  if (e.isTablet() && !m_mouseEvent.isTablet()) {
+    updateCurrentStyle();
+  }
+  m_mouseEvent = e;
+
+  TRasterImageP ri = (TRasterImageP)getImage(true);
   if (!ri) return;
 
   TRasterP ras      = ri->getRaster();
@@ -1017,7 +1022,7 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
         TThickPoint pa = m_points.front();
         points.push_back(pa);
         points.push_back(mid);
-        bbox           = m_bluredBrush->getBoundFromPoints(points);
+        bbox = m_bluredBrush->getBoundFromPoints(points);
         updateWorkAndBackupRasters(bbox + m_lastRect);
         m_tileSaver->save(bbox);
         m_bluredBrush->addArc(pa, (pa + mid) * 0.5, mid, m_oldOpacity, opacity);
@@ -1027,7 +1032,7 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
         points.push_back(m_points[m - 4]);
         points.push_back(old);
         points.push_back(mid);
-        bbox           = m_bluredBrush->getBoundFromPoints(points);
+        bbox = m_bluredBrush->getBoundFromPoints(points);
         updateWorkAndBackupRasters(bbox + m_lastRect);
         m_tileSaver->save(bbox);
         m_bluredBrush->addArc(m_points[m - 4], old, mid, m_oldOpacity, opacity);
@@ -1117,7 +1122,7 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
       m_smoothStroke.getSmoothPoints(pts);
     }
     TRectD invalidateRect;
-    double brushTimer = restartBrushTimer();
+    double brushTimer    = restartBrushTimer();
     m_highFreqBrushTimer = 0.0;
     for (size_t i = 0; i < pts.size(); ++i) {
       const TThickPoint &thickPoint2 = pts[i];
@@ -1217,7 +1222,7 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
                              : 0));
         m_points.push_back(mid);
         m_points.push_back(thickPoint2);
-        
+
         TRect bbox;
         int m = m_points.size();
         std::vector<TThickPoint> points;
