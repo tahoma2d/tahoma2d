@@ -861,7 +861,7 @@ bool Canon::downloadImage(EdsBaseRef object) {
 #if defined(MACOSX) || defined(LINUX)
       EdsUInt64 rawStreamSize = 0;
 #else
-      unsigned __int64 rawStreamSize = 0;
+      unsigned long long rawStreamSize = 0;
 #endif
       unsigned char* rawStreamData = NULL;
 
@@ -899,8 +899,8 @@ bool Canon::downloadImage(EdsBaseRef object) {
   EdsUInt64 jpgStreamSize = 0;
   EdsUInt64 rawStreamSize = 0;
 #else
-  unsigned __int64 jpgStreamSize     = 0;
-  unsigned __int64 rawStreamSize     = 0;
+  unsigned long long jpgStreamSize     = 0;
+  unsigned long long rawStreamSize     = 0;
 #endif
   unsigned char* jpgStreamData = NULL;
   unsigned char* rawStreamData = NULL;

@@ -327,7 +327,7 @@ static bool generateMinidump(TFilePath dumpFile) { return false; }
 //-----------------------------------------------------------------------------
 
 #define HAS_MODULES
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
 static int printModuleInfo(struct dl_phdr_info *i, size_t size, void *data) {
   std::string *out = (std::string *)data;
   char addr[512];
@@ -401,9 +401,7 @@ static void printBacktrace(std::string &out) {
     sprintf(addrstr, "%p", addr);
     sym = std::string(addrstr) + " (in " + module + ")";
 #else
-    link_map *link_map;
-    dladdr1(buffer[i], &info, (void **)&link_map, RTLD_DL_LINKMAP);
-    addr -= link_map->l_addr;
+    if (infoFound) addr -= (size_t)info.dli_fbase;
 #endif
 
     if (infoFound &&

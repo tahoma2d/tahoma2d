@@ -40,7 +40,7 @@ class JpgConverter : public QThread {
   unsigned long long m_dataSize = 0;
 #endif
 #else
-  unsigned __int64 m_dataSize = 0;
+  unsigned long long m_dataSize = 0;
 #endif
   unsigned char* m_dataPtr = NULL;
 
