@@ -43,9 +43,9 @@ sudo pkg install git cmake pkgconf ninja boost-libs opencv \
 
 ---
 
-## 2. Clone & Patch Source Code
+## 2.Patch Source Code
 
-Clone the repository and apply three small compatibility patches for Clang on FreeBSD:
+Applying three small compatibility patches for Clang on FreeBSD:
 
 | File | Issue on FreeBSD | Fix |
 | :--- | :--- | :--- |
